@@ -5,7 +5,7 @@ import useCheckLocationPermission from "../hooks/useCheckLocationPermission";
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 export default function Map() {
-    const hasLocationPermission = useCheckLocationPermission();
+    const { hasLocationPermission } = useCheckLocationPermission();
 
     return (
         <MapView style={{ flex: 1 }} styleURL={MAP_CONFIG.style} scaleBarEnabled={false}>
