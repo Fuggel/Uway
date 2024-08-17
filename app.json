@@ -1,0 +1,50 @@
+{
+    "expo": {
+        "name": "NavSync",
+        "slug": "NavSync",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/images/icon.png",
+        "scheme": "myapp",
+        "userInterfaceStyle": "automatic",
+        "splash": {
+            "image": "./assets/images/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/images/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.fuggel.NavSync"
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static",
+            "favicon": "./assets/images/favicon.png"
+        },
+        "experiments": {
+            "typedRoutes": true
+        },
+        "plugins": [
+            "expo-router",
+            [
+                "@rnmapbox/maps",
+                {
+                    "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5Zzh4enUxM3BnMnFzOHMyMHRnN2lyIn0.7poXg8JTo8tDuMy7PCpsVQ",
+                    "RNMapboxMapsVersion": "10.16.0"
+                }
+            ],
+            [
+                "expo-location",
+                {
+                    "locationWhenInUsePermission": "Show current location on map."
+                }
+            ]
+        ]
+    }
+}
