@@ -1,7 +1,7 @@
-import { Stack } from "expo-router";
+import Map from "@/src/components/Map";
 
 export default function Layout() {
     return (
-        <Stack />
+        <Map />
     );
 }
