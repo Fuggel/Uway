@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 
+
+const TIME_INTERVAL = 1000 * 10;
+
 export default function useCheckLocationPermission() {
     const [hasLocationPermission, setHasLocationPermission] = useState(false);
 
@@ -10,9 +13,9 @@ export default function useCheckLocationPermission() {
             setHasLocationPermission(status === "granted");
         };
 
-        const timeoutInterval = setTimeout(() => {
+        const timeoutInterval = setInterval(() => {
             checkLocationPermission();
-        }, 60000);
+        }, TIME_INTERVAL);
 
         return () => clearInterval(timeoutInterval);
     }, []);
