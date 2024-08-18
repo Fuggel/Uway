@@ -1,0 +1,54 @@
+export default ({ config }) => ({
+    ...config,
+    name: "NavSync",
+    slug: "NavSync",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./src/assets/images/icon.png",
+    scheme: "myapp",
+    userInterfaceStyle: "automatic",
+    splash: {
+        image: "./src/assets/images/splash.png",
+        resizeMode: "contain",
+        backgroundColor: "#ffffff"
+    },
+    ios: {
+        supportsTablet: true,
+        bundleIdentifier: "com.fuggel.NavSync"
+    },
+    android: {
+        adaptiveIcon: {
+            foregroundImage: "./src/assets/images/adaptive-icon.png",
+            backgroundColor: "#ffffff"
+        },
+        package: "com.fuggel.NavSync",
+        permissions: [
+            "android.permission.ACCESS_COARSE_LOCATION",
+            "android.permission.ACCESS_FINE_LOCATION"
+        ]
+    },
+    web: {
+        bundler: "metro",
+        output: "static",
+        favicon: "./src/assets/images/favicon.png"
+    },
+    experiments: {
+        typedRoutes: true
+    },
+    plugins: [
+        "expo-router",
+        [
+            "@rnmapbox/maps",
+            {
+                RNMapboxMapsDownloadToken: process.env.EXPO_MAPBOX_ACCESS_TOKEN,
+                RNMapboxMapsVersion: "10.16.0"
+            }
+        ],
+        [
+            "expo-location",
+            {
+                locationWhenInUsePermission: "Show current location on map."
+            }
+        ]
+    ]
+});

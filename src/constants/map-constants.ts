@@ -9,5 +9,5 @@ export const MAP_CONFIG: MapConfig = {
     zoom: 18,
     pitch: 0,
     style: Mapbox.StyleURL.Dark,
-    accessToken: "sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5Zzh4enUxM3BnMnFzOHMyMHRnN2lyIn0.7poXg8JTo8tDuMy7PCpsVQ",
+    accessToken: String(process.env.EXPO_MAPBOX_ACCESS_TOKEN) || "",
 };
