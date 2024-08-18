@@ -1,4 +1,3 @@
-import Mapbox from "@rnmapbox/maps";
 import { MapConfig } from "../types/IMap";
 
 export const MAP_CONFIG: MapConfig = {
@@ -8,6 +7,7 @@ export const MAP_CONFIG: MapConfig = {
     },
     zoom: 18,
     pitch: 0,
-    style: Mapbox.StyleURL.Dark,
-    accessToken: String(process.env.EXPO_MAPBOX_ACCESS_TOKEN) || "",
+    followZoom: 20,
+    followPitch: 50,
+    style: "mapbox://styles/fuggel-dev/clzzy4fvv005s01qs235m7rhi",
 };
