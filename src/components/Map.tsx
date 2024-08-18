@@ -1,27 +1,69 @@
+import { useRef, useState } from "react";
 import Mapbox, { Camera, LocationPuck, MapView } from "@rnmapbox/maps";
 import { MAP_CONFIG } from "../constants/map-constants";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import useCheckLocationPermission from "../hooks/useCheckLocationPermission";
+import { COLORS } from "../constants/colors-constants";
+import { SIZES } from "../constants/size-constants";
 
-Mapbox.setAccessToken(MAP_CONFIG.accessToken);
+Mapbox.setAccessToken("pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA");
 
 export default function Map() {
+    const cameraRef = useRef<CameraRef | null>(null);
+    const [navigationView, setNavigationView] = useState(true);
     const { hasLocationPermission } = useCheckLocationPermission();
 
     return (
-        <MapView style={{ flex: 1 }} styleURL={MAP_CONFIG.style} scaleBarEnabled={false}>
-            <Camera
-                followUserLocation={hasLocationPermission}
-                followZoomLevel={20}
-                followPitch={50}
-                zoomLevel={MAP_CONFIG.zoom}
-                pitch={MAP_CONFIG.pitch}
-                centerCoordinate={[MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]}
-            />
-            <LocationPuck
-                puckBearingEnabled
-                puckBearing="heading"
-                pulsing={{ isEnabled: true }}
-            />
-        </MapView>
+        <View style={styles.container}>
+            <MapView
+                style={styles.map}
+                styleURL={MAP_CONFIG.style}
+                scaleBarEnabled={false}
+                onTouchStart={() => setNavigationView(false)}
+            >
+                <Camera
+                    ref={cameraRef}
+                    followUserLocation={navigationView && hasLocationPermission}
+                    followZoomLevel={MAP_CONFIG.followZoom}
+                    followPitch={MAP_CONFIG.followPitch}
+                    zoomLevel={MAP_CONFIG.zoom}
+                    centerCoordinate={
+                        hasLocationPermission ?
+                            undefined :
+                            [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
+                    }
+                    pitch={MAP_CONFIG.pitch}
+                />
+                <LocationPuck
+                    puckBearingEnabled
+                    puckBearing="heading"
+                    pulsing={{ isEnabled: true }}
+                />
+            </MapView>
+            <TouchableOpacity style={styles.button}>
+                <MaterialCommunityIcons
+                    name="navigation-variant"
+                    size={SIZES.iconSize.lg}
+                    onPress={() => setNavigationView((prev) => !prev)}
+                    color={navigationView ? COLORS.primary : COLORS.white}
+                />
+            </TouchableOpacity>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    map: {
+        flex: 1,
+    },
+    button: {
+        position: "absolute",
+        bottom: 10,
+        right: 20,
+    },
+});

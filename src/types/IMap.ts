@@ -5,6 +5,7 @@ export interface MapConfig {
     };
     zoom: number;
     pitch: number;
+    followZoom: number;
+    followPitch: number;
     style: string;
-    accessToken: string;
 }
