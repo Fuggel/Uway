@@ -7,10 +7,16 @@ import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import useCheckLocationPermission from "../hooks/useCheckLocationPermission";
 import { COLORS } from "../constants/colors-constants";
 import { SIZES } from "../constants/size-constants";
+import { determineMapStyle } from "../utils/mapStyle";
+import { MapStyle } from "../types/IMap";
 
 Mapbox.setAccessToken("pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA");
 
-export default function Map() {
+interface MapProps {
+    mapStyle: MapStyle;
+}
+
+export default function Map({ mapStyle }: MapProps) {
     const cameraRef = useRef<CameraRef | null>(null);
     const [navigationView, setNavigationView] = useState(true);
     const { hasLocationPermission } = useCheckLocationPermission();
@@ -19,7 +25,7 @@ export default function Map() {
         <View style={styles.container}>
             <MapView
                 style={styles.map}
-                styleURL={MAP_CONFIG.style}
+                styleURL={determineMapStyle(mapStyle)}
                 scaleBarEnabled={false}
                 onTouchStart={() => setNavigationView(false)}
             >
@@ -63,7 +69,7 @@ const styles = StyleSheet.create({
     },
     button: {
         position: "absolute",
-        bottom: 10,
+        bottom: 20,
         right: 20,
     },
 });
