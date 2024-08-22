@@ -8,16 +8,14 @@ import useCheckLocationPermission from "../hooks/useCheckLocationPermission";
 import { COLORS } from "../constants/colors-constants";
 import { SIZES } from "../constants/size-constants";
 import { determineMapStyle } from "../utils/mapStyle";
-import { MapStyle } from "../types/IMap";
+import { useSelector } from "react-redux";
+import { selectMapboxTheme } from "../store/mapView";
 
 Mapbox.setAccessToken("pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA");
 
-interface MapProps {
-    mapStyle: MapStyle;
-}
-
-export default function Map({ mapStyle }: MapProps) {
+export default function Map() {
     const cameraRef = useRef<CameraRef | null>(null);
+    const mapStyle = useSelector(selectMapboxTheme);
     const [navigationView, setNavigationView] = useState(true);
     const { hasLocationPermission } = useCheckLocationPermission();
 

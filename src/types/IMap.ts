@@ -7,19 +7,7 @@ export interface MapConfig {
     pitch: number;
     followZoom: number;
     followPitch: number;
-    style: string;
-}
-
-export enum MapStyle {
-    NAVIGATION_DARK = "navigation-dark",
-    STREET = "street",
-    DARK = "dark",
-    LIGHT = "light",
-    OUTDOORS = "outdoors",
-    SATELLITE = "satellite",
-    SATELLITE_STREET = "satellite-street",
-    TRAFFIC_DAY = "traffic-day",
-    TRAFFIC_NIGHT = "traffic-night",
+    style: MapboxStyle;
 }
 
 export enum MapboxStyle {

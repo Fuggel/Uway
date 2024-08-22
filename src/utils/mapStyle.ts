@@ -1,22 +1,22 @@
-import { MapboxStyle, MapStyle } from "../types/IMap";
+import { MapboxStyle } from "../types/IMap";
 
-export function determineMapStyle(styleUrl: MapStyle): MapboxStyle {
+export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
-        case MapStyle.NAVIGATION_DARK:
+        case MapboxStyle.NAVIGATION_DARK:
             return MapboxStyle.NAVIGATION_DARK;
-        case MapStyle.DARK:
+        case MapboxStyle.DARK:
             return MapboxStyle.DARK;
-        case MapStyle.LIGHT:
+        case MapboxStyle.LIGHT:
             return MapboxStyle.LIGHT;
-        case MapStyle.OUTDOORS:
+        case MapboxStyle.OUTDOORS:
             return MapboxStyle.OUTDOORS;
-        case MapStyle.SATELLITE:
+        case MapboxStyle.SATELLITE:
             return MapboxStyle.SATELLITE;
-        case MapStyle.SATELLITE_STREET:
+        case MapboxStyle.SATELLITE_STREET:
             return MapboxStyle.SATELLITE_STREET;
-        case MapStyle.TRAFFIC_DAY:
+        case MapboxStyle.TRAFFIC_DAY:
             return MapboxStyle.TRAFFIC_DAY;
-        case MapStyle.TRAFFIC_NIGHT:
+        case MapboxStyle.TRAFFIC_NIGHT:
             return MapboxStyle.TRAFFIC_NIGHT;
         default:
             return MapboxStyle.NAVIGATION_DARK;

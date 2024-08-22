@@ -4,19 +4,18 @@ import { COLORS } from "../constants/colors-constants";
 import { Divider, IconButton } from "react-native-paper";
 import { SIZES } from "../constants/size-constants";
 import Dropdown from "./Dropdown";
-import { MapStyle } from "../types/IMap";
-
-interface SettingsProps {
-    mapStyle: MapStyle;
-    setMapStyle: React.Dispatch<React.SetStateAction<MapStyle>>;
-}
+import { MapboxStyle } from "../types/IMap";
+import { useDispatch, useSelector } from "react-redux";
+import { mapViewActions, selectMapboxTheme } from "../store/mapView";
 
 interface SettingsCommonProps {
     title?: string;
     children: React.ReactNode;
 }
 
-export default function Settings({ mapStyle, setMapStyle }: SettingsProps) {
+export default function Settings() {
+    const dispatch = useDispatch();
+    const mapStyle = useSelector(selectMapboxTheme);
     const [openSettings, setOpenSettings] = useState(false);
 
     return (
@@ -36,17 +35,17 @@ export default function Settings({ mapStyle, setMapStyle }: SettingsProps) {
                             <SettingsItem>
                                 <Dropdown
                                     value={mapStyle}
-                                    onChange={setMapStyle as React.Dispatch<React.SetStateAction<string>>}
+                                    onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
                                     data={[
-                                        { label: "Navigation Dark", value: MapStyle.NAVIGATION_DARK },
-                                        { label: "Streets", value: MapStyle.STREET },
-                                        { label: "Outdoors", value: MapStyle.OUTDOORS },
-                                        { label: "Light", value: MapStyle.LIGHT },
-                                        { label: "Dark", value: MapStyle.DARK },
-                                        { label: "Satellite", value: MapStyle.SATELLITE },
-                                        { label: "Satellite Streets", value: MapStyle.SATELLITE_STREET },
-                                        { label: "Traffic Day", value: MapStyle.TRAFFIC_DAY },
-                                        { label: "Traffic Night", value: MapStyle.TRAFFIC_NIGHT }
+                                        { label: "Navigation Dark", value: MapboxStyle.NAVIGATION_DARK },
+                                        { label: "Streets", value: MapboxStyle.STREET },
+                                        { label: "Outdoors", value: MapboxStyle.OUTDOORS },
+                                        { label: "Light", value: MapboxStyle.LIGHT },
+                                        { label: "Dark", value: MapboxStyle.DARK },
+                                        { label: "Satellite", value: MapboxStyle.SATELLITE },
+                                        { label: "Satellite Streets", value: MapboxStyle.SATELLITE_STREET },
+                                        { label: "Traffic Day", value: MapboxStyle.TRAFFIC_DAY },
+                                        { label: "Traffic Night", value: MapboxStyle.TRAFFIC_NIGHT }
                                     ]}
                                 />
                             </SettingsItem>

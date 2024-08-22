@@ -4,13 +4,13 @@ import FeatherIcon from "@expo/vector-icons/Feather";
 import { COLORS } from "../constants/colors-constants";
 import { SIZES } from "../constants/size-constants";
 
-interface DropdownProps {
+interface DropdownProps<T> {
     data: { label: string, value: string; }[];
     value: string;
-    onChange: React.Dispatch<React.SetStateAction<string>>;
+    onChange: (value: T) => void;
 }
 
-export default function Dropdown({ data, value, onChange }: DropdownProps) {
+export default function Dropdown<T>({ data, value, onChange }: DropdownProps<T>) {
     return (
         <DropdownContainer
             style={styles.dropdown}
@@ -26,7 +26,7 @@ export default function Dropdown({ data, value, onChange }: DropdownProps) {
             placeholder="Select item"
             searchPlaceholder="Search..."
             value={value}
-            onChange={item => onChange(item.value)}
+            onChange={item => onChange(item.value as T)}
             renderLeftIcon={() => (
                 <FeatherIcon
                     name="map"

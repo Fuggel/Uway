@@ -1,4 +1,4 @@
-import { MapConfig } from "../types/IMap";
+import { MapboxStyle, MapConfig } from "../types/IMap";
 
 export const MAP_CONFIG: MapConfig = {
     position: {
@@ -9,5 +9,5 @@ export const MAP_CONFIG: MapConfig = {
     pitch: 0,
     followZoom: 20,
     followPitch: 50,
-    style: "mapbox://styles/fuggel-dev/clzzy4fvv005s01qs235m7rhi",
+    style: MapboxStyle.NAVIGATION_DARK,
 };
