@@ -4,7 +4,7 @@ import { MAP_CONFIG } from "../constants/map-constants";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
-import useCheckLocationPermission from "../hooks/useCheckLocationPermission";
+import useUserLocation from "../hooks/useUserLocation";
 import { COLORS } from "../constants/colors-constants";
 import { SIZES } from "../constants/size-constants";
 import { determineMapStyle } from "../utils/mapStyle";
@@ -16,8 +16,8 @@ Mapbox.setAccessToken("pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaT
 export default function Map() {
     const cameraRef = useRef<CameraRef | null>(null);
     const mapStyle = useSelector(selectMapboxTheme);
-    const [navigationView, setNavigationView] = useState(true);
-    const { hasLocationPermission } = useCheckLocationPermission();
+    const [navigationView, setNavigationView] = useState(false);
+    const { userLocation } = useUserLocation();
 
     return (
         <View style={styles.container}>
@@ -29,16 +29,18 @@ export default function Map() {
             >
                 <Camera
                     ref={cameraRef}
-                    followUserLocation={navigationView && hasLocationPermission}
-                    followZoomLevel={MAP_CONFIG.followZoom}
-                    followPitch={MAP_CONFIG.followPitch}
                     zoomLevel={MAP_CONFIG.zoom}
-                    centerCoordinate={
-                        hasLocationPermission ?
-                            undefined :
-                            [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
-                    }
                     pitch={MAP_CONFIG.pitch}
+                    followUserLocation={!!userLocation}
+                    followZoomLevel={MAP_CONFIG.followZoom}
+                    followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                    followHeading={userLocation?.coords.heading || 0}
+                    defaultSettings={{
+                        centerCoordinate: [
+                            MAP_CONFIG.position.lon,
+                            MAP_CONFIG.position.lat,
+                        ],
+                    }}
                 />
                 <LocationPuck
                     puckBearingEnabled
