@@ -1,5 +1,6 @@
 export interface Size {
     spacing: {
+        xs: number;
         sm: number;
         md: number;
         lg: number;
