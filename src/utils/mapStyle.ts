@@ -12,8 +12,8 @@ export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
             return MapboxStyle.OUTDOORS;
         case MapboxStyle.SATELLITE:
             return MapboxStyle.SATELLITE;
-        case MapboxStyle.SATELLITE_STREET:
-            return MapboxStyle.SATELLITE_STREET;
+        case MapboxStyle.SATELLITE_STREETS:
+            return MapboxStyle.SATELLITE_STREETS;
         case MapboxStyle.TRAFFIC_DAY:
             return MapboxStyle.TRAFFIC_DAY;
         case MapboxStyle.TRAFFIC_NIGHT:

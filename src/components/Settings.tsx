@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { COLORS } from "../constants/colors-constants";
-import { Divider, IconButton } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import { SIZES } from "../constants/size-constants";
 import Dropdown from "./Dropdown";
 import { MapboxStyle } from "../types/IMap";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewActions, selectMapboxTheme } from "../store/mapView";
-
-interface SettingsCommonProps {
-    title?: string;
-    children: React.ReactNode;
-}
+import { SettingsItem, SettingsSection } from "./SettingsItem";
+import { mapStyles } from "../constants/map-constants";
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -35,18 +32,8 @@ export default function Settings() {
                             <SettingsItem>
                                 <Dropdown
                                     value={mapStyle}
+                                    data={mapStyles}
                                     onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
-                                    data={[
-                                        { label: "Navigation Dark", value: MapboxStyle.NAVIGATION_DARK },
-                                        { label: "Streets", value: MapboxStyle.STREET },
-                                        { label: "Outdoors", value: MapboxStyle.OUTDOORS },
-                                        { label: "Light", value: MapboxStyle.LIGHT },
-                                        { label: "Dark", value: MapboxStyle.DARK },
-                                        { label: "Satellite", value: MapboxStyle.SATELLITE },
-                                        { label: "Satellite Streets", value: MapboxStyle.SATELLITE_STREET },
-                                        { label: "Traffic Day", value: MapboxStyle.TRAFFIC_DAY },
-                                        { label: "Traffic Night", value: MapboxStyle.TRAFFIC_NIGHT }
-                                    ]}
                                 />
                             </SettingsItem>
                         </SettingsSection>
@@ -56,25 +43,6 @@ export default function Settings() {
         </>
     );
 };
-
-function SettingsItem({ title, children }: SettingsCommonProps) {
-    return (
-        <View style={styles.settingsItem}>
-            <Text>{title}</Text>
-            {children}
-        </View>
-    );
-}
-
-function SettingsSection({ title, children }: SettingsCommonProps) {
-    return (
-        <View style={styles.settingsSection}>
-            <Text style={styles.heading}>{title}</Text>
-            <Divider style={styles.divider} />
-            {children}
-        </View>
-    );
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -86,27 +54,10 @@ const styles = StyleSheet.create({
         marginTop: SIZES.spacing.lg,
         padding: SIZES.spacing.md,
     },
-    settingsSection: {
-        marginVertical: SIZES.spacing.sm,
-    },
     iconButton: {
         position: "absolute",
         top: 20,
         right: 10,
         zIndex: 999999,
     },
-    heading: {
-        fontSize: SIZES.fontSize.md,
-    },
-    divider: {
-        marginTop: SIZES.spacing.xs,
-    },
-    settingsItem: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        padding: SIZES.spacing.sm,
-    }
 });
