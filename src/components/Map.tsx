@@ -7,7 +7,7 @@ import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import useUserLocation from "../hooks/useUserLocation";
 import { COLORS } from "../constants/colors-constants";
 import { SIZES } from "../constants/size-constants";
-import { determineMapStyle } from "../utils/map-utils";
+import { arrowDirection, determineMapStyle } from "../utils/map-utils";
 import { useSelector } from "react-redux";
 import { selectMapboxTheme } from "../store/mapView";
 import useDirections from "../hooks/useDirections";
@@ -19,6 +19,8 @@ import useSearchSuggestion from "../hooks/useSearchSuggestion";
 import { generateSessionToken } from "../utils/auth-utils";
 import { Divider } from "react-native-paper";
 import useSearchLocation from "../hooks/useSeachLocation";
+import useInstructions from "../hooks/useInstructions";
+import { Instruction } from "../types/IMap";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -31,12 +33,6 @@ export default function Map() {
     const [locationId, setLocationId] = useState("");
     const [navigationView, setNavigationView] = useState(false);
     const { userLocation } = useUserLocation();
-
-    const handleCancelNavigation = () => {
-        setNavigationView(false);
-        setDirections(null);
-    };
-
     const { suggestions } = useSearchSuggestion({ query: searchQuery, sessionToken });
     const { locations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
@@ -44,38 +40,24 @@ export default function Map() {
         startLngLat: { lon: userLocation?.coords.longitude as number, lat: userLocation?.coords.latitude as number },
         destinationLngLat: { lon: locations?.geometry.coordinates[0] as number, lat: locations?.geometry.coordinates[1] as number },
     });
+    const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
+
+    const handleCancelNavigation = () => {
+        setNavigationView(false);
+        setDirections(null);
+    };
 
     useEffect(() => {
         if (directions) {
             setNavigationView(true);
             setSearchQuery("");
+            setCurrentStep(0);
         }
     }, [directions]);
 
     return (
         <View style={styles.container}>
             {loadingDirections && <Loading />}
-
-            {!directions &&
-                <Searchbar
-                    st={styles.search}
-                    listSt={styles.suggestions}
-                    placeholder="Search for a location"
-                    onChangeText={setSearchQuery}
-                    value={searchQuery}
-                >
-                    {suggestions?.suggestions
-                        .filter(suggestion => suggestion.full_address)
-                        .map((suggestion) => (
-                            <ScrollView key={suggestion.mapbox_id}>
-                                <TouchableOpacity onPress={() => setLocationId(suggestion.mapbox_id)}>
-                                    <Text>{suggestion.full_address}</Text>
-                                    <Divider style={styles.divider} />
-                                </TouchableOpacity>
-                            </ScrollView>
-                        ))}
-                </Searchbar>
-            }
 
             <MapView
                 style={styles.map}
@@ -112,6 +94,27 @@ export default function Map() {
                 )}
             </MapView>
 
+            {!directions &&
+                <Searchbar
+                    st={styles.search}
+                    listSt={styles.suggestions}
+                    placeholder="Search for a location"
+                    onChangeText={setSearchQuery}
+                    value={searchQuery}
+                >
+                    {suggestions?.suggestions
+                        .filter(suggestion => suggestion.full_address)
+                        .map((suggestion) => (
+                            <ScrollView key={suggestion.mapbox_id}>
+                                <TouchableOpacity onPress={() => setLocationId(suggestion.mapbox_id)}>
+                                    <Text>{suggestion.full_address}</Text>
+                                    <Divider style={styles.divider} />
+                                </TouchableOpacity>
+                            </ScrollView>
+                        ))}
+                </Searchbar>
+            }
+
             <View style={styles.mapButtons}>
                 <TouchableOpacity>
                     <MaterialCommunityIcons
@@ -143,6 +146,39 @@ export default function Map() {
                     </Card>
                 }
             </View>
+
+            {directions?.legs?.[0]?.steps && (
+                <View style={styles.instructionsContainer}>
+                    {directions.legs[0].steps
+                        .slice(currentStep, currentStep + 1)
+                        .map((step: Instruction, index: number) => {
+                            const arrowDir = arrowDirection(step);
+
+                            return (
+                                <View key={index}>
+                                    <Text style={styles.stepInstruction}>
+                                        {step.maneuver.instruction}
+                                    </Text>
+
+                                    <View style={styles.directionRow}>
+                                        {arrowDir !== undefined &&
+                                            <MaterialCommunityIcons
+                                                name={`arrow-${arrowDir}-bold`}
+                                                size={50}
+                                                color={COLORS.primary}
+                                            />
+                                        }
+                                        <TouchableOpacity onPress={() => setCurrentStep(index)}>
+                                            <Text style={styles.stepDistance}>
+                                                {step.distance.toFixed(0)} meters
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            );
+                        })}
+                </View>
+            )}
         </View>
     );
 }
@@ -161,7 +197,7 @@ const styles = StyleSheet.create({
         width: "50%",
     },
     suggestions: {
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
         marginTop: 2,
         gap: SIZES.spacing.sm,
@@ -173,13 +209,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        backgroundColor: COLORS.white_transparent,
         paddingVertical: SIZES.spacing.sm,
-    },
-    navigationButton: {
-        marginTop: SIZES.spacing.xs,
-        width: 120,
-        marginHorizontal: "auto",
     },
     navigationDuration: {
         color: COLORS.success,
@@ -196,7 +227,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         gap: 4,
-        zIndex: 999999,
     },
     navigationViewButton: {
         marginLeft: "auto",
@@ -205,5 +235,26 @@ const styles = StyleSheet.create({
     },
     divider: {
         marginTop: SIZES.spacing.xs,
+    },
+    instructionsContainer: {
+        position: "absolute",
+        top: SIZES.spacing.xl,
+        left: SIZES.spacing.md,
+        width: "50%",
+        backgroundColor: COLORS.white_transparent,
+        borderRadius: SIZES.borderRadius.sm,
+        padding: SIZES.spacing.sm,
+    },
+    stepInstruction: {
+        fontSize: SIZES.fontSize.md,
+        fontWeight: "bold",
+    },
+    stepDistance: {
+        fontSize: SIZES.fontSize.sm,
+        color: COLORS.gray,
+    },
+    directionRow: {
+        flexDirection: "row",
+        alignItems: "center",
     },
 });

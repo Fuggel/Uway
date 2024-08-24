@@ -14,8 +14,8 @@ export default function Layout() {
             <PersistGate persistor={persistor}>
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
-                        <Settings />
                         <Map />
+                        <Settings />
                     </QueryClientProvider>
                 </PaperProvider>
             </PersistGate>

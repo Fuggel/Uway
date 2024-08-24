@@ -14,7 +14,7 @@ export async function fetchDirections(
         const { lon: startLon, lat: startLat } = params.startLngLat;
         const { lon: destLon, lat: destLat } = params.destinationLngLat;
 
-        const queryParams = `geometries=geojson&access_token=${MAP_CONFIG.accessToken}`;
+        const queryParams = `geometries=geojson&steps=true&access_token=${MAP_CONFIG.accessToken}`;
         const url = `${MAPBOX_DIRECTIONS_API}/${params.profile}/${startLon},${startLat};${destLon},${destLat}?${queryParams}`;
         const response = await axios.get(url);
 

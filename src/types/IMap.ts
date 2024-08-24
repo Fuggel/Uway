@@ -46,6 +46,7 @@ export interface Direction {
     };
     distance: number;
     duration: number;
+    legs: any;
 }
 
 export interface Suggestion {
@@ -61,4 +62,22 @@ export interface Location {
         full_address: string;
     };
     geometry: Geometry;
+}
+
+export interface Instruction {
+    driving_side: string;
+    distance: number;
+    maneuver: {
+        type: ManeuverType;
+        instruction: string;
+        location: number[];
+    };
+    name: string;
+}
+
+export enum ManeuverType {
+    LEFT = "left",
+    RIGHT = "right",
+    STRAIGHT = "straight",
+    CONTINUE = "continue",
 }

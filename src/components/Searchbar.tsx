@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { Searchbar as PaperSearchbar } from "react-native-paper";
+import { COLORS } from "../constants/colors-constants";
 
 interface SearchbarProps {
     placeholder: string;
@@ -12,9 +13,9 @@ interface SearchbarProps {
 
 export default function Searchbar({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) {
     return (
-        <View style={{ zIndex: 999999, ...st }}>
+        <View style={st}>
             <PaperSearchbar
-                style={{ backgroundColor: "rgba(255,255,255,0.9)" }}
+                style={{ backgroundColor: COLORS.white_transparent }}
                 placeholder={placeholder}
                 onChangeText={onChangeText}
                 value={value}
