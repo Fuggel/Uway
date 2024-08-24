@@ -1,15 +1,19 @@
 import { ImageSourcePropType } from "react-native";
+import { Geometry } from "@turf/helpers";
+
+export interface LonLat {
+    lon: number;
+    lat: number;
+}
 
 export interface MapConfig {
-    position: {
-        lon: number;
-        lat: number;
-    };
+    position: LonLat;
     zoom: number;
     pitch: number;
     followZoom: number;
     followPitch: number;
     style: MapboxStyle;
+    accessToken: string;
 }
 
 export enum MapboxStyle {
@@ -28,4 +32,57 @@ export interface DropdownItem {
     label: string;
     value: string;
     img?: ImageSourcePropType;
+}
+
+export interface RouteProfile {
+    value: RouteProfileType;
+    icon: string;
+}
+
+export interface Direction {
+    geometry: {
+        coordinates: number[][];
+    };
+    distance: number;
+    duration: number;
+    legs: any;
+}
+
+export interface Suggestion {
+    suggestions: {
+        full_address: string;
+        mapbox_id: string;
+    }[];
+}
+
+export interface Location {
+    properties: {
+        address: string;
+        full_address: string;
+    };
+    geometry: Geometry;
+}
+
+export interface Instruction {
+    driving_side: string;
+    distance: number;
+    maneuver: {
+        type: ManeuverType;
+        instruction: string;
+        location: number[];
+    };
+    name: string;
+}
+
+export enum ManeuverType {
+    LEFT = "left",
+    RIGHT = "right",
+    STRAIGHT = "straight",
+    CONTINUE = "continue",
+}
+
+export enum RouteProfileType {
+    DRIVING = "driving",
+    WALKING = "walking",
+    CYCLING = "cycling",
 }
