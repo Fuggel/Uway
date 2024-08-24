@@ -28,7 +28,7 @@ export default function Settings() {
             {openSettings &&
                 <View style={styles.container}>
                     <View style={styles.settings}>
-                        <SettingsSection title="Map">
+                        <SettingsSection title="Map Style">
                             <SettingsItem>
                                 <Dropdown
                                     value={mapStyle}
