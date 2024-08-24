@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Mapbox, { Camera, LocationPuck, MapView } from "@rnmapbox/maps";
+import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
 import { MAP_CONFIG } from "../constants/map-constants";
 import { StyleSheet, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
@@ -18,6 +18,7 @@ import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
 import { RouteProfileType } from "../types/IMap";
+import { COLORS } from "../constants/colors-constants";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -69,6 +70,12 @@ export default function Map() {
                 scaleBarEnabled={false}
                 onTouchStart={() => setNavigationView(false)}
             >
+                <Images
+                    images={{
+                        "user-location-icon": require("../assets/images/map-icons/user-location.png"),
+                    }}
+                />
+
                 <Camera
                     ref={cameraRef}
                     zoomLevel={MAP_CONFIG.zoom}
@@ -85,9 +92,15 @@ export default function Map() {
                     }}
                 />
                 <LocationPuck
-                    puckBearingEnabled
+                    topImage="user-location-icon"
+                    scale={1.5}
                     puckBearing="heading"
-                    pulsing={{ isEnabled: true }}
+                    puckBearingEnabled
+                    pulsing={{
+                        isEnabled: true,
+                        color: COLORS.primary,
+                        radius: 50,
+                    }}
                 />
                 {directions?.geometry?.coordinates && (
                     <LineLayer
