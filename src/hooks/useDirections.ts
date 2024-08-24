@@ -8,17 +8,19 @@ export default function useDirections(params: {
     profile: string;
     startLngLat: LonLat;
     destinationLngLat: LonLat;
+    isNavigationMode: boolean;
 }) {
     const [directions, setDirections] = useState<Direction | null>(null);
 
     const { data, isLoading: loadingDirections, error: errorDirections } = useQuery({
-        queryKey: ["directions", params.profile, params.startLngLat, params.destinationLngLat],
+        queryKey: ["directions", params.profile, params.startLngLat, params.destinationLngLat, params.isNavigationMode],
         queryFn: () => fetchDirections({
             profile: params.profile,
             startLngLat: params.startLngLat,
             destinationLngLat: params.destinationLngLat
         }),
         enabled:
+            params.isNavigationMode &&
             isValidLonLat(params.startLngLat.lon, params.startLngLat.lat) &&
             isValidLonLat(params.destinationLngLat.lon, params.destinationLngLat.lat),
         staleTime: Infinity,

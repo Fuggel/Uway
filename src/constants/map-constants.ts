@@ -1,4 +1,4 @@
-import { MapboxStyle, MapConfig, DropdownItem, RouteProfile } from "../types/IMap";
+import { MapboxStyle, MapConfig, DropdownItem, RouteProfile, RouteProfileType } from "../types/IMap";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 
@@ -65,18 +65,15 @@ export const MAP_STYLES: DropdownItem[] = [
 
 export const ROUTE_PROFILES: RouteProfile[] = [
     {
-        id: "driving",
-        label: "Driving",
+        value: RouteProfileType.DRIVING,
         icon: "car"
     },
     {
-        id: "walking",
-        label: "Walking",
+        value: RouteProfileType.WALKING,
         icon: "walk"
     },
     {
-        id: "cycling",
-        label: "Cycling",
+        value: RouteProfileType.CYCLING,
         icon: "bike"
     },
 ];

@@ -17,6 +17,7 @@ import useInstructions from "../hooks/useInstructions";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
+import { RouteProfileType } from "../types/IMap";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -28,28 +29,35 @@ export default function Map() {
     const [searchQuery, setSearchQuery] = useState("");
     const [locationId, setLocationId] = useState("");
     const [navigationView, setNavigationView] = useState(false);
+    const [isNavigationMode, setIsNavigationMode] = useState(false);
+    const [navigationProfile, setNavigationProfile] = useState<RouteProfileType>(RouteProfileType.DRIVING);
     const { userLocation } = useUserLocation();
     const { suggestions } = useSearchSuggestion({ query: searchQuery, sessionToken });
-    const { locations } = useSearchLocation({ mapboxId: locationId, sessionToken });
+    const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
-        profile: "driving",
+        profile: navigationProfile,
         startLngLat: { lon: userLocation?.coords.longitude as number, lat: userLocation?.coords.latitude as number },
         destinationLngLat: { lon: locations?.geometry.coordinates[0] as number, lat: locations?.geometry.coordinates[1] as number },
+        isNavigationMode
     });
     const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
 
     const handleCancelNavigation = () => {
         setNavigationView(false);
         setDirections(null);
+        setIsNavigationMode(false);
+        setCurrentStep(0);
+        setSearchQuery("");
+        setLocations(null);
     };
 
     useEffect(() => {
-        if (directions) {
+        if (directions && isNavigationMode && locations) {
             setNavigationView(true);
             setSearchQuery("");
             setCurrentStep(0);
         }
-    }, [directions]);
+    }, [directions, isNavigationMode]);
 
     return (
         <View style={styles.container}>
@@ -103,6 +111,10 @@ export default function Map() {
                 setNavigationView={setNavigationView}
                 directions={directions}
                 locations={locations}
+                isNavigationMode={isNavigationMode}
+                setIsNavigationMode={setIsNavigationMode}
+                profileType={navigationProfile}
+                setProfileType={setNavigationProfile}
                 onCancelNavigation={handleCancelNavigation}
             />
             {directions?.legs?.[0]?.steps && (

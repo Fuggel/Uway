@@ -35,8 +35,7 @@ export interface DropdownItem {
 }
 
 export interface RouteProfile {
-    id: string;
-    label: string;
+    value: RouteProfileType;
     icon: string;
 }
 
@@ -80,4 +79,10 @@ export enum ManeuverType {
     RIGHT = "right",
     STRAIGHT = "straight",
     CONTINUE = "continue",
+}
+
+export enum RouteProfileType {
+    DRIVING = "driving",
+    WALKING = "walking",
+    CYCLING = "cycling",
 }

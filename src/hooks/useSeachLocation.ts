@@ -22,5 +22,5 @@ export default function useSearchLocation(params: {
         }
     }, [searchData]);
 
-    return { locations, loadingSearchData, errorSearchData };
+    return { locations, setLocations, loadingSearchData, errorSearchData };
 }
