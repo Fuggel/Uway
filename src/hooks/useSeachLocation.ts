@@ -1,0 +1,26 @@
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { fetchSearchLocation } from "../utils/api/search";
+import { Location } from "../types/IMap";
+
+export default function useSearchLocation(params: {
+    mapboxId: string;
+    sessionToken: string;
+}) {
+    const [locations, setLocations] = useState<Location | null>(null);
+
+    const { data: searchData, isLoading: loadingSearchData, error: errorSearchData } = useQuery({
+        queryKey: ["searchData", params.mapboxId],
+        queryFn: () => fetchSearchLocation({ mapboxId: params.mapboxId, sessionToken: params.sessionToken }),
+        enabled: params.mapboxId.length > 0,
+        staleTime: Infinity,
+    });
+
+    useEffect(() => {
+        if (searchData) {
+            setLocations(searchData.features[0]);
+        }
+    }, [searchData]);
+
+    return { locations, loadingSearchData, errorSearchData };
+}

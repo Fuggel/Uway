@@ -4,6 +4,8 @@ export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
         case MapboxStyle.NAVIGATION_DARK:
             return MapboxStyle.NAVIGATION_DARK;
+        case MapboxStyle.STREETS:
+            return MapboxStyle.STREETS;
         case MapboxStyle.DARK:
             return MapboxStyle.DARK;
         case MapboxStyle.LIGHT:
@@ -21,4 +23,8 @@ export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
         default:
             return MapboxStyle.NAVIGATION_DARK;
     }
+}
+
+export function isValidLonLat(lon: number, lat: number) {
+    return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
 }

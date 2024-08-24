@@ -8,7 +8,7 @@ import { MapboxStyle } from "../types/IMap";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewActions, selectMapboxTheme } from "../store/mapView";
 import { SettingsItem, SettingsSection } from "./SettingsItem";
-import { mapStyles } from "../constants/map-constants";
+import { MAP_STYLES } from "../constants/map-constants";
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export default function Settings() {
                             <SettingsItem>
                                 <Dropdown
                                     value={mapStyle}
-                                    data={mapStyles}
+                                    data={MAP_STYLES}
                                     onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
                                 />
                             </SettingsItem>

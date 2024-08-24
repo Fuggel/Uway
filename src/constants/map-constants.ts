@@ -1,4 +1,4 @@
-import { MapboxStyle, MapConfig, DropdownItem } from "../types/IMap";
+import { MapboxStyle, MapConfig, DropdownItem, RouteProfile } from "../types/IMap";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 
@@ -12,9 +12,10 @@ export const MAP_CONFIG: MapConfig = {
     followZoom: 20,
     followPitch: 50,
     style: MapboxStyle.NAVIGATION_DARK,
+    accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "",
 };
 
-export const mapStyles: DropdownItem[] = [
+export const MAP_STYLES: DropdownItem[] = [
     {
         label: "Navigation Dark",
         value: MapboxStyle.NAVIGATION_DARK,
@@ -59,5 +60,23 @@ export const mapStyles: DropdownItem[] = [
         label: "Traffic Night",
         value: MapboxStyle.TRAFFIC_NIGHT,
         img: require(`${MAP_STYLES_URL}/traffic-night.png`)
+    },
+];
+
+export const ROUTE_PROFILES: RouteProfile[] = [
+    {
+        id: "driving",
+        label: "Driving",
+        icon: "car"
+    },
+    {
+        id: "walking",
+        label: "Walking",
+        icon: "walk"
+    },
+    {
+        id: "cycling",
+        label: "Cycling",
+        icon: "bike"
     },
 ];
