@@ -11,7 +11,14 @@ interface SearchbarProps {
     listSt?: any;
 }
 
-export default function Searchbar({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) {
+export default function Searchbar({
+    placeholder,
+    onChangeText,
+    value,
+    children,
+    st,
+    listSt
+}: SearchbarProps) {
     return (
         <View style={st}>
             <PaperSearchbar

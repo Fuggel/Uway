@@ -5,6 +5,7 @@ import Map from "@/src/components/Map";
 import { PaperProvider } from "react-native-paper";
 import Settings from "../components/Settings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SettingsContextProvider } from "../contexts/SettingsContext";
 
 const queryClient = new QueryClient();
 
@@ -14,8 +15,10 @@ export default function Layout() {
             <PersistGate persistor={persistor}>
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
-                        <Map />
-                        <Settings />
+                        <SettingsContextProvider>
+                            <Map />
+                            <Settings />
+                        </SettingsContextProvider>
                     </QueryClientProvider>
                 </PaperProvider>
             </PersistGate>

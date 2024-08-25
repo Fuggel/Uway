@@ -4,33 +4,30 @@ import { Divider } from "react-native-paper";
 import { Suggestion } from "../types/IMap";
 import { SIZES } from "../constants/size-constants";
 import { COLORS } from "../constants/colors-constants";
+import { useDispatch, useSelector } from "react-redux";
+import { mapNavigationActions, mapNavigationSelectors } from "../store/mapNavigation";
 
 interface MapSearchbarProps {
-    searchQuery: string;
-    setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
     suggestions: Suggestion | null;
-    setLocationId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function MapSearchbar({
-    searchQuery,
-    setSearchQuery,
-    suggestions,
-    setLocationId,
-}: MapSearchbarProps) {
+export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
+    const dispatch = useDispatch();
+    const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
+
     return (
         <Searchbar
             st={styles.search}
             listSt={styles.suggestions}
             placeholder="Search for a location"
-            onChangeText={setSearchQuery}
+            onChangeText={(val) => dispatch(mapNavigationActions.setSearchQuery(val))}
             value={searchQuery}
         >
             {suggestions?.suggestions
                 .filter(suggestion => suggestion.full_address)
                 .map((suggestion) => (
                     <ScrollView key={suggestion.mapbox_id}>
-                        <TouchableOpacity onPress={() => setLocationId(suggestion.mapbox_id)}>
+                        <TouchableOpacity onPress={() => dispatch(mapNavigationActions.setLocationId(suggestion.mapbox_id))}>
                             <Text>{suggestion.full_address}</Text>
                             <Divider style={styles.divider} />
                         </TouchableOpacity>

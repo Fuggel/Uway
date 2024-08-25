@@ -21,7 +21,9 @@ const mapViewSlice = createSlice({
     },
 });
 
-export const selectMapboxTheme = (state: RootState) => state.mapView.mapboxTheme;
+export const mapViewSelectors = {
+    mapboxTheme: (state: RootState): MapboxStyle => state.mapView.mapboxTheme,
+};
 
 export const mapViewActions = mapViewSlice.actions;
 export default mapViewSlice.reducer;

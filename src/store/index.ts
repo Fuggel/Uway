@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "@react-native-async-storage/async-storage";
 import mapViewReducer from "./mapView";
+import mapNavigationReduce from "./mapNavigation";
 
 const persistConfig = {
     key: "root",
@@ -11,6 +12,7 @@ const persistConfig = {
 
 const reducer = combineReducers({
     mapView: mapViewReducer,
+    mapNavigation: mapNavigationReduce,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

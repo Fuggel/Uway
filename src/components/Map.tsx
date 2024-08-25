@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
 import { MAP_CONFIG } from "../constants/map-constants";
 import { StyleSheet, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import useUserLocation from "../hooks/useUserLocation";
 import { determineMapStyle } from "../utils/map-utils";
-import { useSelector } from "react-redux";
-import { selectMapboxTheme } from "../store/mapView";
+import { useDispatch, useSelector } from "react-redux";
+import { mapViewSelectors } from "../store/mapView";
 import useDirections from "../hooks/useDirections";
 import LineLayer from "./Layers/LineLayer";
 import Loading from "./Loading";
@@ -17,8 +17,8 @@ import useInstructions from "../hooks/useInstructions";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
-import { RouteProfileType } from "../types/IMap";
 import { COLORS } from "../constants/colors-constants";
+import { mapNavigationActions, mapNavigationSelectors } from "../store/mapNavigation";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -26,36 +26,45 @@ const sessionToken = generateSessionToken();
 
 export default function Map() {
     const cameraRef = useRef<CameraRef | null>(null);
-    const mapStyle = useSelector(selectMapboxTheme);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [locationId, setLocationId] = useState("");
-    const [navigationView, setNavigationView] = useState(false);
-    const [isNavigationMode, setIsNavigationMode] = useState(false);
-    const [navigationProfile, setNavigationProfile] = useState<RouteProfileType>(RouteProfileType.DRIVING);
+    const dispatch = useDispatch();
+    const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
+    const locationId = useSelector(mapNavigationSelectors.locationId);
+    const navigationView = useSelector(mapNavigationSelectors.navigationView);
+    const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+
     const { userLocation } = useUserLocation();
     const { suggestions } = useSearchSuggestion({ query: searchQuery, sessionToken });
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
         profile: navigationProfile,
-        startLngLat: { lon: userLocation?.coords.longitude as number, lat: userLocation?.coords.latitude as number },
-        destinationLngLat: { lon: locations?.geometry.coordinates[0] as number, lat: locations?.geometry.coordinates[1] as number },
+        startLngLat: {
+            lon: userLocation?.coords.longitude as number,
+            lat: userLocation?.coords.latitude as number
+        },
+        destinationLngLat: {
+            lon: locations?.geometry.coordinates[0] as number,
+            lat: locations?.geometry.coordinates[1] as number
+        },
         isNavigationMode
     });
     const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
 
     const handleCancelNavigation = () => {
-        setNavigationView(false);
         setDirections(null);
-        setIsNavigationMode(false);
         setCurrentStep(0);
-        setSearchQuery("");
         setLocations(null);
+        dispatch(mapNavigationActions.setNavigationView(false));
+        dispatch(mapNavigationActions.setIsNavigationMode(false));
+        dispatch(mapNavigationActions.setSearchQuery(""));
+        dispatch(mapNavigationActions.setLocationId(""));
     };
 
     useEffect(() => {
         if (directions && isNavigationMode && locations) {
-            setNavigationView(true);
-            setSearchQuery("");
+            dispatch(mapNavigationActions.setNavigationView(true));
+            dispatch(mapNavigationActions.setSearchQuery(""));
             setCurrentStep(0);
         }
     }, [directions, isNavigationMode]);
@@ -68,7 +77,7 @@ export default function Map() {
                 style={styles.map}
                 styleURL={determineMapStyle(mapStyle)}
                 scaleBarEnabled={false}
-                onTouchStart={() => setNavigationView(false)}
+                onTouchStart={() => dispatch(mapNavigationActions.setNavigationView(false))}
             >
                 <Images
                     images={{
@@ -111,32 +120,16 @@ export default function Map() {
                 )}
             </MapView>
 
-            {!directions &&
-                <MapSearchbar
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    suggestions={suggestions}
-                    setLocationId={setLocationId}
-                />
-            }
-            <MapButtons
-                navigationView={navigationView}
-                setNavigationView={setNavigationView}
+            <MapButtons />
+            {!directions && <MapSearchbar suggestions={suggestions} />}
+
+            <MapNavigation
                 directions={directions}
                 locations={locations}
-                isNavigationMode={isNavigationMode}
-                setIsNavigationMode={setIsNavigationMode}
-                profileType={navigationProfile}
-                setProfileType={setNavigationProfile}
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
                 onCancelNavigation={handleCancelNavigation}
             />
-            {directions?.legs?.[0]?.steps && (
-                <MapNavigation
-                    directions={directions}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                />
-            )}
         </View>
     );
 }

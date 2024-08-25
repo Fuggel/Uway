@@ -1,32 +1,33 @@
-import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { COLORS } from "../constants/colors-constants";
-import { IconButton } from "react-native-paper";
 import { SIZES } from "../constants/size-constants";
 import Dropdown from "./Dropdown";
 import { MapboxStyle } from "../types/IMap";
 import { useDispatch, useSelector } from "react-redux";
-import { mapViewActions, selectMapboxTheme } from "../store/mapView";
+import { mapViewActions, mapViewSelectors } from "../store/mapView";
 import { SettingsItem, SettingsSection } from "./SettingsItem";
 import { MAP_STYLES } from "../constants/map-constants";
+import { useContext } from "react";
+import { SettingsContext } from "../contexts/SettingsContext";
+import { IconButton } from "react-native-paper";
 
 export default function Settings() {
     const dispatch = useDispatch();
-    const mapStyle = useSelector(selectMapboxTheme);
-    const [openSettings, setOpenSettings] = useState(false);
+    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const { open, setOpen } = useContext(SettingsContext);
 
     return (
         <>
-            <IconButton
-                icon="cog"
-                size={SIZES.iconSize.md}
-                style={styles.iconButton}
-                iconColor={COLORS.primary}
-                onPress={() => setOpenSettings((prev) => !prev)}
-            />
-
-            {openSettings &&
+            {open &&
                 <View style={styles.container}>
+                    <View style={styles.closeButton}>
+                        <IconButton
+                            icon="close-circle"
+                            size={SIZES.iconSize.lg}
+                            iconColor={COLORS.primary}
+                            onPress={() => setOpen(false)}
+                        />
+                    </View>
                     <View style={styles.settings}>
                         <SettingsSection title="Map Style">
                             <SettingsItem>
@@ -54,10 +55,10 @@ const styles = StyleSheet.create({
         marginTop: SIZES.spacing.lg,
         padding: SIZES.spacing.md,
     },
-    iconButton: {
+    closeButton: {
         position: "absolute",
-        top: 20,
-        right: 10,
+        top: SIZES.spacing.lg,
+        right: SIZES.spacing.lg,
         zIndex: 999999,
-    },
+    }
 });
