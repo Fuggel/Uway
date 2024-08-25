@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
-import { MAP_CONFIG } from "../../constants/map-constants";
-import { StyleSheet, View } from "react-native";
+import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG } from "../../constants/map-constants";
+import { StyleSheet, Text, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import useUserLocation from "../../hooks/useUserLocation";
 import { determineMapStyle } from "../../utils/map-utils";
@@ -19,6 +19,12 @@ import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
 import { COLORS } from "../../constants/colors-constants";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
+import useSpeedCameras from "@/src/hooks/useSpeedCameras";
+import SymbolLayer from "../layer/SymbolLayer";
+import { Point } from "@turf/helpers";
+import Toast from "../common/Toast";
+import { SpeedCameraFeature } from "@/src/types/IMap";
+import { SIZES } from "@/src/constants/size-constants";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -40,14 +46,19 @@ export default function Map() {
     const { directions, setDirections, loadingDirections } = useDirections({
         profile: navigationProfile,
         startLngLat: {
-            lon: userLocation?.coords.longitude as number,
-            lat: userLocation?.coords.latitude as number
+            lon: userLocation?.coords?.longitude as number,
+            lat: userLocation?.coords?.latitude as number
         },
         destinationLngLat: {
             lon: locations?.geometry.coordinates[0] as number,
             lat: locations?.geometry.coordinates[1] as number
         },
         isNavigationMode
+    });
+    const { speedCameras } = useSpeedCameras({
+        userLon: userLocation?.coords?.longitude as number,
+        userLat: userLocation?.coords?.latitude as number,
+        distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     });
     const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
 
@@ -82,6 +93,7 @@ export default function Map() {
                 <Images
                     images={{
                         "user-location-icon": require("../../assets/images/map-icons/user-location.png"),
+                        "speed-camera": require("../../assets/images/map-icons/speed-camera.png"),
                     }}
                 />
 
@@ -118,18 +130,45 @@ export default function Map() {
                         coordinates={directions.geometry.coordinates}
                     />
                 )}
+                {speedCameras?.data?.features.map((feature, i) => (
+                    <SymbolLayer
+                        key={i}
+                        sourceId={`speed-camera-source-${i}`}
+                        layerId={`speed-camera-layer-${i}`}
+                        coordinates={(feature.geometry as Point).coordinates}
+                        iconImage="speed-camera"
+                        iconSize={0.6}
+                    />
+                ))}
             </MapView>
 
             <MapButtons />
-            {!directions && <MapSearchbar suggestions={suggestions} />}
 
-            <MapNavigation
-                directions={directions}
-                locations={locations}
-                currentStep={currentStep}
-                setCurrentStep={setCurrentStep}
-                onCancelNavigation={handleCancelNavigation}
-            />
+            {!directions && (
+                <MapSearchbar suggestions={suggestions} />
+            )}
+
+            <View style={styles.absoluteBottom}>
+                {speedCameras?.alert && (
+                    <Toast
+                        show={!!speedCameras.alert}
+                        type="error"
+                        title={`Speed camera in ${speedCameras.alert.distance.toFixed(0)} m`}
+                    >
+                        <Text style={styles.speedAlert}>
+                            Max speed: {(speedCameras.alert.feature.properties as SpeedCameraFeature).maxspeed} km/h
+                        </Text>
+                    </Toast>
+                )}
+
+                <MapNavigation
+                    directions={directions}
+                    locations={locations}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    onCancelNavigation={handleCancelNavigation}
+                />
+            </View>
         </View>
     );
 }
@@ -140,5 +179,16 @@ const styles = StyleSheet.create({
     },
     map: {
         flex: 1,
+    },
+    absoluteBottom: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
+    speedAlert: {
+        color: COLORS.dark,
+        fontSize: SIZES.fontSize.md,
+        fontWeight: "bold",
     },
 });

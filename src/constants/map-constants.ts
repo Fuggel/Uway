@@ -1,6 +1,8 @@
+import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { MapboxStyle, MapConfig, DropdownItem, RouteProfile, RouteProfileType } from "../types/IMap";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
+export const DEFAULT_FC: FeatureCollection<Geometry, GeometryCollection> = { type: "FeatureCollection", features: [] };
 
 export const MAP_CONFIG: MapConfig = {
     position: {
@@ -77,3 +79,7 @@ export const ROUTE_PROFILES: RouteProfile[] = [
         icon: "bike"
     },
 ];
+
+export const NEXT_STEP_THRESHOLD_IN_METERS = 20;
+export const SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS = 10000;
+export const SHOW_WARNING_THRESHOLD_IN_METERS = 500;

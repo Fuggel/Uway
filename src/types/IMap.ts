@@ -1,5 +1,5 @@
 import { ImageSourcePropType } from "react-native";
-import { Geometry } from "@turf/helpers";
+import { Feature, Geometry, GeometryCollection } from "@turf/helpers";
 
 export interface LonLat {
     lon: number;
@@ -86,3 +86,26 @@ export enum RouteProfileType {
     WALKING = "walking",
     CYCLING = "cycling",
 }
+
+export interface OpenStreetMap {
+    elements: {
+        lat: number;
+        lon: number;
+        tags: SpeedCameraProperties;
+    }[];
+}
+
+export interface SpeedCameraAlert {
+    distance: number;
+    feature: Feature<Geometry, GeometryCollection>;
+}
+
+interface SpeedCameraProperties {
+    direction?: string;
+    highway?: string;
+    man_made?: string;
+    mapillary?: string;
+    maxspeed?: string;
+}
+
+export type SpeedCameraFeature = GeometryCollection & SpeedCameraProperties;

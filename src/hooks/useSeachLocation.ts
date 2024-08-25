@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { fetchSearchLocation } from "../utils/api/search";
+import { fetchSearchLocation } from "../services/search";
 import { Location } from "../types/IMap";
 
 export default function useSearchLocation(params: {
