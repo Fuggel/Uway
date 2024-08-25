@@ -4,11 +4,11 @@ export default ({ config }) => ({
     slug: "NavSync",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./src/assets/images/icon.png",
+    icon: "./src/assets/images/build/icon.png",
     scheme: "myapp",
     userInterfaceStyle: "automatic",
     splash: {
-        image: "./src/assets/images/splash.png",
+        image: "./src/assets/images/build/splash.png",
         resizeMode: "contain",
         backgroundColor: "#ffffff"
     },
@@ -18,7 +18,7 @@ export default ({ config }) => ({
     },
     android: {
         adaptiveIcon: {
-            foregroundImage: "./src/assets/images/adaptive-icon.png",
+            foregroundImage: "./src/assets/images/build/adaptive-icon.png",
             backgroundColor: "#ffffff"
         },
         package: "com.fuggel.NavSync",
@@ -30,7 +30,7 @@ export default ({ config }) => ({
     web: {
         bundler: "metro",
         output: "static",
-        favicon: "./src/assets/images/favicon.png"
+        favicon: "./src/assets/images/build/favicon.png"
     },
     experiments: {
         typedRoutes: true
