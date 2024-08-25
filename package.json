@@ -20,6 +20,7 @@
     "@rnmapbox/maps": "^10.1.28",
     "@tanstack/react-query": "^5.52.1",
     "@turf/helpers": "^6.5.0",
+    "@turf/turf": "^7.1.0",
     "axios": "^1.7.5",
     "expo": "~51.0.28",
     "expo-font": "~12.0.9",

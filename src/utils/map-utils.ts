@@ -51,3 +51,16 @@ export function haversineDistance(start: { lon: number, lat: number; }, end: { l
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c * 1000; // Convert to meters
 };
+
+export function boundingBox(lon: number, lat: number, distance: number) {
+    const metersPerDegree = 111111; // Roughly 111 km at the equator
+    const latDelta = distance / metersPerDegree;
+    const lonDelta = distance / (metersPerDegree * Math.cos(lat * (Math.PI / 180)));
+
+    return {
+        lat,
+        lon,
+        latDelta,
+        lonDelta,
+    };
+}

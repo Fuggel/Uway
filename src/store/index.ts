@@ -3,16 +3,18 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "@react-native-async-storage/async-storage";
 import mapViewReducer from "./mapView";
 import mapNavigationReduce from "./mapNavigation";
+import mapSpeedCameraReduce from "./mapSpeedCamera";
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["mapView"],
+    whitelist: ["mapView", "mapSpeedCamera"],
 };
 
 const reducer = combineReducers({
     mapView: mapViewReducer,
     mapNavigation: mapNavigationReduce,
+    mapSpeedCamera: mapSpeedCameraReduce,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

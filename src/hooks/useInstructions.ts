@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Direction, Instruction } from "../types/IMap";
 import { LocationObject } from "expo-location";
 import { haversineDistance } from "../utils/map-utils";
-
-const NEXT_STEP_THRESHOLD_IN_METERS = 20;
+import { NEXT_STEP_THRESHOLD_IN_METERS } from "../constants/map-constants";
 
 export default function useInstructions(directions: Direction | null, userLocation: LocationObject | null) {
     const [currentStep, setCurrentStep] = useState(0);

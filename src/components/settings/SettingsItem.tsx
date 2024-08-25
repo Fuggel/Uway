@@ -10,7 +10,7 @@ interface SettingsCommonProps {
 export function SettingsItem({ title, children }: SettingsCommonProps) {
     return (
         <View style={styles.settingsItem}>
-            <Text>{title}</Text>
+            <Text style={styles.text}>{title}</Text>
             {children}
         </View>
     );
@@ -31,6 +31,10 @@ const styles = StyleSheet.create({
         marginVertical: SIZES.spacing.sm,
     },
     heading: {
+        fontSize: SIZES.fontSize.md,
+        fontWeight: "bold",
+    },
+    text: {
         fontSize: SIZES.fontSize.md,
     },
     divider: {

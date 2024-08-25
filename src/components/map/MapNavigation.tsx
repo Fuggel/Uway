@@ -146,9 +146,6 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.md,
     },
     instructionsContainer: {
-        position: "absolute",
-        top: SIZES.spacing.xl,
-        left: SIZES.spacing.md,
         width: "50%",
         backgroundColor: COLORS.white_transparent,
         borderRadius: SIZES.borderRadius.sm,
