@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { SIZES } from "../constants/size-constants";
+import { SIZES } from "../../constants/size-constants";
 
 interface CardProps {
     title?: string;

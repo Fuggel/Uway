@@ -1,9 +1,9 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Dropdown as DropdownContainer } from "react-native-element-dropdown";
 import FeatherIcon from "@expo/vector-icons/Feather";
-import { COLORS } from "../constants/colors-constants";
-import { SIZES } from "../constants/size-constants";
-import { DropdownItem } from "../types/IMap";
+import { COLORS } from "../../constants/colors-constants";
+import { SIZES } from "../../constants/size-constants";
+import { DropdownItem } from "../../types/IMap";
 
 interface DropdownProps<T> {
     data: DropdownItem[];

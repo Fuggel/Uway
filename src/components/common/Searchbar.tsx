@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { Searchbar as PaperSearchbar } from "react-native-paper";
-import { COLORS } from "../constants/colors-constants";
+import { COLORS } from "../../constants/colors-constants";
 
 interface SearchbarProps {
     placeholder: string;

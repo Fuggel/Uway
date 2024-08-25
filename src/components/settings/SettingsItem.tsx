@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Divider } from "react-native-paper";
-import { SIZES } from "../constants/size-constants";
+import { SIZES } from "../../constants/size-constants";
 
 interface SettingsCommonProps {
     title?: string;

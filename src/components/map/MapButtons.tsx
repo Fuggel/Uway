@@ -1,11 +1,11 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { COLORS } from "../constants/colors-constants";
-import { SIZES } from "../constants/size-constants";
+import { COLORS } from "../../constants/colors-constants";
+import { SIZES } from "../../constants/size-constants";
 import { IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../store/mapNavigation";
+import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { useContext } from "react";
-import { SettingsContext } from "../contexts/SettingsContext";
+import { SettingsContext } from "../../contexts/SettingsContext";
 
 export default function MapButtons() {
     const dispatch = useDispatch();

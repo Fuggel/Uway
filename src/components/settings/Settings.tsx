@@ -1,14 +1,14 @@
 import { StyleSheet, View } from "react-native";
-import { COLORS } from "../constants/colors-constants";
-import { SIZES } from "../constants/size-constants";
-import Dropdown from "./Dropdown";
-import { MapboxStyle } from "../types/IMap";
+import { COLORS } from "../../constants/colors-constants";
+import { SIZES } from "../../constants/size-constants";
+import Dropdown from "../common/Dropdown";
+import { MapboxStyle } from "../../types/IMap";
 import { useDispatch, useSelector } from "react-redux";
-import { mapViewActions, mapViewSelectors } from "../store/mapView";
+import { mapViewActions, mapViewSelectors } from "../../store/mapView";
 import { SettingsItem, SettingsSection } from "./SettingsItem";
-import { MAP_STYLES } from "../constants/map-constants";
+import { MAP_STYLES } from "../../constants/map-constants";
 import { useContext } from "react";
-import { SettingsContext } from "../contexts/SettingsContext";
+import { SettingsContext } from "../../contexts/SettingsContext";
 import { IconButton } from "react-native-paper";
 
 export default function Settings() {

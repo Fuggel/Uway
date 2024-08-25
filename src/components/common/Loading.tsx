@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { COLORS } from "../constants/colors-constants";
-import { SIZES } from "../constants/size-constants";
+import { COLORS } from "../../constants/colors-constants";
+import { SIZES } from "../../constants/size-constants";
 
 interface LoadingProps {
     color?: string;

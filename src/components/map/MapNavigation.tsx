@@ -1,14 +1,14 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { COLORS } from "../constants/colors-constants";
-import { arrowDirection } from "../utils/map-utils";
-import { Direction, Instruction, Location, RouteProfileType } from "../types/IMap";
-import { SIZES } from "../constants/size-constants";
+import { COLORS } from "../../constants/colors-constants";
+import { arrowDirection } from "../../utils/map-utils";
+import { Direction, Instruction, Location, RouteProfileType } from "../../types/IMap";
+import { SIZES } from "../../constants/size-constants";
 import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../store/mapNavigation";
-import Card from "./Card";
+import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
+import Card from "../common/Card";
 import { IconButton, SegmentedButtons } from "react-native-paper";
-import { ROUTE_PROFILES } from "../constants/map-constants";
+import { ROUTE_PROFILES } from "../../constants/map-constants";
 
 interface MapNavigationProps {
     directions: Direction | null;

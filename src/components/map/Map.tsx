@@ -1,24 +1,24 @@
 import { useEffect, useRef } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
-import { MAP_CONFIG } from "../constants/map-constants";
+import { MAP_CONFIG } from "../../constants/map-constants";
 import { StyleSheet, View } from "react-native";
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
-import useUserLocation from "../hooks/useUserLocation";
-import { determineMapStyle } from "../utils/map-utils";
+import useUserLocation from "../../hooks/useUserLocation";
+import { determineMapStyle } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
-import { mapViewSelectors } from "../store/mapView";
-import useDirections from "../hooks/useDirections";
-import LineLayer from "./Layers/LineLayer";
-import Loading from "./Loading";
-import useSearchSuggestion from "../hooks/useSearchSuggestion";
-import { generateSessionToken } from "../utils/auth-utils";
-import useSearchLocation from "../hooks/useSeachLocation";
-import useInstructions from "../hooks/useInstructions";
+import { mapViewSelectors } from "../../store/mapView";
+import useDirections from "../../hooks/useDirections";
+import LineLayer from "../layer/LineLayer";
+import Loading from "../common/Loading";
+import useSearchSuggestion from "../../hooks/useSearchSuggestion";
+import { generateSessionToken } from "../../utils/auth-utils";
+import useSearchLocation from "../../hooks/useSeachLocation";
+import useInstructions from "../../hooks/useInstructions";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
-import { COLORS } from "../constants/colors-constants";
-import { mapNavigationActions, mapNavigationSelectors } from "../store/mapNavigation";
+import { COLORS } from "../../constants/colors-constants";
+import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -81,7 +81,7 @@ export default function Map() {
             >
                 <Images
                     images={{
-                        "user-location-icon": require("../assets/images/map-icons/user-location.png"),
+                        "user-location-icon": require("../../assets/images/map-icons/user-location.png"),
                     }}
                 />
 
