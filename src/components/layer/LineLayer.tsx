@@ -6,15 +6,23 @@ interface LineLayerProps {
     sourceId: string;
     layerId: string;
     coordinates: number[][];
+    properties?: any;
+    style?: any;
 }
 
-export default function LineLayer({ sourceId, layerId, coordinates }: LineLayerProps) {
+export default function LineLayer({
+    sourceId,
+    layerId,
+    coordinates,
+    properties = {},
+    style,
+}: LineLayerProps) {
     return (
         <ShapeSource
             id={sourceId}
             shape={{
                 type: "Feature",
-                properties: {},
+                properties,
                 geometry: {
                     type: "LineString",
                     coordinates,
@@ -24,6 +32,7 @@ export default function LineLayer({ sourceId, layerId, coordinates }: LineLayerP
             <Layer
                 id={layerId}
                 style={{
+                    ...style,
                     lineColor: COLORS.secondary,
                     lineWidth: 5,
                     lineOpacity: 0.8,

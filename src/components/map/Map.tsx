@@ -25,6 +25,7 @@ import { Point } from "@turf/helpers";
 import Toast from "../common/Toast";
 import { SpeedCameraFeature } from "@/src/types/IMap";
 import { SIZES } from "@/src/constants/size-constants";
+import useParkAvailability from "@/src/hooks/useParkAvailability";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -60,6 +61,7 @@ export default function Map() {
         userLat: userLocation?.coords?.latitude as number,
         distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     });
+    const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
 
     const handleCancelNavigation = () => {
@@ -94,6 +96,7 @@ export default function Map() {
                     images={{
                         "user-location-icon": require("../../assets/images/map-icons/user-location.png"),
                         "speed-camera": require("../../assets/images/map-icons/speed-camera.png"),
+                        "parking-availability": require("../../assets/images/map-icons/parking.png"),
                     }}
                 />
 
@@ -139,6 +142,26 @@ export default function Map() {
                         iconImage="speed-camera"
                         iconSize={0.6}
                     />
+                ))}
+                {parkAvailability?.features?.map((feature, i) => (
+                    <View key={i}>
+                        <SymbolLayer
+                            sourceId={`parking-availability-source-${i}`}
+                            layerId={`parking-availability-layer-${i}`}
+                            coordinates={(feature.geometry as Point).coordinates}
+                            iconImage="parking-availability"
+                            properties={feature.properties}
+                            style={{
+                                textField: `
+                                    ${feature.properties?.name}
+                                    ${feature.properties?.free} / ${feature.properties?.total}
+                                `,
+                                textSize: SIZES.fontSize.sm,
+                                textColor: COLORS.white,
+                                textOffset: [0, 2.5],
+                            }}
+                        />
+                    </View>
                 ))}
             </MapView>
 

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { COLORS } from "../../constants/colors-constants";
 import { SIZES } from "../../constants/size-constants";
 import Dropdown from "../common/Dropdown";
@@ -11,11 +11,13 @@ import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
 import { IconButton, Switch } from "react-native-paper";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/src/store/mapSpeedCamera";
+import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/src/store/mapParkAvailability";
 
 export default function Settings() {
     const dispatch = useDispatch();
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const { open, setOpen } = useContext(SettingsContext);
 
     return (
@@ -50,6 +52,17 @@ export default function Settings() {
                                     trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
+                                    }}
+                                />
+                            </SettingsItem>
+                            <SettingsItem title="Show Park Availablity">
+                                <Switch
+                                    value={showParkAvailability}
+                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
+                                    thumbColor={showParkAvailability ? COLORS.primary : COLORS.light_gray}
+                                    trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
+                                    onValueChange={() => {
+                                        dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability));
                                     }}
                                 />
                             </SettingsItem>

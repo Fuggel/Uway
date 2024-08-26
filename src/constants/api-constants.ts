@@ -5,3 +5,6 @@ export const MAPBOX_SEARCH_RETRIEVE_API = "https://api.mapbox.com/search/searchb
 
 // OpenStreetMap
 export const OPENSTREETMAP_API = "https://overpass-api.de/api/interpreter";
+
+// ParkAPI
+export const PARK_API = "https://api.parkendd.de";

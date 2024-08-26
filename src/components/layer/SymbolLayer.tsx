@@ -6,7 +6,9 @@ interface SymbolLayerProps {
     layerId: string;
     coordinates: number[];
     iconImage: string;
+    properties?: any;
     iconSize?: number;
+    style?: any;
 }
 
 export default function SymbolLayer({
@@ -14,14 +16,16 @@ export default function SymbolLayer({
     layerId,
     coordinates,
     iconImage,
+    properties = {},
     iconSize,
+    style,
 }: SymbolLayerProps) {
     return (
         <ShapeSource
             id={sourceId}
             shape={{
                 type: "Feature",
-                properties: {},
+                properties,
                 geometry: {
                     type: "Point",
                     coordinates,
@@ -31,6 +35,7 @@ export default function SymbolLayer({
             <Layer
                 id={layerId}
                 style={{
+                    ...style,
                     iconImage,
                     iconSize: iconSize ?? 0.5,
                 }}
