@@ -95,6 +95,24 @@ export interface OpenStreetMap {
     }[];
 }
 
+export interface ParkAvailability {
+    lots: {
+        address: string;
+        coords: {
+            lat: number;
+            lng: number;
+        };
+        forecast: boolean;
+        free: number;
+        id: string;
+        lost_type: string;
+        name: string;
+        region: string;
+        state: string;
+        total: number;
+    }[];
+}
+
 export interface SpeedCameraAlert {
     distance: number;
     feature: Feature<Geometry, GeometryCollection>;
