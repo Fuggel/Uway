@@ -10,11 +10,11 @@ Real-time data on Traffic jams and potential hazards
 
 ### 🅿️ Parking Availability
 
-Information on parking availability near the located device position
+Information on parking availability
 
-### 🎥 Real-Time Speed Camera Information
+### 🎥 Speed Camera Information
 
-Receive live updates on speed camera locations with speed limits
+Information on speed camera locations with speed limits near the located device position
 
 ### 🔌 Availability of EV Charging Stations
 
