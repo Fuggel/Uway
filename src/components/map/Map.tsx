@@ -1,9 +1,7 @@
-import { useEffect, useRef } from "react";
-import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
+import { useEffect, useState } from "react";
+import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG } from "../../constants/map-constants";
 import { StyleSheet, Text, View } from "react-native";
-import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
-import useUserLocation from "../../hooks/useUserLocation";
 import { determineMapStyle } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
@@ -32,16 +30,16 @@ Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 const sessionToken = generateSessionToken();
 
 export default function Map() {
-    const cameraRef = useRef<CameraRef | null>(null);
     const dispatch = useDispatch();
+    const [userLocation, setUserLocation] = useState<Mapbox.Location | null>(null);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
+    const tracking = useSelector(mapNavigationSelectors.tracking);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
-    const { userLocation } = useUserLocation();
     const { suggestions } = useSearchSuggestion({ query: searchQuery, sessionToken });
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
@@ -90,7 +88,10 @@ export default function Map() {
                 style={styles.map}
                 styleURL={determineMapStyle(mapStyle)}
                 scaleBarEnabled={false}
-                onTouchStart={() => dispatch(mapNavigationActions.setNavigationView(false))}
+                onTouchStart={() => {
+                    dispatch(mapNavigationActions.setTracking(false));
+                    dispatch(mapNavigationActions.setNavigationView(false));
+                }}
             >
                 <Images
                     images={{
@@ -101,29 +102,27 @@ export default function Map() {
                 />
 
                 <Camera
-                    ref={cameraRef}
+                    animationDuration={1000}
+                    animationMode="easeTo"
+                    followUserLocation={tracking || navigationView}
+                    pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                     zoomLevel={MAP_CONFIG.zoom}
-                    pitch={MAP_CONFIG.pitch}
-                    followUserLocation={!!userLocation}
-                    followZoomLevel={MAP_CONFIG.followZoom}
-                    followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                    followHeading={userLocation?.coords.heading || 0}
+                    followZoomLevel={MAP_CONFIG.zoom}
                     defaultSettings={{
-                        centerCoordinate: [
-                            MAP_CONFIG.position.lon,
-                            MAP_CONFIG.position.lat,
-                        ],
+                        centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
                     }}
                 />
+
+                <UserLocation onUpdate={(location) => setUserLocation(location)} />
+
                 <LocationPuck
                     topImage="user-location-icon"
-                    scale={1.5}
-                    puckBearing="heading"
+                    scale={["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.8]}
                     puckBearingEnabled
                     pulsing={{
                         isEnabled: true,
                         color: COLORS.primary,
-                        radius: 50,
+                        radius: 45,
                     }}
                 />
                 {directions?.geometry?.coordinates && (

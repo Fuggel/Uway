@@ -11,7 +11,6 @@ export const MAP_CONFIG: MapConfig = {
     },
     zoom: 18,
     pitch: 0,
-    followZoom: 20,
     followPitch: 50,
     style: MapboxStyle.NAVIGATION_DARK,
     accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "",

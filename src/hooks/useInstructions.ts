@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Direction, Instruction } from "../types/IMap";
-import { LocationObject } from "expo-location";
 import { haversineDistance } from "../utils/map-utils";
 import { NEXT_STEP_THRESHOLD_IN_METERS } from "../constants/map-constants";
+import Mapbox from "@rnmapbox/maps";
 
-export default function useInstructions(directions: Direction | null, userLocation: LocationObject | null) {
+export default function useInstructions(directions: Direction | null, userLocation: Mapbox.Location | null) {
     const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {

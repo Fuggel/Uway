@@ -28,6 +28,17 @@ export default function MapButtons() {
             <View style={styles.button}>
                 <TouchableOpacity>
                     <IconButton
+                        icon={"crosshairs-gps"}
+                        size={SIZES.iconSize.lg}
+                        iconColor={COLORS.primary}
+                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
+                    />
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.button}>
+                <TouchableOpacity>
+                    <IconButton
                         icon={navigationView ? "compass" : "navigation-variant"}
                         size={SIZES.iconSize.lg}
                         iconColor={COLORS.primary}
