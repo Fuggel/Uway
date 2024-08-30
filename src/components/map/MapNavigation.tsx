@@ -35,6 +35,35 @@ export default function MapNavigation({
 
     return (
         <>
+            {directions?.legs[0].steps
+                .slice(currentStep, currentStep + 1)
+                .map((step: Instruction, index: number) => {
+                    const arrowDir = arrowDirection(step);
+
+                    return (
+                        <View key={index} style={styles.instructionsContainer}>
+                            <Text style={styles.stepInstruction}>
+                                {step.maneuver.instruction}
+                            </Text>
+
+                            <View style={styles.directionRow}>
+                                {arrowDir !== undefined &&
+                                    <MaterialCommunityIcons
+                                        name={`arrow-${arrowDir}-bold`}
+                                        size={50}
+                                        color={COLORS.primary}
+                                    />
+                                }
+                                <TouchableOpacity onPress={() => setCurrentStep(index)}>
+                                    <Text style={styles.stepDistance}>
+                                        {step.distance.toFixed(0)} meters
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    );
+                })}
+
             {directions && isNavigationMode &&
                 <Card st={styles.card}>
                     <View>
@@ -94,35 +123,6 @@ export default function MapNavigation({
                     </View>
                 </Card>
             }
-
-            {directions?.legs[0].steps
-                .slice(currentStep, currentStep + 1)
-                .map((step: Instruction, index: number) => {
-                    const arrowDir = arrowDirection(step);
-
-                    return (
-                        <View key={index} style={styles.instructionsContainer}>
-                            <Text style={styles.stepInstruction}>
-                                {step.maneuver.instruction}
-                            </Text>
-
-                            <View style={styles.directionRow}>
-                                {arrowDir !== undefined &&
-                                    <MaterialCommunityIcons
-                                        name={`arrow-${arrowDir}-bold`}
-                                        size={50}
-                                        color={COLORS.primary}
-                                    />
-                                }
-                                <TouchableOpacity onPress={() => setCurrentStep(index)}>
-                                    <Text style={styles.stepDistance}>
-                                        {step.distance.toFixed(0)} meters
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    );
-                })}
         </>
     );
 }
@@ -146,6 +146,8 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.md,
     },
     instructionsContainer: {
+        marginLeft: SIZES.spacing.sm,
+        marginBottom: SIZES.spacing.sm,
         width: "50%",
         backgroundColor: COLORS.white_transparent,
         borderRadius: SIZES.borderRadius.sm,

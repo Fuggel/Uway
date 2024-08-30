@@ -7,6 +7,7 @@ import { DEFAULT_FC, SHOW_WARNING_THRESHOLD_IN_METERS } from "../constants/map-c
 import { SpeedCameraAlert } from "../types/IMap";
 import { useSelector } from "react-redux";
 import { mapSpeedCameraSelectors } from "../store/mapSpeedCamera";
+import { REFETCH_INTERVAL } from "../constants/api-constants";
 
 export default function useSpeedCameras(params: {
     userLon: number,
@@ -17,14 +18,14 @@ export default function useSpeedCameras(params: {
     const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection, alert: SpeedCameraAlert | null; }>();
 
     const { data, isLoading: loadingSpeedCameras, error: errorSpeedCameras } = useQuery({
-        queryKey: ["speed-cameras", params.userLon, params.userLat, params.distance, showSpeedCameras],
+        queryKey: ["speed-cameras", showSpeedCameras],
         queryFn: () => fetchSpeedCameras({
             userLon: params.userLon,
             userLat: params.userLat,
             distance: params.distance
         }),
         enabled: showSpeedCameras,
-        staleTime: Infinity,
+        refetchInterval: REFETCH_INTERVAL,
     });
 
     useEffect(() => {

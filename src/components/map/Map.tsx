@@ -10,7 +10,7 @@ import LineLayer from "../layer/LineLayer";
 import Loading from "../common/Loading";
 import useSearchSuggestion from "../../hooks/useSearchSuggestion";
 import { generateSessionToken } from "../../utils/auth-utils";
-import useSearchLocation from "../../hooks/useSeachLocation";
+import useSearchLocation from "../../hooks/useSearchLocation";
 import useInstructions from "../../hooks/useInstructions";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
@@ -78,7 +78,7 @@ export default function Map() {
             dispatch(mapNavigationActions.setSearchQuery(""));
             setCurrentStep(0);
         }
-    }, [directions, isNavigationMode]);
+    }, [isNavigationMode]);
 
     return (
         <View style={styles.container}>
@@ -102,10 +102,11 @@ export default function Map() {
                 />
 
                 <Camera
-                    animationDuration={1000}
+                    animationDuration={2000}
                     animationMode="easeTo"
                     followUserLocation={tracking || navigationView}
                     pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                    followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                     zoomLevel={MAP_CONFIG.zoom}
                     followZoomLevel={MAP_CONFIG.zoom}
                     defaultSettings={{
@@ -117,7 +118,7 @@ export default function Map() {
 
                 <LocationPuck
                     topImage="user-location-icon"
-                    scale={["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.8]}
+                    scale={["interpolate", ["linear"], ["zoom"], 10, 0.8, 20, 1.2]}
                     puckBearingEnabled
                     pulsing={{
                         isEnabled: true,
@@ -139,7 +140,15 @@ export default function Map() {
                         layerId={`speed-camera-layer-${i}`}
                         coordinates={(feature.geometry as Point).coordinates}
                         iconImage="speed-camera"
-                        iconSize={0.6}
+                        iconSize={[
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
+                            10,
+                            0.4,
+                            20,
+                            0.6,
+                        ]}
                     />
                 ))}
                 {parkAvailability?.features?.map((feature, i) => (
@@ -159,6 +168,15 @@ export default function Map() {
                                 textColor: COLORS.white,
                                 textOffset: [0, 2.5],
                             }}
+                            iconSize={[
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                0.4,
+                                20,
+                                0.6,
+                            ]}
                         />
                     </View>
                 ))}

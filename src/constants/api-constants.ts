@@ -8,3 +8,5 @@ export const OPENSTREETMAP_API = "https://overpass-api.de/api/interpreter";
 
 // ParkAPI
 export const PARK_API = "https://api.parkendd.de";
+
+export const REFETCH_INTERVAL = 1000 * 60;
