@@ -41,3 +41,10 @@ interface SpeedLimitProperties {
     name: string;
     surface: string;
 }
+
+export interface SpeedLimitAlert {
+    distance: number;
+    feature: Feature<Geometry, GeometryCollection>;
+}
+
+export type SpeedLimitFeature = GeometryCollection & SpeedLimitProperties;

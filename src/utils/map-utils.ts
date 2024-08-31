@@ -1,4 +1,3 @@
-import { FeatureCollection } from "@turf/helpers";
 import { MapboxStyle } from "../types/IMap";
 import { ManeuverType, Instruction } from "../types/INavigation";
 
@@ -64,34 +63,34 @@ export function determineSpeedLimitIcon(speedLimit: string) {
 
     switch (speedLimit) {
         case "5":
-            return `${assetsUrl}/speed-limit-5.png`;
+            return require(`${assetsUrl}/speed-limit-5.png`);
         case "10":
-            return `${assetsUrl}/speed-limit-10.png`;
+            return require(`${assetsUrl}/speed-limit-10.png`);
         case "15":
-            return `${assetsUrl}/speed-limit-15.png`;
+            return require(`${assetsUrl}/speed-limit-15.png`);
         case "20":
-            return `${assetsUrl}/speed-limit-20.png`;
+            return require(`${assetsUrl}/speed-limit-20.png`);
         case "25":
-            return `${assetsUrl}/speed-limit-25.png`;
+            return require(`${assetsUrl}/speed-limit-25.png`);
         case "30":
-            return `${assetsUrl}/speed-limit-30.png`;
+            return require(`${assetsUrl}/speed-limit-30.png`);
         case "40":
-            return `${assetsUrl}/speed-limit-40.png`;
+            return require(`${assetsUrl}/speed-limit-40.png`);
         case "45":
-            return `${assetsUrl}/speed-limit-45.png`;
+            return require(`${assetsUrl}/speed-limit-45.png`);
         case "50":
-            return `${assetsUrl}/speed-limit-50.png`;
+            return require(`${assetsUrl}/speed-limit-50.png`);
         case "60":
-            return `${assetsUrl}/speed-limit-60.png`;
+            return require(`${assetsUrl}/speed-limit-60.png`);
         case "70":
-            return `${assetsUrl}/speed-limit-70.png`;
+            return require(`${assetsUrl}/speed-limit-70.png`);
         case "80":
-            return `${assetsUrl}/speed-limit-80.png`;
+            return require(`${assetsUrl}/speed-limit-80.png`);
         case "100":
-            return `${assetsUrl}/speed-limit-100.png`;
+            return require(`${assetsUrl}/speed-limit-100.png`);
         case "120":
-            return `${assetsUrl}/speed-limit-120.png`;
+            return require(`${assetsUrl}/speed-limit-120.png`);
         default:
-            return `${assetsUrl}/speed-limit-unknown.png`;
+            return require(`${assetsUrl}/speed-limit-unknown.png`);
     }
 }

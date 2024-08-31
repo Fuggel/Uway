@@ -52,7 +52,7 @@ export default function useSpeedCameras(params: {
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
         }
-    }, [data]);
+    }, [data, params.userLon, params.userLat]);
 
     return { speedCameras, loadingSpeedCameras, errorSpeedCameras };
 }
