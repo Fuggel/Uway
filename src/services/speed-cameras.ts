@@ -2,8 +2,8 @@ import axios from "axios";
 import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
-import { OpenStreetMap } from "../types/IMap";
 import { DEFAULT_FC } from "../constants/map-constants";
+import { SpeedCamera } from "../types/ISpeed";
 
 export async function fetchSpeedCameras(params: {
     userLon: number,
@@ -11,20 +11,15 @@ export async function fetchSpeedCameras(params: {
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
-        const bb = boundingBox(params.userLon, params.userLat, params.distance);
+        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLon, params.userLat, params.distance);
 
-        const swLat = bb.lat - bb.latDelta;
-        const swLon = bb.lon - bb.lonDelta;
-        const neLat = bb.lat + bb.latDelta;
-        const neLon = bb.lon + bb.lonDelta;
-
-        if (!swLat || !swLon || !neLat || !neLon) {
+        if (!minLat || !minLon || !maxLat || !maxLon) {
             return DEFAULT_FC;
         }
 
         const overpassQuery = `
             [out:json];
-            node["highway"="speed_camera"](${swLat},${swLon},${neLat},${neLon});
+            node["highway"="speed_camera"](${minLat},${minLon},${maxLat},${maxLon});
             out body;
         `;
 
@@ -38,7 +33,7 @@ export async function fetchSpeedCameras(params: {
     }
 }
 
-function convertToGeoJSON(overpassData: OpenStreetMap): FeatureCollection {
+function convertToGeoJSON(overpassData: SpeedCamera): FeatureCollection {
     return {
         type: "FeatureCollection",
         features: overpassData.elements.map((element) => ({

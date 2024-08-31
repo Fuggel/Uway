@@ -1,7 +1,11 @@
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
-import { MapboxStyle, MapConfig, DropdownItem, RouteProfile, RouteProfileType } from "../types/IMap";
+import { MapboxStyle, MapConfig } from "../types/IMap";
+import { RouteProfile, RouteProfileType } from "../types/INavigation";
+import { DropdownItem } from "../types/ISettings";
+import Mapbox from "@rnmapbox/maps";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
+const MAP_ICONS_URL = "../assets/images/map-icons";
 export const DEFAULT_FC: FeatureCollection<Geometry, GeometryCollection> = { type: "FeatureCollection", features: [] };
 
 export const MAP_CONFIG: MapConfig = {
@@ -64,6 +68,12 @@ export const MAP_STYLES: DropdownItem[] = [
     },
 ];
 
+export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
+    "user-location-icon": require(`${MAP_ICONS_URL}/user-location.png`),
+    "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
+    "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
+};
+
 export const ROUTE_PROFILES: RouteProfile[] = [
     {
         value: RouteProfileType.DRIVING,
@@ -81,4 +91,6 @@ export const ROUTE_PROFILES: RouteProfile[] = [
 
 export const NEXT_STEP_THRESHOLD_IN_METERS = 20;
 export const SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS = 10000;
-export const SHOW_WARNING_THRESHOLD_IN_METERS = 500;
+export const SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS = 500;
+
+export const SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS = 150;

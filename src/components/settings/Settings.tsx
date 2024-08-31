@@ -12,11 +12,13 @@ import { SettingsContext } from "../../contexts/SettingsContext";
 import { IconButton, Switch } from "react-native-paper";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/src/store/mapSpeedCamera";
 import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/src/store/mapParkAvailability";
+import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/src/store/mapSpeedLimit";
 
 export default function Settings() {
     const dispatch = useDispatch();
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const { open, setOpen } = useContext(SettingsContext);
 
@@ -52,6 +54,17 @@ export default function Settings() {
                                     trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
+                                    }}
+                                />
+                            </SettingsItem>
+                            <SettingsItem title="Show Speed Limits">
+                                <Switch
+                                    value={showSpeedLimits}
+                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
+                                    thumbColor={showSpeedLimits ? COLORS.primary : COLORS.light_gray}
+                                    trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
+                                    onValueChange={() => {
+                                        dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits));
                                     }}
                                 />
                             </SettingsItem>

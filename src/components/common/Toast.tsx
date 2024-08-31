@@ -6,7 +6,7 @@ import { Divider, Icon } from "react-native-paper";
 interface ToastProps {
     show: boolean;
     type: "error" | "warning" | "info";
-    title: string;
+    title?: string;
     children?: React.ReactNode;
 }
 
@@ -45,17 +45,23 @@ export default function Toast({
     return (
         <>
             {show && (
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Icon source={determineIcon()} size={50} color={determineColor()} />
-                        <Text style={{ ...styles.title, color: determineColor() }}>{title}</Text>
-                    </View>
+                <View style={{ ...styles.container, width: !title ? "20%" : undefined }}>
+                    {title && (
+                        <View style={styles.header}>
+                            <Icon source={determineIcon()} size={50} color={determineColor()} />
+                            <Text style={{ ...styles.title, color: determineColor() }}>{title}</Text>
+                        </View>
+                    )}
 
-                    <Divider style={styles.divider} />
+                    {title && children && (
+                        <Divider style={styles.divider} />
+                    )}
 
-                    <View style={styles.children}>
-                        {children}
-                    </View>
+                    {children && (
+                        <View style={styles.children}>
+                            {children}
+                        </View>
+                    )}
                 </View>
             )}
         </>
@@ -66,7 +72,8 @@ const styles = StyleSheet.create({
     container: {
         left: SIZES.spacing.md,
         bottom: SIZES.spacing.md,
-        maxWidth: "40%",
+        maxWidth: "60%",
+        marginVertical: SIZES.spacing.sm,
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,

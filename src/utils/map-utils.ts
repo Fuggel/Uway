@@ -1,4 +1,5 @@
-import { Instruction, ManeuverType, MapboxStyle } from "../types/IMap";
+import { MapboxStyle } from "../types/IMap";
+import { ManeuverType, Instruction } from "../types/INavigation";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
@@ -43,14 +44,6 @@ export function isValidLonLat(lon: number, lat: number) {
     return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
 }
 
-export function haversineDistance(start: { lon: number, lat: number; }, end: { lon: number, lat: number; }) {
-    const R = 6371; // Radius of the Earth in km
-    const dLat = (end.lat - start.lat) * (Math.PI / 180);
-    const dLon = (end.lon - start.lon) * (Math.PI / 180);
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(start.lat * (Math.PI / 180)) * Math.cos(end.lat * (Math.PI / 180)) * Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c * 1000; // Convert to meters
-};
 
 export function boundingBox(lon: number, lat: number, distance: number) {
     const metersPerDegree = 111111; // Roughly 111 km at the equator
@@ -58,9 +51,46 @@ export function boundingBox(lon: number, lat: number, distance: number) {
     const lonDelta = distance / (metersPerDegree * Math.cos(lat * (Math.PI / 180)));
 
     return {
-        lat,
-        lon,
-        latDelta,
-        lonDelta,
+        minLat: lat - latDelta,
+        minLon: lon - lonDelta,
+        maxLat: lat + latDelta,
+        maxLon: lon + lonDelta
     };
+}
+
+export function determineSpeedLimitIcon(speedLimit: string) {
+    const assetsUrl = "../assets/images/map-icons";
+
+    switch (speedLimit) {
+        case "5":
+            return require(`${assetsUrl}/speed-limit-5.png`);
+        case "10":
+            return require(`${assetsUrl}/speed-limit-10.png`);
+        case "15":
+            return require(`${assetsUrl}/speed-limit-15.png`);
+        case "20":
+            return require(`${assetsUrl}/speed-limit-20.png`);
+        case "25":
+            return require(`${assetsUrl}/speed-limit-25.png`);
+        case "30":
+            return require(`${assetsUrl}/speed-limit-30.png`);
+        case "40":
+            return require(`${assetsUrl}/speed-limit-40.png`);
+        case "45":
+            return require(`${assetsUrl}/speed-limit-45.png`);
+        case "50":
+            return require(`${assetsUrl}/speed-limit-50.png`);
+        case "60":
+            return require(`${assetsUrl}/speed-limit-60.png`);
+        case "70":
+            return require(`${assetsUrl}/speed-limit-70.png`);
+        case "80":
+            return require(`${assetsUrl}/speed-limit-80.png`);
+        case "100":
+            return require(`${assetsUrl}/speed-limit-100.png`);
+        case "120":
+            return require(`${assetsUrl}/speed-limit-120.png`);
+        default:
+            return require(`${assetsUrl}/speed-limit-unknown.png`);
+    }
 }

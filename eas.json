@@ -8,9 +8,25 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA",
+        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbTBmcW9hcjEwY3p0MmxyMTN2eDU4YTJsIn0.87MkJ-odcPYfib0GImKQlg"
+      }
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA",
+        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbTBmcW9hcjEwY3p0MmxyMTN2eDU4YTJsIn0.87MkJ-odcPYfib0GImKQlg"
+      }
+    }
   },
   "submit": {
     "production": {}

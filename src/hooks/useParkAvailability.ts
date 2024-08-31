@@ -5,7 +5,7 @@ import { fetchParkAvailability } from "../services/park-availability";
 import { useSelector } from "react-redux";
 import { mapParkAvailabilitySelectors } from "../store/mapParkAvailability";
 import { isValidLonLat } from "../utils/map-utils";
-import { REFETCH_INTERVAL } from "../constants/api-constants";
+import { REFETCH_INTERVAL } from "../constants/time-constants";
 
 export default function useParkAvailability() {
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);

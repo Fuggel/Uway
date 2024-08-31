@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
-import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG } from "../../constants/map-constants";
-import { StyleSheet, Text, View } from "react-native";
-import { determineMapStyle } from "../../utils/map-utils";
+import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
@@ -21,9 +21,10 @@ import useSpeedCameras from "@/src/hooks/useSpeedCameras";
 import SymbolLayer from "../layer/SymbolLayer";
 import { Point } from "@turf/helpers";
 import Toast from "../common/Toast";
-import { SpeedCameraFeature } from "@/src/types/IMap";
+import { SpeedCameraFeature, SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
 import useParkAvailability from "@/src/hooks/useParkAvailability";
+import useSpeedLimits from "@/src/hooks/useSpeedLimits";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -59,6 +60,11 @@ export default function Map() {
         userLat: userLocation?.coords?.latitude as number,
         distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     });
+    const { speedLimits } = useSpeedLimits({
+        userLon: userLocation?.coords?.longitude as number,
+        userLat: userLocation?.coords?.latitude as number,
+        distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
+    });
     const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
 
@@ -93,13 +99,7 @@ export default function Map() {
                     dispatch(mapNavigationActions.setNavigationView(false));
                 }}
             >
-                <Images
-                    images={{
-                        "user-location-icon": require("../../assets/images/map-icons/user-location.png"),
-                        "speed-camera": require("../../assets/images/map-icons/speed-camera.png"),
-                        "parking-availability": require("../../assets/images/map-icons/parking.png"),
-                    }}
-                />
+                <Images images={MAP_ICONS} />
 
                 <Camera
                     animationDuration={2000}
@@ -133,7 +133,7 @@ export default function Map() {
                         coordinates={directions.geometry.coordinates}
                     />
                 )}
-                {speedCameras?.data?.features.map((feature, i) => (
+                {speedCameras?.data?.features?.map((feature, i) => (
                     <SymbolLayer
                         key={i}
                         sourceId={`speed-camera-source-${i}`}
@@ -189,6 +189,22 @@ export default function Map() {
             )}
 
             <View style={styles.absoluteBottom}>
+                {speedLimits?.alert && (
+                    <View>
+                        <Image
+                            source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
+                            style={styles.speedLimitImage}
+                        />
+                        {userLocation?.coords.speed && (
+                            <Toast show={!!speedLimits.alert} type="info">
+                                <Text style={styles.speedAlert}>
+                                    {(userLocation?.coords.speed * 3.6).toFixed(1)} km/h
+                                </Text>
+                            </Toast>
+                        )}
+                    </View>
+                )}
+
                 {speedCameras?.alert && (
                     <Toast
                         show={!!speedCameras.alert}
@@ -230,5 +246,11 @@ const styles = StyleSheet.create({
         color: COLORS.dark,
         fontSize: SIZES.fontSize.md,
         fontWeight: "bold",
+    },
+    speedLimitImage: {
+        width: 75,
+        height: 75,
+        marginVertical: SIZES.spacing.md,
+        marginHorizontal: SIZES.spacing.md,
     },
 });

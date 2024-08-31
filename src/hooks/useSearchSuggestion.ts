@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { fetchSearchSuggestion } from "../services/search";
-import { Suggestion } from "../types/IMap";
+import { Suggestion } from "../types/ISearch";
 
 export default function useSearchSuggestion(params: { query: string; sessionToken: string; }) {
     const [suggestions, setSuggestions] = useState<Suggestion | null>(null);
