@@ -4,18 +4,20 @@ import storage from "@react-native-async-storage/async-storage";
 import mapViewReducer from "./mapView";
 import mapNavigationReduce from "./mapNavigation";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
+import mapSpeedLimitReduce from "./mapSpeedLimit";
 import mapParkAvailabilityReduce from "./mapParkAvailability";
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["mapView", "mapSpeedCamera", "mapParkAvailability"],
+    whitelist: ["mapView", "mapSpeedCamera", "mapSpeedLimit", "mapParkAvailability"],
 };
 
 const reducer = combineReducers({
     mapView: mapViewReducer,
     mapNavigation: mapNavigationReduce,
     mapSpeedCamera: mapSpeedCameraReduce,
+    mapSpeedLimit: mapSpeedLimitReduce,
     mapParkAvailability: mapParkAvailabilityReduce,
 });
 

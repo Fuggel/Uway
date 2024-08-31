@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PARK_API } from "@/src/constants/api-constants";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
-import { ParkAvailability } from "../types/IMap";
+import { ParkAvailability } from "../types/IParking";
 import { DEFAULT_FC } from "../constants/map-constants";
 
 export async function fetchParkAvailability(): Promise<FeatureCollection<Geometry, GeometryCollection>> {

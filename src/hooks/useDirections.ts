@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchDirections } from "../services/navigation";
-import { Direction, LonLat } from "../types/IMap";
+import { LonLat } from "../types/IMap";
 import { useEffect, useState } from "react";
 import { isValidLonLat } from "../utils/map-utils";
+import { Direction } from "../types/INavigation";
 
 export default function useDirections(params: {
     profile: string;

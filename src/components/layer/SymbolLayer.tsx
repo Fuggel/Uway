@@ -5,7 +5,7 @@ interface SymbolLayerProps {
     sourceId: string;
     layerId: string;
     coordinates: number[];
-    iconImage: string;
+    iconImage: string | any[];
     properties?: any;
     iconSize?: number | any[];
     style?: any;

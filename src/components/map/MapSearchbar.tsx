@@ -1,11 +1,11 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Searchbar from "../common/Searchbar";
 import { Divider } from "react-native-paper";
-import { Suggestion } from "../../types/IMap";
 import { SIZES } from "../../constants/size-constants";
 import { COLORS } from "../../constants/colors-constants";
 import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
+import { Suggestion } from "@/src/types/ISearch";
 
 interface MapSearchbarProps {
     suggestions: Suggestion | null;

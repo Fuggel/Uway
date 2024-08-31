@@ -20,10 +20,12 @@ export default ({ config }) => {
             backgroundColor: "#ffffff"
         },
         ios: {
+            buildNumber: "1.0.0",
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.NavSync"
         },
         android: {
+            versionCode: 1,
             adaptiveIcon: {
                 foregroundImage: "./src/assets/images/build/adaptive-icon.png",
                 backgroundColor: "#ffffff"
@@ -58,5 +60,5 @@ export default ({ config }) => {
                 }
             ]
         ]
-    }
+    };
 };
