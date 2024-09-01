@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
@@ -123,7 +123,6 @@ export default function Map() {
                 <UserLocation onUpdate={(location) => setUserLocation(location)} />
 
                 <LocationPuck
-                    topImage="user-location-icon"
                     scale={["interpolate", ["linear"], ["zoom"], 10, 0.8, 20, 1.2]}
                     puckBearingEnabled
                     pulsing={{
