@@ -6,6 +6,7 @@ import { COLORS } from "../../constants/colors-constants";
 import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { Suggestion } from "@/src/types/ISearch";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 interface MapSearchbarProps {
     suggestions: Suggestion | null;
@@ -41,17 +42,15 @@ const styles = StyleSheet.create({
     search: {
         position: "absolute",
         top: SIZES.spacing.xl,
-        left: SIZES.spacing.md,
-        width: "50%",
+        left: SIZES.spacing.sm,
+        width: wp("65%"),
     },
     suggestions: {
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
-        marginTop: 2,
+        marginTop: hp("0.5%"),
         gap: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
-        width: "95%",
-        marginHorizontal: "auto",
     },
     divider: {
         marginTop: SIZES.spacing.xs,

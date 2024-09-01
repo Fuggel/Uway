@@ -3,7 +3,7 @@ import { Dropdown as DropdownContainer } from "react-native-element-dropdown";
 import FeatherIcon from "@expo/vector-icons/Feather";
 import { COLORS } from "../../constants/colors-constants";
 import { SIZES } from "../../constants/size-constants";
-import { DropdownItem } from "../../types/IMap";
+import { DropdownItem } from "@/src/types/ISettings";
 
 interface DropdownProps<T> {
     data: DropdownItem[];
@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.md,
     },
     iconStyle: {
-        width: 20,
-        height: 20,
+        width: SIZES.iconSize.sm,
+        height: SIZES.iconSize.sm,
     },
     inputSearchStyle: {
         height: SIZES.spacing.xl,
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
         paddingVertical: SIZES.spacing.sm,
     },
     img: {
-        width: 75,
-        height: 75,
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
         marginLeft: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
     },

@@ -13,6 +13,7 @@ import { IconButton, Switch } from "react-native-paper";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/src/store/mapSpeedCamera";
 import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/src/store/mapParkAvailability";
 import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/src/store/mapSpeedLimit";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -49,9 +50,9 @@ export default function Settings() {
                             <SettingsItem title="Show Speed Cameras">
                                 <Switch
                                     value={showSpeedCameras}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-                                    thumbColor={showSpeedCameras ? COLORS.primary : COLORS.light_gray}
-                                    trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
+                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
+                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
                                     }}
@@ -60,9 +61,9 @@ export default function Settings() {
                             <SettingsItem title="Show Speed Limits">
                                 <Switch
                                     value={showSpeedLimits}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-                                    thumbColor={showSpeedLimits ? COLORS.primary : COLORS.light_gray}
-                                    trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
+                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
+                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits));
                                     }}
@@ -71,9 +72,9 @@ export default function Settings() {
                             <SettingsItem title="Show Park Availablity">
                                 <Switch
                                     value={showParkAvailability}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-                                    thumbColor={showParkAvailability ? COLORS.primary : COLORS.light_gray}
-                                    trackColor={{ false: COLORS.light_gray, true: COLORS.primary }}
+                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
+                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability));
                                     }}
@@ -89,8 +90,8 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        height: "100%",
+        width: wp("100%"),
+        height: hp("100%"),
         backgroundColor: COLORS.white,
     },
     settings: {
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
     closeButton: {
         position: "absolute",
         top: SIZES.spacing.lg,
-        right: SIZES.spacing.lg,
+        right: 0,
         zIndex: 999999,
     }
 });

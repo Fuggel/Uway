@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function MapButtons() {
     const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function MapButtons() {
                 <TouchableOpacity>
                     <IconButton
                         icon="cog"
-                        size={SIZES.iconSize.lg}
+                        size={SIZES.iconSize.md}
                         iconColor={COLORS.primary}
                         onPress={() => setOpen(!open)}
                     />
@@ -29,7 +30,7 @@ export default function MapButtons() {
                 <TouchableOpacity>
                     <IconButton
                         icon={"crosshairs-gps"}
-                        size={SIZES.iconSize.lg}
+                        size={SIZES.iconSize.md}
                         iconColor={COLORS.primary}
                         onPress={() => dispatch(mapNavigationActions.setTracking(true))}
                     />
@@ -40,7 +41,7 @@ export default function MapButtons() {
                 <TouchableOpacity>
                     <IconButton
                         icon={navigationView ? "compass" : "navigation-variant"}
-                        size={SIZES.iconSize.lg}
+                        size={SIZES.iconSize.md}
                         iconColor={COLORS.primary}
                         onPress={() => dispatch(mapNavigationActions.setNavigationView(!navigationView))}
                     />
@@ -53,16 +54,16 @@ export default function MapButtons() {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        top: "4%",
-        right: "4%",
+        top: hp("6%"),
+        right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },
     button: {
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: COLORS.white_transparent,
-        width: 50,
-        height: 50,
+        width: SIZES.iconSize.lg,
+        height: SIZES.iconSize.lg,
         borderRadius: SIZES.borderRadius.sm,
     }
 });

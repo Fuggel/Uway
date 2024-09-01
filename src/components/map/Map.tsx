@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
@@ -25,6 +25,7 @@ import { SpeedCameraFeature, SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
 import useParkAvailability from "@/src/hooks/useParkAvailability";
 import useSpeedLimits from "@/src/hooks/useSpeedLimits";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -68,6 +69,9 @@ export default function Map() {
     const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
 
+    const userSpeed = userLocation?.coords?.speed;
+    const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
+
     const handleCancelNavigation = () => {
         setDirections(null);
         setCurrentStep(0);
@@ -91,6 +95,8 @@ export default function Map() {
             {loadingDirections && <Loading />}
 
             <MapView
+                logoEnabled={false}
+                attributionEnabled={false}
                 style={styles.map}
                 styleURL={determineMapStyle(mapStyle)}
                 scaleBarEnabled={false}
@@ -195,11 +201,9 @@ export default function Map() {
                             source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
                             style={styles.speedLimitImage}
                         />
-                        {userLocation?.coords.speed && (
+                        {userLocation?.coords && (
                             <Toast show={!!speedLimits.alert} type="info">
-                                <Text style={styles.speedAlert}>
-                                    {(userLocation?.coords.speed * 3.6).toFixed(1)} km/h
-                                </Text>
+                                <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
                             </Toast>
                         )}
                     </View>
@@ -239,8 +243,7 @@ const styles = StyleSheet.create({
     absoluteBottom: {
         position: "absolute",
         bottom: 0,
-        left: 0,
-        right: 0,
+        width: 0,
     },
     speedAlert: {
         color: COLORS.dark,
@@ -248,9 +251,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     speedLimitImage: {
-        width: 75,
-        height: 75,
-        marginVertical: SIZES.spacing.md,
-        marginHorizontal: SIZES.spacing.md,
+        width: wp("15%"),
+        height: wp("15%"),
+        marginBottom: SIZES.spacing.md,
+        marginLeft: SIZES.spacing.sm,
     },
 });

@@ -11,7 +11,7 @@ interface CardProps {
 export default function Card({ title, children, st }: CardProps) {
     return (
         <View style={{ ...styles.card, ...st }}>
-            <Text style={styles.title}>{title}</Text>
+            <Text>{title}</Text>
             {children}
         </View>
     );
@@ -23,7 +23,4 @@ const styles = StyleSheet.create({
         borderTopRightRadius: SIZES.borderRadius.lg,
         borderTopLeftRadius: SIZES.borderRadius.lg,
     },
-    title: {
-        marginBottom: 4,
-    }
 });

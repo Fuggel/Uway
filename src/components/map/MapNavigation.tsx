@@ -10,6 +10,7 @@ import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNav
 import Card from "../common/Card";
 import { IconButton, SegmentedButtons } from "react-native-paper";
 import { ROUTE_PROFILES } from "../../constants/map-constants";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 interface MapNavigationProps {
     directions: Direction | null;
@@ -51,7 +52,7 @@ export default function MapNavigation({
                                 {arrowDir !== undefined &&
                                     <MaterialCommunityIcons
                                         name={`arrow-${arrowDir}-bold`}
-                                        size={50}
+                                        size={SIZES.iconSize.xl}
                                         color={COLORS.primary}
                                     />
                                 }
@@ -75,7 +76,7 @@ export default function MapNavigation({
                     <TouchableOpacity>
                         <IconButton
                             icon="close-circle"
-                            size={50}
+                            size={SIZES.iconSize.xl}
                             iconColor={COLORS.error}
                             onPress={onCancelNavigation}
                         />
@@ -107,7 +108,7 @@ export default function MapNavigation({
                         <TouchableOpacity>
                             <IconButton
                                 icon="close-circle"
-                                size={50}
+                                size={SIZES.iconSize.xl}
                                 iconColor={COLORS.error}
                                 onPress={onCancelNavigation}
                             />
@@ -116,7 +117,7 @@ export default function MapNavigation({
                         <TouchableOpacity>
                             <IconButton
                                 icon="navigation"
-                                size={50}
+                                size={SIZES.iconSize.xl}
                                 iconColor={COLORS.success}
                                 onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
                             />
@@ -134,7 +135,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: COLORS.white_transparent,
-        paddingVertical: SIZES.spacing.sm,
+        paddingVertical: SIZES.spacing.md,
+        width: wp("100%"),
     },
     navigationDuration: {
         color: COLORS.success,
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     instructionsContainer: {
         marginLeft: SIZES.spacing.sm,
         marginBottom: SIZES.spacing.sm,
-        width: "50%",
+        width: wp("65%"),
         backgroundColor: COLORS.white_transparent,
         borderRadius: SIZES.borderRadius.sm,
         padding: SIZES.spacing.sm,
@@ -167,10 +169,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     profileActions: {
-        width: "60%",
-        gap: SIZES.spacing.sm,
+        width: wp("60%"),
+        gap: SIZES.spacing.xs,
     },
     navigationActionButtons: {
         flexDirection: "row",
+        justifyContent: "space-evenly",
+        width: wp("25%"),
+        marginLeft: wp("5%"),
     }
 });
