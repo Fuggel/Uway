@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: COLORS.white_transparent,
         paddingVertical: SIZES.spacing.md,
     },
     navigationDuration: {
@@ -117,7 +116,6 @@ const styles = StyleSheet.create({
     navigationActionButtons: {
         flexDirection: "row",
         justifyContent: "space-around",
-        minWidth: "25%",
         maxWidth: "30%",
         marginLeft: SIZES.spacing.md,
     }

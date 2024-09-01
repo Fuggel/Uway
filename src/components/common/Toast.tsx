@@ -1,6 +1,6 @@
 import { COLORS } from "@/src/constants/colors-constants";
 import { SIZES } from "@/src/constants/size-constants";
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
 
 interface ToastProps {
@@ -9,6 +9,8 @@ interface ToastProps {
     title?: string;
     children?: React.ReactNode;
 }
+
+const deviceWidth = Dimensions.get("window").width;
 
 export default function Toast({
     show,
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     container: {
         left: SIZES.spacing.sm,
         bottom: SIZES.spacing.md,
-        maxWidth: "60%",
+        maxWidth: deviceWidth > 600 ? "35%" : "70%",
         marginTop: SIZES.spacing.sm,
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
@@ -83,6 +85,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: SIZES.spacing.sm,
+        marginHorizontal: "auto",
     },
     title: {
         fontSize: SIZES.fontSize.md,

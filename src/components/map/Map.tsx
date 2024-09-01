@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { arrowDirection, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
@@ -31,6 +31,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 const sessionToken = generateSessionToken();
+
+const deviceHeight = Dimensions.get("window").height;
 
 export default function Map() {
     const dispatch = useDispatch();
@@ -279,14 +281,15 @@ const styles = StyleSheet.create({
     },
     flexBottom: {
         flex: 1,
-        maxHeight: "14%",
+        maxHeight: deviceHeight > 1000 ? "10%" : "14%",
+        justifyContent: "center",
+        backgroundColor: COLORS.white_transparent,
     },
     instructionsContainer: {
         position: "absolute",
-        top: "6%",
+        top: deviceHeight > 1000 ? "4%" : "7%",
         left: SIZES.spacing.sm,
-        minWidth: "60%",
-        maxWidth: "70%",
+        maxWidth: "60%",
         backgroundColor: COLORS.white_transparent,
         borderRadius: SIZES.borderRadius.sm,
         padding: SIZES.spacing.sm,

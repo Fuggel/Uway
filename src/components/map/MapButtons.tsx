@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { COLORS } from "../../constants/colors-constants";
 import { SIZES } from "../../constants/size-constants";
 import { IconButton } from "react-native-paper";
@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
+
+const deviceHeight = Dimensions.get("window").height;
 
 export default function MapButtons() {
     const dispatch = useDispatch();
@@ -53,7 +55,7 @@ export default function MapButtons() {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        top: "6%",
+        top: deviceHeight > 1000 ? "4%" : "7%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },

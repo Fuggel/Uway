@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Searchbar from "../common/Searchbar";
 import { Divider } from "react-native-paper";
 import { SIZES } from "../../constants/size-constants";
@@ -10,6 +10,8 @@ import { Suggestion } from "@/src/types/ISearch";
 interface MapSearchbarProps {
     suggestions: Suggestion | null;
 }
+
+const deviceHeight = Dimensions.get("window").height;
 
 export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     const dispatch = useDispatch();
@@ -40,7 +42,7 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
 const styles = StyleSheet.create({
     search: {
         position: "absolute",
-        top: "6%",
+        top: deviceHeight > 1000 ? "4%" : "7%",
         left: SIZES.spacing.sm,
         minWidth: "60%",
         maxWidth: "70%",
