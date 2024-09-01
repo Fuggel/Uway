@@ -21,7 +21,7 @@ import useSpeedCameras from "@/src/hooks/useSpeedCameras";
 import SymbolLayer from "../layer/SymbolLayer";
 import { Point } from "@turf/helpers";
 import Toast from "../common/Toast";
-import { SpeedCameraFeature, SpeedLimitFeature } from "@/src/types/ISpeed";
+import { SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
 import useParkAvailability from "@/src/hooks/useParkAvailability";
 import useSpeedLimits from "@/src/hooks/useSpeedLimits";
@@ -71,6 +71,7 @@ export default function Map() {
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
+    const speedCameraDistance = speedCameras?.alert?.distance.toFixed(0);
 
     const handleCancelNavigation = () => {
         setDirections(null);
@@ -212,12 +213,8 @@ export default function Map() {
                     <Toast
                         show={!!speedCameras.alert}
                         type="error"
-                        title={`Speed camera in ${speedCameras.alert.distance.toFixed(0)} m`}
-                    >
-                        <Text style={styles.speedAlert}>
-                            Max speed: {(speedCameras.alert.feature.properties as SpeedCameraFeature).maxspeed} km/h
-                        </Text>
-                    </Toast>
+                        title={`Speed camera in ${speedCameraDistance} m`}
+                    />
                 )}
 
                 <MapNavigation
@@ -242,7 +239,6 @@ const styles = StyleSheet.create({
     absoluteBottom: {
         position: "absolute",
         bottom: 0,
-        width: 0,
     },
     speedAlert: {
         color: COLORS.dark,
