@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Direction, Instruction } from "../types/IMap";
+import { Direction, Instruction } from "../types/INavigation";
 import { NEXT_STEP_THRESHOLD_IN_METERS } from "../constants/map-constants";
 import Mapbox from "@rnmapbox/maps";
 import { point, distance } from "@turf/turf";

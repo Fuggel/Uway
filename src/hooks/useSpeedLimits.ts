@@ -48,7 +48,7 @@ export default function useSpeedLimits(params: {
         } else {
             setSpeedLimits({ data: DEFAULT_FC, alert: null });
         }
-    }, [data]);
+    }, [data, params.userLon, params.userLat]);
 
     return { speedLimits, loadingSpeedLimits, errorSpeedLimits };
 }
