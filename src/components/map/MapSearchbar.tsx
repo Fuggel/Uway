@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Searchbar from "../common/Searchbar";
 import { Divider } from "react-native-paper";
 import { SIZES } from "../../constants/size-constants";
@@ -6,11 +6,12 @@ import { COLORS } from "../../constants/colors-constants";
 import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { Suggestion } from "@/src/types/ISearch";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 interface MapSearchbarProps {
     suggestions: Suggestion | null;
 }
+
+const deviceHeight = Dimensions.get("window").height;
 
 export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     const dispatch = useDispatch();
@@ -41,14 +42,15 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
 const styles = StyleSheet.create({
     search: {
         position: "absolute",
-        top: SIZES.spacing.xl,
+        top: deviceHeight > 1000 ? "4%" : "7%",
         left: SIZES.spacing.sm,
-        width: wp("65%"),
+        minWidth: "60%",
+        maxWidth: "70%",
     },
     suggestions: {
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
-        marginTop: hp("0.5%"),
+        marginTop: 2,
         gap: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
     },

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { arrowDirection, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
@@ -25,11 +25,14 @@ import { SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
 import useParkAvailability from "@/src/hooks/useParkAvailability";
 import useSpeedLimits from "@/src/hooks/useSpeedLimits";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { Instruction } from "@/src/types/INavigation";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 const sessionToken = generateSessionToken();
+
+const deviceHeight = Dimensions.get("window").height;
 
 export default function Map() {
     const dispatch = useDispatch();
@@ -92,88 +95,61 @@ export default function Map() {
     }, [isNavigationMode]);
 
     return (
-        <View style={styles.container}>
-            {loadingDirections && <Loading />}
+        <>
+            <View style={styles.container}>
+                {loadingDirections && <Loading />}
 
-            <MapView
-                logoEnabled={false}
-                attributionEnabled={false}
-                style={styles.map}
-                styleURL={determineMapStyle(mapStyle)}
-                scaleBarEnabled={false}
-                onTouchStart={() => {
-                    dispatch(mapNavigationActions.setTracking(false));
-                    dispatch(mapNavigationActions.setNavigationView(false));
-                }}
-            >
-                <Images images={MAP_ICONS} />
-
-                <Camera
-                    animationDuration={2000}
-                    animationMode="easeTo"
-                    followUserLocation={tracking || navigationView}
-                    pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                    followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                    zoomLevel={MAP_CONFIG.zoom}
-                    followZoomLevel={MAP_CONFIG.zoom}
-                    defaultSettings={{
-                        centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
+                <MapView
+                    logoEnabled={false}
+                    attributionEnabled={false}
+                    style={styles.map}
+                    styleURL={determineMapStyle(mapStyle)}
+                    scaleBarEnabled={false}
+                    onTouchStart={() => {
+                        dispatch(mapNavigationActions.setTracking(false));
+                        dispatch(mapNavigationActions.setNavigationView(false));
                     }}
-                />
+                >
+                    <Images images={MAP_ICONS} />
 
-                <UserLocation onUpdate={(location) => setUserLocation(location)} />
+                    <Camera
+                        animationDuration={2000}
+                        animationMode="easeTo"
+                        followUserLocation={tracking || navigationView}
+                        pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                        followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                        zoomLevel={MAP_CONFIG.zoom}
+                        followZoomLevel={MAP_CONFIG.zoom}
+                        defaultSettings={{
+                            centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
+                        }}
+                    />
 
-                <LocationPuck
-                    scale={["interpolate", ["linear"], ["zoom"], 10, 0.8, 20, 1.2]}
-                    puckBearingEnabled
-                    pulsing={{
-                        isEnabled: true,
-                        color: COLORS.primary,
-                        radius: 45,
-                    }}
-                />
-                {directions?.geometry?.coordinates && (
-                    <LineLayer
-                        sourceId="route-source"
-                        layerId="route-layer"
-                        coordinates={directions.geometry.coordinates}
+                    <UserLocation onUpdate={(location) => setUserLocation(location)} />
+
+                    <LocationPuck
+                        scale={["interpolate", ["linear"], ["zoom"], 10, 0.8, 20, 1.2]}
+                        puckBearingEnabled
+                        pulsing={{
+                            isEnabled: true,
+                            color: COLORS.primary,
+                            radius: 45,
+                        }}
                     />
-                )}
-                {speedCameras?.data?.features?.map((feature, i) => (
-                    <SymbolLayer
-                        key={i}
-                        sourceId={`speed-camera-source-${i}`}
-                        layerId={`speed-camera-layer-${i}`}
-                        coordinates={(feature.geometry as Point).coordinates}
-                        iconImage="speed-camera"
-                        iconSize={[
-                            "interpolate",
-                            ["linear"],
-                            ["zoom"],
-                            10,
-                            0.4,
-                            20,
-                            0.6,
-                        ]}
-                    />
-                ))}
-                {parkAvailability?.features?.map((feature, i) => (
-                    <View key={i}>
+                    {directions?.geometry?.coordinates && (
+                        <LineLayer
+                            sourceId="route-source"
+                            layerId="route-layer"
+                            coordinates={directions.geometry.coordinates}
+                        />
+                    )}
+                    {speedCameras?.data?.features?.map((feature, i) => (
                         <SymbolLayer
-                            sourceId={`parking-availability-source-${i}`}
-                            layerId={`parking-availability-layer-${i}`}
+                            key={i}
+                            sourceId={`speed-camera-source-${i}`}
+                            layerId={`speed-camera-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
-                            iconImage="parking-availability"
-                            properties={feature.properties}
-                            style={{
-                                textField: `
-                                    ${feature.properties?.name}
-                                    ${feature.properties?.free} / ${feature.properties?.total}
-                                `,
-                                textSize: SIZES.fontSize.sm,
-                                textColor: COLORS.white,
-                                textOffset: [0, 2.5],
-                            }}
+                            iconImage="speed-camera"
                             iconSize={[
                                 "interpolate",
                                 ["linear"],
@@ -184,48 +160,108 @@ export default function Map() {
                                 0.6,
                             ]}
                         />
-                    </View>
-                ))}
-            </MapView>
+                    ))}
+                    {parkAvailability?.features?.map((feature, i) => (
+                        <View key={i}>
+                            <SymbolLayer
+                                sourceId={`parking-availability-source-${i}`}
+                                layerId={`parking-availability-layer-${i}`}
+                                coordinates={(feature.geometry as Point).coordinates}
+                                iconImage="parking-availability"
+                                properties={feature.properties}
+                                style={{
+                                    textField: `
+                                    ${feature.properties?.name}
+                                    ${feature.properties?.free} / ${feature.properties?.total}
+                                `,
+                                    textSize: SIZES.fontSize.sm,
+                                    textColor: COLORS.white,
+                                    textOffset: [0, 2.5],
+                                }}
+                                iconSize={[
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.4,
+                                    20,
+                                    0.6,
+                                ]}
+                            />
+                        </View>
+                    ))}
+                </MapView>
 
-            <MapButtons />
+                <MapButtons />
 
-            {!directions && (
-                <MapSearchbar suggestions={suggestions} />
-            )}
+                {!directions && (
+                    <MapSearchbar suggestions={suggestions} />
+                )}
 
-            <View style={styles.absoluteBottom}>
-                {speedLimits?.alert && (
-                    <View>
-                        <Image
-                            source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
-                            style={styles.speedLimitImage}
+                {directions?.legs[0].steps
+                    .slice(currentStep, currentStep + 1)
+                    .map((step: Instruction, index: number) => {
+                        const arrowDir = arrowDirection(step);
+
+                        return (
+                            <View key={index} style={styles.instructionsContainer}>
+                                <Text style={styles.stepInstruction}>
+                                    {step.maneuver.instruction}
+                                </Text>
+
+                                <View style={styles.directionRow}>
+                                    {arrowDir !== undefined &&
+                                        <MaterialCommunityIcons
+                                            name={`arrow-${arrowDir}-bold`}
+                                            size={SIZES.iconSize.xl}
+                                            color={COLORS.primary}
+                                        />
+                                    }
+                                    <TouchableOpacity onPress={() => setCurrentStep(index)}>
+                                        <Text style={styles.stepDistance}>
+                                            {step.distance.toFixed(0)} meters
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        );
+                    })}
+
+                <View style={styles.absoluteBottom}>
+                    {speedLimits?.alert && (
+                        <View>
+                            <Image
+                                source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
+                                style={styles.speedLimitImage}
+                            />
+                            {userLocation?.coords && (
+                                <Toast show={!!speedLimits.alert} type="info">
+                                    <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
+                                </Toast>
+                            )}
+                        </View>
+                    )}
+
+                    {speedCameras?.alert && (
+                        <Toast
+                            show={!!speedCameras.alert}
+                            type="error"
+                            title={`Speed camera in ${speedCameraDistance} m`}
                         />
-                        {userLocation?.coords && (
-                            <Toast show={!!speedLimits.alert} type="info">
-                                <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
-                            </Toast>
-                        )}
-                    </View>
-                )}
-
-                {speedCameras?.alert && (
-                    <Toast
-                        show={!!speedCameras.alert}
-                        type="error"
-                        title={`Speed camera in ${speedCameraDistance} m`}
-                    />
-                )}
-
-                <MapNavigation
-                    directions={directions}
-                    locations={locations}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    onCancelNavigation={handleCancelNavigation}
-                />
+                    )}
+                </View>
             </View>
-        </View>
+
+            {(locations || directions) && (
+                <View style={styles.flexBottom}>
+                    <MapNavigation
+                        directions={directions}
+                        locations={locations}
+                        onCancelNavigation={handleCancelNavigation}
+                    />
+                </View>
+            )}
+        </>
     );
 }
 
@@ -239,6 +275,36 @@ const styles = StyleSheet.create({
     absoluteBottom: {
         position: "absolute",
         bottom: 0,
+        left: 0,
+        width: "100%",
+        pointerEvents: "none",
+    },
+    flexBottom: {
+        flex: 1,
+        maxHeight: deviceHeight > 1000 ? "10%" : "14%",
+        justifyContent: "center",
+        backgroundColor: COLORS.white_transparent,
+    },
+    instructionsContainer: {
+        position: "absolute",
+        top: deviceHeight > 1000 ? "4%" : "7%",
+        left: SIZES.spacing.sm,
+        maxWidth: "60%",
+        backgroundColor: COLORS.white_transparent,
+        borderRadius: SIZES.borderRadius.sm,
+        padding: SIZES.spacing.sm,
+    },
+    stepInstruction: {
+        fontSize: SIZES.fontSize.md,
+        fontWeight: "bold",
+    },
+    stepDistance: {
+        fontSize: SIZES.fontSize.sm,
+        color: COLORS.gray,
+    },
+    directionRow: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     speedAlert: {
         color: COLORS.dark,
@@ -246,8 +312,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     speedLimitImage: {
-        width: wp("15%"),
-        height: wp("15%"),
+        width: 75,
+        height: 75,
         marginBottom: SIZES.spacing.md,
         marginLeft: SIZES.spacing.sm,
     },
