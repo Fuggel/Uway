@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
         paddingVertical: SIZES.spacing.sm,
     },
     img: {
-        width: SIZES.iconSize.xl,
-        height: SIZES.iconSize.xl,
+        width: 75,
+        height: 75,
         marginLeft: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
     },

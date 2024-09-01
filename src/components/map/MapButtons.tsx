@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function MapButtons() {
     const dispatch = useDispatch();
@@ -54,7 +53,7 @@ export default function MapButtons() {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        top: hp("6%"),
+        top: "6%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },
@@ -62,8 +61,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: COLORS.white_transparent,
-        width: SIZES.iconSize.lg,
-        height: SIZES.iconSize.lg,
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
         borderRadius: SIZES.borderRadius.sm,
     }
 });

@@ -2,7 +2,6 @@ import { COLORS } from "@/src/constants/colors-constants";
 import { SIZES } from "@/src/constants/size-constants";
 import { StyleSheet, Text, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 interface ToastProps {
     show: boolean;
@@ -46,7 +45,7 @@ export default function Toast({
     return (
         <>
             {show && (
-                <View style={{ ...styles.container, width: !title ? wp("25%") : undefined }}>
+                <View style={{ ...styles.container, width: !title ? "25%" : undefined }}>
                     {title && (
                         <View style={styles.header}>
                             <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     container: {
         left: SIZES.spacing.sm,
         bottom: SIZES.spacing.md,
-        maxWidth: wp("65%"),
+        maxWidth: "60%",
         marginTop: SIZES.spacing.sm,
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
