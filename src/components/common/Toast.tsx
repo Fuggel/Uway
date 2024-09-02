@@ -47,7 +47,7 @@ export default function Toast({
     return (
         <>
             {show && (
-                <View style={{ ...styles.container, width: !title ? "25%" : undefined }}>
+                <View style={{ ...styles.container, width: !title ? "30%" : undefined }}>
                     {title && (
                         <View style={styles.header}>
                             <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
