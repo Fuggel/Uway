@@ -16,6 +16,7 @@ export const MAP_CONFIG: MapConfig = {
     zoom: 18,
     pitch: 0,
     followPitch: 50,
+    followZoom: 20,
     style: MapboxStyle.NAVIGATION_DARK,
     accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "",
 };
@@ -69,6 +70,7 @@ export const MAP_STYLES: DropdownItem[] = [
 ];
 
 export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
+    "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
 };

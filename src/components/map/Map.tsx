@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import Mapbox, { Camera, Images, LocationPuck, MapView, UserLocation } from "@rnmapbox/maps";
+import { useEffect } from "react";
+import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { arrowDirection, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
@@ -27,6 +27,7 @@ import useParkAvailability from "@/src/hooks/useParkAvailability";
 import useSpeedLimits from "@/src/hooks/useSpeedLimits";
 import { Instruction } from "@/src/types/INavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import useUserLocation from "@/src/hooks/useUserLocation";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -36,7 +37,7 @@ const deviceHeight = Dimensions.get("window").height;
 
 export default function Map() {
     const dispatch = useDispatch();
-    const [userLocation, setUserLocation] = useState<Mapbox.Location | null>(null);
+    const { userLocation } = useUserLocation();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -120,29 +121,35 @@ export default function Map() {
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={2000}
+                        animationDuration={1500}
                         animationMode="easeTo"
-                        followUserLocation={tracking || navigationView}
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        zoomLevel={MAP_CONFIG.zoom}
-                        followZoomLevel={MAP_CONFIG.zoom}
-                        defaultSettings={{
-                            centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
-                        }}
+                        zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
+                        heading={userLocation && (tracking || navigationView) ? userLocation.coords?.heading as number : undefined}
+                        centerCoordinate={userLocation && (tracking || navigationView) ?
+                            [userLocation.coords.longitude, userLocation.coords.latitude] :
+                            [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
+                        }
                     />
 
-                    <UserLocation onUpdate={(location) => setUserLocation(location)} />
+                    {userLocation && (
+                        <SymbolLayer
+                            sourceId="user-location"
+                            layerId="user-location-layer"
+                            coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
+                            iconImage="user-location"
+                            iconSize={[
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                0.4,
+                                20,
+                                0.6,
+                            ]}
+                        />
+                    )}
 
-                    <LocationPuck
-                        scale={["interpolate", ["linear"], ["zoom"], 10, 0.8, 20, 1.2]}
-                        puckBearingEnabled
-                        pulsing={{
-                            isEnabled: true,
-                            color: COLORS.primary,
-                            radius: 45,
-                        }}
-                    />
                     {directions?.geometry?.coordinates && (
                         <LineLayer
                             sourceId="route-source"

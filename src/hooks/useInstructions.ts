@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Direction, Instruction } from "../types/INavigation";
 import { NEXT_STEP_THRESHOLD_IN_METERS } from "../constants/map-constants";
-import Mapbox from "@rnmapbox/maps";
 import { point, distance } from "@turf/turf";
+import { LocationObject } from "expo-location";
 
-export default function useInstructions(directions: Direction | null, userLocation: Mapbox.Location | null) {
+export default function useInstructions(directions: Direction | null, userLocation: LocationObject | null) {
     const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {
