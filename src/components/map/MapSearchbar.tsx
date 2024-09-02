@@ -21,7 +21,7 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
         <Searchbar
             st={styles.search}
             listSt={styles.suggestions}
-            placeholder="Search for a location"
+            placeholder="Suche nach Ort"
             onChangeText={(val) => dispatch(mapNavigationActions.setSearchQuery(val))}
             value={searchQuery}
         >

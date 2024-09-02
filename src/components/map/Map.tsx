@@ -232,7 +232,7 @@ export default function Map() {
                                     }
                                     <TouchableOpacity onPress={() => setCurrentStep(index)}>
                                         <Text style={styles.stepDistance}>
-                                            {step.distance.toFixed(0)} meters
+                                            {step.distance.toFixed(0)} m
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -258,7 +258,7 @@ export default function Map() {
                         <Toast
                             show={!!speedCameras.alert}
                             type="error"
-                            title={`Speed camera in ${speedCameraDistance} m`}
+                            title={`Blitzer in ${speedCameraDistance} m`}
                         />
                     )}
                 </View>

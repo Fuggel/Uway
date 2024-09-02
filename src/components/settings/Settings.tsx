@@ -45,8 +45,8 @@ export default function Settings() {
                             </SettingsItem>
                         </SettingsSection>
 
-                        <SettingsSection title="Map Data">
-                            <SettingsItem title="Show Speed Cameras">
+                        <SettingsSection title="Map Daten">
+                            <SettingsItem title="Blitzer">
                                 <Switch
                                     value={showSpeedCameras}
                                     style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
@@ -57,7 +57,7 @@ export default function Settings() {
                                     }}
                                 />
                             </SettingsItem>
-                            <SettingsItem title="Show Speed Limits">
+                            <SettingsItem title="Geschwindigkeitsbegrenzungen">
                                 <Switch
                                     value={showSpeedLimits}
                                     style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
@@ -68,7 +68,7 @@ export default function Settings() {
                                     }}
                                 />
                             </SettingsItem>
-                            <SettingsItem title="Show Park Availablity">
+                            <SettingsItem title="Parkplätze & Parkhäuser">
                                 <Switch
                                     value={showParkAvailability}
                                     style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
