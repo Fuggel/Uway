@@ -10,6 +10,7 @@ export interface MapConfig {
     zoom: number;
     pitch: number;
     followPitch: number;
+    followZoom: number;
     style: MapboxStyle;
     accessToken: string;
 }
