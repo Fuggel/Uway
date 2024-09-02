@@ -1,26 +1,31 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
+import { mockUserLocation } from "../utils/mock-utils";
 
-export default function useUserLocation() {
+export default function useUserLocation({ mockMode = false }: { mockMode?: boolean; }) {
     const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
 
     useEffect(() => {
         let locationSubscription: Location.LocationSubscription | null = null;
 
         const checkLocationPermission = async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-
-            if (status === Location.PermissionStatus.GRANTED) {
-                locationSubscription = await Location.watchPositionAsync(
-                    {
-                        accuracy: Location.Accuracy.BestForNavigation,
-                    },
-                    (location) => {
-                        setUserLocation(location);
-                    }
-                );
+            if (mockMode) {
+                mockUserLocation({ setUserLocation });
             } else {
-                setUserLocation(null);
+                const { status } = await Location.requestForegroundPermissionsAsync();
+
+                if (status === Location.PermissionStatus.GRANTED) {
+                    locationSubscription = await Location.watchPositionAsync(
+                        {
+                            accuracy: Location.Accuracy.BestForNavigation,
+                        },
+                        (location) => {
+                            setUserLocation(location);
+                        }
+                    );
+                } else {
+                    setUserLocation(null);
+                }
             }
         };
 
@@ -31,7 +36,7 @@ export default function useUserLocation() {
                 locationSubscription.remove();
             }
         };
-    }, []);
+    }, [mockMode]);
 
     return { userLocation };
 }
