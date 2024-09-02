@@ -132,24 +132,6 @@ export default function Map() {
                         }
                     />
 
-                    {userLocation && (
-                        <SymbolLayer
-                            sourceId="user-location"
-                            layerId="user-location-layer"
-                            coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
-                            iconImage="user-location"
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.4,
-                                20,
-                                0.6,
-                            ]}
-                        />
-                    )}
-
                     {directions?.geometry?.coordinates && (
                         <LineLayer
                             sourceId="route-source"
@@ -157,24 +139,6 @@ export default function Map() {
                             coordinates={directions.geometry.coordinates}
                         />
                     )}
-                    {speedCameras?.data?.features?.map((feature, i) => (
-                        <SymbolLayer
-                            key={i}
-                            sourceId={`speed-camera-source-${i}`}
-                            layerId={`speed-camera-layer-${i}`}
-                            coordinates={(feature.geometry as Point).coordinates}
-                            iconImage="speed-camera"
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.4,
-                                20,
-                                0.6,
-                            ]}
-                        />
-                    ))}
                     {parkAvailability?.features?.map((feature, i) => (
                         <View key={i}>
                             <SymbolLayer
@@ -204,6 +168,41 @@ export default function Map() {
                             />
                         </View>
                     ))}
+                    {speedCameras?.data?.features?.map((feature, i) => (
+                        <SymbolLayer
+                            key={i}
+                            sourceId={`speed-camera-source-${i}`}
+                            layerId={`speed-camera-layer-${i}`}
+                            coordinates={(feature.geometry as Point).coordinates}
+                            iconImage="speed-camera"
+                            iconSize={[
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                0.4,
+                                20,
+                                0.6,
+                            ]}
+                        />
+                    ))}
+                    {userLocation && (
+                        <SymbolLayer
+                            sourceId="user-location"
+                            layerId="user-location-layer"
+                            coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
+                            iconImage="user-location"
+                            iconSize={[
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                0.4,
+                                20,
+                                0.6,
+                            ]}
+                        />
+                    )}
                 </MapView>
 
                 <MapButtons />
