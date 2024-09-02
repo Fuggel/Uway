@@ -45,8 +45,15 @@ export default function Map() {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
-    const { suggestions } = useSearchSuggestion({ query: searchQuery, sessionToken });
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
+    const { suggestions } = useSearchSuggestion({
+        query: searchQuery,
+        sessionToken,
+        lngLat: {
+            lon: userLocation?.coords?.longitude as number,
+            lat: userLocation?.coords?.latitude as number,
+        }
+    });
     const { directions, setDirections, loadingDirections } = useDirections({
         profile: navigationProfile,
         startLngLat: {
@@ -229,17 +236,16 @@ export default function Map() {
 
                 <View style={styles.absoluteBottom}>
                     {speedLimits?.alert && (
-                        <View>
-                            <Image
-                                source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
-                                style={styles.speedLimitImage}
-                            />
-                            {userLocation?.coords && (
-                                <Toast show={!!speedLimits.alert} type="info">
-                                    <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
-                                </Toast>
-                            )}
-                        </View>
+                        <Image
+                            source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
+                            style={styles.speedLimitImage}
+                        />
+                    )}
+
+                    {userLocation?.coords && (
+                        <Toast show type="info">
+                            <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
+                        </Toast>
                     )}
 
                     {speedCameras?.alert && (
