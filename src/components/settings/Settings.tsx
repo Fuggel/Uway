@@ -13,9 +13,14 @@ import { IconButton, Switch } from "react-native-paper";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/src/store/mapSpeedCamera";
 import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/src/store/mapParkAvailability";
 import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/src/store/mapSpeedLimit";
+import { mapTestingActions, mapTestingSelectors } from "@/src/store/mapTesting";
+import { TESTING_ROUTES } from "@/src/constants/route-testing-constants";
+import { Route } from "@/src/types/IMock";
 
 export default function Settings() {
     const dispatch = useDispatch();
+    const simulateRoute = useSelector(mapTestingSelectors.simulateRoute);
+    const selectedRoute = useSelector(mapTestingSelectors.selectedRoute);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
@@ -35,11 +40,40 @@ export default function Settings() {
                         />
                     </View>
                     <View style={styles.settings}>
+                        {process.env.NODE_ENV === "development" && (
+                            <SettingsSection title="Dev Testing">
+                                <SettingsItem title="Route simulieren">
+                                    <Switch
+                                        value={simulateRoute}
+                                        style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
+                                        thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                        trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                        onValueChange={() => {
+                                            dispatch(mapTestingActions.setSimulateRoute(!simulateRoute));
+                                        }}
+                                    />
+                                </SettingsItem>
+                                {simulateRoute && (
+                                    <SettingsItem>
+                                        <Dropdown
+                                            value={selectedRoute}
+                                            data={TESTING_ROUTES}
+                                            icon="routes"
+                                            onChange={(val) => {
+                                                dispatch(mapTestingActions.setSelectedRoute(val as Route));
+                                            }}
+                                        />
+                                    </SettingsItem>
+                                )}
+                            </SettingsSection>
+                        )}
+
                         <SettingsSection title="Map Style">
                             <SettingsItem>
                                 <Dropdown
                                     value={mapStyle}
                                     data={MAP_STYLES}
+                                    icon="map"
                                     onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
                                 />
                             </SettingsItem>
