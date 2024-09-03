@@ -1,17 +1,23 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Dropdown as DropdownContainer } from "react-native-element-dropdown";
-import FeatherIcon from "@expo/vector-icons/Feather";
 import { COLORS } from "../../constants/colors-constants";
 import { SIZES } from "../../constants/size-constants";
 import { DropdownItem } from "@/src/types/ISettings";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface DropdownProps<T> {
     data: DropdownItem[];
     value: string;
+    icon: string;
     onChange: (value: T) => void;
 }
 
-export default function Dropdown<T>({ data, value, onChange }: DropdownProps<T>) {
+export default function Dropdown<T>({
+    data,
+    value,
+    icon,
+    onChange,
+}: DropdownProps<T>) {
     const renderItem = (item: DropdownItem) => (
         <View style={styles.itemContainer}>
             {item.img && <Image source={item.img} style={styles.img} />}
@@ -35,8 +41,8 @@ export default function Dropdown<T>({ data, value, onChange }: DropdownProps<T>)
             value={value}
             onChange={item => onChange(item.value as T)}
             renderLeftIcon={() => (
-                <FeatherIcon
-                    name="map"
+                <MaterialCommunityIcons
+                    name={icon as any}
                     style={styles.icon}
                     color={COLORS.gray}
                     size={SIZES.iconSize.sm}

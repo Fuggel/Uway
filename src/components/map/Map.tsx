@@ -37,7 +37,7 @@ const deviceHeight = Dimensions.get("window").height;
 
 export default function Map() {
     const dispatch = useDispatch();
-    const { userLocation } = useUserLocation({ mockMode: true });
+    const { userLocation } = useUserLocation();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
