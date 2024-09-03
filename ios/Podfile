@@ -35,7 +35,7 @@ install! 'cocoapods',
 prepare_react_native_project!
 
 # @generated begin @rnmapbox/maps-rnmapboxmapsimpl - expo prebuild (DO NOT MODIFY) sync-afa9a07dd55984d454b57f509f8c252150bb3a8b
-$RNMapboxMapsDownloadToken = 'sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbTBmcW9hcjEwY3p0MmxyMTN2eDU4YTJsIn0.87MkJ-odcPYfib0GImKQlg'
+$RNMapboxMapsDownloadToken = ENV['EXPO_SECRET_MAPBOX_ACCESS_TOKEN']
 $RNMapboxMapsVersion = '10.16.0'
 # @generated end @rnmapbox/maps-rnmapboxmapsimpl
 target 'NavSync' do
