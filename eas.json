@@ -15,18 +15,8 @@
         "simulator": true
       }
     },
-    "production": {
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA",
-        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbTBtZDg4eDIwMTM1MmxzYmFmaGYxaTQ3In0.2iRCFBkdBWXCdd6bd0k9vQ"
-      }
-    },
-    "test": {
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "pk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbHp5ZzYybXkweG11MmxzaTRwdnVucDB4In0.KhhCb-EWGrZDHEMw_n3LAA",
-        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoiZnVnZ2VsLWRldiIsImEiOiJjbTBtZDg4eDIwMTM1MmxzYmFmaGYxaTQ3In0.2iRCFBkdBWXCdd6bd0k9vQ"
-      }
-    }
+    "production": {},
+    "test": {}
   },
   "submit": {
     "production": {}
