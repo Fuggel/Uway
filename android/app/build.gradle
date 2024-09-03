@@ -136,7 +136,6 @@ packagingOptions {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            buildConfigField 'String', "MAPBOX_DOWNLOADS_TOKEN", "\"${MAPBOX_DOWNLOADS_TOKEN}\""
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -146,7 +145,6 @@ packagingOptions {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
-            buildConfigField 'String', "MAPBOX_DOWNLOADS_TOKEN", "\"${MAPBOX_DOWNLOADS_TOKEN}\""
         }
     }
     packagingOptions {
