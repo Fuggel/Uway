@@ -102,9 +102,7 @@ def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInRelea
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
-def mapboxToken = System.getenv("EXPO_SECRET_MAPBOX_ACCESS_TOKEN")
-
-android {
+def mapboxToken = System.getenv("EXPO_SECRET_MAPBOX_ACCESS_TOKEN")def mapboxToken = System.getenv("EXPO_SECRET_MAPBOX_ACCESS_TOKEN")
 // @generated begin @rnmapbox/maps-libcpp - expo prebuild (DO NOT MODIFY) sync-e24830a5a3e854b398227dfe9630aabfaa1cadd1
 packagingOptions {
         pickFirst 'lib/x86/libc++_shared.so'
@@ -124,7 +122,7 @@ packagingOptions {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.1.1"
+        versionName "1.1.2"
         buildConfigField "String", "EXPO_SECRET_MAPBOX_ACCESS_TOKEN", "\"${mapboxToken}\""
     }
     signingConfigs {
