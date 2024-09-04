@@ -132,6 +132,11 @@ export default function Map() {
                             [userLocation.coords.longitude, userLocation.coords.latitude] :
                             [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
                         }
+                        defaultSettings={{
+                            centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
+                            zoomLevel: MAP_CONFIG.zoom,
+                            pitch: MAP_CONFIG.pitch,
+                        }}
                     />
 
                     {directions?.geometry?.coordinates && (
