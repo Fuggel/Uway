@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
+import { mapViewSelectors } from "@/src/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
 
 const deviceHeight = Dimensions.get("window").height;
 
@@ -13,10 +15,11 @@ export default function MapButtons() {
     const dispatch = useDispatch();
     const { open, setOpen } = useContext(SettingsContext);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
+    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
         <View style={styles.container}>
-            <View style={styles.button}>
+            <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
                 <TouchableOpacity>
                     <IconButton
                         icon="cog"
@@ -27,7 +30,7 @@ export default function MapButtons() {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.button}>
+            <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
                 <TouchableOpacity>
                     <IconButton
                         icon={"crosshairs-gps"}
@@ -38,7 +41,7 @@ export default function MapButtons() {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.button}>
+            <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
                 <TouchableOpacity>
                     <IconButton
                         icon={navigationView ? "compass" : "navigation-variant"}
