@@ -28,6 +28,7 @@ import useSpeedLimits from "@/src/hooks/useSpeedLimits";
 import { Instruction } from "@/src/types/INavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUserLocation from "@/src/hooks/useUserLocation";
+import DismissKeyboard from "../common/DissmisKeyboard";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -104,58 +105,78 @@ export default function Map() {
 
     return (
         <>
-            <View style={styles.container}>
-                {loadingDirections && <Loading />}
+            <DismissKeyboard>
+                <View style={styles.container}>
+                    {loadingDirections && <Loading />}
 
-                <MapView
-                    logoEnabled={false}
-                    attributionEnabled={false}
-                    style={styles.map}
-                    styleURL={determineMapStyle(mapStyle)}
-                    scaleBarEnabled={false}
-                    onTouchStart={() => {
-                        dispatch(mapNavigationActions.setTracking(false));
-                        dispatch(mapNavigationActions.setNavigationView(false));
-                    }}
-                >
-                    <Images images={MAP_ICONS} />
+                    <MapView
+                        logoEnabled={false}
+                        attributionEnabled={false}
+                        style={styles.map}
+                        styleURL={determineMapStyle(mapStyle)}
+                        scaleBarEnabled={false}
+                        onTouchStart={() => {
+                            dispatch(mapNavigationActions.setTracking(false));
+                            dispatch(mapNavigationActions.setNavigationView(false));
+                        }}
+                    >
+                        <Images images={MAP_ICONS} />
 
-                    <Camera
-                        animationDuration={1500}
-                        animationMode="easeTo"
-                        pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
-                        heading={userLocation && (tracking || navigationView) ? userLocation.coords?.heading as number : undefined}
-                        centerCoordinate={userLocation && (tracking || navigationView) ?
-                            [userLocation.coords.longitude, userLocation.coords.latitude] :
-                            [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
-                        }
-                    />
-
-                    {directions?.geometry?.coordinates && (
-                        <LineLayer
-                            sourceId="route-source"
-                            layerId="route-layer"
-                            coordinates={directions.geometry.coordinates}
+                        <Camera
+                            animationDuration={1500}
+                            animationMode="easeTo"
+                            pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                            zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
+                            heading={userLocation && (tracking || navigationView) ? userLocation.coords?.heading as number : undefined}
+                            centerCoordinate={userLocation && (tracking || navigationView) ?
+                                [userLocation.coords.longitude, userLocation.coords.latitude] :
+                                [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
+                            }
                         />
-                    )}
-                    {parkAvailability?.features?.map((feature, i) => (
-                        <View key={i}>
-                            <SymbolLayer
-                                sourceId={`parking-availability-source-${i}`}
-                                layerId={`parking-availability-layer-${i}`}
-                                coordinates={(feature.geometry as Point).coordinates}
-                                iconImage="parking-availability"
-                                properties={feature.properties}
-                                style={{
-                                    textField: `
+
+                        {directions?.geometry?.coordinates && (
+                            <LineLayer
+                                sourceId="route-source"
+                                layerId="route-layer"
+                                coordinates={directions.geometry.coordinates}
+                            />
+                        )}
+                        {parkAvailability?.features?.map((feature, i) => (
+                            <View key={i}>
+                                <SymbolLayer
+                                    sourceId={`parking-availability-source-${i}`}
+                                    layerId={`parking-availability-layer-${i}`}
+                                    coordinates={(feature.geometry as Point).coordinates}
+                                    iconImage="parking-availability"
+                                    properties={feature.properties}
+                                    style={{
+                                        textField: `
                                     ${feature.properties?.name}
                                     ${feature.properties?.free} / ${feature.properties?.total}
                                 `,
-                                    textSize: SIZES.fontSize.sm,
-                                    textColor: COLORS.white,
-                                    textOffset: [0, 2.5],
-                                }}
+                                        textSize: SIZES.fontSize.sm,
+                                        textColor: COLORS.white,
+                                        textOffset: [0, 2.5],
+                                    }}
+                                    iconSize={[
+                                        "interpolate",
+                                        ["linear"],
+                                        ["zoom"],
+                                        10,
+                                        0.4,
+                                        20,
+                                        0.6,
+                                    ]}
+                                />
+                            </View>
+                        ))}
+                        {speedCameras?.data?.features?.map((feature, i) => (
+                            <SymbolLayer
+                                key={i}
+                                sourceId={`speed-camera-source-${i}`}
+                                layerId={`speed-camera-layer-${i}`}
+                                coordinates={(feature.geometry as Point).coordinates}
+                                iconImage="speed-camera"
                                 iconSize={[
                                     "interpolate",
                                     ["linear"],
@@ -166,103 +187,85 @@ export default function Map() {
                                     0.6,
                                 ]}
                             />
-                        </View>
-                    ))}
-                    {speedCameras?.data?.features?.map((feature, i) => (
-                        <SymbolLayer
-                            key={i}
-                            sourceId={`speed-camera-source-${i}`}
-                            layerId={`speed-camera-layer-${i}`}
-                            coordinates={(feature.geometry as Point).coordinates}
-                            iconImage="speed-camera"
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.4,
-                                20,
-                                0.6,
-                            ]}
-                        />
-                    ))}
-                    {userLocation && (
-                        <SymbolLayer
-                            sourceId="user-location"
-                            layerId="user-location-layer"
-                            coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
-                            iconImage="user-location"
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.4,
-                                20,
-                                0.6,
-                            ]}
-                        />
+                        ))}
+                        {userLocation && (
+                            <SymbolLayer
+                                sourceId="user-location"
+                                layerId="user-location-layer"
+                                coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
+                                iconImage="user-location"
+                                iconSize={[
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.4,
+                                    20,
+                                    0.6,
+                                ]}
+                            />
+                        )}
+                    </MapView>
+
+                    <MapButtons />
+
+                    {!directions && (
+                        <MapSearchbar suggestions={suggestions} />
                     )}
-                </MapView>
 
-                <MapButtons />
+                    {directions?.legs[0].steps
+                        .slice(currentStep, currentStep + 1)
+                        .map((step: Instruction, index: number) => {
+                            const arrowDir = arrowDirection(step);
 
-                {!directions && (
-                    <MapSearchbar suggestions={suggestions} />
-                )}
+                            return (
+                                <View key={index} style={styles.instructionsContainer}>
+                                    <Text style={styles.stepInstruction}>
+                                        {step.maneuver.instruction}
+                                    </Text>
 
-                {directions?.legs[0].steps
-                    .slice(currentStep, currentStep + 1)
-                    .map((step: Instruction, index: number) => {
-                        const arrowDir = arrowDirection(step);
-
-                        return (
-                            <View key={index} style={styles.instructionsContainer}>
-                                <Text style={styles.stepInstruction}>
-                                    {step.maneuver.instruction}
-                                </Text>
-
-                                <View style={styles.directionRow}>
-                                    {arrowDir !== undefined &&
-                                        <MaterialCommunityIcons
-                                            name={`arrow-${arrowDir}-bold`}
-                                            size={SIZES.iconSize.xl}
-                                            color={COLORS.primary}
-                                        />
-                                    }
-                                    <TouchableOpacity onPress={() => setCurrentStep(index)}>
-                                        <Text style={styles.stepDistance}>
-                                            {step.distance.toFixed(0)} m
-                                        </Text>
-                                    </TouchableOpacity>
+                                    <View style={styles.directionRow}>
+                                        {arrowDir !== undefined &&
+                                            <MaterialCommunityIcons
+                                                name={`arrow-${arrowDir}-bold`}
+                                                size={SIZES.iconSize.xl}
+                                                color={COLORS.primary}
+                                            />
+                                        }
+                                        <TouchableOpacity onPress={() => setCurrentStep(index)}>
+                                            <Text style={styles.stepDistance}>
+                                                {step.distance.toFixed(0)} m
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
-                        );
-                    })}
+                            );
+                        })}
 
-                <View style={styles.absoluteBottom}>
-                    {speedLimits?.alert && (
-                        <Image
-                            source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
-                            style={styles.speedLimitImage}
-                        />
-                    )}
+                    <View style={styles.absoluteBottom}>
+                        {speedLimits?.alert && (
+                            <Image
+                                source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
+                                style={styles.speedLimitImage}
+                            />
+                        )}
 
-                    {userLocation?.coords && (
-                        <Toast show type="info">
-                            <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
-                        </Toast>
-                    )}
+                        {userLocation?.coords && (
+                            <Toast show type="info">
+                                <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
+                            </Toast>
+                        )}
 
-                    {speedCameras?.alert && (
-                        <Toast
-                            show={!!speedCameras.alert}
-                            type="error"
-                            title={`Blitzer in ${speedCameraDistance} m`}
-                        />
-                    )}
+                        {speedCameras?.alert && (
+                            <Toast
+                                show={!!speedCameras.alert}
+                                type="error"
+                                title={`Blitzer in ${speedCameraDistance} m`}
+                            />
+                        )}
+                    </View>
                 </View>
-            </View>
+            </DismissKeyboard>
 
             {(locations || directions) && (
                 <View style={styles.flexBottom}>
