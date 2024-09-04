@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { Suggestion } from "@/src/types/ISearch";
 import { useState } from "react";
+import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
+import { mapViewSelectors } from "@/src/store/mapView";
 
 interface MapSearchbarProps {
     suggestions: Suggestion | null;
@@ -18,6 +20,7 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     const dispatch = useDispatch();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
+    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const selectedAddress = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId)?.full_address;
 
@@ -34,7 +37,7 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     return (
         <Searchbar
             st={styles.search}
-            listSt={styles.suggestions}
+            listSt={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}
             placeholder="Suche nach Ort"
             onChangeText={handleSearch}
             value={selectedAddress || searchQuery}

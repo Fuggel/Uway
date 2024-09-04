@@ -1,6 +1,9 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Searchbar as PaperSearchbar } from "react-native-paper";
 import { COLORS } from "../../constants/colors-constants";
+import { useSelector } from "react-redux";
+import { mapViewSelectors } from "@/src/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
 
 interface SearchbarProps {
     placeholder: string;
@@ -19,10 +22,12 @@ export default function Searchbar({
     st,
     listSt
 }: SearchbarProps) {
+    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+
     return (
         <View style={st}>
             <PaperSearchbar
-                style={{ backgroundColor: COLORS.white_transparent }}
+                style={dynamicThemeStyles(styles.searchbar, determineTheme(mapStyle))}
                 placeholder={placeholder}
                 onChangeText={onChangeText}
                 value={value}
@@ -35,3 +40,9 @@ export default function Searchbar({
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    searchbar: {
+        backgroundColor: COLORS.white_transparent,
+    },
+});

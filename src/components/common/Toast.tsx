@@ -1,7 +1,10 @@
 import { COLORS } from "@/src/constants/colors-constants";
 import { SIZES } from "@/src/constants/size-constants";
+import { mapViewSelectors } from "@/src/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
+import { useSelector } from "react-redux";
 
 interface ToastProps {
     show: boolean;
@@ -18,6 +21,8 @@ export default function Toast({
     title,
     children,
 }: ToastProps) {
+    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+
     const determineIcon = () => {
         switch (type) {
             case "error":
@@ -47,7 +52,12 @@ export default function Toast({
     return (
         <>
             {show && (
-                <View style={{ ...styles.container, width: !title ? "30%" : undefined }}>
+                <View
+                    style={{
+                        ...dynamicThemeStyles(styles.container, determineTheme(mapStyle)),
+                        width: !title ? "30%" : undefined,
+                    }}
+                >
                     {title && (
                         <View style={styles.header}>
                             <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
