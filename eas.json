@@ -15,8 +15,18 @@
         "simulator": true
       }
     },
-    "production": {},
-    "test": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
+        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN"
+      }
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
+        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN"
+      }
+    }
   },
   "submit": {
     "production": {}
