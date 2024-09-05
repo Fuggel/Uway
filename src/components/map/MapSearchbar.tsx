@@ -22,7 +22,8 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const selectedAddress = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId)?.full_address;
+    const selectedAddressName = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId)?.name;
+    const selectedAddressPlace = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId)?.place_formatted;
 
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
@@ -40,14 +41,13 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
             listSt={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}
             placeholder="Suche nach Ort"
             onChangeText={handleSearch}
-            value={selectedAddress || searchQuery}
+            value={selectedAddressName ? `${selectedAddressName}, ${selectedAddressPlace}` : searchQuery}
         >
             {showSuggestions && suggestions?.suggestions
-                .filter(suggestion => suggestion.full_address)
                 .map((suggestion) => (
                     <ScrollView key={suggestion.mapbox_id}>
                         <TouchableOpacity onPress={() => handleSelectLocation(suggestion.mapbox_id)}>
-                            <Text>{suggestion.full_address}</Text>
+                            <Text>{suggestion.name}, {suggestion.place_formatted}</Text>
                             <Divider style={styles.divider} />
                         </TouchableOpacity>
                     </ScrollView>

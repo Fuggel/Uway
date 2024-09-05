@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     },
     flexBottom: {
         flex: 1,
-        maxHeight: deviceHeight > 1000 ? "10%" : "14%",
+        maxHeight: deviceHeight > 1000 ? "12%" : "14%",
         justifyContent: "center",
         backgroundColor: COLORS.white_transparent,
     },

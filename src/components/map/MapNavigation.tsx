@@ -26,7 +26,8 @@ export default function MapNavigation({
 
     const distance = `${(directions?.distance! / 1000).toFixed(2).replace(".", ",")} km`;
     const duration = `${(directions?.duration! / 60).toFixed(0)} min`;
-    const address = locations?.properties.address;
+    const address = locations?.properties.name;
+    const place = locations?.properties.place_formatted;
 
     return (
         <>
@@ -34,7 +35,7 @@ export default function MapNavigation({
                 <Card st={styles.card}>
                     <View>
                         <Text style={styles.navigationDuration}>{duration}</Text>
-                        <Text style={styles.navigationDistance}>{distance} · {address}</Text>
+                        <Text style={styles.navigationDistance}>{distance} · {address}, {place}</Text>
                     </View>
 
                     <TouchableOpacity>
@@ -51,7 +52,9 @@ export default function MapNavigation({
             {locations && !isNavigationMode && (
                 <Card st={styles.card}>
                     <View style={styles.profileActions}>
-                        <Text style={{ ...styles.navigationDuration, color: COLORS.gray }}>{address}</Text>
+                        <Text style={{ ...styles.navigationDuration, color: COLORS.gray }}>
+                            {address}, {place}
+                        </Text>
                         <SegmentedButtons
                             value={profileType}
                             onValueChange={(value) => dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))}

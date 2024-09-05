@@ -31,6 +31,8 @@ export interface Location {
     properties: {
         address: string;
         full_address: string;
+        name: string;
+        place_formatted: string;
     };
     geometry: Geometry;
 }

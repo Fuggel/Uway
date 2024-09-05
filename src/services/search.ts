@@ -15,7 +15,9 @@ export async function fetchSearchSuggestion(params: {
         queryParams.append("access_token", MAP_CONFIG.accessToken);
         queryParams.append("proximity", `${params.lngLat.lon},${params.lngLat.lat}`);
         queryParams.append("types", "address,street,place,poi,locality,city,district");
+        queryParams.append("limit", "10");
         queryParams.append("language", "de");
+        queryParams.append("country", "DE");
 
         const url = `${MAPBOX_SEARCH_SUGGESTION_API}?${queryParams.toString()}`;
         const response = await axios.get(url);
