@@ -10,12 +10,16 @@ import { IconButton, SegmentedButtons } from "react-native-paper";
 import { ROUTE_PROFILES } from "../../constants/map-constants";
 
 interface MapNavigationProps {
+    remainingDistance: number;
+    remainingTime: number;
     directions: Direction | null;
     locations: Location | null;
     onCancelNavigation: () => void;
 }
 
 export default function MapNavigation({
+    remainingDistance,
+    remainingTime,
     directions,
     locations,
     onCancelNavigation,
@@ -24,8 +28,8 @@ export default function MapNavigation({
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const profileType = useSelector(mapNavigationSelectors.navigationProfile);
 
-    const distance = `${(directions?.distance! / 1000).toFixed(2).replace(".", ",")} km`;
-    const duration = `${(directions?.duration! / 60).toFixed(0)} min`;
+    const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
+    const duration = `${(remainingTime / 60).toFixed(0)} min`;
     const address = locations?.properties.name;
     const place = locations?.properties.place_formatted;
 

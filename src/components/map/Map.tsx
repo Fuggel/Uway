@@ -79,7 +79,7 @@ export default function Map() {
         distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
     });
     const { parkAvailability } = useParkAvailability();
-    const { currentStep, setCurrentStep } = useInstructions(directions, userLocation);
+    const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
@@ -214,7 +214,7 @@ export default function Map() {
 
                 <MapButtons />
 
-                {!directions && (
+                {!directions && userLocation && (
                     <MapSearchbar suggestions={suggestions} />
                 )}
 
@@ -237,11 +237,9 @@ export default function Map() {
                                             color={COLORS.primary}
                                         />
                                     }
-                                    <TouchableOpacity onPress={() => setCurrentStep(index)}>
-                                        <Text style={styles.stepDistance}>
-                                            {step.distance.toFixed(0)} m
-                                        </Text>
-                                    </TouchableOpacity>
+                                    <Text style={styles.stepDistance}>
+                                        {step.distance.toFixed(0)} m
+                                    </Text>
                                 </View>
                             </View>
                         );
@@ -274,6 +272,8 @@ export default function Map() {
             {(locations || directions) && (
                 <View style={styles.flexBottom}>
                     <MapNavigation
+                        remainingDistance={remainingDistance}
+                        remainingTime={remainingTime}
                         directions={directions}
                         locations={locations}
                         onCancelNavigation={handleCancelNavigation}
