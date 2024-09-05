@@ -31,7 +31,12 @@ export async function fetchSearchSuggestion(params: {
 
 export async function fetchSearchLocation(params: { mapboxId: string; sessionToken: string; }) {
     try {
-        const url = `${MAPBOX_SEARCH_RETRIEVE_API}/${params.mapboxId}?session_token=${params.sessionToken}&access_token=${MAP_CONFIG.accessToken}`;
+        const queryParams = new URLSearchParams();
+        queryParams.append("access_token", MAP_CONFIG.accessToken);
+        queryParams.append("session_token", params.sessionToken);
+        queryParams.append("language", "de");
+
+        const url = `${MAPBOX_SEARCH_RETRIEVE_API}/${params.mapboxId}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
         return response.data;
