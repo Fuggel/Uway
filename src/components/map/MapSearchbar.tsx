@@ -22,8 +22,11 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const selectedAddressName = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId)?.name;
-    const selectedAddressPlace = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId)?.place_formatted;
+
+    const selectedSuggestion = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId);
+    const searchbarValue = selectedSuggestion
+        ? `${selectedSuggestion.name} ${selectedSuggestion.place_formatted}`
+        : searchQuery;
 
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
@@ -41,17 +44,24 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
             listSt={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}
             placeholder="Suche nach Ort"
             onChangeText={handleSearch}
-            value={selectedAddressName ? `${selectedAddressName}, ${selectedAddressPlace}` : searchQuery}
+            value={searchbarValue}
         >
-            {showSuggestions && suggestions?.suggestions
-                .map((suggestion) => (
-                    <ScrollView key={suggestion.mapbox_id}>
-                        <TouchableOpacity onPress={() => handleSelectLocation(suggestion.mapbox_id)}>
-                            <Text>{suggestion.name}, {suggestion.place_formatted}</Text>
-                            <Divider style={styles.divider} />
-                        </TouchableOpacity>
-                    </ScrollView>
-                ))}
+            {showSuggestions && suggestions &&
+                <ScrollView>
+                    {suggestions.suggestions
+                        .map((suggestion) => (
+                            <TouchableOpacity
+                                key={suggestion.mapbox_id}
+                                style={styles.scrollContainer}
+                                onPress={() => handleSelectLocation(suggestion.mapbox_id)}
+                            >
+                                <Text>{suggestion.name}, {suggestion.place_formatted}</Text>
+                                <Divider style={styles.divider} />
+                            </TouchableOpacity>
+                        ))
+                    }
+                </ScrollView>
+            }
         </Searchbar>
     );
 }
@@ -61,15 +71,17 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: deviceHeight > 1000 ? "4%" : "7%",
         left: SIZES.spacing.sm,
-        minWidth: "60%",
-        maxWidth: "70%",
+        minWidth: "65%",
+        maxWidth: "75%",
     },
     suggestions: {
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
         marginTop: 2,
-        gap: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
+    },
+    scrollContainer: {
+        marginVertical: 4,
     },
     divider: {
         marginTop: SIZES.spacing.xs,

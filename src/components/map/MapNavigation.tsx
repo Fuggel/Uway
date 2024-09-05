@@ -34,8 +34,11 @@ export default function MapNavigation({
             {directions && isNavigationMode && (
                 <Card st={styles.card}>
                     <View>
-                        <Text style={styles.navigationDuration}>{duration}</Text>
-                        <Text style={styles.navigationDistance}>{distance} · {address}, {place}</Text>
+                        <Text style={styles.navigationDuration}>{duration} · {distance}</Text>
+                        <View style={styles.navigationInfo}>
+                            <Text style={styles.navigationDistance}>{address}</Text>
+                            <Text style={styles.navigationDistance}>{place}</Text>
+                        </View>
                     </View>
 
                     <TouchableOpacity>
@@ -106,6 +109,12 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.lg,
         textAlign: "center",
         fontWeight: "bold",
+    },
+    navigationInfo: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: SIZES.spacing.xs,
+        gap: 2,
     },
     navigationDistance: {
         color: COLORS.gray,

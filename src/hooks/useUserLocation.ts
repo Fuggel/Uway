@@ -38,6 +38,8 @@ export default function useUserLocation() {
                     locationSubscription = await Location.watchPositionAsync(
                         {
                             accuracy: Location.Accuracy.BestForNavigation,
+                            timeInterval: 1000,
+                            distanceInterval: 1,
                         },
                         (location) => {
                             setUserLocation(location);

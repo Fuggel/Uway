@@ -1,9 +1,9 @@
 import { StyleSheet, View } from "react-native";
-import { Searchbar as PaperSearchbar } from "react-native-paper";
 import { COLORS } from "../../constants/colors-constants";
 import { useSelector } from "react-redux";
 import { mapViewSelectors } from "@/src/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
+import SearchBar from "react-native-platform-searchbar";
 
 interface SearchbarProps {
     placeholder: string;
@@ -26,8 +26,10 @@ export default function Searchbar({
 
     return (
         <View style={st}>
-            <PaperSearchbar
-                style={dynamicThemeStyles(styles.searchbar, determineTheme(mapStyle))}
+            <SearchBar
+                platform="default"
+                cancelText={""}
+                inputStyle={dynamicThemeStyles(styles.searchbar, determineTheme(mapStyle))}
                 placeholder={placeholder}
                 onChangeText={onChangeText}
                 value={value}
