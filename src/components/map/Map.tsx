@@ -66,7 +66,11 @@ export default function Map() {
             lon: locations?.geometry.coordinates[0] as number,
             lat: locations?.geometry.coordinates[1] as number
         },
-        isNavigationMode
+        isNavigationMode,
+        userLocation: {
+            lon: userLocation?.coords?.longitude as number,
+            lat: userLocation?.coords?.latitude as number
+        }
     });
     const { speedCameras } = useSpeedCameras({
         userLon: userLocation?.coords?.longitude as number,
