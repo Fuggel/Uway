@@ -4,14 +4,16 @@ import { boundingBox } from "../utils/map-utils";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { SpeedCamera } from "../types/ISpeed";
+import { LonLat } from "../types/IMap";
 
 export async function fetchSpeedCameras(params: {
-    userLon: number,
-    userLat: number,
+    userLonLat: LonLat;
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
-        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLon, params.userLat, params.distance);
+        const { lon, lat } = params.userLonLat;
+
+        const { minLat, minLon, maxLat, maxLon } = boundingBox(lon, lat, params.distance);
 
         if (!minLat || !minLon || !maxLat || !maxLon) {
             return DEFAULT_FC;

@@ -8,10 +8,10 @@ import { SpeedCameraAlert } from "../types/ISpeed";
 import { useSelector } from "react-redux";
 import { mapSpeedCameraSelectors } from "../store/mapSpeedCamera";
 import { REFETCH_INTERVAL } from "../constants/time-constants";
+import { LonLat } from "../types/IMap";
 
 export default function useSpeedCameras(params: {
-    userLon: number,
-    userLat: number,
+    userLonLat: LonLat;
     distance: number;
 }) {
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
@@ -20,11 +20,10 @@ export default function useSpeedCameras(params: {
     const { data, isLoading: loadingSpeedCameras, error: errorSpeedCameras } = useQuery({
         queryKey: ["speedCameras", showSpeedCameras],
         queryFn: () => fetchSpeedCameras({
-            userLon: params.userLon,
-            userLat: params.userLat,
+            userLonLat: params.userLonLat,
             distance: params.distance
         }),
-        enabled: showSpeedCameras && !!params.userLon && !!params.userLat,
+        enabled: showSpeedCameras && !!params.userLonLat,
         refetchInterval: REFETCH_INTERVAL,
     });
 
@@ -33,11 +32,12 @@ export default function useSpeedCameras(params: {
             let closestCamera: SpeedCameraAlert | null = null;
 
             data?.features?.forEach((feature) => {
+                const { lon, lat } = params.userLonLat;
                 const cameraPoint = point([
                     feature.geometry.coordinates[0] as number,
                     feature.geometry.coordinates[1] as number,
                 ]);
-                const userPoint = point([params.userLon, params.userLat]);
+                const userPoint = point([lon, lat]);
                 const distanceToCamera = distance(userPoint, cameraPoint, { units: "meters" });
 
                 const isWithinWarningDistance = distanceToCamera <= SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
@@ -52,7 +52,7 @@ export default function useSpeedCameras(params: {
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
         }
-    }, [data, params.userLon, params.userLat]);
+    }, [data, params.userLonLat]);
 
     return { speedCameras, loadingSpeedCameras, errorSpeedCameras };
 }

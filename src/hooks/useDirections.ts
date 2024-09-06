@@ -10,10 +10,10 @@ import { distance, nearestPointOnLine } from "@turf/turf";
 
 export default function useDirections(params: {
     profile: string;
+    userLocation: LonLat;
     startLngLat: LonLat;
     destinationLngLat: LonLat;
     isNavigationMode: boolean;
-    userLocation: LonLat;
 }) {
     const [directions, setDirections] = useState<Direction | null>(null);
 

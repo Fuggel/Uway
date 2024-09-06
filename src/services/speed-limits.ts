@@ -1,17 +1,18 @@
 import axios from "axios";
 import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
-import { Feature, FeatureCollection, Geometry, GeometryCollection, LineString, Point } from "@turf/helpers";
+import { Feature, FeatureCollection, Geometry, GeometryCollection, LineString } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { SpeedLimit } from "../types/ISpeed";
+import { LonLat } from "../types/IMap";
 
 export async function fetchSpeedLimits(params: {
-    userLon: number,
-    userLat: number,
+    userLonLat: LonLat;
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
-        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLon, params.userLat, params.distance);
+        const { lon, lat } = params.userLonLat;
+        const { minLat, minLon, maxLat, maxLon } = boundingBox(lon, lat, params.distance);
 
         if (!minLat || !minLon || !maxLat || !maxLon) {
             return DEFAULT_FC;

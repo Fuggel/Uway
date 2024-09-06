@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
-import { Dimensions, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, Keyboard, StyleSheet, Text, View } from "react-native";
 import { arrowDirection, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
@@ -29,6 +29,7 @@ import { Instruction } from "@/src/types/INavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUserLocation from "@/src/hooks/useUserLocation";
 import { determineTheme } from "@/src/utils/theme-utils";
+import { LonLat } from "@/src/types/IMap";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -47,41 +48,25 @@ export default function Map() {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
+    const userLonLat: LonLat = {
+        lon: userLocation?.coords?.longitude as number,
+        lat: userLocation?.coords?.latitude as number,
+    };
+
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
-    const { suggestions } = useSearchSuggestion({
-        query: searchQuery,
-        sessionToken,
-        lngLat: {
-            lon: userLocation?.coords?.longitude as number,
-            lat: userLocation?.coords?.latitude as number,
-        }
-    });
+    const { suggestions } = useSearchSuggestion({ query: searchQuery, sessionToken, lngLat: userLonLat });
     const { directions, setDirections, loadingDirections } = useDirections({
         profile: navigationProfile,
-        startLngLat: {
-            lon: userLocation?.coords?.longitude as number,
-            lat: userLocation?.coords?.latitude as number
-        },
+        userLocation: userLonLat,
+        startLngLat: userLonLat,
         destinationLngLat: {
             lon: locations?.geometry.coordinates[0] as number,
             lat: locations?.geometry.coordinates[1] as number
         },
         isNavigationMode,
-        userLocation: {
-            lon: userLocation?.coords?.longitude as number,
-            lat: userLocation?.coords?.latitude as number
-        }
     });
-    const { speedCameras } = useSpeedCameras({
-        userLon: userLocation?.coords?.longitude as number,
-        userLat: userLocation?.coords?.latitude as number,
-        distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
-    });
-    const { speedLimits } = useSpeedLimits({
-        userLon: userLocation?.coords?.longitude as number,
-        userLat: userLocation?.coords?.latitude as number,
-        distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
-    });
+    const { speedCameras } = useSpeedCameras({ userLonLat, distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS });
+    const { speedLimits } = useSpeedLimits({ userLonLat, distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS });
     const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
 

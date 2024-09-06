@@ -8,10 +8,10 @@ import { fetchSpeedLimits } from "../services/speed-limits";
 import { SpeedLimitAlert } from "../types/ISpeed";
 import { DEFAULT_FC, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS } from "../constants/map-constants";
 import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
+import { LonLat } from "../types/IMap";
 
 export default function useSpeedLimits(params: {
-    userLon: number,
-    userLat: number,
+    userLonLat: LonLat;
     distance: number;
 }) {
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
@@ -19,8 +19,8 @@ export default function useSpeedLimits(params: {
 
     const { data, isLoading: loadingSpeedLimits, error: errorSpeedLimits } = useQuery({
         queryKey: ["speedLimits", showSpeedLimits],
-        queryFn: () => fetchSpeedLimits({ userLon: params.userLon, userLat: params.userLat, distance: params.distance }),
-        enabled: showSpeedLimits && !!params.userLon && !!params.userLat,
+        queryFn: () => fetchSpeedLimits({ userLonLat: params.userLonLat, distance: params.distance }),
+        enabled: showSpeedLimits && !!params.userLonLat,
         refetchInterval: REFETCH_INTERVAL,
     });
 
@@ -30,7 +30,9 @@ export default function useSpeedLimits(params: {
 
             data?.features?.forEach((feature) => {
                 if (feature.geometry.type === "LineString") {
-                    const userPoint = point([params.userLon, params.userLat]);
+                    const { lon, lat } = params.userLonLat;
+
+                    const userPoint = point([lon, lat]);
                     const line = lineString(feature.geometry.coordinates as [[number, number]]);
                     const closestPoint = nearestPointOnLine(line, userPoint);
                     const distanceToLine = distance(userPoint, closestPoint, { units: "meters" });
@@ -48,7 +50,7 @@ export default function useSpeedLimits(params: {
         } else {
             setSpeedLimits({ data: DEFAULT_FC, alert: null });
         }
-    }, [data, params.userLon, params.userLat]);
+    }, [data, params.userLonLat]);
 
     return { speedLimits, loadingSpeedLimits, errorSpeedLimits };
 }
