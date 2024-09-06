@@ -35,9 +35,10 @@ export default function SymbolLayer({
             <Layer
                 id={layerId}
                 style={{
-                    ...style,
                     iconImage,
+                    iconAllowOverlap: true,
                     iconSize: iconSize ?? 0.5,
+                    ...style,
                 }}
             />
         </ShapeSource>
