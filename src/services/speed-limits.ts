@@ -1,7 +1,7 @@
 import axios from "axios";
 import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
-import { Feature, FeatureCollection, Geometry, GeometryCollection, LineString, Point } from "@turf/helpers";
+import { Feature, FeatureCollection, Geometry, GeometryCollection, LineString } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { SpeedLimitProperties } from "../types/ISpeed";
 import { Overpass } from "../types/IOverpass";

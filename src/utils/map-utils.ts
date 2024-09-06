@@ -1,5 +1,6 @@
+import { Feature, Point } from "@turf/helpers";
 import { MapboxStyle } from "../types/IMap";
-import { ManeuverType, Instruction } from "../types/INavigation";
+import { ManeuverType, Instruction, Incident } from "../types/INavigation";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
@@ -93,4 +94,31 @@ export function determineSpeedLimitIcon(speedLimit: string) {
         default:
             return require(`${assetsUrl}/speed-limit-unknown.png`);
     }
+}
+
+export function incidentsToFeatureCollection(incidents: Incident[]) {
+    const features = incidents.map((incident) => {
+        return {
+            type: "Feature",
+            properties: {
+                id: incident.id,
+                type: incident.type,
+                description: incident.description,
+                impact: incident.impact,
+                subType: incident.sub_type,
+            },
+            geometry: {
+                type: "Point",
+                coordinates: [
+                    (incident.west + incident.east) / 2,
+                    (incident.south + incident.north) / 2,
+                ],
+            },
+        };
+    });
+
+    return {
+        type: "FeatureCollection",
+        features: features as Feature<Point>[],
+    };
 }

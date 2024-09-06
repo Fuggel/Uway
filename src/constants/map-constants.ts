@@ -73,7 +73,13 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
-    "charging-station": require(`${MAP_ICONS_URL}/charging-station.png`),
+    "e-charging-station": require(`${MAP_ICONS_URL}/e-charging-station.png`),
+    "caution": require(`${MAP_ICONS_URL}/caution.png`),
+    "accident": require(`${MAP_ICONS_URL}/accident.png`),
+    "congestion": require(`${MAP_ICONS_URL}/congestion.png`),
+    "construction": require(`${MAP_ICONS_URL}/construction.png`),
+    "disabled-vehicle": require(`${MAP_ICONS_URL}/disabled-vehicle.png`),
+    "road-closure": require(`${MAP_ICONS_URL}/road-closure.png`),
 };
 
 export const ROUTE_PROFILES: RouteProfile[] = [

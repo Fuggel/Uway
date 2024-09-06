@@ -17,7 +17,7 @@ export enum ManeuverType {
 }
 
 export enum RouteProfileType {
-    DRIVING = "driving",
+    DRIVING = "driving-traffic",
     WALKING = "walking",
     CYCLING = "cycling",
 }
@@ -34,4 +34,28 @@ export interface Direction {
 export interface RouteProfile {
     value: RouteProfileType;
     icon: string;
+}
+
+export interface Incident {
+    id: string;
+    type: IncidentType;
+    creation_time: string;
+    start_time: string;
+    end_time: string;
+    description: string;
+    long_description: string;
+    impact: string;
+    sub_type: string;
+    south: number;
+    west: number;
+    north: number;
+    east: number;
+}
+
+export enum IncidentType {
+    ACCIDENT = "accident",
+    CONGESTION = "congestion",
+    CONSTRUCTION = "construction",
+    DISABLED_VEHICLE = "disabled_vehicle",
+    ROAD_CLOSURE = "road_closure",
 }

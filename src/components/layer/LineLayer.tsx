@@ -32,10 +32,13 @@ export default function LineLayer({
             <Layer
                 id={layerId}
                 style={{
-                    ...style,
+                    iconAllowOverlap: true,
                     lineColor: COLORS.secondary,
                     lineWidth: 5,
                     lineOpacity: 0.8,
+                    lineCap: "round",
+                    lineJoin: "round",
+                    ...style,
                 }}
             />
         </ShapeSource>

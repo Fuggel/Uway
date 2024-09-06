@@ -57,7 +57,7 @@ export default function Map() {
             lat: userLocation?.coords?.latitude as number,
         }
     });
-    const { directions, setDirections, loadingDirections } = useDirections({
+    const { directions, setDirections, incidents, loadingDirections } = useDirections({
         profile: navigationProfile,
         startLngLat: {
             lon: userLocation?.coords?.longitude as number,
@@ -154,15 +154,33 @@ export default function Map() {
                             sourceId="route-source"
                             layerId="route-layer"
                             coordinates={directions.geometry.coordinates}
+                            style={{
+                                lineWidth: [
+                                    "interpolate",
+                                    [
+                                        "exponential",
+                                        1.5
+                                    ],
+                                    [
+                                        "zoom"
+                                    ],
+                                    10,
+                                    5,
+                                    15,
+                                    8,
+                                    20,
+                                    20,
+                                ],
+                            }}
                         />
                     )}
                     {chargingStations?.features?.map((feature, i) => (
                         <SymbolLayer
                             key={i}
-                            sourceId={`charging-station-source-${i}`}
-                            layerId={`charging-station-layer-${i}`}
+                            sourceId={`e-charging-station-source-${i}`}
+                            layerId={`e-charging-station-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
-                            iconImage="charging-station"
+                            iconImage="e-charging-station"
                             style={{
                                 textField: `
                                 Kapazität: ${feature.properties?.capacity}
@@ -227,6 +245,39 @@ export default function Map() {
                                 0.4,
                                 20,
                                 0.6,
+                            ]}
+                        />
+                    ))}
+                    {incidents?.features?.map((feature, i) => (
+                        <SymbolLayer
+                            key={i}
+                            sourceId={`incident-source-${i}`}
+                            layerId={`incident-layer-${i}`}
+                            coordinates={(feature.geometry as Point).coordinates}
+                            properties={feature.properties}
+                            iconSize={[
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                0.5,
+                                20,
+                                0.7,
+                            ]}
+                            iconImage={[
+                                "match",
+                                ["get", "type"],
+                                "accident",
+                                "accident",
+                                "congestion",
+                                "congestion",
+                                "construction",
+                                "construction",
+                                "disabled_vehicle",
+                                "disabled-vehicle",
+                                "road_closure",
+                                "road-closure",
+                                "caution",
                             ]}
                         />
                     ))}
