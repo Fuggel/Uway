@@ -4,7 +4,7 @@ export default ({ config }) => {
         ...config,
         name: "NavSync",
         slug: "NavSync",
-        version: "1.1.7",
+        version: "1.2.0",
         orientation: "portrait",
         icon: "./src/assets/images/build/icon.png",
         scheme: "myapp",
@@ -20,7 +20,7 @@ export default ({ config }) => {
             backgroundColor: "#ffffff"
         },
         ios: {
-            buildNumber: "1.1.7",
+            buildNumber: "1.2.0",
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.NavSync"
         },
