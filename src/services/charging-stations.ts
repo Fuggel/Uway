@@ -3,10 +3,10 @@ import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
-import { SpeedCameraProperties } from "../types/ISpeed";
 import { Overpass } from "../types/IOverpass";
+import { ChargingStationProperties } from "../types/IChargingStation";
 
-export async function fetchSpeedCameras(params: {
+export async function fetchChargingStations(params: {
     userLon: number,
     userLat: number,
     distance: number;
@@ -20,8 +20,10 @@ export async function fetchSpeedCameras(params: {
 
         const overpassQuery = `
             [out:json];
-            node["highway"="speed_camera"](${minLat},${minLon},${maxLat},${maxLon});
+            node["amenity"="charging_station"](${minLat},${minLon},${maxLat},${maxLon});
             out body;
+            >;
+            out skel qt;
         `;
 
         const url = `${OPENSTREETMAP_API}?data=${encodeURIComponent(overpassQuery)}`;
@@ -29,12 +31,12 @@ export async function fetchSpeedCameras(params: {
 
         return convertToGeoJSON(response.data) as FeatureCollection<Geometry, GeometryCollection>;
     } catch (error) {
-        console.log(`Error fetching speed cameras: ${error}`);
+        console.log(`Error fetching charging stations: ${error}`);
         return DEFAULT_FC;
     }
 }
 
-function convertToGeoJSON(overpassData: Overpass<SpeedCameraProperties>): FeatureCollection {
+function convertToGeoJSON(overpassData: Overpass<ChargingStationProperties>): FeatureCollection {
     return {
         type: "FeatureCollection",
         features: overpassData.elements.map((element) => ({

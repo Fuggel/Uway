@@ -3,7 +3,8 @@ import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
 import { Feature, FeatureCollection, Geometry, GeometryCollection, LineString, Point } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
-import { SpeedLimit } from "../types/ISpeed";
+import { SpeedLimitProperties } from "../types/ISpeed";
+import { Overpass } from "../types/IOverpass";
 
 export async function fetchSpeedLimits(params: {
     userLon: number,
@@ -38,7 +39,7 @@ export async function fetchSpeedLimits(params: {
     }
 }
 
-function convertToGeoJSON(data: SpeedLimit) {
+function convertToGeoJSON(data: Overpass<SpeedLimitProperties>) {
     const features = data.elements
         .filter(element => element.type === "way")
         .map(way => {
