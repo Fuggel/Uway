@@ -6,12 +6,20 @@ import mapNavigationReduce from "./mapNavigation";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
 import mapSpeedLimitReduce from "./mapSpeedLimit";
 import mapParkAvailabilityReduce from "./mapParkAvailability";
+import mapChargingStationReduce from "./mapChargingStation";
 import mapTestingReduce from "./mapTesting";
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["mapView", "mapSpeedCamera", "mapSpeedLimit", "mapParkAvailability", "mapTesting"],
+    whitelist: [
+        "mapView",
+        "mapSpeedCamera",
+        "mapSpeedLimit",
+        "mapParkAvailability",
+        "mapChargingStation",
+        "mapTesting"
+    ],
 };
 
 const reducer = combineReducers({
@@ -20,6 +28,7 @@ const reducer = combineReducers({
     mapSpeedCamera: mapSpeedCameraReduce,
     mapSpeedLimit: mapSpeedLimitReduce,
     mapParkAvailability: mapParkAvailabilityReduce,
+    mapChargingStation: mapChargingStationReduce,
     mapTesting: mapTestingReduce,
 });
 

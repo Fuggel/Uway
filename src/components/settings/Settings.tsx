@@ -16,6 +16,7 @@ import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/src/store/mapSpe
 import { mapTestingActions, mapTestingSelectors } from "@/src/store/mapTesting";
 import { TESTING_ROUTES } from "@/src/constants/route-testing-constants";
 import { Route } from "@/src/types/IMock";
+import { mapChargingStationActions, mapChargingStationSelectors } from "@/src/store/mapChargingStation";
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -25,6 +26,7 @@ export default function Settings() {
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
+    const showChargingStations = useSelector(mapChargingStationSelectors.showChargingStation);
     const { open, setOpen } = useContext(SettingsContext);
 
     return (
@@ -110,6 +112,17 @@ export default function Settings() {
                                     trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability));
+                                    }}
+                                />
+                            </SettingsItem>
+                            <SettingsItem title="E-Ladestationen">
+                                <Switch
+                                    value={showChargingStations}
+                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
+                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    onValueChange={() => {
+                                        dispatch(mapChargingStationActions.setShowChargingStation(!showChargingStations));
                                     }}
                                 />
                             </SettingsItem>

@@ -73,6 +73,7 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
+    "charging-station": require(`${MAP_ICONS_URL}/charging-station.png`),
 };
 
 export const ROUTE_PROFILES: RouteProfile[] = [
@@ -98,3 +99,5 @@ export const SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS = 10000;
 export const SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS = 500;
 
 export const SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS = 150;
+
+export const SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS = 5000;

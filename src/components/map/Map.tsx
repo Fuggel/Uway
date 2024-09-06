@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
-import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
-import { Dimensions, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
+import { Dimensions, Image, Keyboard, StyleSheet, Text, View } from "react-native";
 import { arrowDirection, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
@@ -29,6 +29,7 @@ import { Instruction } from "@/src/types/INavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUserLocation from "@/src/hooks/useUserLocation";
 import { determineTheme } from "@/src/utils/theme-utils";
+import useChargingStations from "@/src/hooks/useChargingStations";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -81,6 +82,11 @@ export default function Map() {
         userLon: userLocation?.coords?.longitude as number,
         userLat: userLocation?.coords?.latitude as number,
         distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
+    });
+    const { chargingStations } = useChargingStations({
+        userLon: userLocation?.coords?.longitude as number,
+        userLat: userLocation?.coords?.latitude as number,
+        distance: SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS
     });
     const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
@@ -150,6 +156,33 @@ export default function Map() {
                             coordinates={directions.geometry.coordinates}
                         />
                     )}
+                    {chargingStations?.features?.map((feature, i) => (
+                        <SymbolLayer
+                            key={i}
+                            sourceId={`charging-station-source-${i}`}
+                            layerId={`charging-station-layer-${i}`}
+                            coordinates={(feature.geometry as Point).coordinates}
+                            iconImage="charging-station"
+                            style={{
+                                textField: `
+                                Kapazität: ${feature.properties?.capacity}
+                            `,
+                                textSize: SIZES.fontSize.sm,
+                                textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
+                                textOffset: [0, 2],
+                            }}
+                            iconSize={[
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                0.5,
+                                20,
+                                0.7,
+                            ]}
+                        />
+                    ))
+                    }
                     {parkAvailability?.features?.map((feature, i) => (
                         <View key={i}>
                             <SymbolLayer
