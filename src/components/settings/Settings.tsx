@@ -17,6 +17,7 @@ import { mapTestingActions, mapTestingSelectors } from "@/src/store/mapTesting";
 import { TESTING_ROUTES } from "@/src/constants/route-testing-constants";
 import { Route } from "@/src/types/IMock";
 import { mapChargingStationActions, mapChargingStationSelectors } from "@/src/store/mapChargingStation";
+import { mapGasStationActions, mapGasStationSelectors } from "@/src/store/mapGasStation";
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -27,6 +28,7 @@ export default function Settings() {
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const showChargingStations = useSelector(mapChargingStationSelectors.showChargingStation);
+    const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const { open, setOpen } = useContext(SettingsContext);
 
     return (
@@ -47,8 +49,7 @@ export default function Settings() {
                                 <SettingsItem title="Route simulieren">
                                     <Switch
                                         value={simulateRoute}
-                                        style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
-                                        thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                        thumbColor={simulateRoute ? COLORS.white : COLORS.white}
                                         trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                         onValueChange={() => {
                                             dispatch(mapTestingActions.setSimulateRoute(!simulateRoute));
@@ -85,8 +86,7 @@ export default function Settings() {
                             <SettingsItem title="Blitzer">
                                 <Switch
                                     value={showSpeedCameras}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
-                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    thumbColor={showSpeedCameras ? COLORS.white : COLORS.white}
                                     trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
@@ -96,7 +96,6 @@ export default function Settings() {
                             <SettingsItem title="Geschwindigkeitsbegrenzungen">
                                 <Switch
                                     value={showSpeedLimits}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
                                     thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
                                     trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
@@ -107,8 +106,7 @@ export default function Settings() {
                             <SettingsItem title="Parkplätze & Parkhäuser">
                                 <Switch
                                     value={showParkAvailability}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
-                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    thumbColor={showParkAvailability ? COLORS.white : COLORS.white}
                                     trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability));
@@ -118,11 +116,20 @@ export default function Settings() {
                             <SettingsItem title="E-Ladestationen">
                                 <Switch
                                     value={showChargingStations}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.1 }] }}
-                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
+                                    thumbColor={showChargingStations ? COLORS.white : COLORS.white}
                                     trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapChargingStationActions.setShowChargingStation(!showChargingStations));
+                                    }}
+                                />
+                            </SettingsItem>
+                            <SettingsItem title="Tankstellen">
+                                <Switch
+                                    value={showGasStations}
+                                    thumbColor={showGasStations ? COLORS.white : COLORS.white}
+                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    onValueChange={() => {
+                                        dispatch(mapGasStationActions.setShowGasStation(!showGasStations));
                                     }}
                                 />
                             </SettingsItem>

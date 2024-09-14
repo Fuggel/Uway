@@ -8,3 +8,6 @@ export const OPENSTREETMAP_API = "https://overpass-api.de/api/interpreter";
 
 // ParkAPI
 export const PARK_API = "https://api.parkendd.de";
+
+// Tankerkoenig
+export const TANKERKOENIG_API = "https://creativecommons.tankerkoenig.de/json/list.php";

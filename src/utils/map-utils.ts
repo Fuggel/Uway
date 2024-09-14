@@ -1,6 +1,7 @@
 import { Feature, Point } from "@turf/helpers";
 import { MapboxStyle } from "../types/IMap";
 import { Incident, ModifierType } from "../types/INavigation";
+import { GasStation } from "../types/IGasStation";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
@@ -126,4 +127,20 @@ export function incidentsToFeatureCollection(incidents: Incident[]) {
         type: "FeatureCollection",
         features: features as Feature<Point>[],
     };
+}
+
+export function getStationIcon(stations: GasStation[], price: number) {
+    const iconName = "gas-station";
+
+    const totalPrice = stations.reduce((sum, station) => sum + station.diesel, 0);
+    const avgPrice = totalPrice / stations.length;
+    const diffPercentage = ((price - avgPrice) / avgPrice) * 100;
+
+    if (diffPercentage >= 5) {
+        return `${iconName}-expensive`;
+    } else if (diffPercentage <= -5) {
+        return `${iconName}-cheap`;
+    } else {
+        return `${iconName}-average`;
+    }
 }

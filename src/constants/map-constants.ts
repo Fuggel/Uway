@@ -80,6 +80,9 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
     "construction": require(`${MAP_ICONS_URL}/construction.png`),
     "disabled-vehicle": require(`${MAP_ICONS_URL}/disabled-vehicle.png`),
     "road-closure": require(`${MAP_ICONS_URL}/road-closure.png`),
+    "gas-station-expensive": require(`${MAP_ICONS_URL}/gas-station-expensive.png`),
+    "gas-station-average": require(`${MAP_ICONS_URL}/gas-station-average.png`),
+    "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station-cheap.png`),
 };
 
 export const ROUTE_PROFILES: RouteProfile[] = [
@@ -98,12 +101,9 @@ export const ROUTE_PROFILES: RouteProfile[] = [
 ];
 
 export const ROUTE_DEVIATION_THRESHOLD_IN_METERS = 50;
-
 export const NEXT_STEP_THRESHOLD_IN_METERS = 20;
-
 export const SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS = 10000;
 export const SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS = 500;
-
 export const SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS = 150;
-
 export const SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS = 5000;
+export const SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS = 4;
