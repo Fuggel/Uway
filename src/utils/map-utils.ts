@@ -1,6 +1,6 @@
 import { Feature, Point } from "@turf/helpers";
 import { MapboxStyle } from "../types/IMap";
-import { ManeuverType, Instruction, Incident } from "../types/INavigation";
+import { Incident, ModifierType } from "../types/INavigation";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
@@ -27,15 +27,20 @@ export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     }
 }
 
-export function arrowDirection(step: Instruction) {
-    switch (step.driving_side) {
-        case ManeuverType.CONTINUE:
-        case ManeuverType.STRAIGHT:
-            return "up";
-        case ManeuverType.LEFT:
-            return "left";
-        case ManeuverType.RIGHT:
-            return "right";
+export function arrowDirection(modifier: ModifierType) {
+    switch (modifier) {
+        case ModifierType.U_TURN:
+            return "arrow-u-down-left-bold";
+        case ModifierType.SHARP_RIGHT:
+        case ModifierType.RIGHT:
+        case ModifierType.SLIGHT_RIGHT:
+            return "arrow-right-top-bold";
+        case ModifierType.STRAIGHT:
+            return "arrow-up-thick";
+        case ModifierType.SHARP_LEFT:
+        case ModifierType.LEFT:
+        case ModifierType.SLIGHT_LEFT:
+            return "arrow-left-top-bold";
         default:
             return undefined;
     }

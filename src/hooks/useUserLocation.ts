@@ -8,6 +8,7 @@ export default function useUserLocation() {
     const simulateRoute = useSelector(mapTestingSelectors.simulateRoute);
     const selectedRoute = useSelector(mapTestingSelectors.selectedRoute);
     const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
+    const [userHeading, setUserHeading] = useState<number | null>(null);
 
     useEffect(() => {
         let locationSubscription: Location.LocationSubscription | null = null;
@@ -16,7 +17,7 @@ export default function useUserLocation() {
         const startSimulation = () => {
             const simulateLocation = simulateUserLocation(selectedRoute);
             intervalId = setInterval(() => {
-                simulateLocation({ setUserLocation });
+                simulateLocation({ setUserLocation, userHeading: userHeading ?? 0 });
             }, 1500);
         };
 
@@ -33,6 +34,13 @@ export default function useUserLocation() {
             } else {
                 cancelSimulation();
                 const { status } = await Location.requestForegroundPermissionsAsync();
+                await Location.watchHeadingAsync(
+                    (heading) => {
+                        if (heading.trueHeading !== null && heading.accuracy >= 1) {
+                            setUserHeading(heading.trueHeading);
+                        }
+                    },
+                );
 
                 if (status === Location.PermissionStatus.GRANTED) {
                     locationSubscription = await Location.watchPositionAsync(
@@ -63,5 +71,5 @@ export default function useUserLocation() {
         };
     }, [simulateRoute, selectedRoute]);
 
-    return { userLocation };
+    return { userLocation, userHeading };
 }

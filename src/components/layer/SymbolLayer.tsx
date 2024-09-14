@@ -5,20 +5,31 @@ interface SymbolLayerProps {
     sourceId: string;
     layerId: string;
     coordinates: number[];
-    iconImage: string | any[];
     properties?: any;
-    iconSize?: number | any[];
-    style?: any;
+    style?: {
+        textField?: string | any[];
+        textSize?: number | any[];
+        textColor?: string | any[];
+        textOffset?: number[] | any[];
+        iconImage?: string | any[];
+        iconAllowOverlap?: boolean | any[];
+        iconRotationAlignment?: "map" | "viewport" | any[];
+        iconPitchAlignment?: "map" | "viewport" | any[];
+        iconSize?: number | any[];
+        iconRotate?: number | any[];
+    };
+    belowLayerId?: string;
+    aboveLayerId?: string;
 }
 
 export default function SymbolLayer({
     sourceId,
     layerId,
     coordinates,
-    iconImage,
     properties = {},
-    iconSize,
     style,
+    belowLayerId,
+    aboveLayerId,
 }: SymbolLayerProps) {
     return (
         <ShapeSource
@@ -35,11 +46,14 @@ export default function SymbolLayer({
             <Layer
                 id={layerId}
                 style={{
-                    iconImage,
+                    iconImage: style?.iconImage ?? "marker-15",
                     iconAllowOverlap: true,
-                    iconSize: iconSize ?? 0.5,
+                    iconSize: style?.iconSize ?? 0.5,
+                    iconRotate: style?.iconRotate ?? 0,
                     ...style,
                 }}
+                belowLayerID={belowLayerId ?? undefined}
+                aboveLayerID={aboveLayerId ?? undefined}
             />
         </ShapeSource>
     );

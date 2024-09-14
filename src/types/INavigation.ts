@@ -5,6 +5,7 @@ export interface Instruction {
         type: ManeuverType;
         instruction: string;
         location: number[];
+        modifier: ModifierType;
     };
     name: string;
 }
@@ -58,4 +59,15 @@ export enum IncidentType {
     CONSTRUCTION = "construction",
     DISABLED_VEHICLE = "disabled_vehicle",
     ROAD_CLOSURE = "road_closure",
+}
+
+export enum ModifierType {
+    U_TURN = "uturn",
+    SHARP_RIGHT = "sharp right",
+    RIGHT = "right",
+    SLIGHT_RIGHT = "slight right",
+    STRAIGHT = "straight",
+    SLIGHT_LEFT = "slight left",
+    LEFT = "left",
+    SHARP_LEFT = "sharp left",
 }

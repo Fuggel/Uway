@@ -19,7 +19,7 @@ export default function useDirections(params: {
     const [incidents, setIncidents] = useState<FeatureCollection<Point> | null>(null);
 
     const { data, isLoading: loadingDirections, error: errorDirections } = useQuery({
-        queryKey: ["directions", params.profile, params.isNavigationMode],
+        queryKey: ["directions", directions, params.profile, params.isNavigationMode],
         queryFn: () => fetchDirections({
             profile: params.profile,
             startLngLat: params.startLngLat,
