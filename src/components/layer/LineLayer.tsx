@@ -8,6 +8,8 @@ interface LineLayerProps {
     coordinates: number[][];
     properties?: any;
     style?: any;
+    belowLayerId?: string;
+    aboveLayerId?: string;
 }
 
 export default function LineLayer({
@@ -16,6 +18,8 @@ export default function LineLayer({
     coordinates,
     properties = {},
     style,
+    belowLayerId,
+    aboveLayerId,
 }: LineLayerProps) {
     return (
         <ShapeSource
@@ -40,6 +44,8 @@ export default function LineLayer({
                     lineJoin: "round",
                     ...style,
                 }}
+                belowLayerID={belowLayerId ?? "user-location-layer"}
+                aboveLayerID={aboveLayerId ?? undefined}
             />
         </ShapeSource>
     );

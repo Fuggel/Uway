@@ -39,7 +39,7 @@ const deviceHeight = Dimensions.get("window").height;
 
 export default function Map() {
     const dispatch = useDispatch();
-    const { userLocation } = useUserLocation();
+    const { userLocation, userHeading } = useUserLocation();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -111,7 +111,13 @@ export default function Map() {
             dispatch(mapNavigationActions.setSearchQuery(""));
             setCurrentStep(0);
         }
-    }, [isNavigationMode]);
+    }, [isNavigationMode, directions, locations]);
+
+    useEffect(() => {
+        if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
+            handleCancelNavigation();
+        }
+    }, [currentStep, directions]);
 
     return (
         <>
@@ -137,7 +143,7 @@ export default function Map() {
                         animationMode="easeTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                         zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
-                        heading={userLocation && (tracking || navigationView) ? userLocation.coords?.heading as number : undefined}
+                        heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}
                         centerCoordinate={userLocation && (tracking || navigationView) ?
                             [userLocation.coords.longitude, userLocation.coords.latitude] :
                             [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
@@ -180,24 +186,25 @@ export default function Map() {
                             sourceId={`e-charging-station-source-${i}`}
                             layerId={`e-charging-station-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
-                            iconImage="e-charging-station"
                             style={{
+                                iconImage: "e-charging-station",
                                 textField: `
-                                Kapazität: ${feature.properties?.capacity}
+                                Kapazität: ${feature.properties?.capacity ?? "Unbekannt"}
                             `,
                                 textSize: SIZES.fontSize.sm,
                                 textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
                                 textOffset: [0, 2],
+                                iconSize: [
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.5,
+                                    20,
+                                    0.7,
+                                ],
                             }}
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.5,
-                                20,
-                                0.7,
-                            ]}
+                            belowLayerId="user-location-layer"
                         />
                     ))
                     }
@@ -207,9 +214,9 @@ export default function Map() {
                                 sourceId={`parking-availability-source-${i}`}
                                 layerId={`parking-availability-layer-${i}`}
                                 coordinates={(feature.geometry as Point).coordinates}
-                                iconImage="parking-availability"
                                 properties={feature.properties}
                                 style={{
+                                    iconImage: "parking-availability",
                                     textField: `
                                     ${feature.properties?.name}
                                     ${feature.properties?.free} / ${feature.properties?.total}
@@ -217,16 +224,17 @@ export default function Map() {
                                     textSize: SIZES.fontSize.sm,
                                     textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
                                     textOffset: [0, 2.5],
+                                    iconSize: [
+                                        "interpolate",
+                                        ["linear"],
+                                        ["zoom"],
+                                        10,
+                                        0.4,
+                                        20,
+                                        0.6,
+                                    ]
                                 }}
-                                iconSize={[
-                                    "interpolate",
-                                    ["linear"],
-                                    ["zoom"],
-                                    10,
-                                    0.4,
-                                    20,
-                                    0.6,
-                                ]}
+                                belowLayerId="user-location-layer"
                             />
                         </View>
                     ))}
@@ -236,16 +244,19 @@ export default function Map() {
                             sourceId={`speed-camera-source-${i}`}
                             layerId={`speed-camera-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
-                            iconImage="speed-camera"
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.4,
-                                20,
-                                0.6,
-                            ]}
+                            style={{
+                                iconImage: "speed-camera",
+                                iconSize: [
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.4,
+                                    20,
+                                    0.6,
+                                ],
+                            }}
+                            belowLayerId="user-location-layer"
                         />
                     ))}
                     {incidents?.features?.map((feature, i) => (
@@ -255,30 +266,33 @@ export default function Map() {
                             layerId={`incident-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
                             properties={feature.properties}
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.5,
-                                20,
-                                0.7,
-                            ]}
-                            iconImage={[
-                                "match",
-                                ["get", "type"],
-                                "accident",
-                                "accident",
-                                "congestion",
-                                "congestion",
-                                "construction",
-                                "construction",
-                                "disabled_vehicle",
-                                "disabled-vehicle",
-                                "road_closure",
-                                "road-closure",
-                                "caution",
-                            ]}
+                            style={{
+                                iconSize: [
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.5,
+                                    20,
+                                    0.7,
+                                ],
+                                iconImage: [
+                                    "match",
+                                    ["get", "type"],
+                                    "accident",
+                                    "accident",
+                                    "congestion",
+                                    "congestion",
+                                    "construction",
+                                    "construction",
+                                    "disabled_vehicle",
+                                    "disabled-vehicle",
+                                    "road_closure",
+                                    "road-closure",
+                                    "caution",
+                                ],
+                            }}
+                            belowLayerId="user-location-layer"
                         />
                     ))}
                     {userLocation && (
@@ -286,16 +300,25 @@ export default function Map() {
                             sourceId="user-location"
                             layerId="user-location-layer"
                             coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
-                            iconImage="user-location"
-                            iconSize={[
-                                "interpolate",
-                                ["linear"],
-                                ["zoom"],
-                                10,
-                                0.4,
-                                20,
-                                0.6,
-                            ]}
+                            properties={{ heading: userHeading, ...userLocation }}
+                            style={{
+                                iconImage: "user-location",
+                                iconRotationAlignment: "map",
+                                iconPitchAlignment: "map",
+                                iconSize: [
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.4,
+                                    20,
+                                    0.6,
+                                ],
+                                iconRotate: [
+                                    "get",
+                                    "heading",
+                                ],
+                            }}
                         />
                     )}
                 </MapView>
@@ -309,7 +332,7 @@ export default function Map() {
                 {directions?.legs[0].steps
                     .slice(currentStep, currentStep + 1)
                     .map((step: Instruction, index: number) => {
-                        const arrowDir = arrowDirection(step);
+                        const arrowDir = arrowDirection(step.maneuver.modifier);
 
                         return (
                             <View key={index} style={styles.instructionsContainer}>
@@ -320,7 +343,7 @@ export default function Map() {
                                 <View style={styles.directionRow}>
                                     {arrowDir !== undefined &&
                                         <MaterialCommunityIcons
-                                            name={`arrow-${arrowDir}-bold`}
+                                            name={arrowDir}
                                             size={SIZES.iconSize.xl}
                                             color={COLORS.primary}
                                         />
