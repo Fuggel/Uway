@@ -5,6 +5,7 @@ interface SymbolLayerProps {
     sourceId: string;
     layerId: string;
     coordinates: number[];
+    onPress?: () => void;
     properties?: any;
     style?: {
         textField?: string | any[];
@@ -26,6 +27,7 @@ export default function SymbolLayer({
     sourceId,
     layerId,
     coordinates,
+    onPress,
     properties = {},
     style,
     belowLayerId,
@@ -42,6 +44,7 @@ export default function SymbolLayer({
                     coordinates,
                 },
             }}
+            onPress={onPress}
         >
             <Layer
                 id={layerId}

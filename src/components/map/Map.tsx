@@ -1,8 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
-import { SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS, MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS, SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS, MAP_ICONS } from "../../constants/map-constants";
+import {
+    SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
+    MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
+    SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
+    MAP_ICONS,
+    SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS
+} from "../../constants/map-constants";
 import { Dimensions, Image, Keyboard, StyleSheet, Text, View } from "react-native";
-import { arrowDirection, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
+import { arrowDirection, determineMapStyle, determineSpeedLimitIcon, getStationIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
@@ -30,6 +36,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUserLocation from "@/src/hooks/useUserLocation";
 import { determineTheme } from "@/src/utils/theme-utils";
 import useChargingStations from "@/src/hooks/useChargingStations";
+import useGasStations from "@/src/hooks/useGasStations";
+import { GasStation } from "@/src/types/IGasStation";
+import BottomSheetComponent from "../common/BottomSheet";
+import MapBottomSheet from "./MapBottomSheet";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -40,6 +50,8 @@ const deviceHeight = Dimensions.get("window").height;
 export default function Map() {
     const dispatch = useDispatch();
     const { userLocation, userHeading } = useUserLocation();
+    const [showGasStationSheet, setShowGasStationSheet] = useState(false);
+    const [gasStationProperties, setGasStationProperties] = useState<GasStation | null>(null);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -88,6 +100,11 @@ export default function Map() {
         userLat: userLocation?.coords?.latitude as number,
         distance: SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS
     });
+    const { gasStations } = useGasStations({
+        userLon: userLocation?.coords?.longitude as number,
+        userLat: userLocation?.coords?.latitude as number,
+        radius: SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS
+    });
     const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
 
@@ -103,6 +120,11 @@ export default function Map() {
         dispatch(mapNavigationActions.setIsNavigationMode(false));
         dispatch(mapNavigationActions.setSearchQuery(""));
         dispatch(mapNavigationActions.setLocationId(""));
+    };
+
+    const handleGasStationPress = (properties: GasStation) => {
+        setShowGasStationSheet(true);
+        setGasStationProperties(properties);
     };
 
     useEffect(() => {
@@ -237,6 +259,32 @@ export default function Map() {
                                 belowLayerId="user-location-layer"
                             />
                         </View>
+                    ))}
+                    {gasStations?.features?.map((feature, i) => (
+                        <SymbolLayer
+                            key={i}
+                            sourceId={`gas-station-source-${i}`}
+                            layerId={`gas-station-layer-${i}`}
+                            coordinates={(feature.geometry as Point).coordinates}
+                            onPress={() => handleGasStationPress(feature.properties as GasStation)}
+                            properties={feature.properties}
+                            style={{
+                                iconImage: getStationIcon(
+                                    gasStations.features.map(f => f.properties as GasStation),
+                                    feature.properties?.diesel,
+                                ),
+                                iconSize: [
+                                    "interpolate",
+                                    ["linear"],
+                                    ["zoom"],
+                                    10,
+                                    0.5,
+                                    20,
+                                    0.7,
+                                ],
+                            }}
+                            belowLayerId="user-location-layer"
+                        />
                     ))}
                     {speedCameras?.data?.features?.map((feature, i) => (
                         <SymbolLayer
@@ -378,6 +426,19 @@ export default function Map() {
                         />
                     )}
                 </View>
+                {showGasStationSheet && (
+                    <MapBottomSheet
+                        title={gasStationProperties?.name || "Tankstelle"}
+                        data={[
+                            { label: "Marke", value: gasStationProperties?.brand ?? "Unbekannt" },
+                            { label: "Straße", value: gasStationProperties?.name ?? "Unbekannt" },
+                            { label: "Diesel", value: `${gasStationProperties?.diesel} €` ?? "Unbekannt" },
+                            { label: "E5", value: `${gasStationProperties?.e5} €` ?? "Unbekannt" },
+                            { label: "E10", value: `${gasStationProperties?.e10} €` ?? "Unbekannt" }
+                        ]}
+                        onClose={() => setShowGasStationSheet(false)}
+                    />
+                )}
             </View>
 
             {(locations || directions) && (
@@ -398,6 +459,7 @@ export default function Map() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        position: "relative",
     },
     map: {
         flex: 1,
