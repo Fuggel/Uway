@@ -2,7 +2,6 @@ import { Feature, Geometry, GeometryCollection } from "@turf/helpers";
 
 export interface SpeedCameraAlert {
     distance: number;
-    feature: Feature<Geometry, GeometryCollection>;
 }
 
 export interface SpeedCameraProperties {

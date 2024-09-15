@@ -1,7 +1,7 @@
-import { Feature, Point } from "@turf/helpers";
 import { MapboxStyle } from "../types/IMap";
-import { Incident, ModifierType } from "../types/INavigation";
+import { ModifierType } from "../types/INavigation";
 import { GasStation } from "../types/IGasStation";
+import { IncidentType } from "../types/ITraffic";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
@@ -102,31 +102,25 @@ export function determineSpeedLimitIcon(speedLimit: string) {
     }
 }
 
-export function incidentsToFeatureCollection(incidents: Incident[]) {
-    const features = incidents.map((incident) => {
-        return {
-            type: "Feature",
-            properties: {
-                id: incident.id,
-                type: incident.type,
-                description: incident.description,
-                impact: incident.impact,
-                subType: incident.sub_type,
-            },
-            geometry: {
-                type: "Point",
-                coordinates: [
-                    (incident.west + incident.east) / 2,
-                    (incident.south + incident.north) / 2,
-                ],
-            },
-        };
-    });
+export function determineIncidentIcon(iconCategory: IncidentType) {
+    const assetsUrl = "../assets/images/map-icons";
 
-    return {
-        type: "FeatureCollection",
-        features: features as Feature<Point>[],
-    };
+    switch (iconCategory) {
+        case IncidentType.Accident:
+            return require(`${assetsUrl}/incident-accident.png`);
+        case IncidentType.Rain:
+            return require(`${assetsUrl}/incident-rain.png`);
+        case IncidentType.Ice:
+            return require(`${assetsUrl}/incident-ice.png`);
+        case IncidentType.Jam:
+            return require(`${assetsUrl}/incident-jam.png`);
+        case IncidentType.RoadWorks:
+            return require(`${assetsUrl}/incident-road-works.png`);
+        case IncidentType.BrokenDownVehicle:
+            return require(`${assetsUrl}/incident-broken-down-vehicle.png`);
+        default:
+            return require(`${assetsUrl}/incident-caution.png`);
+    }
 }
 
 export function getStationIcon(stations: GasStation[], price: number) {

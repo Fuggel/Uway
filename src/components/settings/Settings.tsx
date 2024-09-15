@@ -18,6 +18,7 @@ import { TESTING_ROUTES } from "@/src/constants/route-testing-constants";
 import { Route } from "@/src/types/IMock";
 import { mapChargingStationActions, mapChargingStationSelectors } from "@/src/store/mapChargingStation";
 import { mapGasStationActions, mapGasStationSelectors } from "@/src/store/mapGasStation";
+import { mapIncidentActions, mapIncidentSelectors } from "@/src/store/mapIncident";
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -25,6 +26,7 @@ export default function Settings() {
     const selectedRoute = useSelector(mapTestingSelectors.selectedRoute);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const showChargingStations = useSelector(mapChargingStationSelectors.showChargingStation);
@@ -90,6 +92,16 @@ export default function Settings() {
                                     trackColor={{ false: COLORS.gray, true: COLORS.primary }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
+                                    }}
+                                />
+                            </SettingsItem>
+                            <SettingsItem title="Verkehrsdaten">
+                                <Switch
+                                    value={showIncidents}
+                                    thumbColor={showIncidents ? COLORS.white : COLORS.white}
+                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    onValueChange={() => {
+                                        dispatch(mapIncidentActions.setShowIncident(!showIncidents));
                                     }}
                                 />
                             </SettingsItem>

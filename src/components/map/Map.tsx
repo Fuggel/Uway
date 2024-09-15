@@ -5,10 +5,11 @@ import {
     MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
     SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     MAP_ICONS,
-    SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS
+    SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
+    SHOW_INCIDENTS_THRESHOLD_IN_METERS
 } from "../../constants/map-constants";
 import { Dimensions, Image, Keyboard, StyleSheet, Text, View } from "react-native";
-import { arrowDirection, determineMapStyle, determineSpeedLimitIcon, getStationIcon } from "../../utils/map-utils";
+import { arrowDirection, determineIncidentIcon, determineMapStyle, determineSpeedLimitIcon, getStationIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
@@ -25,7 +26,7 @@ import { COLORS } from "../../constants/colors-constants";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import useSpeedCameras from "@/src/hooks/useSpeedCameras";
 import SymbolLayer from "../layer/SymbolLayer";
-import { Point } from "@turf/helpers";
+import { LineString, Point } from "@turf/helpers";
 import Toast from "../common/Toast";
 import { SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
@@ -38,8 +39,9 @@ import { determineTheme } from "@/src/utils/theme-utils";
 import useChargingStations from "@/src/hooks/useChargingStations";
 import useGasStations from "@/src/hooks/useGasStations";
 import { GasStation } from "@/src/types/IGasStation";
-import BottomSheetComponent from "../common/BottomSheet";
 import MapBottomSheet from "./MapBottomSheet";
+import useIncidents from "@/src/hooks/useIncidents";
+import { IncidentType } from "@/src/types/ITraffic";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -69,7 +71,7 @@ export default function Map() {
             lat: userLocation?.coords?.latitude as number,
         }
     });
-    const { directions, setDirections, incidents, loadingDirections } = useDirections({
+    const { directions, setDirections, loadingDirections } = useDirections({
         profile: navigationProfile,
         startLngLat: {
             lon: userLocation?.coords?.longitude as number,
@@ -105,12 +107,16 @@ export default function Map() {
         userLat: userLocation?.coords?.latitude as number,
         radius: SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS
     });
+    const { incidents } = useIncidents({
+        userLon: userLocation?.coords?.longitude as number,
+        userLat: userLocation?.coords?.latitude as number,
+        distance: SHOW_INCIDENTS_THRESHOLD_IN_METERS,
+    });
     const { parkAvailability } = useParkAvailability();
     const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
-    const speedCameraDistance = speedCameras?.alert?.distance.toFixed(0);
 
     const handleCancelNavigation = () => {
         setDirections(null);
@@ -307,41 +313,77 @@ export default function Map() {
                             belowLayerId="user-location-layer"
                         />
                     ))}
-                    {incidents?.features?.map((feature, i) => (
-                        <SymbolLayer
-                            key={i}
-                            sourceId={`incident-source-${i}`}
-                            layerId={`incident-layer-${i}`}
-                            coordinates={(feature.geometry as Point).coordinates}
-                            properties={feature.properties}
-                            style={{
-                                iconSize: [
-                                    "interpolate",
-                                    ["linear"],
-                                    ["zoom"],
-                                    10,
-                                    0.5,
-                                    20,
-                                    0.7,
-                                ],
-                                iconImage: [
-                                    "match",
-                                    ["get", "type"],
-                                    "accident",
-                                    "accident",
-                                    "congestion",
-                                    "congestion",
-                                    "construction",
-                                    "construction",
-                                    "disabled_vehicle",
-                                    "disabled-vehicle",
-                                    "road_closure",
-                                    "road-closure",
-                                    "caution",
-                                ],
-                            }}
-                            belowLayerId="user-location-layer"
-                        />
+                    {incidents?.data?.incidents?.map((incident, i) => (
+                        <View key={i}>
+                            <LineLayer
+                                sourceId={`incident-line-source-${i}`}
+                                layerId={`incident-line-layer-${i}`}
+                                coordinates={incident.geometry.coordinates}
+                                properties={incident.properties}
+                                style={{
+                                    lineWidth: [
+                                        "interpolate",
+                                        [
+                                            "exponential",
+                                            1.5
+                                        ],
+                                        [
+                                            "zoom"
+                                        ],
+                                        10,
+                                        5,
+                                        15,
+                                        8,
+                                        20,
+                                        20,
+                                    ],
+                                    lineColor: "#FF0000",
+                                }}
+                                belowLayerId="user-location-layer"
+                            />
+                            <SymbolLayer
+                                key={i}
+                                sourceId={`incident-symbol-source-${i}`}
+                                layerId={`incident-symbol-layer-${i}`}
+                                coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
+                                properties={incident.properties}
+                                style={{
+                                    iconSize: [
+                                        "interpolate",
+                                        ["linear"],
+                                        ["zoom"],
+                                        10,
+                                        0.5,
+                                        20,
+                                        0.7,
+                                    ],
+                                    iconImage: [
+                                        "match",
+                                        ["get", "iconCategory"],
+                                        IncidentType.Accident,
+                                        "incident-accident",
+                                        IncidentType.Rain,
+                                        "incident-rain",
+                                        IncidentType.Ice,
+                                        "incident-ice",
+                                        IncidentType.Jam,
+                                        "incident-jam",
+                                        IncidentType.LaneClosed,
+                                        "incident-road-closure",
+                                        IncidentType.RoadClosed,
+                                        "incident-road-closure",
+                                        IncidentType.RoadWorks,
+                                        "incident-road-works",
+                                        IncidentType.Wind,
+                                        "incident-wind",
+                                        IncidentType.BrokenDownVehicle,
+                                        "incident-broken-down-vehicle",
+                                        "incident-caution",
+                                    ],
+                                }}
+                                belowLayerId="user-location-layer"
+                            />
+                        </View>
                     ))}
                     {userLocation && (
                         <SymbolLayer
@@ -414,7 +456,7 @@ export default function Map() {
 
                     {userLocation?.coords && (
                         <Toast show type="info">
-                            <Text style={styles.speedAlert}>{currentSpeed} km/h</Text>
+                            <Text style={styles.alertMsg}>{currentSpeed} km/h</Text>
                         </Toast>
                     )}
 
@@ -422,8 +464,19 @@ export default function Map() {
                         <Toast
                             show={!!speedCameras.alert}
                             type="error"
-                            title={`Blitzer in ${speedCameraDistance} m`}
+                            title={`Blitzer in ${speedCameras.alert.distance.toFixed(0)} m`}
                         />
+                    )}
+
+                    {incidents?.alert && (
+                        <Toast
+                            show={!!incidents.alert}
+                            type="error"
+                            image={determineIncidentIcon(incidents.alert.events[0]?.iconCategory)}
+                            title={`Achtung! Gefahr in ${incidents.alert.distance.toFixed(0)} m`}
+                        >
+                            <Text style={styles.alertMsg}>{incidents.alert.events[0]?.description}</Text>
+                        </Toast>
                     )}
                 </View>
                 {showGasStationSheet && (
@@ -498,7 +551,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
     },
-    speedAlert: {
+    alertMsg: {
         color: COLORS.dark,
         fontSize: SIZES.fontSize.md,
         fontWeight: "bold",

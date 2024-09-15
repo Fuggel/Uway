@@ -8,6 +8,7 @@ import mapSpeedLimitReduce from "./mapSpeedLimit";
 import mapParkAvailabilityReduce from "./mapParkAvailability";
 import mapChargingStationReduce from "./mapChargingStation";
 import mapGasStationReduce from "./mapGasStation";
+import mapIncidentReduce from "./mapIncident";
 import mapTestingReduce from "./mapTesting";
 
 const persistConfig = {
@@ -20,6 +21,7 @@ const persistConfig = {
         "mapParkAvailability",
         "mapChargingStation",
         "mapGasStation",
+        "mapIncident",
         "mapTesting",
     ],
 };
@@ -32,6 +34,7 @@ const reducer = combineReducers({
     mapParkAvailability: mapParkAvailabilityReduce,
     mapChargingStation: mapChargingStationReduce,
     mapGasStation: mapGasStationReduce,
+    mapIncident: mapIncidentReduce,
     mapTesting: mapTestingReduce,
 });
 
