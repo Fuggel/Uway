@@ -74,12 +74,15 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
     "e-charging-station": require(`${MAP_ICONS_URL}/e-charging-station.png`),
-    "caution": require(`${MAP_ICONS_URL}/caution.png`),
-    "accident": require(`${MAP_ICONS_URL}/accident.png`),
-    "congestion": require(`${MAP_ICONS_URL}/congestion.png`),
-    "construction": require(`${MAP_ICONS_URL}/construction.png`),
-    "disabled-vehicle": require(`${MAP_ICONS_URL}/disabled-vehicle.png`),
-    "road-closure": require(`${MAP_ICONS_URL}/road-closure.png`),
+    "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
+    "incident-accident": require(`${MAP_ICONS_URL}/incident-accident.png`),
+    "incident-jam": require(`${MAP_ICONS_URL}/incident-jam.png`),
+    "incident-road-works": require(`${MAP_ICONS_URL}/incident-road-works.png`),
+    "incident-broken-down-vehicle": require(`${MAP_ICONS_URL}/incident-broken-down-vehicle.png`),
+    "incident-road-closure": require(`${MAP_ICONS_URL}/incident-road-closure.png`),
+    "incident-wind": require(`${MAP_ICONS_URL}/incident-wind.png`),
+    "incident-rain": require(`${MAP_ICONS_URL}/incident-rain.png`),
+    "incident-ice": require(`${MAP_ICONS_URL}/incident-ice.png`),
     "gas-station-expensive": require(`${MAP_ICONS_URL}/gas-station-expensive.png`),
     "gas-station-average": require(`${MAP_ICONS_URL}/gas-station-average.png`),
     "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station-cheap.png`),
@@ -107,3 +110,5 @@ export const SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS = 500;
 export const SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS = 150;
 export const SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS = 5000;
 export const SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS = 4;
+export const SHOW_INCIDENTS_THRESHOLD_IN_METERS = 5000;
+export const SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS = 300;

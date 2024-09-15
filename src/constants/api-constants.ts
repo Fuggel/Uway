@@ -11,3 +11,6 @@ export const PARK_API = "https://api.parkendd.de";
 
 // Tankerkoenig
 export const TANKERKOENIG_API = "https://creativecommons.tankerkoenig.de/json/list.php";
+
+// TomTom
+export const TOMTOM_INCIDENTS_API = "https://api.tomtom.com/traffic/services/5/incidentDetails";

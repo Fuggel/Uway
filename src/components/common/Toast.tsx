@@ -2,7 +2,7 @@ import { COLORS } from "@/src/constants/colors-constants";
 import { SIZES } from "@/src/constants/size-constants";
 import { mapViewSelectors } from "@/src/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, ImageProps, StyleSheet, Text, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
 import { useSelector } from "react-redux";
 
@@ -10,6 +10,7 @@ interface ToastProps {
     show: boolean;
     type: "error" | "warning" | "info";
     title?: string;
+    image?: ImageProps;
     children?: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ export default function Toast({
     show,
     type,
     title,
+    image,
     children,
 }: ToastProps) {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
@@ -60,7 +62,8 @@ export default function Toast({
                 >
                     {title && (
                         <View style={styles.header}>
-                            <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
+                            {!image && <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />}
+                            {image && <Image resizeMode="contain" source={image} style={{ width: SIZES.iconSize.lg, height: SIZES.iconSize.lg }} />}
                             <Text style={{ ...styles.title, color: determineColor() }}>{title}</Text>
                         </View>
                     )}

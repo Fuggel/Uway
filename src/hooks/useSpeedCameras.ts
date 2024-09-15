@@ -44,7 +44,7 @@ export default function useSpeedCameras(params: {
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
-                    closestCamera = { distance: distanceToCamera, feature };
+                    closestCamera = { distance: distanceToCamera };
                 }
             });
 

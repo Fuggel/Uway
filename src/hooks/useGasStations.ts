@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { FeatureCollection } from "@turf/helpers";
 import { useSelector } from "react-redux";
-import { REFETCH_INTERVAL } from "../constants/time-constants";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { fetchGasStations } from "../services/gas-stations";
 import { mapGasStationSelectors } from "../store/mapGasStation";
@@ -19,7 +18,7 @@ export default function useGasStations(params: {
         queryKey: ["gasStations", showGasStations],
         queryFn: () => fetchGasStations({ userLon: params.userLon, userLat: params.userLat, radius: params.radius }),
         enabled: showGasStations && !!params.userLon && !!params.userLat,
-        refetchInterval: REFETCH_INTERVAL,
+        staleTime: Infinity,
     });
 
     useEffect(() => {
