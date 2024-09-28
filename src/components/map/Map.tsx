@@ -26,7 +26,7 @@ import { COLORS } from "../../constants/colors-constants";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import useSpeedCameras from "@/src/hooks/useSpeedCameras";
 import SymbolLayer from "../layer/SymbolLayer";
-import { LineString, Point } from "@turf/helpers";
+import { Point } from "@turf/helpers";
 import Toast from "../common/Toast";
 import { SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
@@ -139,7 +139,7 @@ export default function Map() {
             dispatch(mapNavigationActions.setSearchQuery(""));
             setCurrentStep(0);
         }
-    }, [isNavigationMode, directions, locations]);
+    }, [isNavigationMode, directions]);
 
     useEffect(() => {
         if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
@@ -167,8 +167,8 @@ export default function Map() {
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={1500}
-                        animationMode="easeTo"
+                        animationDuration={1000}
+                        animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                         zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
                         heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}

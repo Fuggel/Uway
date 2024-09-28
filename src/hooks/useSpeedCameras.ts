@@ -7,7 +7,6 @@ import { DEFAULT_FC, SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS } from "../co
 import { SpeedCameraAlert } from "../types/ISpeed";
 import { useSelector } from "react-redux";
 import { mapSpeedCameraSelectors } from "../store/mapSpeedCamera";
-import { REFETCH_INTERVAL } from "../constants/time-constants";
 
 export default function useSpeedCameras(params: {
     userLon: number,
@@ -25,7 +24,7 @@ export default function useSpeedCameras(params: {
             distance: params.distance
         }),
         enabled: showSpeedCameras && !!params.userLon && !!params.userLat,
-        refetchInterval: REFETCH_INTERVAL,
+        staleTime: Infinity,
     });
 
     useEffect(() => {

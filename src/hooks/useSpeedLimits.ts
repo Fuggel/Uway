@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { FeatureCollection } from "@turf/helpers";
 import { useSelector } from "react-redux";
 import { mapSpeedLimitSelectors } from "../store/mapSpeedLimit";
-import { REFETCH_INTERVAL } from "../constants/time-constants";
 import { fetchSpeedLimits } from "../services/speed-limits";
 import { SpeedLimitAlert } from "../types/ISpeed";
 import { DEFAULT_FC, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS } from "../constants/map-constants";
@@ -21,7 +20,7 @@ export default function useSpeedLimits(params: {
         queryKey: ["speedLimits", showSpeedLimits],
         queryFn: () => fetchSpeedLimits({ userLon: params.userLon, userLat: params.userLat, distance: params.distance }),
         enabled: showSpeedLimits && !!params.userLon && !!params.userLat,
-        refetchInterval: REFETCH_INTERVAL,
+        staleTime: Infinity,
     });
 
     useEffect(() => {
