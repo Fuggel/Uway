@@ -11,38 +11,35 @@ export default ({ config }) => {
         userInterfaceStyle: "automatic",
         extra: {
             eas: {
-                projectId: "db71619c-6270-4e2f-b360-8d388fba3d85"
+                projectId: "db71619c-6270-4e2f-b360-8d388fba3d85",
             },
         },
         splash: {
             image: "./src/assets/images/build/splash.png",
             resizeMode: "contain",
-            backgroundColor: "#ffffff"
+            backgroundColor: "#ffffff",
         },
         ios: {
             buildNumber: "1.3.0",
             supportsTablet: true,
-            bundleIdentifier: "com.fuggel.NavSync"
+            bundleIdentifier: "com.fuggel.NavSync",
         },
         android: {
             versionCode: 1,
             adaptiveIcon: {
                 foregroundImage: "./src/assets/images/build/adaptive-icon.png",
-                backgroundColor: "#ffffff"
+                backgroundColor: "#ffffff",
             },
             package: "com.fuggel.NavSync",
-            permissions: [
-                "android.permission.ACCESS_COARSE_LOCATION",
-                "android.permission.ACCESS_FINE_LOCATION"
-            ]
+            permissions: ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"],
         },
         web: {
             bundler: "metro",
             output: "static",
-            favicon: "./src/assets/images/build/favicon.png"
+            favicon: "./src/assets/images/build/favicon.png",
         },
         experiments: {
-            typedRoutes: true
+            typedRoutes: true,
         },
         plugins: [
             "expo-router",
@@ -50,15 +47,15 @@ export default ({ config }) => {
                 "@rnmapbox/maps",
                 {
                     RNMapboxMapsDownloadToken: MAPBOX_TOKEN,
-                    RNMapboxMapsVersion: "10.16.0"
-                }
+                    RNMapboxMapsVersion: "10.16.0",
+                },
             ],
             [
                 "expo-location",
                 {
-                    locationWhenInUsePermission: "Show current location on map."
-                }
-            ]
-        ]
+                    locationWhenInUsePermission: "Show current location on map.",
+                },
+            ],
+        ],
     };
 };

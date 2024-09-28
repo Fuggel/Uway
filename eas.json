@@ -1,38 +1,38 @@
 {
-  "cli": {
-    "version": ">= 11.0.2"
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
+    "cli": {
+        "version": ">= 11.0.2"
     },
-    "preview": {
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {
-        "simulator": true
-      }
+    "build": {
+        "development": {
+            "developmentClient": true,
+            "distribution": "internal"
+        },
+        "preview": {
+            "android": {
+                "buildType": "apk"
+            },
+            "ios": {
+                "simulator": true
+            }
+        },
+        "production": {
+            "env": {
+                "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
+                "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
+                "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
+                "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY"
+            }
+        },
+        "test": {
+            "env": {
+                "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
+                "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
+                "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
+                "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY"
+            }
+        }
     },
-    "production": {
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
-        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
-        "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
-        "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY"
-      }
-    },
-    "test": {
-      "env": {
-        "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
-        "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
-        "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
-        "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY"
-      }
+    "submit": {
+        "production": {}
     }
-  },
-  "submit": {
-    "production": {}
-  }
 }
