@@ -31,7 +31,9 @@ export default function useInstructions(directions: Direction | null, userLocati
                 const userPoint = point([userLocation.coords.longitude, userLocation.coords.latitude]);
                 const stepPoint = point(nextStep.maneuver.location);
 
-                const distanceToNextStep = turfDistance(userPoint, stepPoint, { units: "meters" });
+                const distanceToNextStep = turfDistance(userPoint, stepPoint, {
+                    units: "meters",
+                });
 
                 if (distanceToNextStep < NEXT_STEP_THRESHOLD_IN_METERS) {
                     setCurrentStep(currentStep + 1);

@@ -35,7 +35,7 @@ export default function Settings() {
 
     return (
         <>
-            {open &&
+            {open && (
                 <View style={styles.container}>
                     <View style={styles.closeButton}>
                         <IconButton
@@ -52,7 +52,10 @@ export default function Settings() {
                                     <Switch
                                         value={simulateRoute}
                                         thumbColor={simulateRoute ? COLORS.white : COLORS.white}
-                                        trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                        trackColor={{
+                                            false: COLORS.gray,
+                                            true: COLORS.primary,
+                                        }}
                                         onValueChange={() => {
                                             dispatch(mapTestingActions.setSimulateRoute(!simulateRoute));
                                         }}
@@ -89,7 +92,10 @@ export default function Settings() {
                                 <Switch
                                     value={showSpeedCameras}
                                     thumbColor={showSpeedCameras ? COLORS.white : COLORS.white}
-                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    trackColor={{
+                                        false: COLORS.gray,
+                                        true: COLORS.primary,
+                                    }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
                                     }}
@@ -99,7 +105,10 @@ export default function Settings() {
                                 <Switch
                                     value={showIncidents}
                                     thumbColor={showIncidents ? COLORS.white : COLORS.white}
-                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    trackColor={{
+                                        false: COLORS.gray,
+                                        true: COLORS.primary,
+                                    }}
                                     onValueChange={() => {
                                         dispatch(mapIncidentActions.setShowIncident(!showIncidents));
                                     }}
@@ -109,7 +118,10 @@ export default function Settings() {
                                 <Switch
                                     value={showSpeedLimits}
                                     thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
-                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    trackColor={{
+                                        false: COLORS.gray,
+                                        true: COLORS.primary,
+                                    }}
                                     onValueChange={() => {
                                         dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits));
                                     }}
@@ -119,9 +131,14 @@ export default function Settings() {
                                 <Switch
                                     value={showParkAvailability}
                                     thumbColor={showParkAvailability ? COLORS.white : COLORS.white}
-                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    trackColor={{
+                                        false: COLORS.gray,
+                                        true: COLORS.primary,
+                                    }}
                                     onValueChange={() => {
-                                        dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability));
+                                        dispatch(
+                                            mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability)
+                                        );
                                     }}
                                 />
                             </SettingsItem>
@@ -129,9 +146,14 @@ export default function Settings() {
                                 <Switch
                                     value={showChargingStations}
                                     thumbColor={showChargingStations ? COLORS.white : COLORS.white}
-                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    trackColor={{
+                                        false: COLORS.gray,
+                                        true: COLORS.primary,
+                                    }}
                                     onValueChange={() => {
-                                        dispatch(mapChargingStationActions.setShowChargingStation(!showChargingStations));
+                                        dispatch(
+                                            mapChargingStationActions.setShowChargingStation(!showChargingStations)
+                                        );
                                     }}
                                 />
                             </SettingsItem>
@@ -139,7 +161,10 @@ export default function Settings() {
                                 <Switch
                                     value={showGasStations}
                                     thumbColor={showGasStations ? COLORS.white : COLORS.white}
-                                    trackColor={{ false: COLORS.gray, true: COLORS.primary }}
+                                    trackColor={{
+                                        false: COLORS.gray,
+                                        true: COLORS.primary,
+                                    }}
                                     onValueChange={() => {
                                         dispatch(mapGasStationActions.setShowGasStation(!showGasStations));
                                     }}
@@ -148,10 +173,10 @@ export default function Settings() {
                         </SettingsSection>
                     </View>
                 </View>
-            }
+            )}
         </>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -168,5 +193,5 @@ const styles = StyleSheet.create({
         top: SIZES.spacing.lg,
         right: 0,
         zIndex: 999999,
-    }
+    },
 });

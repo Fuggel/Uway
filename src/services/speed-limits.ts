@@ -7,8 +7,8 @@ import { SpeedLimitProperties } from "../types/ISpeed";
 import { Overpass } from "../types/IOverpass";
 
 export async function fetchSpeedLimits(params: {
-    userLon: number,
-    userLat: number,
+    userLon: number;
+    userLat: number;
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
@@ -41,10 +41,10 @@ export async function fetchSpeedLimits(params: {
 
 function convertToGeoJSON(data: Overpass<SpeedLimitProperties>) {
     const features = data.elements
-        .filter(element => element.type === "way")
-        .map(way => {
-            const coordinates = way.nodes?.map(nodeId => {
-                const node = data.elements?.find(e => e.type === "node" && e.id === nodeId);
+        .filter((element) => element.type === "way")
+        .map((way) => {
+            const coordinates = way.nodes?.map((nodeId) => {
+                const node = data.elements?.find((e) => e.type === "node" && e.id === nodeId);
                 return [node?.lon, node?.lat];
             });
             return {

@@ -69,5 +69,5 @@ const styles = StyleSheet.create({
         width: SIZES.iconSize.xl,
         height: SIZES.iconSize.xl,
         borderRadius: SIZES.borderRadius.sm,
-    }
+    },
 });

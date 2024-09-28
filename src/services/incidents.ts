@@ -3,13 +3,11 @@ import { TOMTOM_INCIDENTS_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
 import { IncidentFc } from "../types/ITraffic";
 
-export async function fetchIncidents(
-    params: {
-        userLon: number,
-        userLat: number,
-        distance: number;
-    }
-): Promise<IncidentFc> {
+export async function fetchIncidents(params: {
+    userLon: number;
+    userLat: number;
+    distance: number;
+}): Promise<IncidentFc> {
     try {
         const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLon, params.userLat, params.distance);
 
@@ -19,7 +17,10 @@ export async function fetchIncidents(
 
         const queryParams = new URLSearchParams();
         queryParams.append("bbox", `${minLon},${minLat},${maxLon},${maxLat}`);
-        queryParams.append("fields", "{incidents{type,geometry{type,coordinates},properties{iconCategory,probabilityOfOccurrence,events{description,iconCategory}}}}");
+        queryParams.append(
+            "fields",
+            "{incidents{type,geometry{type,coordinates},properties{iconCategory,probabilityOfOccurrence,events{description,iconCategory}}}}"
+        );
         queryParams.append("language", "de-DE");
         queryParams.append("categoryFilter", "0,1,3,4,5,6,9,14");
         queryParams.append("timeValidityFilter", "present");

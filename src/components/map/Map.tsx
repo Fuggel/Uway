@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import {
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
-    MAP_CONFIG, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
+    MAP_CONFIG,
+    SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
     SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     MAP_ICONS,
     SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
-    SHOW_INCIDENTS_THRESHOLD_IN_METERS
+    SHOW_INCIDENTS_THRESHOLD_IN_METERS,
 } from "../../constants/map-constants";
 import { Dimensions, Image, Keyboard, StyleSheet, Text, View } from "react-native";
-import { arrowDirection, determineIncidentIcon, determineMapStyle, determineSpeedLimitIcon, getStationIcon } from "../../utils/map-utils";
+import {
+    arrowDirection,
+    determineIncidentIcon,
+    determineMapStyle,
+    determineSpeedLimitIcon,
+    getStationIcon,
+} from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
@@ -62,30 +69,33 @@ export default function Map() {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
-    const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
+    const { locations, setLocations } = useSearchLocation({
+        mapboxId: locationId,
+        sessionToken,
+    });
     const { suggestions } = useSearchSuggestion({
         query: searchQuery,
         sessionToken,
         lngLat: {
             lon: userLocation?.coords?.longitude as number,
             lat: userLocation?.coords?.latitude as number,
-        }
+        },
     });
     const { directions, setDirections, loadingDirections } = useDirections({
         profile: navigationProfile,
         startLngLat: {
             lon: userLocation?.coords?.longitude as number,
-            lat: userLocation?.coords?.latitude as number
+            lat: userLocation?.coords?.latitude as number,
         },
         destinationLngLat: {
             lon: locations?.geometry.coordinates[0] as number,
-            lat: locations?.geometry.coordinates[1] as number
+            lat: locations?.geometry.coordinates[1] as number,
         },
         isNavigationMode,
         userLocation: {
             lon: userLocation?.coords?.longitude as number,
-            lat: userLocation?.coords?.latitude as number
-        }
+            lat: userLocation?.coords?.latitude as number,
+        },
     });
     const { speedCameras } = useSpeedCameras({
         userLon: userLocation?.coords?.longitude as number,
@@ -100,12 +110,12 @@ export default function Map() {
     const { chargingStations } = useChargingStations({
         userLon: userLocation?.coords?.longitude as number,
         userLat: userLocation?.coords?.latitude as number,
-        distance: SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS
+        distance: SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     });
     const { gasStations } = useGasStations({
         userLon: userLocation?.coords?.longitude as number,
         userLat: userLocation?.coords?.latitude as number,
-        radius: SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS
+        radius: SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
     });
     const { incidents } = useIncidents({
         userLon: userLocation?.coords?.longitude as number,
@@ -172,9 +182,10 @@ export default function Map() {
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                         zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
                         heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}
-                        centerCoordinate={userLocation && (tracking || navigationView) ?
-                            [userLocation.coords.longitude, userLocation.coords.latitude] :
-                            [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
+                        centerCoordinate={
+                            userLocation && (tracking || navigationView)
+                                ? [userLocation.coords.longitude, userLocation.coords.latitude]
+                                : [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
                         }
                         defaultSettings={{
                             centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
@@ -189,22 +200,7 @@ export default function Map() {
                             layerId="route-layer"
                             coordinates={directions.geometry.coordinates}
                             style={{
-                                lineWidth: [
-                                    "interpolate",
-                                    [
-                                        "exponential",
-                                        1.5
-                                    ],
-                                    [
-                                        "zoom"
-                                    ],
-                                    10,
-                                    5,
-                                    15,
-                                    8,
-                                    20,
-                                    20,
-                                ],
+                                lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             }}
                         />
                     )}
@@ -222,20 +218,11 @@ export default function Map() {
                                 textSize: SIZES.fontSize.sm,
                                 textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
                                 textOffset: [0, 2],
-                                iconSize: [
-                                    "interpolate",
-                                    ["linear"],
-                                    ["zoom"],
-                                    10,
-                                    0.5,
-                                    20,
-                                    0.7,
-                                ],
+                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                             }}
                             belowLayerId="user-location-layer"
                         />
-                    ))
-                    }
+                    ))}
                     {parkAvailability?.features?.map((feature, i) => (
                         <View key={i}>
                             <SymbolLayer
@@ -252,15 +239,7 @@ export default function Map() {
                                     textSize: SIZES.fontSize.sm,
                                     textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
                                     textOffset: [0, 2.5],
-                                    iconSize: [
-                                        "interpolate",
-                                        ["linear"],
-                                        ["zoom"],
-                                        10,
-                                        0.4,
-                                        20,
-                                        0.6,
-                                    ]
+                                    iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                                 }}
                                 belowLayerId="user-location-layer"
                             />
@@ -276,18 +255,10 @@ export default function Map() {
                             properties={feature.properties}
                             style={{
                                 iconImage: getStationIcon(
-                                    gasStations.features.map(f => f.properties as GasStation),
-                                    feature.properties?.diesel,
+                                    gasStations.features.map((f) => f.properties as GasStation),
+                                    feature.properties?.diesel
                                 ),
-                                iconSize: [
-                                    "interpolate",
-                                    ["linear"],
-                                    ["zoom"],
-                                    10,
-                                    0.5,
-                                    20,
-                                    0.7,
-                                ],
+                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                             }}
                             belowLayerId="user-location-layer"
                         />
@@ -300,15 +271,7 @@ export default function Map() {
                             coordinates={(feature.geometry as Point).coordinates}
                             style={{
                                 iconImage: "speed-camera",
-                                iconSize: [
-                                    "interpolate",
-                                    ["linear"],
-                                    ["zoom"],
-                                    10,
-                                    0.4,
-                                    20,
-                                    0.6,
-                                ],
+                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                             }}
                             belowLayerId="user-location-layer"
                         />
@@ -321,22 +284,7 @@ export default function Map() {
                                 coordinates={incident.geometry.coordinates}
                                 properties={incident.properties}
                                 style={{
-                                    lineWidth: [
-                                        "interpolate",
-                                        [
-                                            "exponential",
-                                            1.5
-                                        ],
-                                        [
-                                            "zoom"
-                                        ],
-                                        10,
-                                        5,
-                                        15,
-                                        8,
-                                        20,
-                                        20,
-                                    ],
+                                    lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                                     lineColor: "#FF0000",
                                 }}
                                 belowLayerId="user-location-layer"
@@ -348,15 +296,7 @@ export default function Map() {
                                 coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
                                 properties={incident.properties}
                                 style={{
-                                    iconSize: [
-                                        "interpolate",
-                                        ["linear"],
-                                        ["zoom"],
-                                        10,
-                                        0.5,
-                                        20,
-                                        0.7,
-                                    ],
+                                    iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                                     iconImage: [
                                         "match",
                                         ["get", "iconCategory"],
@@ -390,24 +330,16 @@ export default function Map() {
                             sourceId="user-location"
                             layerId="user-location-layer"
                             coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
-                            properties={{ heading: userHeading, ...userLocation }}
+                            properties={{
+                                heading: userHeading,
+                                ...userLocation,
+                            }}
                             style={{
                                 iconImage: "user-location",
                                 iconRotationAlignment: "map",
                                 iconPitchAlignment: "map",
-                                iconSize: [
-                                    "interpolate",
-                                    ["linear"],
-                                    ["zoom"],
-                                    10,
-                                    0.4,
-                                    20,
-                                    0.6,
-                                ],
-                                iconRotate: [
-                                    "get",
-                                    "heading",
-                                ],
+                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
+                                iconRotate: ["get", "heading"],
                             }}
                         />
                     )}
@@ -415,9 +347,7 @@ export default function Map() {
 
                 <MapButtons />
 
-                {!directions && userLocation && (
-                    <MapSearchbar suggestions={suggestions} />
-                )}
+                {!directions && userLocation && <MapSearchbar suggestions={suggestions} />}
 
                 {directions?.legs[0].steps
                     .slice(currentStep, currentStep + 1)
@@ -426,21 +356,17 @@ export default function Map() {
 
                         return (
                             <View key={index} style={styles.instructionsContainer}>
-                                <Text style={styles.stepInstruction}>
-                                    {step.maneuver.instruction}
-                                </Text>
+                                <Text style={styles.stepInstruction}>{step.maneuver.instruction}</Text>
 
                                 <View style={styles.directionRow}>
-                                    {arrowDir !== undefined &&
+                                    {arrowDir !== undefined && (
                                         <MaterialCommunityIcons
                                             name={arrowDir}
                                             size={SIZES.iconSize.xl}
                                             color={COLORS.primary}
                                         />
-                                    }
-                                    <Text style={styles.stepDistance}>
-                                        {step.distance.toFixed(0)} m
-                                    </Text>
+                                    )}
+                                    <Text style={styles.stepDistance}>{step.distance.toFixed(0)} m</Text>
                                 </View>
                             </View>
                         );
@@ -449,7 +375,9 @@ export default function Map() {
                 <View style={styles.absoluteBottom}>
                     {speedLimits?.alert && (
                         <Image
-                            source={determineSpeedLimitIcon((speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed)}
+                            source={determineSpeedLimitIcon(
+                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
+                            )}
                             style={styles.speedLimitImage}
                         />
                     )}
@@ -483,11 +411,26 @@ export default function Map() {
                     <MapBottomSheet
                         title={gasStationProperties?.name || "Tankstelle"}
                         data={[
-                            { label: "Marke", value: gasStationProperties?.brand ?? "Unbekannt" },
-                            { label: "Straße", value: gasStationProperties?.name ?? "Unbekannt" },
-                            { label: "Diesel", value: `${gasStationProperties?.diesel} €` ?? "Unbekannt" },
-                            { label: "E5", value: `${gasStationProperties?.e5} €` ?? "Unbekannt" },
-                            { label: "E10", value: `${gasStationProperties?.e10} €` ?? "Unbekannt" }
+                            {
+                                label: "Marke",
+                                value: gasStationProperties?.brand ?? "Unbekannt",
+                            },
+                            {
+                                label: "Straße",
+                                value: gasStationProperties?.name ?? "Unbekannt",
+                            },
+                            {
+                                label: "Diesel",
+                                value: `${gasStationProperties?.diesel} €` ?? "Unbekannt",
+                            },
+                            {
+                                label: "E5",
+                                value: `${gasStationProperties?.e5} €` ?? "Unbekannt",
+                            },
+                            {
+                                label: "E10",
+                                value: `${gasStationProperties?.e10} €` ?? "Unbekannt",
+                            },
                         ]}
                         onClose={() => setShowGasStationSheet(false)}
                     />

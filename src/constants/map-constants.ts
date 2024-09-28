@@ -25,51 +25,51 @@ export const MAP_STYLES: DropdownItem[] = [
     {
         label: "Navigation Dark",
         value: MapboxStyle.NAVIGATION_DARK,
-        img: require(`${MAP_STYLES_URL}/navigation-dark.png`)
+        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
     },
     {
         label: "Streets",
         value: MapboxStyle.STREETS,
-        img: require(`${MAP_STYLES_URL}/streets.png`)
+        img: require(`${MAP_STYLES_URL}/streets.png`),
     },
     {
         label: "Outdoors",
         value: MapboxStyle.OUTDOORS,
-        img: require(`${MAP_STYLES_URL}/outdoors.png`)
+        img: require(`${MAP_STYLES_URL}/outdoors.png`),
     },
     {
         label: "Light",
         value: MapboxStyle.LIGHT,
-        img: require(`${MAP_STYLES_URL}/light.png`)
+        img: require(`${MAP_STYLES_URL}/light.png`),
     },
     {
         label: "Dark",
         value: MapboxStyle.DARK,
-        img: require(`${MAP_STYLES_URL}/dark.png`)
+        img: require(`${MAP_STYLES_URL}/dark.png`),
     },
     {
         label: "Satellite",
         value: MapboxStyle.SATELLITE,
-        img: require(`${MAP_STYLES_URL}/satellite.png`)
+        img: require(`${MAP_STYLES_URL}/satellite.png`),
     },
     {
         label: "Satellite Streets",
         value: MapboxStyle.SATELLITE_STREETS,
-        img: require(`${MAP_STYLES_URL}/satellite-streets.png`)
+        img: require(`${MAP_STYLES_URL}/satellite-streets.png`),
     },
     {
         label: "Traffic Day",
         value: MapboxStyle.TRAFFIC_DAY,
-        img: require(`${MAP_STYLES_URL}/traffic-day.png`)
+        img: require(`${MAP_STYLES_URL}/traffic-day.png`),
     },
     {
         label: "Traffic Night",
         value: MapboxStyle.TRAFFIC_NIGHT,
-        img: require(`${MAP_STYLES_URL}/traffic-night.png`)
+        img: require(`${MAP_STYLES_URL}/traffic-night.png`),
     },
 ];
 
-export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
+export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
@@ -91,15 +91,15 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
 export const ROUTE_PROFILES: RouteProfile[] = [
     {
         value: RouteProfileType.DRIVING,
-        icon: "car"
+        icon: "car",
     },
     {
         value: RouteProfileType.WALKING,
-        icon: "walk"
+        icon: "walk",
     },
     {
         value: RouteProfileType.CYCLING,
-        icon: "bike"
+        icon: "bike",
     },
 ];
 

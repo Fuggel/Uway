@@ -16,13 +16,7 @@ interface ToastProps {
 
 const deviceWidth = Dimensions.get("window").width;
 
-export default function Toast({
-    show,
-    type,
-    title,
-    image,
-    children,
-}: ToastProps) {
+export default function Toast({ show, type, title, image, children }: ToastProps) {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     const determineIcon = () => {
@@ -62,21 +56,33 @@ export default function Toast({
                 >
                     {title && (
                         <View style={styles.header}>
-                            {!image && <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />}
-                            {image && <Image resizeMode="contain" source={image} style={{ width: SIZES.iconSize.lg, height: SIZES.iconSize.lg }} />}
-                            <Text style={{ ...styles.title, color: determineColor() }}>{title}</Text>
+                            {!image && (
+                                <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
+                            )}
+                            {image && (
+                                <Image
+                                    resizeMode="contain"
+                                    source={image}
+                                    style={{
+                                        width: SIZES.iconSize.lg,
+                                        height: SIZES.iconSize.lg,
+                                    }}
+                                />
+                            )}
+                            <Text
+                                style={{
+                                    ...styles.title,
+                                    color: determineColor(),
+                                }}
+                            >
+                                {title}
+                            </Text>
                         </View>
                     )}
 
-                    {title && children && (
-                        <Divider style={styles.divider} />
-                    )}
+                    {title && children && <Divider style={styles.divider} />}
 
-                    {children && (
-                        <View style={styles.children}>
-                            {children}
-                        </View>
-                    )}
+                    {children && <View style={styles.children}>{children}</View>}
                 </View>
             )}
         </>
@@ -110,5 +116,5 @@ const styles = StyleSheet.create({
     children: {
         marginHorizontal: "auto",
         marginVertical: SIZES.spacing.sm,
-    }
+    },
 });

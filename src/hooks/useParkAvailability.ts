@@ -10,7 +10,11 @@ export default function useParkAvailability() {
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const [parkAvailability, setParkAvailability] = useState<FeatureCollection | null>(null);
 
-    const { data, isLoading: loadingParkAvailability, error: errorParkAvailability } = useQuery({
+    const {
+        data,
+        isLoading: loadingParkAvailability,
+        error: errorParkAvailability,
+    } = useQuery({
         queryKey: ["parkAvailability", showParkAvailability],
         queryFn: () => fetchParkAvailability(),
         enabled: showParkAvailability,
@@ -35,8 +39,6 @@ export default function useParkAvailability() {
             setParkAvailability(null);
         }
     }, [data]);
-
-
 
     return { parkAvailability, loadingParkAvailability, errorParkAvailability };
 }

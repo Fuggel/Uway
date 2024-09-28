@@ -23,7 +23,7 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const selectedSuggestion = suggestions?.suggestions.find(suggestion => suggestion.mapbox_id === locationId);
+    const selectedSuggestion = suggestions?.suggestions.find((suggestion) => suggestion.mapbox_id === locationId);
     const searchbarValue = selectedSuggestion
         ? `${selectedSuggestion.name} ${selectedSuggestion.place_formatted}`
         : searchQuery;
@@ -46,22 +46,22 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
             onChangeText={handleSearch}
             value={searchbarValue}
         >
-            {showSuggestions && suggestions &&
+            {showSuggestions && suggestions && (
                 <ScrollView>
-                    {suggestions.suggestions
-                        .map((suggestion) => (
-                            <TouchableOpacity
-                                key={suggestion.mapbox_id}
-                                style={styles.scrollContainer}
-                                onPress={() => handleSelectLocation(suggestion.mapbox_id)}
-                            >
-                                <Text>{suggestion.name}, {suggestion.place_formatted}</Text>
-                                <Divider style={styles.divider} />
-                            </TouchableOpacity>
-                        ))
-                    }
+                    {suggestions.suggestions.map((suggestion) => (
+                        <TouchableOpacity
+                            key={suggestion.mapbox_id}
+                            style={styles.scrollContainer}
+                            onPress={() => handleSelectLocation(suggestion.mapbox_id)}
+                        >
+                            <Text>
+                                {suggestion.name}, {suggestion.place_formatted}
+                            </Text>
+                            <Divider style={styles.divider} />
+                        </TouchableOpacity>
+                    ))}
                 </ScrollView>
-            }
+            )}
         </Searchbar>
     );
 }

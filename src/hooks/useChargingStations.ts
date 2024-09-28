@@ -6,17 +6,22 @@ import { DEFAULT_FC } from "../constants/map-constants";
 import { fetchChargingStations } from "../services/charging-stations";
 import { mapChargingStationSelectors } from "../store/mapChargingStation";
 
-export default function useChargingStations(params: {
-    userLon: number,
-    userLat: number,
-    distance: number;
-}) {
+export default function useChargingStations(params: { userLon: number; userLat: number; distance: number }) {
     const showChargingStations = useSelector(mapChargingStationSelectors.showChargingStation);
     const [chargingStations, setChargingStations] = useState<FeatureCollection>(DEFAULT_FC);
 
-    const { data, isLoading: loadingChargingStations, error: errorChargingStations } = useQuery({
+    const {
+        data,
+        isLoading: loadingChargingStations,
+        error: errorChargingStations,
+    } = useQuery({
         queryKey: ["chargingStations", showChargingStations],
-        queryFn: () => fetchChargingStations({ userLon: params.userLon, userLat: params.userLat, distance: params.distance }),
+        queryFn: () =>
+            fetchChargingStations({
+                userLon: params.userLon,
+                userLat: params.userLat,
+                distance: params.distance,
+            }),
         enabled: showChargingStations && !!params.userLon && !!params.userLat,
         staleTime: Infinity,
     });

@@ -11,15 +11,11 @@ interface ProviderProps {
 
 export const SettingsContext = createContext<ContextProps>({
     open: false,
-    setOpen: () => { },
+    setOpen: () => {},
 });
 
 export const SettingsContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const [open, setOpen] = useState(false);
 
-    return (
-        <SettingsContext.Provider value={{ open, setOpen }}>
-            {children}
-        </SettingsContext.Provider>
-    );
+    return <SettingsContext.Provider value={{ open, setOpen }}>{children}</SettingsContext.Provider>;
 };

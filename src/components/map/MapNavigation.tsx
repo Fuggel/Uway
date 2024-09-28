@@ -38,7 +38,9 @@ export default function MapNavigation({
             {directions && isNavigationMode && (
                 <Card st={styles.card}>
                     <View>
-                        <Text style={styles.navigationDuration}>{duration} · {distance}</Text>
+                        <Text style={styles.navigationDuration}>
+                            {duration} · {distance}
+                        </Text>
                         <View style={styles.navigationInfo}>
                             <Text style={styles.navigationDistance}>{address}</Text>
                             <Text style={styles.navigationDistance}>{place}</Text>
@@ -59,19 +61,26 @@ export default function MapNavigation({
             {locations && !isNavigationMode && (
                 <Card st={styles.card}>
                     <View style={styles.profileActions}>
-                        <Text style={{ ...styles.navigationDuration, color: COLORS.gray }}>
+                        <Text
+                            style={{
+                                ...styles.navigationDuration,
+                                color: COLORS.gray,
+                            }}
+                        >
                             {address}, {place}
                         </Text>
                         <SegmentedButtons
                             value={profileType}
-                            onValueChange={(value) => dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))}
-                            buttons={ROUTE_PROFILES.map(p => ({
+                            onValueChange={(value) =>
+                                dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
+                            }
+                            buttons={ROUTE_PROFILES.map((p) => ({
                                 value: p.value,
                                 icon: p.icon,
                                 checkedColor: COLORS.white,
                                 style: {
                                     backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
-                                }
+                                },
                             }))}
                         />
                     </View>
@@ -134,5 +143,5 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         maxWidth: "30%",
         marginLeft: SIZES.spacing.md,
-    }
+    },
 });

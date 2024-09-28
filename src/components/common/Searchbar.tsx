@@ -14,14 +14,7 @@ interface SearchbarProps {
     listSt?: any;
 }
 
-export default function Searchbar({
-    placeholder,
-    onChangeText,
-    value,
-    children,
-    st,
-    listSt
-}: SearchbarProps) {
+export default function Searchbar({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
@@ -34,11 +27,7 @@ export default function Searchbar({
                 onChangeText={onChangeText}
                 value={value}
             />
-            {children &&
-                <View style={{ ...listSt }}>
-                    {children}
-                </View>
-            }
+            {children && <View style={{ ...listSt }}>{children}</View>}
         </View>
     );
 }

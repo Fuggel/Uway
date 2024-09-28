@@ -5,7 +5,7 @@ import { COLORS } from "@/src/constants/colors-constants";
 
 interface MapBottomSheetProps {
     title: string;
-    data: { label: string; value: string | number; }[];
+    data: { label: string; value: string | number }[];
     onClose: () => void;
 }
 
@@ -24,7 +24,7 @@ export default function MapBottomSheet({ title, data, onClose }: MapBottomSheetP
             </View>
         </BottomSheetComponent>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {

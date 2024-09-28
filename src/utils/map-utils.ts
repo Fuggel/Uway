@@ -51,7 +51,6 @@ export function isValidLonLat(lon: number, lat: number) {
     return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
 }
 
-
 export function boundingBox(lon: number, lat: number, distance: number) {
     const metersPerDegree = 111111; // Roughly 111 km at the equator
     const latDelta = distance / metersPerDegree;
@@ -61,7 +60,7 @@ export function boundingBox(lon: number, lat: number, distance: number) {
         minLat: lat - latDelta,
         minLon: lon - lonDelta,
         maxLat: lat + latDelta,
-        maxLon: lon + lonDelta
+        maxLon: lon + lonDelta,
     };
 }
 

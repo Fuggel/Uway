@@ -8,21 +8,25 @@ import { SpeedCameraAlert } from "../types/ISpeed";
 import { useSelector } from "react-redux";
 import { mapSpeedCameraSelectors } from "../store/mapSpeedCamera";
 
-export default function useSpeedCameras(params: {
-    userLon: number,
-    userLat: number,
-    distance: number;
-}) {
+export default function useSpeedCameras(params: { userLon: number; userLat: number; distance: number }) {
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
-    const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection, alert: SpeedCameraAlert | null; }>();
+    const [speedCameras, setSpeedCameras] = useState<{
+        data: FeatureCollection;
+        alert: SpeedCameraAlert | null;
+    }>();
 
-    const { data, isLoading: loadingSpeedCameras, error: errorSpeedCameras } = useQuery({
+    const {
+        data,
+        isLoading: loadingSpeedCameras,
+        error: errorSpeedCameras,
+    } = useQuery({
         queryKey: ["speedCameras", showSpeedCameras],
-        queryFn: () => fetchSpeedCameras({
-            userLon: params.userLon,
-            userLat: params.userLat,
-            distance: params.distance
-        }),
+        queryFn: () =>
+            fetchSpeedCameras({
+                userLon: params.userLon,
+                userLat: params.userLat,
+                distance: params.distance,
+            }),
         enabled: showSpeedCameras && !!params.userLon && !!params.userLat,
         staleTime: Infinity,
     });
@@ -37,7 +41,9 @@ export default function useSpeedCameras(params: {
                     feature.geometry.coordinates[1] as number,
                 ]);
                 const userPoint = point([params.userLon, params.userLat]);
-                const distanceToCamera = distance(userPoint, cameraPoint, { units: "meters" });
+                const distanceToCamera = distance(userPoint, cameraPoint, {
+                    units: "meters",
+                });
 
                 const isWithinWarningDistance = distanceToCamera <= SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
