@@ -7,8 +7,8 @@ import { Overpass } from "../types/IOverpass";
 import { ChargingStationProperties } from "../types/IChargingStation";
 
 export async function fetchChargingStations(params: {
-    userLon: number,
-    userLat: number,
+    userLon: number;
+    userLat: number;
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {

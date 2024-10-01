@@ -7,8 +7,8 @@ import { SpeedCameraProperties } from "../types/ISpeed";
 import { Overpass } from "../types/IOverpass";
 
 export async function fetchSpeedCameras(params: {
-    userLon: number,
-    userLat: number,
+    userLon: number;
+    userLat: number;
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {

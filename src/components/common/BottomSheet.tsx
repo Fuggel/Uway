@@ -15,14 +15,12 @@ export default function BottomSheetComponent({ onClose, children, st }: BottomSh
         <GestureHandlerRootView style={styles.container}>
             <BottomSheet snapPoints={["100%"]} enablePanDownToClose onClose={onClose}>
                 <ScrollView>
-                    <BottomSheetView style={{ ...styles.contentContainer, ...st }}>
-                        {children}
-                    </BottomSheetView>
+                    <BottomSheetView style={{ ...styles.contentContainer, ...st }}>{children}</BottomSheetView>
                 </ScrollView>
             </BottomSheet>
         </GestureHandlerRootView>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {

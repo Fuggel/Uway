@@ -17,13 +17,18 @@ export default function useDirections(params: {
 }) {
     const [directions, setDirections] = useState<Direction | null>(null);
 
-    const { data, isLoading: loadingDirections, error: errorDirections } = useQuery({
+    const {
+        data,
+        isLoading: loadingDirections,
+        error: errorDirections,
+    } = useQuery({
         queryKey: ["directions", directions, params.profile, params.isNavigationMode],
-        queryFn: () => fetchDirections({
-            profile: params.profile,
-            startLngLat: params.startLngLat,
-            destinationLngLat: params.destinationLngLat
-        }),
+        queryFn: () =>
+            fetchDirections({
+                profile: params.profile,
+                startLngLat: params.startLngLat,
+                destinationLngLat: params.destinationLngLat,
+            }),
         enabled:
             params.isNavigationMode &&
             isValidLonLat(params.startLngLat.lon, params.startLngLat.lat) &&
@@ -32,11 +37,12 @@ export default function useDirections(params: {
     });
 
     const { mutate: recalculateRoute } = useMutation({
-        mutationFn: () => fetchDirections({
-            profile: params.profile,
-            startLngLat: params.userLocation,
-            destinationLngLat: params.destinationLngLat
-        }),
+        mutationFn: () =>
+            fetchDirections({
+                profile: params.profile,
+                startLngLat: params.userLocation,
+                destinationLngLat: params.destinationLngLat,
+            }),
         onSuccess: (data) => {
             if (data?.routes?.length > 0) {
                 setDirections(data.routes[0]);
@@ -57,7 +63,9 @@ export default function useDirections(params: {
 
             const nearestPoint = point(nearestPointFeature.geometry.coordinates);
 
-            const distanceToRoute = distance(userPoint, nearestPoint, { units: "meters" });
+            const distanceToRoute = distance(userPoint, nearestPoint, {
+                units: "meters",
+            });
 
             if (distanceToRoute > ROUTE_DEVIATION_THRESHOLD_IN_METERS) {
                 recalculateRoute();

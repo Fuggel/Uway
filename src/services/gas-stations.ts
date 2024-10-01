@@ -5,8 +5,8 @@ import { DEFAULT_FC } from "../constants/map-constants";
 import { GasStation } from "../types/IGasStation";
 
 export async function fetchGasStations(params: {
-    userLon: number,
-    userLat: number,
+    userLon: number;
+    userLat: number;
     radius: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
@@ -29,7 +29,7 @@ export async function fetchGasStations(params: {
     }
 }
 
-function convertToGeoJSON(data: { stations: GasStation[]; }): FeatureCollection {
+function convertToGeoJSON(data: { stations: GasStation[] }): FeatureCollection {
     return {
         type: "FeatureCollection",
         features: data.stations.map((element) => ({

@@ -17,7 +17,10 @@ export default function useUserLocation() {
         const startSimulation = () => {
             const simulateLocation = simulateUserLocation(selectedRoute);
             intervalId = setInterval(() => {
-                simulateLocation({ setUserLocation, userHeading: userHeading ?? 0 });
+                simulateLocation({
+                    setUserLocation,
+                    userHeading: userHeading ?? 0,
+                });
             }, 1500);
         };
 
@@ -34,13 +37,11 @@ export default function useUserLocation() {
             } else {
                 cancelSimulation();
                 const { status } = await Location.requestForegroundPermissionsAsync();
-                await Location.watchHeadingAsync(
-                    (heading) => {
-                        if (heading.trueHeading !== null && heading.accuracy >= 1) {
-                            setUserHeading(heading.trueHeading);
-                        }
-                    },
-                );
+                await Location.watchHeadingAsync((heading) => {
+                    if (heading.trueHeading !== null && heading.accuracy >= 1) {
+                        setUserHeading(heading.trueHeading);
+                    }
+                });
 
                 if (status === Location.PermissionStatus.GRANTED) {
                     locationSubscription = await Location.watchPositionAsync(

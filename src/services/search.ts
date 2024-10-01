@@ -3,11 +3,7 @@ import { MAPBOX_SEARCH_RETRIEVE_API, MAPBOX_SEARCH_SUGGESTION_API } from "@/src/
 import { MAP_CONFIG } from "@/src/constants/map-constants";
 import { LonLat } from "../types/IMap";
 
-export async function fetchSearchSuggestion(params: {
-    query: string;
-    sessionToken: string;
-    lngLat: LonLat;
-}) {
+export async function fetchSearchSuggestion(params: { query: string; sessionToken: string; lngLat: LonLat }) {
     try {
         const queryParams = new URLSearchParams();
         queryParams.append("q", params.query);
@@ -29,7 +25,7 @@ export async function fetchSearchSuggestion(params: {
     }
 }
 
-export async function fetchSearchLocation(params: { mapboxId: string; sessionToken: string; }) {
+export async function fetchSearchLocation(params: { mapboxId: string; sessionToken: string }) {
     try {
         const queryParams = new URLSearchParams();
         queryParams.append("access_token", MAP_CONFIG.accessToken);

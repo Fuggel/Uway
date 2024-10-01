@@ -12,12 +12,7 @@ interface DropdownProps<T> {
     onChange: (value: T) => void;
 }
 
-export default function Dropdown<T>({
-    data,
-    value,
-    icon,
-    onChange,
-}: DropdownProps<T>) {
+export default function Dropdown<T>({ data, value, icon, onChange }: DropdownProps<T>) {
     const renderItem = (item: DropdownItem) => (
         <View style={styles.itemContainer}>
             {item.img && <Image source={item.img} style={styles.img} />}
@@ -39,7 +34,7 @@ export default function Dropdown<T>({
             placeholder="Select item"
             searchPlaceholder="Search..."
             value={value}
-            onChange={item => onChange(item.value as T)}
+            onChange={(item) => onChange(item.value as T)}
             renderLeftIcon={() => (
                 <MaterialCommunityIcons
                     name={icon as any}
@@ -51,7 +46,7 @@ export default function Dropdown<T>({
             renderItem={renderItem}
         />
     );
-};
+}
 
 const styles = StyleSheet.create({
     dropdown: {
