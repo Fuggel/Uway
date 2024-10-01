@@ -5,7 +5,7 @@ import { COLORS } from "@/src/constants/colors-constants";
 
 interface MapBottomSheetProps {
     title: string;
-    data: { label: string; value: string | number }[];
+    data: { label: string; value: string | number | React.ReactNode }[];
     onClose: () => void;
 }
 
@@ -18,7 +18,11 @@ export default function MapBottomSheet({ title, data, onClose }: MapBottomSheetP
                 {data.map((item, i) => (
                     <View key={i} style={styles.itemContainer}>
                         <Text style={styles.label}>{item.label}:</Text>
-                        <Text style={styles.value}>{item.value}</Text>
+                        {typeof item.value === "string" || typeof item.value === "number" ? (
+                            <Text style={styles.textValue}>{item.value}</Text>
+                        ) : (
+                            item.value
+                        )}
                     </View>
                 ))}
             </View>
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.md,
         color: COLORS.gray,
     },
-    value: {
+    textValue: {
         fontSize: SIZES.fontSize.md,
         color: COLORS.dark,
         fontWeight: "bold",

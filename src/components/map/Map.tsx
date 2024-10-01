@@ -49,6 +49,7 @@ import { GasStation } from "@/src/types/IGasStation";
 import MapBottomSheet from "./MapBottomSheet";
 import useIncidents from "@/src/hooks/useIncidents";
 import { IncidentType } from "@/src/types/ITraffic";
+import PriceDisplay from "../ui/PriceDisplay";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -421,15 +422,27 @@ export default function Map() {
                             },
                             {
                                 label: "Diesel",
-                                value: `${gasStationProperties?.diesel} €` ?? "Unbekannt",
+                                value: gasStationProperties?.diesel ? (
+                                    <PriceDisplay price={gasStationProperties.diesel} />
+                                ) : (
+                                    "Unbekannt"
+                                ),
                             },
                             {
                                 label: "E5",
-                                value: `${gasStationProperties?.e5} €` ?? "Unbekannt",
+                                value: gasStationProperties?.e5 ? (
+                                    <PriceDisplay price={gasStationProperties.e5} />
+                                ) : (
+                                    "Unbekannt"
+                                ),
                             },
                             {
                                 label: "E10",
-                                value: `${gasStationProperties?.e10} €` ?? "Unbekannt",
+                                value: gasStationProperties?.e10 ? (
+                                    <PriceDisplay price={gasStationProperties.e10} />
+                                ) : (
+                                    "Unbekannt"
+                                ),
                             },
                         ]}
                         onClose={() => setShowGasStationSheet(false)}

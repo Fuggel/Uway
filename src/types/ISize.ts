@@ -13,6 +13,7 @@ export interface Size {
         xl: number;
     };
     fontSize: {
+        xs: number;
         sm: number;
         md: number;
         lg: number;
