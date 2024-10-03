@@ -54,3 +54,24 @@ export interface IncidentEvent {
     description: string;
     iconCategory: IncidentType;
 }
+
+export interface IncidentProperties {
+    id: string;
+    iconCategory: IncidentType;
+    description: string;
+    magnitudeOfDelay: number;
+    startTimestamp: string;
+    endTimestamp: string;
+    from: string;
+    to: string;
+    length: number;
+    delay: number;
+    roadNumbers: string[];
+    timeValidity: string;
+    events: IncidentEvent[];
+    probabilityOfOccurrence: string;
+    geometry: {
+        type: string;
+        coordinates: number[][];
+    };
+}
