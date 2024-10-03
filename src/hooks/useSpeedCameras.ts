@@ -32,7 +32,7 @@ export default function useSpeedCameras(params: { userLon: number; userLat: numb
     });
 
     useEffect(() => {
-        if (data && showSpeedCameras) {
+        if (data && showSpeedCameras && params.userLon && params.userLat) {
             let closestCamera: SpeedCameraAlert | null = null;
 
             data?.features?.forEach((feature) => {

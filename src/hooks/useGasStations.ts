@@ -27,7 +27,7 @@ export default function useGasStations(params: { userLon: number; userLat: numbe
     });
 
     useEffect(() => {
-        if (data && showGasStations) {
+        if (data && showGasStations && params.userLon && params.userLat) {
             setGasStations(data);
         } else {
             setGasStations(DEFAULT_FC);

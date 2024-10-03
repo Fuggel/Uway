@@ -32,7 +32,7 @@ export default function useSpeedLimits(params: { userLon: number; userLat: numbe
     });
 
     useEffect(() => {
-        if (data && showSpeedLimits) {
+        if (data && showSpeedLimits && params.userLon && params.userLat) {
             let closestSpeedLimit: SpeedLimitAlert | null = null;
 
             data?.features?.forEach((feature) => {

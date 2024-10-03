@@ -31,7 +31,7 @@ export default function useIncidents(params: { userLon: number; userLat: number;
     });
 
     useEffect(() => {
-        if (data && showIncidents) {
+        if (data && showIncidents && params.userLon && params.userLat) {
             let closestIncident: IncidentAlert | null = null;
 
             const filteredIncidents = data.incidents.filter(

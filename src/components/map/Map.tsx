@@ -89,8 +89,8 @@ export default function Map() {
             lat: userLocation?.coords?.latitude as number,
         },
         destinationLngLat: {
-            lon: locations?.geometry.coordinates[0] as number,
-            lat: locations?.geometry.coordinates[1] as number,
+            lon: locations?.geometry?.coordinates[0] as number,
+            lat: locations?.geometry?.coordinates[1] as number,
         },
         isNavigationMode,
         userLocation: {
@@ -321,7 +321,7 @@ export default function Map() {
                         <SymbolLayer
                             sourceId="user-location"
                             layerId="user-location-layer"
-                            coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
+                            coordinates={[userLocation.coords?.longitude, userLocation.coords?.latitude]}
                             properties={{
                                 heading: userHeading,
                                 ...userLocation,
