@@ -36,7 +36,6 @@ export default function LineLayer({
             <Layer
                 id={layerId}
                 style={{
-                    iconAllowOverlap: true,
                     lineColor: COLORS.secondary,
                     lineWidth: 5,
                     lineOpacity: 0.8,

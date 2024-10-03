@@ -47,6 +47,8 @@ const styles = StyleSheet.create({
     itemContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
+        flexWrap: "wrap",
+        alignItems: "center",
         marginBottom: SIZES.spacing.sm,
         borderBottomWidth: 1,
         borderBottomColor: COLORS.light_gray,
@@ -60,5 +62,6 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.md,
         color: COLORS.dark,
         fontWeight: "bold",
+        maxWidth: "75%",
     },
 });
