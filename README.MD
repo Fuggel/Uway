@@ -16,10 +16,6 @@ Information on parking availability
 
 Information on speed camera locations with speed limits near the located device position
 
-### 🔌 Availability of EV Charging Stations
-
-Information on eletric vehicle charging stations
-
 ### 🧭 Directions and Navigation
 
 Calculating optimal routes with turn-by-turn instructions
@@ -34,8 +30,8 @@ Toggle between different features in the sidebar and customize the map view with
 
 ## Tech Stack
 
-- React Native (Expo)
-- Mapbox
-- React Paper
-- Redux
-- Jest
+-   React Native (Expo)
+-   Mapbox
+-   React Paper
+-   Redux
+-   Jest

@@ -16,7 +16,6 @@ import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/src/store/mapSpe
 import { mapTestingActions, mapTestingSelectors } from "@/src/store/mapTesting";
 import { TESTING_ROUTES } from "@/src/constants/route-testing-constants";
 import { Route } from "@/src/types/IMock";
-import { mapChargingStationActions, mapChargingStationSelectors } from "@/src/store/mapChargingStation";
 import { mapGasStationActions, mapGasStationSelectors } from "@/src/store/mapGasStation";
 import { mapIncidentActions, mapIncidentSelectors } from "@/src/store/mapIncident";
 
@@ -29,7 +28,6 @@ export default function Settings() {
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
-    const showChargingStations = useSelector(mapChargingStationSelectors.showChargingStation);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const { open, setOpen } = useContext(SettingsContext);
 
@@ -138,21 +136,6 @@ export default function Settings() {
                                     onValueChange={() => {
                                         dispatch(
                                             mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability)
-                                        );
-                                    }}
-                                />
-                            </SettingsItem>
-                            <SettingsItem title="E-Ladestationen">
-                                <Switch
-                                    value={showChargingStations}
-                                    thumbColor={showChargingStations ? COLORS.white : COLORS.white}
-                                    trackColor={{
-                                        false: COLORS.gray,
-                                        true: COLORS.primary,
-                                    }}
-                                    onValueChange={() => {
-                                        dispatch(
-                                            mapChargingStationActions.setShowChargingStation(!showChargingStations)
                                         );
                                     }}
                                 />

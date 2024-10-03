@@ -73,7 +73,6 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
-    "e-charging-station": require(`${MAP_ICONS_URL}/e-charging-station.png`),
     "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
     "incident-accident": require(`${MAP_ICONS_URL}/incident-accident.png`),
     "incident-jam": require(`${MAP_ICONS_URL}/incident-jam.png`),
@@ -108,7 +107,6 @@ export const NEXT_STEP_THRESHOLD_IN_METERS = 20;
 export const SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS = 10000;
 export const SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS = 500;
 export const SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS = 150;
-export const SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS = 5000;
 export const SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS = 4;
 export const SHOW_INCIDENTS_THRESHOLD_IN_METERS = 5000;
 export const SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS = 300;

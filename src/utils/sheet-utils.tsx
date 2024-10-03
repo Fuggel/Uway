@@ -4,7 +4,6 @@ import { GasStation } from "../types/IGasStation";
 import { IncidentProperties, IncidentType } from "../types/ITraffic";
 import { ParkAvailabilityProperties } from "../types/IParking";
 import { SpeedCameraProperties } from "../types/ISpeed";
-import { ChargingStationProperties } from "../types/IChargingStation";
 
 export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): string {
     switch (marker) {
@@ -16,8 +15,6 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
             return parkingTitle(properties as ParkAvailabilityProperties);
         case MarkerSheet.SPEED_CAMERA:
             return speedCameraTitle(properties as SpeedCameraProperties);
-        case MarkerSheet.CHARGING_STATION:
-            return eChargingTitle(properties as ChargingStationProperties);
         default:
             return "Unbekannt";
     }
@@ -36,8 +33,6 @@ export function sheetData<T>(
             return parkingData(properties as ParkAvailabilityProperties);
         case MarkerSheet.SPEED_CAMERA:
             return speedCameraData(properties as SpeedCameraProperties);
-        case MarkerSheet.CHARGING_STATION:
-            return eChargingData(properties as ChargingStationProperties);
         default:
             return null;
     }
@@ -125,31 +120,6 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
     ];
 }
 
-function eChargingData(chargingStationProperties: ChargingStationProperties | undefined) {
-    return [
-        {
-            label: "Name",
-            value: chargingStationProperties?.name ?? "Unbekannt",
-        },
-        {
-            label: "Betreiber",
-            value: chargingStationProperties?.operator ?? "Unbekannt",
-        },
-        {
-            label: "Spannung",
-            value: chargingStationProperties?.voltage ?? "Unbekannt",
-        },
-        {
-            label: "Ampere",
-            value: chargingStationProperties?.amperage ?? "Unbekannt",
-        },
-        {
-            label: "Kapazität",
-            value: chargingStationProperties?.capacity ?? "Unbekannt",
-        },
-    ];
-}
-
 function incidentTitle(incidentProperties: IncidentProperties | undefined) {
     switch (incidentProperties?.iconCategory) {
         case IncidentType.Accident:
@@ -187,8 +157,4 @@ function parkingTitle(parkingProperties: ParkAvailabilityProperties | undefined)
 
 function speedCameraTitle(speedCameraProperties: SpeedCameraProperties | undefined) {
     return speedCameraProperties?.highway ?? "Unbekannt";
-}
-
-function eChargingTitle(chargingStationProperties: ChargingStationProperties | undefined) {
-    return chargingStationProperties?.name ?? "Unbekannt";
 }

@@ -4,7 +4,6 @@ import {
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     MAP_CONFIG,
     SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
-    SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     MAP_ICONS,
     SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
     SHOW_INCIDENTS_THRESHOLD_IN_METERS,
@@ -43,7 +42,6 @@ import { Instruction } from "@/src/types/INavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUserLocation from "@/src/hooks/useUserLocation";
 import { determineTheme } from "@/src/utils/theme-utils";
-import useChargingStations from "@/src/hooks/useChargingStations";
 import useGasStations from "@/src/hooks/useGasStations";
 import { GasStation } from "@/src/types/IGasStation";
 import MapBottomSheet from "./MapBottomSheet";
@@ -52,7 +50,6 @@ import { IncidentProperties, IncidentType } from "@/src/types/ITraffic";
 import useMarkerBottomSheet from "@/src/hooks/useMarkerBottomSheet";
 import { MarkerSheet } from "@/src/types/ISheet";
 import { sheetData, sheetTitle } from "@/src/utils/sheet-utils";
-import { ChargingStationProperties } from "@/src/types/IChargingStation";
 import { ParkAvailabilityProperties } from "@/src/types/IParking";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
@@ -110,11 +107,6 @@ export default function Map() {
         userLon: userLocation?.coords?.longitude as number,
         userLat: userLocation?.coords?.latitude as number,
         distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
-    });
-    const { chargingStations } = useChargingStations({
-        userLon: userLocation?.coords?.longitude as number,
-        userLat: userLocation?.coords?.latitude as number,
-        distance: SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     });
     const { gasStations } = useGasStations({
         userLon: userLocation?.coords?.longitude as number,
@@ -203,31 +195,6 @@ export default function Map() {
                             }}
                         />
                     )}
-                    {chargingStations?.features?.map((feature, i) => (
-                        <SymbolLayer
-                            key={i}
-                            sourceId={`e-charging-station-source-${i}`}
-                            layerId={`e-charging-station-layer-${i}`}
-                            coordinates={(feature.geometry as Point).coordinates}
-                            onPress={() =>
-                                openSheet<ChargingStationProperties>(
-                                    MarkerSheet.CHARGING_STATION,
-                                    feature.properties as ChargingStationProperties
-                                )
-                            }
-                            style={{
-                                iconImage: "e-charging-station",
-                                textField: `
-                                Kapazität: ${feature.properties?.capacity ?? "Unbekannt"}
-                            `,
-                                textSize: SIZES.fontSize.sm,
-                                textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
-                                textOffset: [0, 2],
-                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
-                            }}
-                            belowLayerId="user-location-layer"
-                        />
-                    ))}
                     {parkAvailability?.features?.map((feature, i) => (
                         <View key={i}>
                             <SymbolLayer
