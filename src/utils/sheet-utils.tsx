@@ -4,6 +4,8 @@ import { GasStation } from "../types/IGasStation";
 import { IncidentProperties, IncidentType } from "../types/ITraffic";
 import { ParkAvailabilityProperties } from "../types/IParking";
 import { SpeedCameraProperties } from "../types/ISpeed";
+import { toGermanDate } from "./date-utils";
+import { formatLength } from "./unit-utils";
 
 export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): string {
     switch (marker) {
@@ -41,10 +43,6 @@ export function sheetData<T>(
 function incidentData(incidentProperties: IncidentProperties | undefined) {
     return [
         {
-            label: "Typ",
-            value: incidentProperties?.iconCategory ?? "Unbekannt",
-        },
-        {
             label: "Von",
             value: incidentProperties?.from ?? "Unbekannt",
         },
@@ -54,11 +52,23 @@ function incidentData(incidentProperties: IncidentProperties | undefined) {
         },
         {
             label: "Länge",
-            value: incidentProperties?.length ? `${incidentProperties.length} km` : "Unbekannt",
+            value: incidentProperties?.length ? formatLength(incidentProperties.length) : "Unbekannt",
         },
         {
             label: "Verzögerung",
-            value: incidentProperties?.magnitudeOfDelay ? `${incidentProperties.magnitudeOfDelay} min` : "Unbekannt",
+            value: incidentProperties?.delay ? `${incidentProperties.delay.toFixed(0)} min` : "Unbekannt",
+        },
+        {
+            label: "Startzeit",
+            value: toGermanDate(incidentProperties?.startTime) ?? "Unbekannt",
+        },
+        {
+            label: "Endzeit",
+            value: toGermanDate(incidentProperties?.endTime) ?? "Unbekannt",
+        },
+        {
+            label: "Letzte Meldung",
+            value: incidentProperties?.lastReportTime ?? "Unbekannt",
         },
     ];
 }

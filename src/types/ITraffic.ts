@@ -41,9 +41,8 @@ export interface IncidentProperties {
     id: string;
     iconCategory: IncidentType;
     description: string;
-    magnitudeOfDelay: number;
-    startTimestamp: string;
-    endTimestamp: string;
+    startTime: string;
+    endTime: string;
     from: string;
     to: string;
     length: number;
@@ -52,6 +51,7 @@ export interface IncidentProperties {
     timeValidity: string;
     events: IncidentEvent[];
     probabilityOfOccurrence: string;
+    lastReportTime: string;
     geometry: {
         type: string;
         coordinates: number[][];

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        height: deviceHeight > 1000 ? "30%" : "35%",
+        height: deviceHeight > 1000 ? "40%" : "35%",
         backgroundColor: "transparent",
     },
     contentContainer: {
