@@ -107,15 +107,11 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
     return [
         {
             label: "Straße",
-            value: speedCameraProperties?.highway ?? "Unbekannt",
-        },
-        {
-            label: "Richtung",
-            value: speedCameraProperties?.direction ?? "Unbekannt",
+            value: speedCameraProperties?.address ?? "Unbekannt",
         },
         {
             label: "Max. Geschwindigkeit",
-            value: speedCameraProperties?.maxspeed ?? "Unbekannt",
+            value: `${speedCameraProperties?.maxspeed} km/h` ?? "Unbekannt",
         },
     ];
 }
@@ -152,9 +148,14 @@ function gasStationTitle(gasStationProperties: GasStation | undefined) {
 }
 
 function parkingTitle(parkingProperties: ParkAvailabilityProperties | undefined) {
-    return parkingProperties?.name ?? "Unbekannt";
+    const title = parkingProperties?.name ?? "Unbekannt";
+    const fullTitle = `${
+        !title.includes(parkingProperties?.lot_type as string) ? `${parkingProperties?.lot_type} ${title}` : title
+    }`;
+
+    return fullTitle;
 }
 
 function speedCameraTitle(speedCameraProperties: SpeedCameraProperties | undefined) {
-    return speedCameraProperties?.highway ?? "Unbekannt";
+    return speedCameraProperties?.name ?? "Unbekannt";
 }

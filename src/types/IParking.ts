@@ -11,7 +11,7 @@ export interface ParkAvailabilityProperties {
     forecast: boolean;
     free: number;
     id: string;
-    lost_type: string;
+    lot_type: string;
     name: string;
     region: string;
     state: string;

@@ -6,3 +6,8 @@ export interface Suggestion {
         place_formatted: string;
     }[];
 }
+
+export interface ReverseGeocodeProperties {
+    full_address: string;
+    name: string;
+}
