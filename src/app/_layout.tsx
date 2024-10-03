@@ -6,6 +6,8 @@ import { PaperProvider } from "react-native-paper";
 import Settings from "../components/settings/Settings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SettingsContextProvider } from "../contexts/SettingsContext";
+import { UserLocationContextProvider } from "../contexts/UserLocationContext";
+import { MarkerBottomSheetContextProvider } from "../contexts/MarkerBottomSheetContext";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +18,11 @@ export default function Layout() {
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
                         <SettingsContextProvider>
-                            <Map />
+                            <UserLocationContextProvider>
+                                <MarkerBottomSheetContextProvider>
+                                    <Map />
+                                </MarkerBottomSheetContextProvider>
+                            </UserLocationContextProvider>
                             <Settings />
                         </SettingsContextProvider>
                     </QueryClientProvider>

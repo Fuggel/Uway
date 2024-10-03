@@ -5,18 +5,18 @@ import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { SpeedCameraProperties } from "../types/ISpeed";
 import { Overpass } from "../types/IOverpass";
+import { BoundingBox, LonLat } from "../types/IMap";
 
 export async function fetchSpeedCameras(params: {
-    userLon: number;
-    userLat: number;
+    userLonLat: LonLat;
     distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
-        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLon, params.userLat, params.distance);
-
-        if (!minLat || !minLon || !maxLat || !maxLon) {
+        if (!params.userLonLat.lon || !params.userLonLat.lat) {
             return DEFAULT_FC;
         }
+
+        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLonLat, params.distance) as BoundingBox;
 
         const overpassQuery = `
             [out:json];

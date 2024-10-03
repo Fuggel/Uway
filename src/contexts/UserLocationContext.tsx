@@ -1,10 +1,24 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { simulateUserLocation } from "../utils/route-testing-utils";
 import { useSelector } from "react-redux";
 import { mapTestingSelectors } from "../store/mapTesting";
+import { simulateUserLocation } from "../utils/route-testing-utils";
 
-export default function useUserLocation() {
+interface ContextProps {
+    userLocation: Location.LocationObject | null;
+    userHeading: number | null;
+}
+
+interface ProviderProps {
+    children: React.ReactNode;
+}
+
+export const UserLocationContext = createContext<ContextProps>({
+    userLocation: null,
+    userHeading: null,
+});
+
+export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const simulateRoute = useSelector(mapTestingSelectors.simulateRoute);
     const selectedRoute = useSelector(mapTestingSelectors.selectedRoute);
     const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
@@ -72,5 +86,7 @@ export default function useUserLocation() {
         };
     }, [simulateRoute, selectedRoute]);
 
-    return { userLocation, userHeading };
-}
+    return (
+        <UserLocationContext.Provider value={{ userLocation, userHeading }}>{children}</UserLocationContext.Provider>
+    );
+};

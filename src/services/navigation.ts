@@ -8,6 +8,10 @@ export async function fetchDirections(params: { profile: string; startLngLat: Lo
         const { lon: startLon, lat: startLat } = params.startLngLat;
         const { lon: destLon, lat: destLat } = params.destinationLngLat;
 
+        if (!startLon || !startLat || !destLon || !destLat) {
+            return [];
+        }
+
         const queryParams = new URLSearchParams();
         queryParams.append("geometries", "geojson");
         queryParams.append("steps", "true");

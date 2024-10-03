@@ -1,4 +1,4 @@
-import { MapboxStyle } from "../types/IMap";
+import { LonLat, MapboxStyle } from "../types/IMap";
 import { ModifierType } from "../types/INavigation";
 import { GasStation } from "../types/IGasStation";
 import { IncidentType } from "../types/ITraffic";
@@ -51,20 +51,27 @@ export function arrowDirection(modifier: ModifierType) {
     }
 }
 
-export function isValidLonLat(lon: number, lat: number) {
+export function isValidLonLat(lon: number | undefined, lat: number | undefined) {
+    if (lon === undefined || lat === undefined) {
+        return false;
+    }
     return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
 }
 
-export function boundingBox(lon: number, lat: number, distance: number) {
+export function boundingBox(lonLat: LonLat, distance: number) {
+    if (!lonLat.lon || !lonLat.lat) {
+        return;
+    }
+
     const metersPerDegree = 111111; // Roughly 111 km at the equator
     const latDelta = distance / metersPerDegree;
-    const lonDelta = distance / (metersPerDegree * Math.cos(lat * (Math.PI / 180)));
+    const lonDelta = distance / (metersPerDegree * Math.cos(lonLat.lat * (Math.PI / 180)));
 
     return {
-        minLat: lat - latDelta,
-        minLon: lon - lonDelta,
-        maxLat: lat + latDelta,
-        maxLon: lon + lonDelta,
+        minLat: lonLat.lat - latDelta,
+        minLon: lonLat.lon - lonDelta,
+        maxLat: lonLat.lat + latDelta,
+        maxLon: lonLat.lon + lonDelta,
     };
 }
 

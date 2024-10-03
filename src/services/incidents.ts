@@ -2,18 +2,15 @@ import axios from "axios";
 import { TOMTOM_INCIDENTS_API } from "@/src/constants/api-constants";
 import { boundingBox } from "../utils/map-utils";
 import { IncidentFc } from "../types/ITraffic";
+import { BoundingBox, LonLat } from "../types/IMap";
 
-export async function fetchIncidents(params: {
-    userLon: number;
-    userLat: number;
-    distance: number;
-}): Promise<IncidentFc> {
+export async function fetchIncidents(params: { userLonLat: LonLat; distance: number }): Promise<IncidentFc> {
     try {
-        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLon, params.userLat, params.distance);
-
-        if (!minLat || !minLon || !maxLat || !maxLon) {
+        if (!params.userLonLat.lon || !params.userLonLat.lat) {
             return { type: "FeatureCollection", incidents: [] };
         }
+
+        const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLonLat, params.distance) as BoundingBox;
 
         const queryParams = new URLSearchParams();
         queryParams.append("bbox", `${minLon},${minLat},${maxLon},${maxLat}`);

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FeatureCollection } from "@turf/helpers";
 import { useSelector } from "react-redux";
 import { mapSpeedLimitSelectors } from "../store/mapSpeedLimit";
@@ -7,13 +7,18 @@ import { fetchSpeedLimits } from "../services/speed-limits";
 import { SpeedLimitAlert } from "../types/ISpeed";
 import { DEFAULT_FC, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS } from "../constants/map-constants";
 import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
+import { UserLocationContext } from "../contexts/UserLocationContext";
 
-export default function useSpeedLimits(params: { userLon: number; userLat: number; distance: number }) {
+export default function useSpeedLimits() {
+    const { userLocation } = useContext(UserLocationContext);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const [speedLimits, setSpeedLimits] = useState<{
         data: FeatureCollection;
         alert: SpeedLimitAlert | null;
     }>();
+
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
 
     const {
         data,
@@ -23,21 +28,20 @@ export default function useSpeedLimits(params: { userLon: number; userLat: numbe
         queryKey: ["speedLimits", showSpeedLimits],
         queryFn: () =>
             fetchSpeedLimits({
-                userLon: params.userLon,
-                userLat: params.userLat,
-                distance: params.distance,
+                userLonLat: { lon: longitude, lat: latitude },
+                distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
             }),
-        enabled: showSpeedLimits && !!params.userLon && !!params.userLat,
+        enabled: showSpeedLimits && !!longitude && !!latitude,
         staleTime: Infinity,
     });
 
     useEffect(() => {
-        if (data && showSpeedLimits && params.userLon && params.userLat) {
+        if (data && showSpeedLimits && longitude && latitude) {
             let closestSpeedLimit: SpeedLimitAlert | null = null;
 
             data?.features?.forEach((feature) => {
                 if (feature.geometry.type === "LineString") {
-                    const userPoint = point([params.userLon, params.userLat]);
+                    const userPoint = point([longitude, latitude]);
                     const line = lineString(feature.geometry.coordinates as [[number, number]]);
                     const closestPoint = nearestPointOnLine(line, userPoint);
                     const distanceToLine = distance(userPoint, closestPoint, {
@@ -60,7 +64,7 @@ export default function useSpeedLimits(params: { userLon: number; userLat: numbe
         } else {
             setSpeedLimits({ data: DEFAULT_FC, alert: null });
         }
-    }, [data, params.userLon, params.userLat]);
+    }, [data, longitude, latitude]);
 
     return { speedLimits, loadingSpeedLimits, errorSpeedLimits };
 }

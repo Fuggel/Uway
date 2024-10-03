@@ -1,14 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FeatureCollection } from "@turf/helpers";
 import { useSelector } from "react-redux";
-import { DEFAULT_FC } from "../constants/map-constants";
+import { DEFAULT_FC, SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS } from "../constants/map-constants";
 import { fetchGasStations } from "../services/gas-stations";
 import { mapGasStationSelectors } from "../store/mapGasStation";
+import { UserLocationContext } from "../contexts/UserLocationContext";
 
-export default function useGasStations(params: { userLon: number; userLat: number; radius: number }) {
+export default function useGasStations() {
+    const { userLocation } = useContext(UserLocationContext);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const [gasStations, setGasStations] = useState<FeatureCollection>(DEFAULT_FC);
+
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
 
     const {
         data,
@@ -18,21 +23,20 @@ export default function useGasStations(params: { userLon: number; userLat: numbe
         queryKey: ["gasStations", showGasStations],
         queryFn: () =>
             fetchGasStations({
-                userLon: params.userLon,
-                userLat: params.userLat,
-                radius: params.radius,
+                userLonLat: { lon: longitude, lat: latitude },
+                radius: SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
             }),
-        enabled: showGasStations && !!params.userLon && !!params.userLat,
+        enabled: showGasStations && !!longitude && !!latitude,
         staleTime: Infinity,
     });
 
     useEffect(() => {
-        if (data && showGasStations && params.userLon && params.userLat) {
+        if (data && showGasStations && longitude && latitude) {
             setGasStations(data);
         } else {
             setGasStations(DEFAULT_FC);
         }
-    }, [data, params.userLon, params.userLat]);
+    }, [data, longitude, latitude]);
 
     return { gasStations, loadingGasStations, errorGasStations };
 }
