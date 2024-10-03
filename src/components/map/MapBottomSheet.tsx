@@ -5,7 +5,7 @@ import { COLORS } from "@/src/constants/colors-constants";
 
 interface MapBottomSheetProps {
     title: string;
-    data: { label: string; value: string | number }[];
+    data: { label: string; value: string | number | React.ReactNode }[] | null;
     onClose: () => void;
 }
 
@@ -15,12 +15,18 @@ export default function MapBottomSheet({ title, data, onClose }: MapBottomSheetP
             <View style={styles.container}>
                 <Text style={styles.title}>{title}</Text>
 
-                {data.map((item, i) => (
-                    <View key={i} style={styles.itemContainer}>
-                        <Text style={styles.label}>{item.label}:</Text>
-                        <Text style={styles.value}>{item.value}</Text>
-                    </View>
-                ))}
+                {data &&
+                    data.length > 0 &&
+                    data.map((item, i) => (
+                        <View key={i} style={styles.itemContainer}>
+                            <Text style={styles.label}>{item.label}:</Text>
+                            {typeof item.value === "string" || typeof item.value === "number" ? (
+                                <Text style={styles.textValue}>{item.value}</Text>
+                            ) : (
+                                item.value
+                            )}
+                        </View>
+                    ))}
             </View>
         </BottomSheetComponent>
     );
@@ -41,6 +47,8 @@ const styles = StyleSheet.create({
     itemContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
+        flexWrap: "wrap",
+        alignItems: "center",
         marginBottom: SIZES.spacing.sm,
         borderBottomWidth: 1,
         borderBottomColor: COLORS.light_gray,
@@ -50,9 +58,10 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.md,
         color: COLORS.gray,
     },
-    value: {
+    textValue: {
         fontSize: SIZES.fontSize.md,
         color: COLORS.dark,
         fontWeight: "bold",
+        maxWidth: "75%",
     },
 });

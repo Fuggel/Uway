@@ -2,6 +2,10 @@ import { MapboxStyle } from "../types/IMap";
 import { ModifierType } from "../types/INavigation";
 import { GasStation } from "../types/IGasStation";
 import { IncidentType } from "../types/ITraffic";
+import axios from "axios";
+import { MAPBOX_REVERSE_GEOCODING_API } from "../constants/api-constants";
+import { MAP_CONFIG } from "../constants/map-constants";
+import { ReverseGeocodeProperties } from "../types/ISearch";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
@@ -136,4 +140,22 @@ export function getStationIcon(stations: GasStation[], price: number) {
     } else {
         return `${iconName}-average`;
     }
+}
+
+export async function reverseGeocode(lon: number, lat: number): Promise<ReverseGeocodeProperties> {
+    if (!isValidLonLat(lon, lat)) {
+        return { name: "Unbekannt", full_address: "Adresse nicht gefunden" };
+    }
+
+    const response = await axios.get(
+        `${MAPBOX_REVERSE_GEOCODING_API}?longitude=${lon}&latitude=${lat}&limit=1&language=de&access_token=${MAP_CONFIG.accessToken}`
+    );
+
+    const fullAddress = response.data?.features[0]?.properties.full_address ?? "Adresse nicht gefunden";
+    const name = response.data?.features[0]?.properties.name ?? "Unbekannt";
+
+    return {
+        name: name,
+        full_address: fullAddress,
+    };
 }

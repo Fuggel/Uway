@@ -10,6 +10,14 @@ export interface SpeedCameraProperties {
     man_made: string;
     mapillary: string;
     maxspeed: string;
+    height: string;
+    colour: string;
+    name: string;
+    address: string;
+    geometry: {
+        type: string;
+        coordinates: number[];
+    };
 }
 
 export type SpeedCameraFeature = GeometryCollection & SpeedCameraProperties;

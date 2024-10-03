@@ -1,6 +1,6 @@
 import axios from "axios";
 import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
-import { boundingBox } from "../utils/map-utils";
+import { boundingBox, reverseGeocode } from "../utils/map-utils";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { SpeedCameraProperties } from "../types/ISpeed";
@@ -27,23 +27,35 @@ export async function fetchSpeedCameras(params: {
         const url = `${OPENSTREETMAP_API}?data=${encodeURIComponent(overpassQuery)}`;
         const response = await axios.get(url);
 
-        return convertToGeoJSON(response.data) as FeatureCollection<Geometry, GeometryCollection>;
+        return convertToGeoJSON(response.data) as Promise<FeatureCollection<Geometry, GeometryCollection>>;
     } catch (error) {
         console.log(`Error fetching speed cameras: ${error}`);
         return DEFAULT_FC;
     }
 }
 
-function convertToGeoJSON(overpassData: Overpass<SpeedCameraProperties>): FeatureCollection {
+async function convertToGeoJSON(overpassData: Overpass<SpeedCameraProperties>): Promise<FeatureCollection> {
+    const features = await Promise.all(
+        overpassData.elements.map(async (element) => {
+            const { name, full_address } = await reverseGeocode(element.lon, element.lat);
+
+            return {
+                type: "Feature",
+                properties: {
+                    ...element.tags,
+                    name,
+                    address: full_address,
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [element.lon, element.lat],
+                },
+            };
+        })
+    );
+
     return {
         type: "FeatureCollection",
-        features: overpassData.elements.map((element) => ({
-            type: "Feature",
-            properties: element.tags,
-            geometry: {
-                type: "Point",
-                coordinates: [element.lon, element.lat],
-            },
-        })),
+        features: features as FeatureCollection["features"],
     };
 }

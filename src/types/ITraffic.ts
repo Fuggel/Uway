@@ -9,25 +9,7 @@ export interface IncidentFeature {
         type: string;
         coordinates: number[][];
     };
-    properties: {
-        id: string;
-        iconCategory: IncidentType;
-        magnitudeOfDelay: number;
-        startTimestamp: string;
-        endTimestamp: string;
-        from: string;
-        to: string;
-        length: number;
-        delay: number;
-        roadNumbers: string[];
-        timeValidity: string;
-        events: IncidentEvent[];
-        probabilityOfOccurrence: string;
-        geometry: {
-            type: string;
-            coordinates: number[][];
-        };
-    };
+    properties: IncidentProperties;
 }
 
 export interface IncidentAlert {
@@ -53,4 +35,25 @@ export interface IncidentEvent {
     code: number;
     description: string;
     iconCategory: IncidentType;
+}
+
+export interface IncidentProperties {
+    id: string;
+    iconCategory: IncidentType;
+    description: string;
+    startTime: string;
+    endTime: string;
+    from: string;
+    to: string;
+    length: number;
+    delay: number;
+    roadNumbers: string[];
+    timeValidity: string;
+    events: IncidentEvent[];
+    probabilityOfOccurrence: string;
+    lastReportTime: string;
+    geometry: {
+        type: string;
+        coordinates: number[][];
+    };
 }

@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import {
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     MAP_CONFIG,
     SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
-    SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     MAP_ICONS,
     SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
     SHOW_INCIDENTS_THRESHOLD_IN_METERS,
@@ -35,7 +34,7 @@ import useSpeedCameras from "@/src/hooks/useSpeedCameras";
 import SymbolLayer from "../layer/SymbolLayer";
 import { Point } from "@turf/helpers";
 import Toast from "../common/Toast";
-import { SpeedLimitFeature } from "@/src/types/ISpeed";
+import { SpeedCameraProperties, SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
 import useParkAvailability from "@/src/hooks/useParkAvailability";
 import useSpeedLimits from "@/src/hooks/useSpeedLimits";
@@ -43,12 +42,15 @@ import { Instruction } from "@/src/types/INavigation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useUserLocation from "@/src/hooks/useUserLocation";
 import { determineTheme } from "@/src/utils/theme-utils";
-import useChargingStations from "@/src/hooks/useChargingStations";
 import useGasStations from "@/src/hooks/useGasStations";
 import { GasStation } from "@/src/types/IGasStation";
 import MapBottomSheet from "./MapBottomSheet";
 import useIncidents from "@/src/hooks/useIncidents";
-import { IncidentType } from "@/src/types/ITraffic";
+import { IncidentProperties, IncidentType } from "@/src/types/ITraffic";
+import useMarkerBottomSheet from "@/src/hooks/useMarkerBottomSheet";
+import { MarkerSheet } from "@/src/types/ISheet";
+import { sheetData, sheetTitle } from "@/src/utils/sheet-utils";
+import { ParkAvailabilityProperties } from "@/src/types/IParking";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -58,9 +60,8 @@ const deviceHeight = Dimensions.get("window").height;
 
 export default function Map() {
     const dispatch = useDispatch();
+    const { showSheet, markerData, openSheet, closeSheet } = useMarkerBottomSheet();
     const { userLocation, userHeading } = useUserLocation();
-    const [showGasStationSheet, setShowGasStationSheet] = useState(false);
-    const [gasStationProperties, setGasStationProperties] = useState<GasStation | null>(null);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -88,8 +89,8 @@ export default function Map() {
             lat: userLocation?.coords?.latitude as number,
         },
         destinationLngLat: {
-            lon: locations?.geometry.coordinates[0] as number,
-            lat: locations?.geometry.coordinates[1] as number,
+            lon: locations?.geometry?.coordinates[0] as number,
+            lat: locations?.geometry?.coordinates[1] as number,
         },
         isNavigationMode,
         userLocation: {
@@ -106,11 +107,6 @@ export default function Map() {
         userLon: userLocation?.coords?.longitude as number,
         userLat: userLocation?.coords?.latitude as number,
         distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
-    });
-    const { chargingStations } = useChargingStations({
-        userLon: userLocation?.coords?.longitude as number,
-        userLat: userLocation?.coords?.latitude as number,
-        distance: SHOW_CHARGING_STATIONS_THRESHOLD_IN_METERS,
     });
     const { gasStations } = useGasStations({
         userLon: userLocation?.coords?.longitude as number,
@@ -136,11 +132,6 @@ export default function Map() {
         dispatch(mapNavigationActions.setIsNavigationMode(false));
         dispatch(mapNavigationActions.setSearchQuery(""));
         dispatch(mapNavigationActions.setLocationId(""));
-    };
-
-    const handleGasStationPress = (properties: GasStation) => {
-        setShowGasStationSheet(true);
-        setGasStationProperties(properties);
     };
 
     useEffect(() => {
@@ -204,31 +195,18 @@ export default function Map() {
                             }}
                         />
                     )}
-                    {chargingStations?.features?.map((feature, i) => (
-                        <SymbolLayer
-                            key={i}
-                            sourceId={`e-charging-station-source-${i}`}
-                            layerId={`e-charging-station-layer-${i}`}
-                            coordinates={(feature.geometry as Point).coordinates}
-                            style={{
-                                iconImage: "e-charging-station",
-                                textField: `
-                                Kapazität: ${feature.properties?.capacity ?? "Unbekannt"}
-                            `,
-                                textSize: SIZES.fontSize.sm,
-                                textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
-                                textOffset: [0, 2],
-                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
-                            }}
-                            belowLayerId="user-location-layer"
-                        />
-                    ))}
                     {parkAvailability?.features?.map((feature, i) => (
                         <View key={i}>
                             <SymbolLayer
                                 sourceId={`parking-availability-source-${i}`}
                                 layerId={`parking-availability-layer-${i}`}
                                 coordinates={(feature.geometry as Point).coordinates}
+                                onPress={() =>
+                                    openSheet<ParkAvailabilityProperties>(
+                                        MarkerSheet.PARKING,
+                                        feature.properties as ParkAvailabilityProperties
+                                    )
+                                }
                                 properties={feature.properties}
                                 style={{
                                     iconImage: "parking-availability",
@@ -251,7 +229,9 @@ export default function Map() {
                             sourceId={`gas-station-source-${i}`}
                             layerId={`gas-station-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
-                            onPress={() => handleGasStationPress(feature.properties as GasStation)}
+                            onPress={() =>
+                                openSheet<GasStation>(MarkerSheet.GAS_STATION, feature.properties as GasStation)
+                            }
                             properties={feature.properties}
                             style={{
                                 iconImage: getStationIcon(
@@ -269,6 +249,12 @@ export default function Map() {
                             sourceId={`speed-camera-source-${i}`}
                             layerId={`speed-camera-layer-${i}`}
                             coordinates={(feature.geometry as Point).coordinates}
+                            onPress={() =>
+                                openSheet<SpeedCameraProperties>(
+                                    MarkerSheet.SPEED_CAMERA,
+                                    feature.properties as SpeedCameraProperties
+                                )
+                            }
                             style={{
                                 iconImage: "speed-camera",
                                 iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
@@ -294,6 +280,12 @@ export default function Map() {
                                 sourceId={`incident-symbol-source-${i}`}
                                 layerId={`incident-symbol-layer-${i}`}
                                 coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
+                                onPress={() =>
+                                    openSheet<IncidentProperties>(
+                                        MarkerSheet.INCIDENT,
+                                        incident.properties as IncidentProperties
+                                    )
+                                }
                                 properties={incident.properties}
                                 style={{
                                     iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
@@ -329,7 +321,7 @@ export default function Map() {
                         <SymbolLayer
                             sourceId="user-location"
                             layerId="user-location-layer"
-                            coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}
+                            coordinates={[userLocation.coords?.longitude, userLocation.coords?.latitude]}
                             properties={{
                                 heading: userHeading,
                                 ...userLocation,
@@ -407,32 +399,11 @@ export default function Map() {
                         </Toast>
                     )}
                 </View>
-                {showGasStationSheet && (
+                {showSheet && (
                     <MapBottomSheet
-                        title={gasStationProperties?.name || "Tankstelle"}
-                        data={[
-                            {
-                                label: "Marke",
-                                value: gasStationProperties?.brand ?? "Unbekannt",
-                            },
-                            {
-                                label: "Straße",
-                                value: gasStationProperties?.name ?? "Unbekannt",
-                            },
-                            {
-                                label: "Diesel",
-                                value: `${gasStationProperties?.diesel} €` ?? "Unbekannt",
-                            },
-                            {
-                                label: "E5",
-                                value: `${gasStationProperties?.e5} €` ?? "Unbekannt",
-                            },
-                            {
-                                label: "E10",
-                                value: `${gasStationProperties?.e10} €` ?? "Unbekannt",
-                            },
-                        ]}
-                        onClose={() => setShowGasStationSheet(false)}
+                        title={sheetTitle(markerData?.type, markerData?.properties)}
+                        data={sheetData(markerData?.type, markerData?.properties)}
+                        onClose={closeSheet}
                     />
                 )}
             </View>
