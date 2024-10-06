@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { MAP_CONFIG, MAP_ICONS } from "../../constants/map-constants";
-import { Image, Keyboard, StyleSheet, Text, View } from "react-native";
-import { determineIncidentIcon, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
+import { Keyboard, StyleSheet, View } from "react-native";
+import { determineMapStyle } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
@@ -11,21 +11,15 @@ import useSearchLocation from "../../hooks/useSearchLocation";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
-import { COLORS } from "../../constants/colors-constants";
 import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
-import useSpeedCameras from "@/src/hooks/useSpeedCameras";
-import Toast from "../common/Toast";
-import { SpeedLimitFeature } from "@/src/types/ISpeed";
-import { SIZES } from "@/src/constants/size-constants";
-import useSpeedLimits from "@/src/hooks/useSpeedLimits";
 import MapBottomSheet from "./MapBottomSheet";
-import useIncidents from "@/src/hooks/useIncidents";
 import { sheetData, sheetTitle } from "@/src/utils/sheet-utils";
 import { UserLocationContext } from "@/src/contexts/UserLocationContext";
 import { sessionToken } from "@/src/constants/auth-constants";
 import Layers from "../layer/Layers";
 import { MarkerBottomSheetContext } from "@/src/contexts/MarkerBottomSheetContext";
 import { Position } from "@turf/helpers";
+import MapAlerts from "./MapAlerts";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -38,18 +32,12 @@ export default function Map() {
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
-    const { speedCameras } = useSpeedCameras();
-    const { speedLimits } = useSpeedLimits();
-    const { incidents } = useIncidents();
     const { directions, setDirections, loadingDirections } = useDirections({
         destinationLngLat: {
             lon: locations?.geometry?.coordinates[0] as number,
             lat: locations?.geometry?.coordinates[1] as number,
         },
     });
-
-    const userSpeed = userLocation?.coords?.speed;
-    const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
 
     return (
         <>
@@ -102,42 +90,7 @@ export default function Map() {
 
                 {!directions && userLocation && <MapSearchbar />}
 
-                <View style={styles.absoluteBottom}>
-                    {/* TODO: Refactor this and extract into a separate component named MapAlerts */}
-                    {speedLimits?.alert && (
-                        <Image
-                            source={determineSpeedLimitIcon(
-                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
-                            )}
-                            style={styles.speedLimitImage}
-                        />
-                    )}
-
-                    {userLocation?.coords && (
-                        <Toast show type="info">
-                            <Text style={styles.alertMsg}>{currentSpeed} km/h</Text>
-                        </Toast>
-                    )}
-
-                    {speedCameras?.alert && (
-                        <Toast
-                            show={!!speedCameras.alert}
-                            type="error"
-                            title={`Blitzer in ${speedCameras.alert.distance.toFixed(0)} m`}
-                        />
-                    )}
-
-                    {incidents?.alert && (
-                        <Toast
-                            show={!!incidents.alert}
-                            type="error"
-                            image={determineIncidentIcon(incidents.alert.events[0]?.iconCategory)}
-                            title={`Achtung! Gefahr in ${incidents.alert.distance.toFixed(0)} m`}
-                        >
-                            <Text style={styles.alertMsg}>{incidents.alert.events[0]?.description}</Text>
-                        </Toast>
-                    )}
-                </View>
+                <MapAlerts />
 
                 {showSheet && (
                     <MapBottomSheet
@@ -167,23 +120,5 @@ const styles = StyleSheet.create({
     },
     map: {
         flex: 1,
-    },
-    absoluteBottom: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        width: "100%",
-        pointerEvents: "none",
-    },
-    alertMsg: {
-        color: COLORS.dark,
-        fontSize: SIZES.fontSize.md,
-        fontWeight: "bold",
-    },
-    speedLimitImage: {
-        width: 75,
-        height: 75,
-        marginBottom: SIZES.spacing.md,
-        marginLeft: SIZES.spacing.sm,
     },
 });
