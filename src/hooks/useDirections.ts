@@ -25,7 +25,7 @@ export default function useDirections(params: { destinationLngLat: LonLat }) {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", directions, navigationProfile, isNavigationMode, longitude, latitude],
+        queryKey: ["directions", directions, navigationProfile, isNavigationMode],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,

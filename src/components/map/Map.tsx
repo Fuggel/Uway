@@ -1,19 +1,13 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { MAP_CONFIG, MAP_ICONS } from "../../constants/map-constants";
-import { Dimensions, Image, Keyboard, StyleSheet, Text, View } from "react-native";
-import {
-    arrowDirection,
-    determineIncidentIcon,
-    determineMapStyle,
-    determineSpeedLimitIcon,
-} from "../../utils/map-utils";
+import { Image, Keyboard, StyleSheet, Text, View } from "react-native";
+import { determineIncidentIcon, determineMapStyle, determineSpeedLimitIcon } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { mapViewSelectors } from "../../store/mapView";
 import useDirections from "../../hooks/useDirections";
 import Loading from "../common/Loading";
 import useSearchLocation from "../../hooks/useSearchLocation";
-import useInstructions from "../../hooks/useInstructions";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
@@ -24,8 +18,6 @@ import Toast from "../common/Toast";
 import { SpeedLimitFeature } from "@/src/types/ISpeed";
 import { SIZES } from "@/src/constants/size-constants";
 import useSpeedLimits from "@/src/hooks/useSpeedLimits";
-import { Instruction } from "@/src/types/INavigation";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MapBottomSheet from "./MapBottomSheet";
 import useIncidents from "@/src/hooks/useIncidents";
 import { sheetData, sheetTitle } from "@/src/utils/sheet-utils";
@@ -37,8 +29,6 @@ import { Position } from "@turf/helpers";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
-const deviceHeight = Dimensions.get("window").height;
-
 export default function Map() {
     const dispatch = useDispatch();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
@@ -46,49 +36,20 @@ export default function Map() {
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
-    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const { locations, setLocations } = useSearchLocation({
-        mapboxId: locationId,
-        sessionToken,
-    });
+    const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
+    const { speedCameras } = useSpeedCameras();
+    const { speedLimits } = useSpeedLimits();
+    const { incidents } = useIncidents();
     const { directions, setDirections, loadingDirections } = useDirections({
         destinationLngLat: {
             lon: locations?.geometry?.coordinates[0] as number,
             lat: locations?.geometry?.coordinates[1] as number,
         },
     });
-    const { speedCameras } = useSpeedCameras();
-    const { speedLimits } = useSpeedLimits();
-    const { incidents } = useIncidents();
-    const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
-
-    const handleCancelNavigation = () => {
-        setDirections(null);
-        setCurrentStep(0);
-        setLocations(null);
-        dispatch(mapNavigationActions.setNavigationView(false));
-        dispatch(mapNavigationActions.setIsNavigationMode(false));
-        dispatch(mapNavigationActions.setSearchQuery(""));
-        dispatch(mapNavigationActions.setLocationId(""));
-    };
-
-    useEffect(() => {
-        if (directions && isNavigationMode && locations) {
-            dispatch(mapNavigationActions.setNavigationView(true));
-            dispatch(mapNavigationActions.setSearchQuery(""));
-            setCurrentStep(0);
-        }
-    }, [isNavigationMode, directions]);
-
-    useEffect(() => {
-        if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
-            handleCancelNavigation();
-        }
-    }, [currentStep, directions]);
 
     return (
         <>
@@ -141,30 +102,8 @@ export default function Map() {
 
                 {!directions && userLocation && <MapSearchbar />}
 
-                {directions?.legs[0].steps
-                    .slice(currentStep, currentStep + 1)
-                    .map((step: Instruction, index: number) => {
-                        const arrowDir = arrowDirection(step.maneuver.modifier);
-
-                        return (
-                            <View key={index} style={styles.instructionsContainer}>
-                                <Text style={styles.stepInstruction}>{step.maneuver.instruction}</Text>
-
-                                <View style={styles.directionRow}>
-                                    {arrowDir !== undefined && (
-                                        <MaterialCommunityIcons
-                                            name={arrowDir}
-                                            size={SIZES.iconSize.xl}
-                                            color={COLORS.primary}
-                                        />
-                                    )}
-                                    <Text style={styles.stepDistance}>{step.distance.toFixed(0)} m</Text>
-                                </View>
-                            </View>
-                        );
-                    })}
-
                 <View style={styles.absoluteBottom}>
+                    {/* TODO: Refactor this and extract into a separate component named MapAlerts */}
                     {speedLimits?.alert && (
                         <Image
                             source={determineSpeedLimitIcon(
@@ -199,6 +138,7 @@ export default function Map() {
                         </Toast>
                     )}
                 </View>
+
                 {showSheet && (
                     <MapBottomSheet
                         title={sheetTitle(markerData?.type, markerData?.properties)}
@@ -209,15 +149,12 @@ export default function Map() {
             </View>
 
             {(locations || directions) && (
-                <View style={styles.flexBottom}>
-                    <MapNavigation
-                        remainingDistance={remainingDistance}
-                        remainingTime={remainingTime}
-                        directions={directions}
-                        locations={locations}
-                        onCancelNavigation={handleCancelNavigation}
-                    />
-                </View>
+                <MapNavigation
+                    directions={directions}
+                    locations={locations}
+                    setDirections={setDirections}
+                    setLocations={setLocations}
+                />
             )}
         </>
     );
@@ -237,33 +174,6 @@ const styles = StyleSheet.create({
         left: 0,
         width: "100%",
         pointerEvents: "none",
-    },
-    flexBottom: {
-        flex: 1,
-        maxHeight: deviceHeight > 1000 ? "12%" : "18%",
-        justifyContent: "center",
-        backgroundColor: COLORS.white_transparent,
-    },
-    instructionsContainer: {
-        position: "absolute",
-        top: deviceHeight > 1000 ? "4%" : "7%",
-        left: SIZES.spacing.sm,
-        maxWidth: "60%",
-        backgroundColor: COLORS.white_transparent,
-        borderRadius: SIZES.borderRadius.sm,
-        padding: SIZES.spacing.sm,
-    },
-    stepInstruction: {
-        fontSize: SIZES.fontSize.md,
-        fontWeight: "bold",
-    },
-    stepDistance: {
-        fontSize: SIZES.fontSize.sm,
-        color: COLORS.gray,
-    },
-    directionRow: {
-        flexDirection: "row",
-        alignItems: "center",
     },
     alertMsg: {
         color: COLORS.dark,
