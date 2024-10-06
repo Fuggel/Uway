@@ -1,44 +1,33 @@
 import React from "react";
 import { ShapeSource, SymbolLayer as Layer } from "@rnmapbox/maps";
 
-interface SymbolLayerProps {
+interface SymbolLayerProps<T> {
     sourceId: string;
     layerId: string;
     coordinates: number[];
     onPress?: () => void;
-    properties?: any;
-    style?: {
-        textField?: string | any[];
-        textSize?: number | any[];
-        textColor?: string | any[];
-        textOffset?: number[] | any[];
-        iconImage?: string | any[];
-        iconAllowOverlap?: boolean | any[];
-        iconRotationAlignment?: "map" | "viewport" | any[];
-        iconPitchAlignment?: "map" | "viewport" | any[];
-        iconSize?: number | any[];
-        iconRotate?: number | any[];
-    };
+    properties?: T;
+    style?: any;
     belowLayerId?: string;
     aboveLayerId?: string;
 }
 
-export default function SymbolLayer({
+export default function SymbolLayer<T>({
     sourceId,
     layerId,
     coordinates,
     onPress,
-    properties = {},
+    properties,
     style,
     belowLayerId,
     aboveLayerId,
-}: SymbolLayerProps) {
+}: SymbolLayerProps<T>) {
     return (
         <ShapeSource
             id={sourceId}
             shape={{
                 type: "Feature",
-                properties,
+                properties: properties ?? {},
                 geometry: {
                     type: "Point",
                     coordinates,
@@ -49,10 +38,10 @@ export default function SymbolLayer({
             <Layer
                 id={layerId}
                 style={{
-                    iconImage: style?.iconImage ?? "marker-15",
+                    iconImage: "marker-15",
                     iconAllowOverlap: true,
-                    iconSize: style?.iconSize ?? 0.5,
-                    iconRotate: style?.iconRotate ?? 0,
+                    iconSize: 0.5,
+                    iconRotate: 0,
                     ...style,
                 }}
                 belowLayerID={belowLayerId ?? undefined}
