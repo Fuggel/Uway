@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { mapIncidentSelectors } from "../store/mapIncident";
 import { fetchIncidents } from "../services/incidents";
 import { IncidentAlert, IncidentFc } from "../types/ITraffic";
+import { INCIDENTS_REFETCH_INTERVAL } from "../constants/time-constants";
 
 export default function useIncidents(params: { userLon: number; userLat: number; distance: number }) {
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
@@ -28,6 +29,7 @@ export default function useIncidents(params: { userLon: number; userLat: number;
             }),
         enabled: showIncidents && !!params.userLon && !!params.userLat,
         staleTime: Infinity,
+        refetchInterval: INCIDENTS_REFETCH_INTERVAL,
     });
 
     useEffect(() => {

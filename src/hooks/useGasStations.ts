@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { DEFAULT_FC } from "../constants/map-constants";
 import { fetchGasStations } from "../services/gas-stations";
 import { mapGasStationSelectors } from "../store/mapGasStation";
+import { GAS_STATIONS_REFETCH_INTERVAL } from "../constants/time-constants";
 
 export default function useGasStations(params: { userLon: number; userLat: number; radius: number }) {
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
@@ -24,6 +25,7 @@ export default function useGasStations(params: { userLon: number; userLat: numbe
             }),
         enabled: showGasStations && !!params.userLon && !!params.userLat,
         staleTime: Infinity,
+        refetchInterval: GAS_STATIONS_REFETCH_INTERVAL,
     });
 
     useEffect(() => {
