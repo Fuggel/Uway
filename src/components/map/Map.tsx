@@ -162,25 +162,32 @@ export default function Map() {
                     onTouchStart={() => {
                         Keyboard.dismiss();
                         dispatch(mapNavigationActions.setTracking(false));
-                        dispatch(mapNavigationActions.setNavigationView(false));
                     }}
                 >
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={1000}
+                        animationDuration={500}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
+                        zoomLevel={
+                            !userLocation
+                                ? MAP_CONFIG.noLocationZoom
+                                : navigationView
+                                ? MAP_CONFIG.followZoom
+                                : MAP_CONFIG.zoom
+                        }
                         heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? [userLocation.coords.longitude, userLocation.coords.latitude]
-                                : [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
+                                : tracking && !userLocation
+                                ? [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat]
+                                : undefined
                         }
                         defaultSettings={{
                             centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat],
-                            zoomLevel: MAP_CONFIG.zoom,
+                            zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
                             pitch: MAP_CONFIG.pitch,
                         }}
                     />

@@ -10,9 +10,10 @@ export const DEFAULT_FC: FeatureCollection<Geometry, GeometryCollection> = { typ
 
 export const MAP_CONFIG: MapConfig = {
     position: {
-        lon: 9.932443474070425,
-        lat: 53.54839604442992,
+        lon: 9.987431941065552,
+        lat: 51.14220917694149,
     },
+    noLocationZoom: 8,
     zoom: 18,
     pitch: 0,
     followPitch: 50,

@@ -7,6 +7,7 @@ export interface LonLat {
 
 export interface MapConfig {
     position: LonLat;
+    noLocationZoom: number;
     zoom: number;
     pitch: number;
     followPitch: number;
