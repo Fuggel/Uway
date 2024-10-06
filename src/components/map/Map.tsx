@@ -33,6 +33,7 @@ import { UserLocationContext } from "@/src/contexts/UserLocationContext";
 import { sessionToken } from "@/src/constants/auth-constants";
 import Layers from "../layer/Layers";
 import { MarkerBottomSheetContext } from "@/src/contexts/MarkerBottomSheetContext";
+import { Position } from "@turf/helpers";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -103,25 +104,32 @@ export default function Map() {
                     onTouchStart={() => {
                         Keyboard.dismiss();
                         dispatch(mapNavigationActions.setTracking(false));
-                        dispatch(mapNavigationActions.setNavigationView(false));
                     }}
                 >
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={1000}
+                        animationDuration={500}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        zoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
+                        zoomLevel={
+                            !userLocation
+                                ? MAP_CONFIG.noLocationZoom
+                                : navigationView
+                                ? MAP_CONFIG.followZoom
+                                : MAP_CONFIG.zoom
+                        }
                         heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
-                                ? [userLocation.coords.longitude, userLocation.coords.latitude]
-                                : [MAP_CONFIG.position.lon as number, MAP_CONFIG.position.lat as number]
+                                ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
+                                : tracking && !userLocation
+                                ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                : undefined
                         }
                         defaultSettings={{
-                            centerCoordinate: [MAP_CONFIG.position.lon!, MAP_CONFIG.position.lat!],
-                            zoomLevel: MAP_CONFIG.zoom,
+                            centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
+                            zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
                             pitch: MAP_CONFIG.pitch,
                         }}
                     />

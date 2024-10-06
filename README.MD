@@ -32,6 +32,5 @@ Toggle between different features in the sidebar and customize the map view with
 
 -   React Native (Expo)
 -   Mapbox
--   React Paper
 -   Redux
 -   Jest

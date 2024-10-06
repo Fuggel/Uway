@@ -6,6 +6,7 @@ import { DEFAULT_FC, SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS } from "../consta
 import { fetchGasStations } from "../services/gas-stations";
 import { mapGasStationSelectors } from "../store/mapGasStation";
 import { UserLocationContext } from "../contexts/UserLocationContext";
+import { GAS_STATIONS_REFETCH_INTERVAL } from "../constants/time-constants";
 
 export default function useGasStations() {
     const { userLocation } = useContext(UserLocationContext);
@@ -28,6 +29,7 @@ export default function useGasStations() {
             }),
         enabled: showGasStations && !!longitude && !!latitude,
         staleTime: Infinity,
+        refetchInterval: GAS_STATIONS_REFETCH_INTERVAL,
     });
 
     useEffect(() => {

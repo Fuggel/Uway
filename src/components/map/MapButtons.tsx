@@ -3,7 +3,7 @@ import { COLORS } from "../../constants/colors-constants";
 import { SIZES } from "../../constants/size-constants";
 import { IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
+import { mapNavigationActions } from "../../store/mapNavigation";
 import { useContext } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
 import { mapViewSelectors } from "@/src/store/mapView";
@@ -14,7 +14,6 @@ const deviceHeight = Dimensions.get("window").height;
 export default function MapButtons() {
     const dispatch = useDispatch();
     const { open, setOpen } = useContext(SettingsContext);
-    const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
@@ -37,17 +36,6 @@ export default function MapButtons() {
                         size={SIZES.iconSize.md}
                         iconColor={COLORS.primary}
                         onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                    />
-                </TouchableOpacity>
-            </View>
-
-            <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <TouchableOpacity>
-                    <IconButton
-                        icon={navigationView ? "compass" : "navigation-variant"}
-                        size={SIZES.iconSize.md}
-                        iconColor={COLORS.primary}
-                        onPress={() => dispatch(mapNavigationActions.setNavigationView(!navigationView))}
                     />
                 </TouchableOpacity>
             </View>

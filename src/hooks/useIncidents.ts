@@ -10,6 +10,7 @@ import { mapIncidentSelectors } from "../store/mapIncident";
 import { fetchIncidents } from "../services/incidents";
 import { IncidentAlert, IncidentFc } from "../types/ITraffic";
 import { UserLocationContext } from "../contexts/UserLocationContext";
+import { INCIDENTS_REFETCH_INTERVAL } from "../constants/time-constants";
 
 export default function useIncidents() {
     const { userLocation } = useContext(UserLocationContext);
@@ -35,6 +36,7 @@ export default function useIncidents() {
             }),
         enabled: showIncidents && !!longitude && !!latitude,
         staleTime: Infinity,
+        refetchInterval: INCIDENTS_REFETCH_INTERVAL,
     });
 
     useEffect(() => {

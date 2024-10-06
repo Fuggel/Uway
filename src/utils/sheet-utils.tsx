@@ -68,7 +68,7 @@ function incidentData(incidentProperties: IncidentProperties | undefined) {
         },
         {
             label: "Letzte Meldung",
-            value: incidentProperties?.lastReportTime ?? "Unbekannt",
+            value: toGermanDate(incidentProperties?.lastReportTime) ?? "Unbekannt",
         },
     ];
 }
@@ -121,7 +121,7 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
         },
         {
             label: "Max. Geschwindigkeit",
-            value: `${speedCameraProperties?.maxspeed} km/h` ?? "Unbekannt",
+            value: speedCameraProperties?.maxspeed ? `${speedCameraProperties?.maxspeed} km/h` : "Unbekannt",
         },
     ];
 }

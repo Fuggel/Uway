@@ -14,6 +14,7 @@ export interface BoundingBox {
 
 export interface MapConfig {
     position: LonLat;
+    noLocationZoom: number;
     zoom: number;
     pitch: number;
     followPitch: number;
