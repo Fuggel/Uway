@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
-import { MarkerSheet } from "../types/ISheet";
+
+import { MarkerSheet } from "@/types/ISheet";
 
 interface MarkerProperties {
     type: MarkerSheet;

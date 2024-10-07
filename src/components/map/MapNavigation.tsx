@@ -1,18 +1,21 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { COLORS } from "../../constants/colors-constants";
-import { Location } from "../../types/IMap";
-import { Direction, Instruction, RouteProfileType } from "@/src/types/INavigation";
-import { SIZES } from "../../constants/size-constants";
-import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
-import Card from "../common/Card";
-import { IconButton, SegmentedButtons } from "react-native-paper";
-import { ROUTE_PROFILES } from "../../constants/map-constants";
-import { arrowDirection } from "@/src/utils/map-utils";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useContext, useEffect } from "react";
-import useInstructions from "@/src/hooks/useInstructions";
-import { UserLocationContext } from "@/src/contexts/UserLocationContext";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { IconButton, SegmentedButtons } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { COLORS } from "@/constants/colors-constants";
+import { ROUTE_PROFILES } from "@/constants/map-constants";
+import { SIZES } from "@/constants/size-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useInstructions from "@/hooks/useInstructions";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { Location } from "@/types/IMap";
+import { Direction, Instruction, RouteProfileType } from "@/types/INavigation";
+import { arrowDirection } from "@/utils/map-utils";
+
+import Card from "../common/Card";
 
 interface MapNavigationProps {
     directions: Direction | null;
@@ -23,7 +26,7 @@ interface MapNavigationProps {
 
 const deviceHeight = Dimensions.get("window").height;
 
-export default function MapNavigation({ directions, locations, setDirections, setLocations }: MapNavigationProps) {
+const MapNavigation = ({ directions, locations, setDirections, setLocations }: MapNavigationProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -157,7 +160,7 @@ export default function MapNavigation({ directions, locations, setDirections, se
             </View>
         </>
     );
-}
+};
 
 const styles = StyleSheet.create({
     instructionsContainer: {
@@ -221,3 +224,5 @@ const styles = StyleSheet.create({
         marginLeft: SIZES.spacing.md,
     },
 });
+
+export default MapNavigation;

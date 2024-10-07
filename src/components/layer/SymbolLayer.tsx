@@ -1,5 +1,4 @@
-import React from "react";
-import { ShapeSource, SymbolLayer as Layer } from "@rnmapbox/maps";
+import { SymbolLayer as Layer, ShapeSource } from "@rnmapbox/maps";
 
 interface SymbolLayerProps<T> {
     sourceId: string;
@@ -12,7 +11,7 @@ interface SymbolLayerProps<T> {
     aboveLayerId?: string;
 }
 
-export default function SymbolLayer<T>({
+const SymbolLayer = <T,>({
     sourceId,
     layerId,
     coordinates,
@@ -21,7 +20,7 @@ export default function SymbolLayer<T>({
     style,
     belowLayerId,
     aboveLayerId,
-}: SymbolLayerProps<T>) {
+}: SymbolLayerProps<T>) => {
     return (
         <ShapeSource
             id={sourceId}
@@ -49,4 +48,6 @@ export default function SymbolLayer<T>({
             />
         </ShapeSource>
     );
-}
+};
+
+export default SymbolLayer;

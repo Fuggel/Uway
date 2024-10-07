@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { Direction, Instruction } from "../types/INavigation";
-import { NEXT_STEP_THRESHOLD_IN_METERS } from "../constants/map-constants";
-import { point, distance as turfDistance } from "@turf/turf";
 import { LocationObject } from "expo-location";
+import { useEffect, useState } from "react";
 
-export default function useInstructions(directions: Direction | null, userLocation: LocationObject | null) {
+import { point, distance as turfDistance } from "@turf/turf";
+
+import { NEXT_STEP_THRESHOLD_IN_METERS } from "@/constants/map-constants";
+import { Direction, Instruction } from "@/types/INavigation";
+
+const useInstructions = (directions: Direction | null, userLocation: LocationObject | null) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [remainingTime, setRemainingTime] = useState(0);
     const [remainingDistance, setRemainingDistance] = useState(0);
@@ -45,4 +47,6 @@ export default function useInstructions(directions: Direction | null, userLocati
     }, [userLocation, currentStep, directions]);
 
     return { currentStep, setCurrentStep, remainingTime, remainingDistance };
-}
+};
+
+export default useInstructions;

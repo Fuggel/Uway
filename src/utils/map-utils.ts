@@ -1,11 +1,12 @@
-import { LonLat, MapboxStyle } from "../types/IMap";
-import { ModifierType } from "../types/INavigation";
-import { GasStation } from "../types/IGasStation";
-import { IncidentType } from "../types/ITraffic";
 import axios from "axios";
-import { MAPBOX_REVERSE_GEOCODING_API } from "../constants/api-constants";
-import { MAP_CONFIG } from "../constants/map-constants";
-import { ReverseGeocodeProperties } from "../types/ISearch";
+
+import { MAPBOX_REVERSE_GEOCODING_API } from "@/constants/api-constants";
+import { MAP_CONFIG } from "@/constants/map-constants";
+import { GasStation } from "@/types/IGasStation";
+import { LonLat, MapboxStyle } from "@/types/IMap";
+import { ModifierType } from "@/types/INavigation";
+import { ReverseGeocodeProperties } from "@/types/ISearch";
+import { IncidentType } from "@/types/ITraffic";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {

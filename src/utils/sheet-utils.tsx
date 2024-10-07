@@ -1,11 +1,13 @@
-import { MarkerSheet } from "../types/ISheet";
-import PriceDisplay from "../components/ui/PriceDisplay";
-import { GasStation } from "../types/IGasStation";
-import { IncidentProperties, IncidentType } from "../types/ITraffic";
-import { ParkAvailabilityProperties } from "../types/IParking";
-import { SpeedCameraProperties } from "../types/ISpeed";
+import { GasStation } from "@/types/IGasStation";
+import { ParkAvailabilityProperties } from "@/types/IParking";
+import { MarkerSheet } from "@/types/ISheet";
+import { SpeedCameraProperties } from "@/types/ISpeed";
+import { IncidentProperties, IncidentType } from "@/types/ITraffic";
+
 import { toGermanDate } from "./date-utils";
 import { formatLength } from "./unit-utils";
+
+import PriceDisplay from "@/components/ui/PriceDisplay";
 
 export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): string {
     switch (marker) {

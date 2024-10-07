@@ -1,17 +1,20 @@
+import { PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import store, { persistor } from "../store/index";
-import Map from "@/src/components/map/Map";
-import { PaperProvider } from "react-native-paper";
-import Settings from "../components/settings/Settings";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SettingsContextProvider } from "../contexts/SettingsContext";
-import { UserLocationContextProvider } from "../contexts/UserLocationContext";
-import { MarkerBottomSheetContextProvider } from "../contexts/MarkerBottomSheetContext";
+
+import { MarkerBottomSheetContextProvider } from "@/contexts/MarkerBottomSheetContext";
+import { SettingsContextProvider } from "@/contexts/SettingsContext";
+import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
+import store, { persistor } from "@/store";
+
+import Map from "@/components/map/Map";
+import Settings from "@/components/settings/Settings";
 
 const queryClient = new QueryClient();
 
-export default function Layout() {
+const Layout = () => {
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
@@ -30,4 +33,6 @@ export default function Layout() {
             </PersistGate>
         </Provider>
     );
-}
+};
+
+export default Layout;

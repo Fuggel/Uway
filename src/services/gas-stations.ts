@@ -1,9 +1,11 @@
 import axios from "axios";
-import { TANKERKOENIG_API } from "@/src/constants/api-constants";
+
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
-import { DEFAULT_FC } from "../constants/map-constants";
-import { GasStation } from "../types/IGasStation";
-import { LonLat } from "../types/IMap";
+
+import { TANKERKOENIG_API } from "@/constants/api-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
+import { GasStation } from "@/types/IGasStation";
+import { LonLat } from "@/types/IMap";
 
 export async function fetchGasStations(params: {
     userLonLat: LonLat;

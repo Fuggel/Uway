@@ -1,8 +1,9 @@
-import { createContext, useEffect, useState } from "react";
 import * as Location from "expo-location";
+import { createContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { mapTestingSelectors } from "../store/mapTesting";
-import { simulateUserLocation } from "../utils/route-testing-utils";
+
+import { mapTestingSelectors } from "@/store/mapTesting";
+import { simulateUserLocation } from "@/utils/route-testing-utils";
 
 interface ContextProps {
     userLocation: Location.LocationObject | null;

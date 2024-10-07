@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { COLORS } from "../../constants/colors-constants";
-import { SIZES } from "../../constants/size-constants";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
 
 interface LoadingProps {
     color?: string;
@@ -9,7 +10,7 @@ interface LoadingProps {
     style?: StyleSheet;
 }
 
-export default function Loading({ color, size, style }: LoadingProps) {
+const Loading = ({ color, size, style }: LoadingProps) => {
     return (
         <ActivityIndicator
             animating={true}
@@ -18,7 +19,7 @@ export default function Loading({ color, size, style }: LoadingProps) {
             style={{ ...styles.loading, ...style }}
         />
     );
-}
+};
 
 const styles = StyleSheet.create({
     loading: {
@@ -28,3 +29,5 @@ const styles = StyleSheet.create({
         zIndex: 999999,
     },
 });
+
+export default Loading;

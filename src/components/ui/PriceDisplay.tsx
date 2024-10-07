@@ -1,12 +1,13 @@
-import { Text, StyleSheet, View } from "react-native";
-import { COLORS } from "@/src/constants/colors-constants";
-import { SIZES } from "@/src/constants/size-constants";
+import { StyleSheet, Text, View } from "react-native";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
 
 interface PriceDisplayProps {
     price: number;
 }
 
-export default function PriceDisplay({ price }: PriceDisplayProps) {
+const PriceDisplay = ({ price }: PriceDisplayProps) => {
     const [euros, cents] = price.toString().split(".");
     const mainCents = cents.slice(0, 2);
     const smallCents = cents.slice(2, 3);
@@ -20,7 +21,7 @@ export default function PriceDisplay({ price }: PriceDisplayProps) {
             <Text style={styles.price}> €</Text>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     priceContainer: {
@@ -41,3 +42,5 @@ const styles = StyleSheet.create({
         right: 12,
     },
 });
+
+export default PriceDisplay;

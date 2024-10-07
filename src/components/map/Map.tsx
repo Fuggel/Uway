@@ -1,29 +1,32 @@
 import { useContext } from "react";
-import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
-import { MAP_CONFIG, MAP_ICONS } from "../../constants/map-constants";
 import { Keyboard, StyleSheet, View } from "react-native";
-import { determineMapStyle } from "../../utils/map-utils";
 import { useDispatch, useSelector } from "react-redux";
-import { mapViewSelectors } from "../../store/mapView";
-import useDirections from "../../hooks/useDirections";
+
+import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
+import { Position } from "@turf/helpers";
+
+import { sessionToken } from "@/constants/auth-constants";
+import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
+import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useDirections from "@/hooks/useDirections";
+import useSearchLocation from "@/hooks/useSearchLocation";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineMapStyle } from "@/utils/map-utils";
+import { sheetData, sheetTitle } from "@/utils/sheet-utils";
+
 import Loading from "../common/Loading";
-import useSearchLocation from "../../hooks/useSearchLocation";
+import Layers from "../layer/Layers";
+import MapAlerts from "./MapAlerts";
+import MapBottomSheet from "./MapBottomSheet";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
-import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
-import MapBottomSheet from "./MapBottomSheet";
-import { sheetData, sheetTitle } from "@/src/utils/sheet-utils";
-import { UserLocationContext } from "@/src/contexts/UserLocationContext";
-import { sessionToken } from "@/src/constants/auth-constants";
-import Layers from "../layer/Layers";
-import { MarkerBottomSheetContext } from "@/src/contexts/MarkerBottomSheetContext";
-import { Position } from "@turf/helpers";
-import MapAlerts from "./MapAlerts";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
-export default function Map() {
+const Map = () => {
     const dispatch = useDispatch();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation, userHeading } = useContext(UserLocationContext);
@@ -65,16 +68,16 @@ export default function Map() {
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
                                 : navigationView
-                                ? MAP_CONFIG.followZoom
-                                : MAP_CONFIG.zoom
+                                  ? MAP_CONFIG.followZoom
+                                  : MAP_CONFIG.zoom
                         }
                         heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
                                 : tracking && !userLocation
-                                ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                                : undefined
+                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                  : undefined
                         }
                         defaultSettings={{
                             centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
@@ -111,7 +114,7 @@ export default function Map() {
             )}
         </>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -122,3 +125,5 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
+
+export default Map;

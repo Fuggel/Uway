@@ -1,14 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
-import { FeatureCollection } from "@turf/helpers";
 import { useSelector } from "react-redux";
-import { DEFAULT_FC, SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS } from "../constants/map-constants";
-import { fetchGasStations } from "../services/gas-stations";
-import { mapGasStationSelectors } from "../store/mapGasStation";
-import { UserLocationContext } from "../contexts/UserLocationContext";
-import { GAS_STATIONS_REFETCH_INTERVAL } from "../constants/time-constants";
 
-export default function useGasStations() {
+import { useQuery } from "@tanstack/react-query";
+import { FeatureCollection } from "@turf/helpers";
+
+import { DEFAULT_FC, SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS } from "@/constants/map-constants";
+import { GAS_STATIONS_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { fetchGasStations } from "@/services/gas-stations";
+import { mapGasStationSelectors } from "@/store/mapGasStation";
+
+const useGasStations = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const [gasStations, setGasStations] = useState<FeatureCollection>(DEFAULT_FC);
@@ -41,4 +43,6 @@ export default function useGasStations() {
     }, [data, longitude, latitude]);
 
     return { gasStations, loadingGasStations, errorGasStations };
-}
+};
+
+export default useGasStations;

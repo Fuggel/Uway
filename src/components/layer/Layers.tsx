@@ -1,32 +1,35 @@
-import { COLORS } from "@/src/constants/colors-constants";
-import { SIZES } from "@/src/constants/size-constants";
-import { ParkAvailabilityProperties } from "@/src/types/IParking";
-import { determineTheme } from "@/src/utils/theme-utils";
-import { Point } from "@turf/helpers";
-import SymbolLayer from "./SymbolLayer";
-import { View } from "react-native";
-import { GasStation } from "@/src/types/IGasStation";
-import { MarkerSheet } from "@/src/types/ISheet";
-import { getStationIcon } from "@/src/utils/map-utils";
-import { SpeedCameraProperties } from "@/src/types/ISpeed";
-import LineLayer from "./LineLayer";
-import { IncidentProperties, IncidentType } from "@/src/types/ITraffic";
-import useGasStations from "@/src/hooks/useGasStations";
-import useParkAvailability from "@/src/hooks/useParkAvailability";
-import { useSelector } from "react-redux";
-import { mapViewSelectors } from "@/src/store/mapView";
 import { useContext } from "react";
-import { UserLocationContext } from "@/src/contexts/UserLocationContext";
-import useSpeedCameras from "@/src/hooks/useSpeedCameras";
-import useIncidents from "@/src/hooks/useIncidents";
-import { Direction } from "@/src/types/INavigation";
-import { MarkerBottomSheetContext } from "@/src/contexts/MarkerBottomSheetContext";
+import { View } from "react-native";
+import { useSelector } from "react-redux";
+
+import { Point } from "@turf/helpers";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useGasStations from "@/hooks/useGasStations";
+import useIncidents from "@/hooks/useIncidents";
+import useParkAvailability from "@/hooks/useParkAvailability";
+import useSpeedCameras from "@/hooks/useSpeedCameras";
+import { mapViewSelectors } from "@/store/mapView";
+import { GasStation } from "@/types/IGasStation";
+import { Direction } from "@/types/INavigation";
+import { ParkAvailabilityProperties } from "@/types/IParking";
+import { MarkerSheet } from "@/types/ISheet";
+import { SpeedCameraProperties } from "@/types/ISpeed";
+import { IncidentProperties, IncidentType } from "@/types/ITraffic";
+import { getStationIcon } from "@/utils/map-utils";
+import { determineTheme } from "@/utils/theme-utils";
+
+import LineLayer from "./LineLayer";
+import SymbolLayer from "./SymbolLayer";
 
 interface LayersProps {
     directions: Direction | null;
 }
 
-export default function Layers({ directions }: LayersProps) {
+const Layers = ({ directions }: LayersProps) => {
     const { userLocation, userHeading } = useContext(UserLocationContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { openSheet } = useContext(MarkerBottomSheetContext);
@@ -187,4 +190,6 @@ export default function Layers({ directions }: LayersProps) {
             )}
         </>
     );
-}
+};
+
+export default Layers;

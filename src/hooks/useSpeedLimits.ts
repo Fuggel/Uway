@@ -1,21 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
-import { FeatureCollection } from "@turf/helpers";
 import { useSelector } from "react-redux";
-import { mapSpeedLimitSelectors } from "../store/mapSpeedLimit";
-import { fetchSpeedLimits } from "../services/speed-limits";
-import { SpeedLimitAlert } from "../types/ISpeed";
-import { DEFAULT_FC, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS } from "../constants/map-constants";
-import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
-import { UserLocationContext } from "../contexts/UserLocationContext";
 
-export default function useSpeedLimits() {
+import { useQuery } from "@tanstack/react-query";
+import { FeatureCollection } from "@turf/helpers";
+import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
+
+import { DEFAULT_FC, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS } from "@/constants/map-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { fetchSpeedLimits } from "@/services/speed-limits";
+import { mapSpeedLimitSelectors } from "@/store/mapSpeedLimit";
+import { SpeedLimitAlert } from "@/types/ISpeed";
+
+const useSpeedLimits = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
-    const [speedLimits, setSpeedLimits] = useState<{
-        data: FeatureCollection;
-        alert: SpeedLimitAlert | null;
-    }>();
+    const [speedLimits, setSpeedLimits] = useState<{ data: FeatureCollection; alert: SpeedLimitAlert | null }>();
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -67,4 +66,6 @@ export default function useSpeedLimits() {
     }, [data, longitude, latitude]);
 
     return { speedLimits, loadingSpeedLimits, errorSpeedLimits };
-}
+};
+
+export default useSpeedLimits;

@@ -1,13 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { FeatureCollection } from "@turf/helpers";
-import { fetchParkAvailability } from "../services/park-availability";
 import { useSelector } from "react-redux";
-import { mapParkAvailabilitySelectors } from "../store/mapParkAvailability";
-import { isValidLonLat } from "../utils/map-utils";
-import { PARK_AVAILABILITY_REFETCH_INTERVAL } from "../constants/time-constants";
 
-export default function useParkAvailability() {
+import { useQuery } from "@tanstack/react-query";
+import { FeatureCollection } from "@turf/helpers";
+
+import { PARK_AVAILABILITY_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { fetchParkAvailability } from "@/services/park-availability";
+import { mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
+import { isValidLonLat } from "@/utils/map-utils";
+
+const useParkAvailability = () => {
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const [parkAvailability, setParkAvailability] = useState<FeatureCollection | null>(null);
 
@@ -43,4 +45,6 @@ export default function useParkAvailability() {
     }, [data]);
 
     return { parkAvailability, loadingParkAvailability, errorParkAvailability };
-}
+};
+
+export default useParkAvailability;

@@ -1,9 +1,11 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Dropdown as DropdownContainer } from "react-native-element-dropdown";
-import { COLORS } from "../../constants/colors-constants";
-import { SIZES } from "../../constants/size-constants";
-import { DropdownItem } from "@/src/types/ISettings";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { DropdownItem } from "@/types/ISettings";
 
 interface DropdownProps<T> {
     data: DropdownItem[];
@@ -12,7 +14,7 @@ interface DropdownProps<T> {
     onChange: (value: T) => void;
 }
 
-export default function Dropdown<T>({ data, value, icon, onChange }: DropdownProps<T>) {
+const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
     const renderItem = (item: DropdownItem) => (
         <View style={styles.itemContainer}>
             {item.img && <Image source={item.img} style={styles.img} />}
@@ -46,7 +48,7 @@ export default function Dropdown<T>({ data, value, icon, onChange }: DropdownPro
             renderItem={renderItem}
         />
     );
-}
+};
 
 const styles = StyleSheet.create({
     dropdown: {
@@ -92,3 +94,5 @@ const styles = StyleSheet.create({
         marginLeft: SIZES.spacing.sm,
     },
 });
+
+export default Dropdown;

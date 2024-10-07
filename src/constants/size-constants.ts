@@ -1,4 +1,4 @@
-import { Size } from "../types/ISize";
+import { Size } from "@/types/ISize";
 
 export const SIZES: Size = {
     spacing: {

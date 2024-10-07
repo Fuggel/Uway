@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+
 import BottomSheetComponent from "../common/BottomSheet";
-import { SIZES } from "@/src/constants/size-constants";
-import { COLORS } from "@/src/constants/colors-constants";
 
 interface MapBottomSheetProps {
     title: string;
@@ -9,7 +11,7 @@ interface MapBottomSheetProps {
     onClose: () => void;
 }
 
-export default function MapBottomSheet({ title, data, onClose }: MapBottomSheetProps) {
+const MapBottomSheet = ({ title, data, onClose }: MapBottomSheetProps) => {
     return (
         <BottomSheetComponent onClose={onClose}>
             <View style={styles.container}>
@@ -30,7 +32,7 @@ export default function MapBottomSheet({ title, data, onClose }: MapBottomSheetP
             </View>
         </BottomSheetComponent>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -65,3 +67,5 @@ const styles = StyleSheet.create({
         maxWidth: "75%",
     },
 });
+
+export default MapBottomSheet;

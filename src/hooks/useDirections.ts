@@ -1,17 +1,19 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchDirections } from "../services/navigation";
-import { LonLat } from "../types/IMap";
 import { useContext, useEffect, useState } from "react";
-import { isValidLonLat } from "../utils/map-utils";
-import { Direction } from "../types/INavigation";
-import { ROUTE_DEVIATION_THRESHOLD_IN_METERS } from "../constants/map-constants";
+import { useSelector } from "react-redux";
+
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { lineString, point } from "@turf/helpers";
 import { distance, nearestPointOnLine } from "@turf/turf";
-import { useSelector } from "react-redux";
-import { mapNavigationSelectors } from "../store/mapNavigation";
-import { UserLocationContext } from "../contexts/UserLocationContext";
 
-export default function useDirections(params: { destinationLngLat: LonLat }) {
+import { ROUTE_DEVIATION_THRESHOLD_IN_METERS } from "@/constants/map-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { fetchDirections } from "@/services/navigation";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
+import { LonLat } from "@/types/IMap";
+import { Direction } from "@/types/INavigation";
+import { isValidLonLat } from "@/utils/map-utils";
+
+const useDirections = (params: { destinationLngLat: LonLat }) => {
     const { userLocation } = useContext(UserLocationContext);
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -83,4 +85,6 @@ export default function useDirections(params: { destinationLngLat: LonLat }) {
     }, [data, isNavigationMode, navigationProfile]);
 
     return { directions, setDirections, loadingDirections, errorDirections };
-}
+};
+
+export default useDirections;

@@ -1,8 +1,9 @@
 import axios from "axios";
-import { TOMTOM_INCIDENTS_API } from "@/src/constants/api-constants";
-import { boundingBox } from "../utils/map-utils";
-import { IncidentFc } from "../types/ITraffic";
-import { BoundingBox, LonLat } from "../types/IMap";
+
+import { TOMTOM_INCIDENTS_API } from "@/constants/api-constants";
+import { BoundingBox, LonLat } from "@/types/IMap";
+import { IncidentFc } from "@/types/ITraffic";
+import { boundingBox } from "@/utils/map-utils";
 
 export async function fetchIncidents(params: { userLonLat: LonLat; distance: number }): Promise<IncidentFc> {
     try {

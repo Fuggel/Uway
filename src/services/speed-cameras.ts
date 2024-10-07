@@ -1,11 +1,13 @@
 import axios from "axios";
-import { OPENSTREETMAP_API } from "@/src/constants/api-constants";
-import { boundingBox, reverseGeocode } from "../utils/map-utils";
+
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
-import { DEFAULT_FC } from "../constants/map-constants";
-import { SpeedCameraProperties } from "../types/ISpeed";
-import { Overpass } from "../types/IOverpass";
-import { BoundingBox, LonLat } from "../types/IMap";
+
+import { OPENSTREETMAP_API } from "@/constants/api-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
+import { BoundingBox, LonLat } from "@/types/IMap";
+import { Overpass } from "@/types/IOverpass";
+import { SpeedCameraProperties } from "@/types/ISpeed";
+import { boundingBox, reverseGeocode } from "@/utils/map-utils";
 
 export async function fetchSpeedCameras(params: {
     userLonLat: LonLat;

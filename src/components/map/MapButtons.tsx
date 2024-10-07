@@ -1,17 +1,18 @@
+import { useContext } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
-import { COLORS } from "../../constants/colors-constants";
-import { SIZES } from "../../constants/size-constants";
 import { IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions } from "../../store/mapNavigation";
-import { useContext } from "react";
-import { SettingsContext } from "../../contexts/SettingsContext";
-import { mapViewSelectors } from "@/src/store/mapView";
-import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { SettingsContext } from "@/contexts/SettingsContext";
+import { mapNavigationActions } from "@/store/mapNavigation";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 const deviceHeight = Dimensions.get("window").height;
 
-export default function MapButtons() {
+const MapButtons = () => {
     const dispatch = useDispatch();
     const { open, setOpen } = useContext(SettingsContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
@@ -41,7 +42,7 @@ export default function MapButtons() {
             </View>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -59,3 +60,5 @@ const styles = StyleSheet.create({
         borderRadius: SIZES.borderRadius.sm,
     },
 });
+
+export default MapButtons;

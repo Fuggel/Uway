@@ -1,6 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+import { Route } from "@/types/IMock";
+
 import { RootState } from ".";
-import { Route } from "../types/IMock";
 
 interface IMapTestingState {
     simulateRoute: boolean;

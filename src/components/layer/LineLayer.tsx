@@ -1,6 +1,6 @@
-import React from "react";
-import { ShapeSource, LineLayer as Layer } from "@rnmapbox/maps";
-import { COLORS } from "@/src/constants/colors-constants";
+import { LineLayer as Layer, ShapeSource } from "@rnmapbox/maps";
+
+import { COLORS } from "@/constants/colors-constants";
 
 interface LineLayerProps<T> {
     sourceId: string;
@@ -12,7 +12,7 @@ interface LineLayerProps<T> {
     aboveLayerId?: string;
 }
 
-export default function LineLayer<T>({
+const LineLayer = <T,>({
     sourceId,
     layerId,
     coordinates,
@@ -20,7 +20,7 @@ export default function LineLayer<T>({
     style,
     belowLayerId,
     aboveLayerId,
-}: LineLayerProps<T>) {
+}: LineLayerProps<T>) => {
     return (
         <ShapeSource
             id={sourceId}
@@ -48,4 +48,6 @@ export default function LineLayer<T>({
             />
         </ShapeSource>
     );
-}
+};
+
+export default LineLayer;

@@ -1,6 +1,7 @@
-import { Route, TestingRoute } from "../types/IMock";
-import * as omtwbs from "../testing-routes/ottenser-marktplatz-to-willy-brandt-straße.json";
+import { Route, TestingRoute } from "@/types/IMock";
+
 import * as omtm from "../testing-routes/ottenser-marktplatz-to-mercado.json";
+import * as omtwbs from "../testing-routes/ottenser-marktplatz-to-willy-brandt-straße.json";
 
 export const TESTING_ROUTES: TestingRoute[] = [
     {

@@ -1,10 +1,11 @@
-import { COLORS } from "@/src/constants/colors-constants";
-import { SIZES } from "@/src/constants/size-constants";
-import { mapViewSelectors } from "@/src/store/mapView";
-import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
 import { Dimensions, Image, ImageProps, StyleSheet, Text, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
 import { useSelector } from "react-redux";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 interface ToastProps {
     show: boolean;
@@ -16,7 +17,7 @@ interface ToastProps {
 
 const deviceWidth = Dimensions.get("window").width;
 
-export default function Toast({ show, type, title, image, children }: ToastProps) {
+const Toast = ({ show, type, title, image, children }: ToastProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     const determineIcon = () => {
@@ -87,7 +88,7 @@ export default function Toast({ show, type, title, image, children }: ToastProps
             )}
         </>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -118,3 +119,5 @@ const styles = StyleSheet.create({
         marginVertical: SIZES.spacing.sm,
     },
 });
+
+export default Toast;

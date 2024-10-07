@@ -1,20 +1,22 @@
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
-import Searchbar from "../common/Searchbar";
-import { Divider } from "react-native-paper";
-import { SIZES } from "../../constants/size-constants";
-import { COLORS } from "../../constants/colors-constants";
-import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
 import { useContext, useState } from "react";
-import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
-import { mapViewSelectors } from "@/src/store/mapView";
-import useSearchSuggestion from "@/src/hooks/useSearchSuggestion";
-import { sessionToken } from "@/src/constants/auth-constants";
-import { UserLocationContext } from "@/src/contexts/UserLocationContext";
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Divider } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+
+import { sessionToken } from "@/constants/auth-constants";
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useSearchSuggestion from "@/hooks/useSearchSuggestion";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+
+import Searchbar from "../common/Searchbar";
 
 const deviceHeight = Dimensions.get("window").height;
 
-export default function MapSearchbar() {
+const MapSearchbar = () => {
     const dispatch = useDispatch();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
@@ -72,7 +74,7 @@ export default function MapSearchbar() {
             )}
         </Searchbar>
     );
-}
+};
 
 const styles = StyleSheet.create({
     search: {
@@ -95,3 +97,5 @@ const styles = StyleSheet.create({
         marginTop: SIZES.spacing.xs,
     },
 });
+
+export default MapSearchbar;

@@ -1,16 +1,18 @@
-import { SpeedLimitFeature } from "@/src/types/ISpeed";
-import { determineIncidentIcon, determineSpeedLimitIcon } from "@/src/utils/map-utils";
-import { Image, StyleSheet, Text, View } from "react-native";
-import Toast from "../common/Toast";
-import useSpeedCameras from "@/src/hooks/useSpeedCameras";
-import useSpeedLimits from "@/src/hooks/useSpeedLimits";
-import useIncidents from "@/src/hooks/useIncidents";
 import { useContext } from "react";
-import { UserLocationContext } from "@/src/contexts/UserLocationContext";
-import { COLORS } from "@/src/constants/colors-constants";
-import { SIZES } from "@/src/constants/size-constants";
+import { Image, StyleSheet, Text, View } from "react-native";
 
-export default function MapAlerts() {
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useIncidents from "@/hooks/useIncidents";
+import useSpeedCameras from "@/hooks/useSpeedCameras";
+import useSpeedLimits from "@/hooks/useSpeedLimits";
+import { SpeedLimitFeature } from "@/types/ISpeed";
+import { determineIncidentIcon, determineSpeedLimitIcon } from "@/utils/map-utils";
+
+import Toast from "../common/Toast";
+
+const MapAlerts = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useSpeedCameras();
     const { speedLimits } = useSpeedLimits();
@@ -56,7 +58,7 @@ export default function MapAlerts() {
             )}
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     absoluteBottom: {
@@ -78,3 +80,5 @@ const styles = StyleSheet.create({
         marginLeft: SIZES.spacing.sm,
     },
 });
+
+export default MapAlerts;

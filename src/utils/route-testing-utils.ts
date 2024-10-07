@@ -1,5 +1,6 @@
 import { LocationObject } from "expo-location";
-import { TESTING_ROUTES } from "../constants/route-testing-constants";
+
+import { TESTING_ROUTES } from "@/constants/route-testing-constants";
 
 export function simulateUserLocation(selectedRouteValue: string) {
     const selectedRoute = TESTING_ROUTES.find((route) => route.value === selectedRouteValue);

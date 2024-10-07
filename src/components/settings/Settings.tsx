@@ -1,25 +1,27 @@
-import { StyleSheet, View } from "react-native";
-import { COLORS } from "../../constants/colors-constants";
-import { SIZES } from "../../constants/size-constants";
-import Dropdown from "../common/Dropdown";
-import { MapboxStyle } from "../../types/IMap";
-import { useDispatch, useSelector } from "react-redux";
-import { mapViewActions, mapViewSelectors } from "../../store/mapView";
-import { SettingsItem, SettingsSection } from "./SettingsItem";
-import { MAP_STYLES } from "../../constants/map-constants";
 import { useContext } from "react";
-import { SettingsContext } from "../../contexts/SettingsContext";
+import { StyleSheet, View } from "react-native";
 import { IconButton, Switch } from "react-native-paper";
-import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/src/store/mapSpeedCamera";
-import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/src/store/mapParkAvailability";
-import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/src/store/mapSpeedLimit";
-import { mapTestingActions, mapTestingSelectors } from "@/src/store/mapTesting";
-import { TESTING_ROUTES } from "@/src/constants/route-testing-constants";
-import { Route } from "@/src/types/IMock";
-import { mapGasStationActions, mapGasStationSelectors } from "@/src/store/mapGasStation";
-import { mapIncidentActions, mapIncidentSelectors } from "@/src/store/mapIncident";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function Settings() {
+import { COLORS } from "@/constants/colors-constants";
+import { MAP_STYLES } from "@/constants/map-constants";
+import { TESTING_ROUTES } from "@/constants/route-testing-constants";
+import { SIZES } from "@/constants/size-constants";
+import { SettingsContext } from "@/contexts/SettingsContext";
+import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
+import { mapIncidentActions, mapIncidentSelectors } from "@/store/mapIncident";
+import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
+import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
+import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/store/mapSpeedLimit";
+import { mapTestingActions, mapTestingSelectors } from "@/store/mapTesting";
+import { mapViewActions, mapViewSelectors } from "@/store/mapView";
+import { MapboxStyle } from "@/types/IMap";
+import { Route } from "@/types/IMock";
+
+import Dropdown from "../common/Dropdown";
+import { SettingsItem, SettingsSection } from "./SettingsItem";
+
+const Settings = () => {
     const dispatch = useDispatch();
     const simulateRoute = useSelector(mapTestingSelectors.simulateRoute);
     const selectedRoute = useSelector(mapTestingSelectors.selectedRoute);
@@ -159,7 +161,7 @@ export default function Settings() {
             )}
         </>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -178,3 +180,5 @@ const styles = StyleSheet.create({
         zIndex: 999999,
     },
 });
+
+export default Settings;

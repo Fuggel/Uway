@@ -1,14 +1,16 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import { persistReducer, persistStore } from "redux-persist";
+
 import storage from "@react-native-async-storage/async-storage";
-import mapViewReducer from "./mapView";
-import mapNavigationReduce from "./mapNavigation";
-import mapSpeedCameraReduce from "./mapSpeedCamera";
-import mapSpeedLimitReduce from "./mapSpeedLimit";
-import mapParkAvailabilityReduce from "./mapParkAvailability";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+
 import mapGasStationReduce from "./mapGasStation";
 import mapIncidentReduce from "./mapIncident";
+import mapNavigationReduce from "./mapNavigation";
+import mapParkAvailabilityReduce from "./mapParkAvailability";
+import mapSpeedCameraReduce from "./mapSpeedCamera";
+import mapSpeedLimitReduce from "./mapSpeedLimit";
 import mapTestingReduce from "./mapTesting";
+import mapViewReducer from "./mapView";
 
 const persistConfig = {
     key: "root",
