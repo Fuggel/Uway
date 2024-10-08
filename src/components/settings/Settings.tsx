@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { IconButton, Switch } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -19,6 +19,7 @@ import { MapboxStyle } from "@/types/IMap";
 import { Route } from "@/types/IMock";
 
 import Dropdown from "../common/Dropdown";
+import Switch from "../common/Switch";
 import { SettingsItem, SettingsSection } from "./SettingsItem";
 
 const Settings = () => {
@@ -50,15 +51,8 @@ const Settings = () => {
                             <SettingsSection title="Dev Testing">
                                 <SettingsItem title="Route simulieren">
                                     <Switch
-                                        value={simulateRoute}
-                                        thumbColor={simulateRoute ? COLORS.white : COLORS.white}
-                                        trackColor={{
-                                            false: COLORS.gray,
-                                            true: COLORS.primary,
-                                        }}
-                                        onValueChange={() => {
-                                            dispatch(mapTestingActions.setSimulateRoute(!simulateRoute));
-                                        }}
+                                        checked={simulateRoute}
+                                        onChange={() => dispatch(mapTestingActions.setSimulateRoute(!simulateRoute))}
                                     />
                                 </SettingsItem>
                                 {simulateRoute && (
@@ -90,69 +84,38 @@ const Settings = () => {
                         <SettingsSection title="Map Daten">
                             <SettingsItem title="Blitzer">
                                 <Switch
-                                    value={showSpeedCameras}
-                                    thumbColor={showSpeedCameras ? COLORS.white : COLORS.white}
-                                    trackColor={{
-                                        false: COLORS.gray,
-                                        true: COLORS.primary,
-                                    }}
-                                    onValueChange={() => {
-                                        dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras));
-                                    }}
+                                    checked={showSpeedCameras}
+                                    onChange={() =>
+                                        dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras))
+                                    }
                                 />
                             </SettingsItem>
                             <SettingsItem title="Verkehrsdaten">
                                 <Switch
-                                    value={showIncidents}
-                                    thumbColor={showIncidents ? COLORS.white : COLORS.white}
-                                    trackColor={{
-                                        false: COLORS.gray,
-                                        true: COLORS.primary,
-                                    }}
-                                    onValueChange={() => {
-                                        dispatch(mapIncidentActions.setShowIncident(!showIncidents));
-                                    }}
+                                    checked={showIncidents}
+                                    onChange={() => dispatch(mapIncidentActions.setShowIncident(!showIncidents))}
                                 />
                             </SettingsItem>
                             <SettingsItem title="Geschwindigkeitsbegrenzungen">
                                 <Switch
-                                    value={showSpeedLimits}
-                                    thumbColor={showSpeedLimits ? COLORS.white : COLORS.white}
-                                    trackColor={{
-                                        false: COLORS.gray,
-                                        true: COLORS.primary,
-                                    }}
-                                    onValueChange={() => {
-                                        dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits));
-                                    }}
+                                    checked={showSpeedLimits}
+                                    onChange={() => dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits))}
                                 />
                             </SettingsItem>
                             <SettingsItem title="Parkplätze & Parkhäuser">
                                 <Switch
-                                    value={showParkAvailability}
-                                    thumbColor={showParkAvailability ? COLORS.white : COLORS.white}
-                                    trackColor={{
-                                        false: COLORS.gray,
-                                        true: COLORS.primary,
-                                    }}
-                                    onValueChange={() => {
+                                    checked={showParkAvailability}
+                                    onChange={() =>
                                         dispatch(
                                             mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability)
-                                        );
-                                    }}
+                                        )
+                                    }
                                 />
                             </SettingsItem>
                             <SettingsItem title="Tankstellen">
                                 <Switch
-                                    value={showGasStations}
-                                    thumbColor={showGasStations ? COLORS.white : COLORS.white}
-                                    trackColor={{
-                                        false: COLORS.gray,
-                                        true: COLORS.primary,
-                                    }}
-                                    onValueChange={() => {
-                                        dispatch(mapGasStationActions.setShowGasStation(!showGasStations));
-                                    }}
+                                    checked={showGasStations}
+                                    onChange={() => dispatch(mapGasStationActions.setShowGasStation(!showGasStations))}
                                 />
                             </SettingsItem>
                         </SettingsSection>

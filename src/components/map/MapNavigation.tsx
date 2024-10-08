@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { IconButton, SegmentedButtons } from "react-native-paper";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { SegmentedButtons } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -15,6 +15,7 @@ import { Location } from "@/types/IMap";
 import { Direction, Instruction, RouteProfileType } from "@/types/INavigation";
 import { arrowDirection } from "@/utils/map-utils";
 
+import Button from "../common/Button";
 import Card from "../common/Card";
 
 interface MapNavigationProps {
@@ -98,14 +99,7 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
                             </View>
                         </View>
 
-                        <TouchableOpacity>
-                            <IconButton
-                                icon="close-circle"
-                                size={SIZES.iconSize.xl}
-                                iconColor={COLORS.error}
-                                onPress={handleCancelNavigation}
-                            />
-                        </TouchableOpacity>
+                        <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
                     </Card>
                 )}
 
@@ -137,23 +131,13 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
                         </View>
 
                         <View style={styles.navigationActionButtons}>
-                            <TouchableOpacity>
-                                <IconButton
-                                    icon="close-circle"
-                                    size={SIZES.iconSize.xl}
-                                    iconColor={COLORS.error}
-                                    onPress={handleCancelNavigation}
-                                />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity>
-                                <IconButton
-                                    icon="navigation"
-                                    size={SIZES.iconSize.xl}
-                                    iconColor={COLORS.success}
-                                    onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                                />
-                            </TouchableOpacity>
+                            <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                            <Button
+                                icon="navigation"
+                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                                type="success"
+                                size="xl"
+                            />
                         </View>
                     </Card>
                 )}

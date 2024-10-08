@@ -1,6 +1,5 @@
 import { useContext } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
-import { IconButton } from "react-native-paper";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -9,6 +8,8 @@ import { SettingsContext } from "@/contexts/SettingsContext";
 import { mapNavigationActions } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+
+import Button from "../common/Button";
 
 const deviceHeight = Dimensions.get("window").height;
 
@@ -20,25 +21,11 @@ const MapButtons = () => {
     return (
         <View style={styles.container}>
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <TouchableOpacity>
-                    <IconButton
-                        icon="cog"
-                        size={SIZES.iconSize.md}
-                        iconColor={COLORS.primary}
-                        onPress={() => setOpen(!open)}
-                    />
-                </TouchableOpacity>
+                <Button icon="cog" onPress={() => setOpen(!open)} />
             </View>
 
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <TouchableOpacity>
-                    <IconButton
-                        icon={"crosshairs-gps"}
-                        size={SIZES.iconSize.md}
-                        iconColor={COLORS.primary}
-                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                    />
-                </TouchableOpacity>
+                <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
             </View>
         </View>
     );
