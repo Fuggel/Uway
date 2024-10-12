@@ -1,72 +1,88 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { COLORS } from "../../constants/colors-constants";
-import { Location } from "../../types/IMap";
-import { Direction, RouteProfileType } from "@/src/types/INavigation";
-import { SIZES } from "../../constants/size-constants";
+import { useContext, useEffect } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import { SegmentedButtons } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
+
+import { COLORS } from "@/constants/colors-constants";
+import { ROUTE_PROFILES } from "@/constants/map-constants";
+import { SIZES } from "@/constants/size-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useInstructions from "@/hooks/useInstructions";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { Location } from "@/types/IMap";
+import { Direction, RouteProfileType } from "@/types/INavigation";
+
+import Button from "../common/Button";
 import Card from "../common/Card";
-import { IconButton, SegmentedButtons } from "react-native-paper";
-import { ROUTE_PROFILES } from "../../constants/map-constants";
+import Text from "../common/Text";
 
 interface MapNavigationProps {
-    remainingDistance: number;
-    remainingTime: number;
     directions: Direction | null;
     locations: Location | null;
-    onCancelNavigation: () => void;
+    setDirections: (directions: Direction | null) => void;
+    setLocations: (locations: Location | null) => void;
 }
 
-export default function MapNavigation({
-    remainingDistance,
-    remainingTime,
-    directions,
-    locations,
-    onCancelNavigation,
-}: MapNavigationProps) {
+const deviceHeight = Dimensions.get("window").height;
+
+const MapNavigation = ({ directions, locations, setDirections, setLocations }: MapNavigationProps) => {
+    const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const profileType = useSelector(mapNavigationSelectors.navigationProfile);
+    const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
 
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
     const duration = `${(remainingTime / 60).toFixed(0)} min`;
     const address = locations?.properties.name;
     const place = locations?.properties.place_formatted;
 
+    const handleCancelNavigation = () => {
+        setDirections(null);
+        setCurrentStep(0);
+        setLocations(null);
+        dispatch(mapNavigationActions.setNavigationView(false));
+        dispatch(mapNavigationActions.setIsNavigationMode(false));
+        dispatch(mapNavigationActions.setSearchQuery(""));
+        dispatch(mapNavigationActions.setLocationId(""));
+    };
+
+    useEffect(() => {
+        if (directions && isNavigationMode && locations) {
+            dispatch(mapNavigationActions.setNavigationView(true));
+            dispatch(mapNavigationActions.setSearchQuery(""));
+            setCurrentStep(0);
+        }
+    }, [isNavigationMode, directions]);
+
+    useEffect(() => {
+        if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
+            handleCancelNavigation();
+        }
+    }, [currentStep, directions]);
+
     return (
-        <>
+        <View style={styles.flexBottom}>
             {directions && isNavigationMode && (
                 <Card st={styles.card}>
                     <View>
-                        <Text style={styles.navigationDuration}>
+                        <Text type="success" textStyle="header" style={{ textAlign: "center" }}>
                             {duration} · {distance}
                         </Text>
                         <View style={styles.navigationInfo}>
-                            <Text style={styles.navigationDistance}>{address}</Text>
-                            <Text style={styles.navigationDistance}>{place}</Text>
+                            <Text type="secondary">{address}</Text>
+                            <Text type="secondary">{place}</Text>
                         </View>
                     </View>
 
-                    <TouchableOpacity>
-                        <IconButton
-                            icon="close-circle"
-                            size={SIZES.iconSize.xl}
-                            iconColor={COLORS.error}
-                            onPress={onCancelNavigation}
-                        />
-                    </TouchableOpacity>
+                    <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
                 </Card>
             )}
 
             {locations && !isNavigationMode && (
                 <Card st={styles.card}>
                     <View style={styles.profileActions}>
-                        <Text
-                            style={{
-                                ...styles.navigationDuration,
-                                color: COLORS.gray,
-                            }}
-                        >
+                        <Text type="secondary" style={styles.navigationDuration}>
                             {address}, {place}
                         </Text>
                         <SegmentedButtons
@@ -86,31 +102,25 @@ export default function MapNavigation({
                     </View>
 
                     <View style={styles.navigationActionButtons}>
-                        <TouchableOpacity>
-                            <IconButton
-                                icon="close-circle"
-                                size={SIZES.iconSize.xl}
-                                iconColor={COLORS.error}
-                                onPress={onCancelNavigation}
-                            />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity>
-                            <IconButton
-                                icon="navigation"
-                                size={SIZES.iconSize.xl}
-                                iconColor={COLORS.success}
-                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                            />
-                        </TouchableOpacity>
+                        <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                        <Button
+                            icon="navigation"
+                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                            type="success"
+                            size="xl"
+                        />
                     </View>
                 </Card>
             )}
-        </>
+        </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
+    flexBottom: {
+        maxHeight: deviceHeight > 1000 ? "12%" : "18%",
+        justifyContent: "center",
+    },
     card: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -118,20 +128,13 @@ const styles = StyleSheet.create({
         paddingVertical: SIZES.spacing.md,
     },
     navigationDuration: {
-        color: COLORS.success,
-        fontSize: SIZES.fontSize.lg,
         textAlign: "center",
-        fontWeight: "bold",
     },
     navigationInfo: {
         justifyContent: "center",
         alignItems: "center",
         marginTop: SIZES.spacing.xs,
         gap: 2,
-    },
-    navigationDistance: {
-        color: COLORS.gray,
-        fontSize: SIZES.fontSize.md,
     },
     profileActions: {
         minWidth: "60%",
@@ -145,3 +148,5 @@ const styles = StyleSheet.create({
         marginLeft: SIZES.spacing.md,
     },
 });
+
+export default MapNavigation;

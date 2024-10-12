@@ -1,12 +1,17 @@
 import axios from "axios";
-import { MAPBOX_DIRECTIONS_API } from "@/src/constants/api-constants";
-import { LonLat } from "@/src/types/IMap";
-import { MAP_CONFIG } from "@/src/constants/map-constants";
+
+import { MAPBOX_DIRECTIONS_API } from "@/constants/api-constants";
+import { MAP_CONFIG } from "@/constants/map-constants";
+import { LonLat } from "@/types/IMap";
 
 export async function fetchDirections(params: { profile: string; startLngLat: LonLat; destinationLngLat: LonLat }) {
     try {
         const { lon: startLon, lat: startLat } = params.startLngLat;
         const { lon: destLon, lat: destLat } = params.destinationLngLat;
+
+        if (!startLon || !startLat || !destLon || !destLat) {
+            return [];
+        }
 
         const queryParams = new URLSearchParams();
         queryParams.append("geometries", "geojson");

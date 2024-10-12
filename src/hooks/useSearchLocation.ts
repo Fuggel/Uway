@@ -1,9 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { fetchSearchLocation } from "../services/search";
-import { Location } from "../types/IMap";
 
-export default function useSearchLocation(params: { mapboxId: string; sessionToken: string }) {
+import { useQuery } from "@tanstack/react-query";
+
+import { fetchSearchLocation } from "@/services/search";
+import { Location } from "@/types/IMap";
+
+const useSearchLocation = (params: { mapboxId: string; sessionToken: string }) => {
     const [locations, setLocations] = useState<Location | null>(null);
 
     const {
@@ -28,4 +30,6 @@ export default function useSearchLocation(params: { mapboxId: string; sessionTok
     }, [searchData]);
 
     return { locations, setLocations, loadingSearchData, errorSearchData };
-}
+};
+
+export default useSearchLocation;

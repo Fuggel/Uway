@@ -1,7 +1,9 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+import { MAP_CONFIG } from "@/constants/map-constants";
+import { MapboxStyle } from "@/types/IMap";
+
 import { RootState } from ".";
-import { MapboxStyle } from "../types/IMap";
-import { MAP_CONFIG } from "../constants/map-constants";
 
 interface IMapViewState {
     mapboxTheme: MapboxStyle;

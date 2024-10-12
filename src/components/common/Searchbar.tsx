@@ -1,20 +1,21 @@
-import { StyleSheet, View } from "react-native";
-import { COLORS } from "../../constants/colors-constants";
-import { useSelector } from "react-redux";
-import { mapViewSelectors } from "@/src/store/mapView";
-import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
+import { StyleSheet, View, ViewStyle } from "react-native";
 import SearchBar from "react-native-platform-searchbar";
+import { useSelector } from "react-redux";
+
+import { COLORS } from "@/constants/colors-constants";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 interface SearchbarProps {
     placeholder: string;
     onChangeText: (query: string) => void;
     value: string;
     children?: React.ReactNode;
-    st?: any;
-    listSt?: any;
+    st?: ViewStyle;
+    listSt?: ViewStyle;
 }
 
-export default function Searchbar({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) {
+const Searchbar = ({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
@@ -27,13 +28,15 @@ export default function Searchbar({ placeholder, onChangeText, value, children, 
                 onChangeText={onChangeText}
                 value={value}
             />
-            {children && <View style={{ ...listSt }}>{children}</View>}
+            {children && <View style={listSt}>{children}</View>}
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     searchbar: {
         backgroundColor: COLORS.white_transparent,
     },
 });
+
+export default Searchbar;

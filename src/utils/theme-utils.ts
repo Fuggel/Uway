@@ -1,6 +1,7 @@
 import { ViewStyle } from "react-native";
-import { MapboxStyle } from "../types/IMap";
-import { COLORS } from "../constants/colors-constants";
+
+import { COLORS } from "@/constants/colors-constants";
+import { MapboxStyle } from "@/types/IMap";
 
 export function determineTheme(theme: MapboxStyle): "light" | "dark" {
     switch (theme) {

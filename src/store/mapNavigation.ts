@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RouteProfileType } from "../types/INavigation";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+import { RouteProfileType } from "@/types/INavigation";
+
 import { RootState } from ".";
 
 interface IMapNavigationState {

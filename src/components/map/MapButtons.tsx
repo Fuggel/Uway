@@ -1,17 +1,19 @@
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
-import { COLORS } from "../../constants/colors-constants";
-import { SIZES } from "../../constants/size-constants";
-import { IconButton } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions } from "../../store/mapNavigation";
 import { useContext } from "react";
-import { SettingsContext } from "../../contexts/SettingsContext";
-import { mapViewSelectors } from "@/src/store/mapView";
-import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
+import { Dimensions, StyleSheet, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { SettingsContext } from "@/contexts/SettingsContext";
+import { mapNavigationActions } from "@/store/mapNavigation";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+
+import Button from "../common/Button";
 
 const deviceHeight = Dimensions.get("window").height;
 
-export default function MapButtons() {
+const MapButtons = () => {
     const dispatch = useDispatch();
     const { open, setOpen } = useContext(SettingsContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
@@ -19,34 +21,20 @@ export default function MapButtons() {
     return (
         <View style={styles.container}>
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <TouchableOpacity>
-                    <IconButton
-                        icon="cog"
-                        size={SIZES.iconSize.md}
-                        iconColor={COLORS.primary}
-                        onPress={() => setOpen(!open)}
-                    />
-                </TouchableOpacity>
+                <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
             </View>
 
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <TouchableOpacity>
-                    <IconButton
-                        icon={"crosshairs-gps"}
-                        size={SIZES.iconSize.md}
-                        iconColor={COLORS.primary}
-                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                    />
-                </TouchableOpacity>
+                <Button icon="cog" onPress={() => setOpen(!open)} />
             </View>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        top: deviceHeight > 1000 ? "4%" : "7%",
+        bottom: deviceHeight > 1000 ? "2%" : "4%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },
@@ -59,3 +47,5 @@ const styles = StyleSheet.create({
         borderRadius: SIZES.borderRadius.sm,
     },
 });
+
+export default MapButtons;

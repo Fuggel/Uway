@@ -1,19 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { fetchSpeedCameras } from "../services/speed-cameras";
-import { FeatureCollection } from "@turf/helpers";
-import { point, distance } from "@turf/turf";
-import { DEFAULT_FC, SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS } from "../constants/map-constants";
-import { SpeedCameraAlert } from "../types/ISpeed";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { mapSpeedCameraSelectors } from "../store/mapSpeedCamera";
 
-export default function useSpeedCameras(params: { userLon: number; userLat: number; distance: number }) {
+import { useQuery } from "@tanstack/react-query";
+import { FeatureCollection } from "@turf/helpers";
+import { distance, point } from "@turf/turf";
+
+import {
+    DEFAULT_FC,
+    SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
+    SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
+} from "@/constants/map-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { fetchSpeedCameras } from "@/services/speed-cameras";
+import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
+import { SpeedCameraAlert } from "@/types/ISpeed";
+
+const useSpeedCameras = () => {
+    const { userLocation } = useContext(UserLocationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
-    const [speedCameras, setSpeedCameras] = useState<{
-        data: FeatureCollection;
-        alert: SpeedCameraAlert | null;
-    }>();
+    const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
+
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
 
     const {
         data,
@@ -23,16 +31,15 @@ export default function useSpeedCameras(params: { userLon: number; userLat: numb
         queryKey: ["speedCameras", showSpeedCameras],
         queryFn: () =>
             fetchSpeedCameras({
-                userLon: params.userLon,
-                userLat: params.userLat,
-                distance: params.distance,
+                userLonLat: { lon: longitude, lat: latitude },
+                distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
             }),
-        enabled: showSpeedCameras && !!params.userLon && !!params.userLat,
+        enabled: showSpeedCameras && !!longitude && !!latitude,
         staleTime: Infinity,
     });
 
     useEffect(() => {
-        if (data && showSpeedCameras && params.userLon && params.userLat) {
+        if (data && showSpeedCameras && longitude && latitude) {
             let closestCamera: SpeedCameraAlert | null = null;
 
             data?.features?.forEach((feature) => {
@@ -40,7 +47,7 @@ export default function useSpeedCameras(params: { userLon: number; userLat: numb
                     feature.geometry.coordinates[0] as number,
                     feature.geometry.coordinates[1] as number,
                 ]);
-                const userPoint = point([params.userLon, params.userLat]);
+                const userPoint = point([longitude, latitude]);
                 const distanceToCamera = distance(userPoint, cameraPoint, {
                     units: "meters",
                 });
@@ -57,7 +64,9 @@ export default function useSpeedCameras(params: { userLon: number; userLat: numb
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
         }
-    }, [data, params.userLon, params.userLat]);
+    }, [data, longitude, latitude]);
 
     return { speedCameras, loadingSpeedCameras, errorSpeedCameras };
-}
+};
+
+export default useSpeedCameras;

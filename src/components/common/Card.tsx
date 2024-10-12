@@ -1,21 +1,23 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SIZES } from "../../constants/size-constants";
+import { StyleSheet, View, ViewStyle } from "react-native";
+
+import { SIZES } from "@/constants/size-constants";
+
+import Text from "./Text";
 
 interface CardProps {
     title?: string;
     children: React.ReactNode;
-    st?: any;
+    st?: ViewStyle;
 }
 
-export default function Card({ title, children, st }: CardProps) {
+const Card = ({ title, children, st }: CardProps) => {
     return (
         <View style={{ ...styles.card, ...st }}>
             <Text>{title}</Text>
             {children}
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     card: {
@@ -24,3 +26,5 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: SIZES.borderRadius.lg,
     },
 });
+
+export default Card;

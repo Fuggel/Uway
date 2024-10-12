@@ -1,8 +1,9 @@
-import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
-import { MapboxStyle, MapConfig } from "../types/IMap";
-import { RouteProfile, RouteProfileType } from "../types/INavigation";
-import { DropdownItem } from "../types/ISettings";
 import Mapbox from "@rnmapbox/maps";
+import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
+
+import { MapConfig, MapboxStyle } from "@/types/IMap";
+import { RouteProfile, RouteProfileType } from "@/types/INavigation";
+import { DropdownItem } from "@/types/ISettings";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 const MAP_ICONS_URL = "../assets/images/map-icons";

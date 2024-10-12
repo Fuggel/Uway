@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { fetchSearchSuggestion } from "../services/search";
-import { Suggestion } from "../types/ISearch";
-import { LonLat } from "../types/IMap";
 
-export default function useSearchSuggestion(params: { query: string; sessionToken: string; lngLat: LonLat }) {
+import { useQuery } from "@tanstack/react-query";
+
+import { fetchSearchSuggestion } from "@/services/search";
+import { LonLat } from "@/types/IMap";
+import { Suggestion } from "@/types/ISearch";
+
+const useSearchSuggestion = (params: { query: string; sessionToken: string; lngLat: LonLat }) => {
     const [suggestions, setSuggestions] = useState<Suggestion | null>(null);
 
     const {
@@ -32,4 +34,6 @@ export default function useSearchSuggestion(params: { query: string; sessionToke
     }, [suggestionData]);
 
     return { suggestions, loadingSearchSuggestion, errorSearchSuggestion };
-}
+};
+
+export default useSearchSuggestion;

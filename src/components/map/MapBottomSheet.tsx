@@ -1,7 +1,10 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+
 import BottomSheetComponent from "../common/BottomSheet";
-import { SIZES } from "@/src/constants/size-constants";
-import { COLORS } from "@/src/constants/colors-constants";
+import Text from "../common/Text";
 
 interface MapBottomSheetProps {
     title: string;
@@ -9,28 +12,26 @@ interface MapBottomSheetProps {
     onClose: () => void;
 }
 
-export default function MapBottomSheet({ title, data, onClose }: MapBottomSheetProps) {
+const MapBottomSheet = ({ title, data, onClose }: MapBottomSheetProps) => {
     return (
         <BottomSheetComponent onClose={onClose}>
             <View style={styles.container}>
-                <Text style={styles.title}>{title}</Text>
+                <Text textStyle="header" style={styles.title}>
+                    {title}
+                </Text>
 
-                {data &&
-                    data.length > 0 &&
-                    data.map((item, i) => (
-                        <View key={i} style={styles.itemContainer}>
-                            <Text style={styles.label}>{item.label}:</Text>
-                            {typeof item.value === "string" || typeof item.value === "number" ? (
-                                <Text style={styles.textValue}>{item.value}</Text>
-                            ) : (
-                                item.value
-                            )}
-                        </View>
-                    ))}
+                {data?.map((item, i) => (
+                    <View key={i} style={styles.itemContainer}>
+                        <Text type="secondary">{item.label}:</Text>
+                        <Text type="dark" style={styles.textValue}>
+                            {item.value}
+                        </Text>
+                    </View>
+                ))}
             </View>
         </BottomSheetComponent>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -38,9 +39,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: SIZES.spacing.md,
     },
     title: {
-        fontSize: SIZES.fontSize.lg,
-        fontWeight: "bold",
-        color: COLORS.primary,
         textAlign: "center",
         marginVertical: SIZES.spacing.md,
     },
@@ -54,14 +52,10 @@ const styles = StyleSheet.create({
         borderBottomColor: COLORS.light_gray,
         paddingBottom: SIZES.spacing.xs,
     },
-    label: {
-        fontSize: SIZES.fontSize.md,
-        color: COLORS.gray,
-    },
     textValue: {
-        fontSize: SIZES.fontSize.md,
-        color: COLORS.dark,
         fontWeight: "bold",
         maxWidth: "75%",
     },
 });
+
+export default MapBottomSheet;

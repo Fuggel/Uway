@@ -1,27 +1,20 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import { persistReducer, persistStore } from "redux-persist";
+
 import storage from "@react-native-async-storage/async-storage";
-import mapViewReducer from "./mapView";
-import mapNavigationReduce from "./mapNavigation";
-import mapSpeedCameraReduce from "./mapSpeedCamera";
-import mapSpeedLimitReduce from "./mapSpeedLimit";
-import mapParkAvailabilityReduce from "./mapParkAvailability";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+
 import mapGasStationReduce from "./mapGasStation";
 import mapIncidentReduce from "./mapIncident";
-import mapTestingReduce from "./mapTesting";
+import mapNavigationReduce from "./mapNavigation";
+import mapParkAvailabilityReduce from "./mapParkAvailability";
+import mapSpeedCameraReduce from "./mapSpeedCamera";
+import mapSpeedLimitReduce from "./mapSpeedLimit";
+import mapViewReducer from "./mapView";
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: [
-        "mapView",
-        "mapSpeedCamera",
-        "mapSpeedLimit",
-        "mapParkAvailability",
-        "mapGasStation",
-        "mapIncident",
-        "mapTesting",
-    ],
+    whitelist: ["mapView", "mapSpeedCamera", "mapSpeedLimit", "mapParkAvailability", "mapGasStation", "mapIncident"],
 };
 
 const reducer = combineReducers({
@@ -32,7 +25,6 @@ const reducer = combineReducers({
     mapParkAvailability: mapParkAvailabilityReduce,
     mapGasStation: mapGasStationReduce,
     mapIncident: mapIncidentReduce,
-    mapTesting: mapTestingReduce,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

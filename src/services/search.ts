@@ -1,7 +1,8 @@
 import axios from "axios";
-import { MAPBOX_SEARCH_RETRIEVE_API, MAPBOX_SEARCH_SUGGESTION_API } from "@/src/constants/api-constants";
-import { MAP_CONFIG } from "@/src/constants/map-constants";
-import { LonLat } from "../types/IMap";
+
+import { MAPBOX_SEARCH_RETRIEVE_API, MAPBOX_SEARCH_SUGGESTION_API } from "@/constants/api-constants";
+import { MAP_CONFIG } from "@/constants/map-constants";
+import { LonLat } from "@/types/IMap";
 
 export async function fetchSearchSuggestion(params: { query: string; sessionToken: string; lngLat: LonLat }) {
     try {

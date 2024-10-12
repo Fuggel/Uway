@@ -1,8 +1,15 @@
 import { Geometry } from "@turf/helpers";
 
 export interface LonLat {
-    lon: number;
-    lat: number;
+    lon: number | undefined;
+    lat: number | undefined;
+}
+
+export interface BoundingBox {
+    minLat: number;
+    minLon: number;
+    maxLat: number;
+    maxLon: number;
 }
 
 export interface MapConfig {

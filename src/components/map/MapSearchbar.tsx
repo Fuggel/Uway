@@ -1,26 +1,37 @@
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
-import Searchbar from "../common/Searchbar";
+import { useContext, useState } from "react";
+import { Dimensions, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Divider } from "react-native-paper";
-import { SIZES } from "../../constants/size-constants";
-import { COLORS } from "../../constants/colors-constants";
 import { useDispatch, useSelector } from "react-redux";
-import { mapNavigationActions, mapNavigationSelectors } from "../../store/mapNavigation";
-import { Suggestion } from "@/src/types/ISearch";
-import { useState } from "react";
-import { determineTheme, dynamicThemeStyles } from "@/src/utils/theme-utils";
-import { mapViewSelectors } from "@/src/store/mapView";
 
-interface MapSearchbarProps {
-    suggestions: Suggestion | null;
-}
+import { sessionToken } from "@/constants/auth-constants";
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useSearchSuggestion from "@/hooks/useSearchSuggestion";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapViewSelectors } from "@/store/mapView";
+import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+
+import Searchbar from "../common/Searchbar";
+import Text from "../common/Text";
 
 const deviceHeight = Dimensions.get("window").height;
 
-export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
+const MapSearchbar = () => {
     const dispatch = useDispatch();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const { userLocation } = useContext(UserLocationContext);
+    const { suggestions } = useSearchSuggestion({
+        query: searchQuery,
+        sessionToken,
+        lngLat: {
+            lon: userLocation?.coords?.longitude as number,
+            lat: userLocation?.coords?.latitude as number,
+        },
+    });
+
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const selectedSuggestion = suggestions?.suggestions.find((suggestion) => suggestion.mapbox_id === locationId);
@@ -54,7 +65,7 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
                             style={styles.scrollContainer}
                             onPress={() => handleSelectLocation(suggestion.mapbox_id)}
                         >
-                            <Text>
+                            <Text type="dark">
                                 {suggestion.name}, {suggestion.place_formatted}
                             </Text>
                             <Divider style={styles.divider} />
@@ -64,15 +75,14 @@ export default function MapSearchbar({ suggestions }: MapSearchbarProps) {
             )}
         </Searchbar>
     );
-}
+};
 
 const styles = StyleSheet.create({
     search: {
         position: "absolute",
         top: deviceHeight > 1000 ? "4%" : "7%",
-        left: SIZES.spacing.sm,
-        minWidth: "65%",
-        maxWidth: "75%",
+        right: SIZES.spacing.sm,
+        width: "50%",
     },
     suggestions: {
         backgroundColor: COLORS.white_transparent,
@@ -87,3 +97,5 @@ const styles = StyleSheet.create({
         marginTop: SIZES.spacing.xs,
     },
 });
+
+export default MapSearchbar;

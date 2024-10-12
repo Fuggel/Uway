@@ -1,19 +1,26 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { point, distance } from "@turf/turf";
-import { SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS } from "../constants/map-constants";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { mapIncidentSelectors } from "../store/mapIncident";
-import { fetchIncidents } from "../services/incidents";
-import { IncidentAlert, IncidentFc } from "../types/ITraffic";
-import { INCIDENTS_REFETCH_INTERVAL } from "../constants/time-constants";
 
-export default function useIncidents(params: { userLon: number; userLat: number; distance: number }) {
+import { useQuery } from "@tanstack/react-query";
+import { distance, point } from "@turf/turf";
+
+import {
+    SHOW_INCIDENTS_THRESHOLD_IN_METERS,
+    SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
+} from "@/constants/map-constants";
+import { INCIDENTS_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { fetchIncidents } from "@/services/incidents";
+import { mapIncidentSelectors } from "@/store/mapIncident";
+import { IncidentAlert, IncidentFc } from "@/types/ITraffic";
+
+const useIncidents = () => {
+    const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
-    const [incidents, setIncidents] = useState<{
-        data: IncidentFc;
-        alert: IncidentAlert | null;
-    }>();
+    const [incidents, setIncidents] = useState<{ data: IncidentFc; alert: IncidentAlert | null }>();
+
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
 
     const {
         data,
@@ -23,17 +30,16 @@ export default function useIncidents(params: { userLon: number; userLat: number;
         queryKey: ["incidents", showIncidents],
         queryFn: () =>
             fetchIncidents({
-                userLon: params.userLon,
-                userLat: params.userLat,
-                distance: params.distance,
+                userLonLat: { lon: longitude, lat: latitude },
+                distance: SHOW_INCIDENTS_THRESHOLD_IN_METERS,
             }),
-        enabled: showIncidents && !!params.userLon && !!params.userLat,
+        enabled: showIncidents && !!longitude && !!latitude,
         staleTime: Infinity,
         refetchInterval: INCIDENTS_REFETCH_INTERVAL,
     });
 
     useEffect(() => {
-        if (data && showIncidents && params.userLon && params.userLat) {
+        if (data && showIncidents && longitude && latitude) {
             let closestIncident: IncidentAlert | null = null;
 
             const filteredIncidents = data.incidents.filter(
@@ -42,7 +48,7 @@ export default function useIncidents(params: { userLon: number; userLat: number;
 
             filteredIncidents?.forEach((incident) => {
                 const incidentPoint = point(incident.geometry.coordinates[0]);
-                const userPoint = point([params.userLon, params.userLat]);
+                const userPoint = point([longitude, latitude]);
                 const distanceToIncident = distance(userPoint, incidentPoint, {
                     units: "meters",
                 });
@@ -68,7 +74,9 @@ export default function useIncidents(params: { userLon: number; userLat: number;
                 alert: null,
             });
         }
-    }, [data, params.userLon, params.userLat]);
+    }, [data, longitude, latitude]);
 
     return { incidents, loadingIncidents, errorIncidents };
-}
+};
+
+export default useIncidents;
