@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -6,7 +6,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 interface BottomSheetComponentProps {
     onClose: () => void;
     children: React.ReactNode;
-    st?: StyleSheet;
+    st?: ViewStyle;
 }
 
 const BottomSheetComponent = ({ onClose, children, st }: BottomSheetComponentProps) => {

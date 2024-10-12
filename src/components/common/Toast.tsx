@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageProps, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, ImageProps, StyleSheet, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
 import { useSelector } from "react-redux";
 
@@ -6,6 +6,8 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapViewSelectors } from "@/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+
+import Text from "./Text";
 
 interface ToastProps {
     show: boolean;
@@ -33,16 +35,16 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
         }
     };
 
-    const determineColor = () => {
+    const determineColor = (): "error" | "warning" | "primary" => {
         switch (type) {
             case "error":
-                return COLORS.error;
+                return "error";
             case "warning":
-                return COLORS.warning;
+                return "warning";
             case "info":
-                return COLORS.primary;
+                return "primary";
             default:
-                return COLORS.primary;
+                return "primary";
         }
     };
 
@@ -52,30 +54,21 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
                 <View
                     style={{
                         ...dynamicThemeStyles(styles.container, determineTheme(mapStyle)),
-                        width: !title ? "30%" : undefined,
                     }}
                 >
                     {title && (
                         <View style={styles.header}>
-                            {!image && (
+                            {!image ? (
                                 <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
-                            )}
-                            {image && (
+                            ) : (
                                 <Image
                                     resizeMode="contain"
                                     source={image}
-                                    style={{
-                                        width: SIZES.iconSize.lg,
-                                        height: SIZES.iconSize.lg,
-                                    }}
+                                    style={{ width: SIZES.iconSize.lg, height: SIZES.iconSize.lg }}
                                 />
                             )}
-                            <Text
-                                style={{
-                                    ...styles.title,
-                                    color: determineColor(),
-                                }}
-                            >
+
+                            <Text style={{ fontWeight: "bold" }} type={determineColor()}>
                                 {title}
                             </Text>
                         </View>
@@ -94,6 +87,7 @@ const styles = StyleSheet.create({
     container: {
         left: SIZES.spacing.sm,
         bottom: SIZES.spacing.md,
+        alignSelf: "flex-start",
         maxWidth: deviceWidth > 600 ? "35%" : "70%",
         marginTop: SIZES.spacing.sm,
         backgroundColor: COLORS.white_transparent,
@@ -106,10 +100,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: SIZES.spacing.sm,
         marginHorizontal: "auto",
-    },
-    title: {
-        fontSize: SIZES.fontSize.md,
-        fontWeight: "bold",
     },
     divider: {
         marginTop: SIZES.spacing.xs,

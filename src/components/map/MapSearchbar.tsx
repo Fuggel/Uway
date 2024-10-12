@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -13,6 +13,7 @@ import { mapViewSelectors } from "@/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import Searchbar from "../common/Searchbar";
+import Text from "../common/Text";
 
 const deviceHeight = Dimensions.get("window").height;
 
@@ -64,7 +65,7 @@ const MapSearchbar = () => {
                             style={styles.scrollContainer}
                             onPress={() => handleSelectLocation(suggestion.mapbox_id)}
                         >
-                            <Text>
+                            <Text type="dark">
                                 {suggestion.name}, {suggestion.place_formatted}
                             </Text>
                             <Divider style={styles.divider} />

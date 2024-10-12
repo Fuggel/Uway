@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 import SearchBar from "react-native-platform-searchbar";
 import { useSelector } from "react-redux";
 
@@ -11,8 +11,8 @@ interface SearchbarProps {
     onChangeText: (query: string) => void;
     value: string;
     children?: React.ReactNode;
-    st?: StyleProp<ViewStyle>;
-    listSt?: StyleProp<ViewStyle>;
+    st?: ViewStyle;
+    listSt?: ViewStyle;
 }
 
 const Searchbar = ({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) => {

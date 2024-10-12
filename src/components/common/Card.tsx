@@ -1,12 +1,13 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 
 import { SIZES } from "@/constants/size-constants";
+
+import Text from "./Text";
 
 interface CardProps {
     title?: string;
     children: React.ReactNode;
-    st?: any;
+    st?: ViewStyle;
 }
 
 const Card = ({ title, children, st }: CardProps) => {

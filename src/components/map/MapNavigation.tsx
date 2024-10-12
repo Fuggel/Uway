@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,6 +17,7 @@ import { arrowDirection } from "@/utils/map-utils";
 
 import Button from "../common/Button";
 import Card from "../common/Card";
+import Text from "../common/Text";
 
 interface MapNavigationProps {
     directions: Direction | null;
@@ -70,7 +71,9 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
 
                 return (
                     <View key={index} style={styles.instructionsContainer}>
-                        <Text style={styles.stepInstruction}>{step.maneuver.instruction}</Text>
+                        <Text type="dark" style={styles.stepInstruction}>
+                            {step.maneuver.instruction}
+                        </Text>
 
                         <View style={styles.directionRow}>
                             {arrowDir !== undefined && (
@@ -80,7 +83,9 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
                                     color={COLORS.primary}
                                 />
                             )}
-                            <Text style={styles.stepDistance}>{step.distance.toFixed(0)} m</Text>
+                            <Text type="secondary" textStyle="caption">
+                                {step.distance.toFixed(0)} m
+                            </Text>
                         </View>
                     </View>
                 );
@@ -90,12 +95,12 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
                 {directions && isNavigationMode && (
                     <Card st={styles.card}>
                         <View>
-                            <Text style={styles.navigationDuration}>
+                            <Text type="success" textStyle="header">
                                 {duration} · {distance}
                             </Text>
                             <View style={styles.navigationInfo}>
-                                <Text style={styles.navigationDistance}>{address}</Text>
-                                <Text style={styles.navigationDistance}>{place}</Text>
+                                <Text type="secondary">{address}</Text>
+                                <Text type="secondary">{place}</Text>
                             </View>
                         </View>
 
@@ -106,12 +111,7 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
                 {locations && !isNavigationMode && (
                     <Card st={styles.card}>
                         <View style={styles.profileActions}>
-                            <Text
-                                style={{
-                                    ...styles.navigationDuration,
-                                    color: COLORS.gray,
-                                }}
-                            >
+                            <Text type="secondary" style={styles.navigationDuration}>
                                 {address}, {place}
                             </Text>
                             <SegmentedButtons
@@ -163,12 +163,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white_transparent,
     },
     stepInstruction: {
-        fontSize: SIZES.fontSize.md,
         fontWeight: "bold",
-    },
-    stepDistance: {
-        fontSize: SIZES.fontSize.sm,
-        color: COLORS.gray,
     },
     directionRow: {
         flexDirection: "row",
@@ -181,20 +176,13 @@ const styles = StyleSheet.create({
         paddingVertical: SIZES.spacing.md,
     },
     navigationDuration: {
-        color: COLORS.success,
-        fontSize: SIZES.fontSize.lg,
         textAlign: "center",
-        fontWeight: "bold",
     },
     navigationInfo: {
         justifyContent: "center",
         alignItems: "center",
         marginTop: SIZES.spacing.xs,
         gap: 2,
-    },
-    navigationDistance: {
-        color: COLORS.gray,
-        fontSize: SIZES.fontSize.md,
     },
     profileActions: {
         minWidth: "60%",

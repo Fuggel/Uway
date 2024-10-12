@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { COLORS } from "@/constants/colors-constants";
-import { SIZES } from "@/constants/size-constants";
+import Text from "../common/Text";
 
 interface PriceDisplayProps {
     price: number;
@@ -14,11 +13,16 @@ const PriceDisplay = ({ price }: PriceDisplayProps) => {
 
     return (
         <View style={styles.priceContainer}>
-            <Text style={styles.price}>
+            <Text type="dark" style={styles.price}>
                 {euros},{mainCents}
             </Text>
-            <Text style={styles.superscript}>{smallCents}</Text>
-            <Text style={styles.price}> €</Text>
+            <Text type="dark" textStyle="xs" style={styles.superscript}>
+                {smallCents}
+            </Text>
+            <Text type="dark" style={styles.price}>
+                {" "}
+                €
+            </Text>
         </View>
     );
 };
@@ -30,13 +34,10 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     price: {
-        fontSize: SIZES.fontSize.md,
         fontWeight: "bold",
     },
     superscript: {
-        fontSize: SIZES.fontSize.xs,
         fontWeight: "bold",
-        color: COLORS.dark,
         position: "absolute",
         top: -5,
         right: 12,

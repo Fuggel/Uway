@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, ViewStyle } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -7,7 +7,7 @@ import { SIZES } from "@/constants/size-constants";
 interface LoadingProps {
     color?: string;
     size?: number;
-    style?: StyleSheet;
+    style?: ViewStyle;
 }
 
 const Loading = ({ color, size, style }: LoadingProps) => {

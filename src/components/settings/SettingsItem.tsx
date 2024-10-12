@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Divider } from "react-native-paper";
 
 import { SIZES } from "@/constants/size-constants";
+
+import Text from "../common/Text";
 
 interface SettingsCommonProps {
     title?: string;
@@ -11,7 +13,7 @@ interface SettingsCommonProps {
 export const SettingsItem = ({ title, children }: SettingsCommonProps) => {
     return (
         <View style={styles.settingsItem}>
-            <Text style={styles.text}>{title}</Text>
+            <Text type="dark">{title}</Text>
             {children}
         </View>
     );
@@ -20,7 +22,9 @@ export const SettingsItem = ({ title, children }: SettingsCommonProps) => {
 export const SettingsSection = ({ title, children }: SettingsCommonProps) => {
     return (
         <View style={styles.settingsSection}>
-            <Text style={styles.heading}>{title}</Text>
+            <Text type="dark" style={styles.heading}>
+                {title}
+            </Text>
             <Divider style={styles.divider} />
             {children}
         </View>
@@ -32,11 +36,7 @@ const styles = StyleSheet.create({
         marginVertical: SIZES.spacing.sm,
     },
     heading: {
-        fontSize: SIZES.fontSize.md,
         fontWeight: "bold",
-    },
-    text: {
-        fontSize: SIZES.fontSize.md,
     },
     divider: {
         marginTop: SIZES.spacing.xs,
