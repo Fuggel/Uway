@@ -22,7 +22,7 @@ const deviceWidth = Dimensions.get("window").width;
 const Toast = ({ show, type, title, image, children }: ToastProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
-    const determineIcon = () => {
+    const getIcon = () => {
         switch (type) {
             case "error":
                 return "alert-circle";
@@ -35,7 +35,7 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
         }
     };
 
-    const determineColor = (): "error" | "warning" | "primary" => {
+    const getColor = (): "error" | "warning" | "primary" => {
         switch (type) {
             case "error":
                 return "error";
@@ -48,38 +48,31 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
         }
     };
 
-    return (
-        <>
-            {show && (
-                <View
-                    style={{
-                        ...dynamicThemeStyles(styles.container, determineTheme(mapStyle)),
-                    }}
-                >
-                    {title && (
-                        <View style={styles.header}>
-                            {!image ? (
-                                <Icon source={determineIcon()} size={SIZES.iconSize.lg} color={determineColor()} />
-                            ) : (
-                                <Image
-                                    resizeMode="contain"
-                                    source={image}
-                                    style={{ width: SIZES.iconSize.lg, height: SIZES.iconSize.lg }}
-                                />
-                            )}
+    if (!show) return null;
 
-                            <Text style={{ fontWeight: "bold" }} type={determineColor()}>
-                                {title}
-                            </Text>
-                        </View>
+    return (
+        <View style={{ ...dynamicThemeStyles(styles.container, determineTheme(mapStyle)) }}>
+            {title && (
+                <View style={styles.header}>
+                    {!image ? (
+                        <Icon source={getIcon()} size={SIZES.iconSize.lg} color={getColor()} />
+                    ) : (
+                        <Image
+                            resizeMode="contain"
+                            source={image}
+                            style={{ width: SIZES.iconSize.lg, height: SIZES.iconSize.lg }}
+                        />
                     )}
 
-                    {title && children && <Divider style={styles.divider} />}
-
-                    {children && <View style={styles.children}>{children}</View>}
+                    <Text style={{ fontWeight: "bold" }} type={getColor()}>
+                        {title}
+                    </Text>
                 </View>
             )}
-        </>
+
+            {title && children && <Divider style={styles.divider} />}
+            {children && <View style={styles.children}>{children}</View>}
+        </View>
     );
 };
 
