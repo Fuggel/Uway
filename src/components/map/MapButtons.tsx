@@ -21,11 +21,11 @@ const MapButtons = () => {
     return (
         <View style={styles.container}>
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <Button icon="cog" onPress={() => setOpen(!open)} />
+                <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
             </View>
 
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
+                <Button icon="cog" onPress={() => setOpen(!open)} />
             </View>
         </View>
     );
@@ -34,7 +34,7 @@ const MapButtons = () => {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        top: deviceHeight > 1000 ? "4%" : "7%",
+        bottom: deviceHeight > 1000 ? "2%" : "4%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },

@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageProps, StyleSheet, View } from "react-native";
+import { Image, ImageProps, StyleSheet, View } from "react-native";
 import { Divider, Icon } from "react-native-paper";
 import { useSelector } from "react-redux";
 
@@ -17,8 +17,6 @@ interface ToastProps {
     children?: React.ReactNode;
 }
 
-const deviceWidth = Dimensions.get("window").width;
-
 const Toast = ({ show, type, title, image, children }: ToastProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
@@ -35,16 +33,16 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
         }
     };
 
-    const getColor = (): "error" | "warning" | "primary" => {
+    const getColor = () => {
         switch (type) {
             case "error":
-                return "error";
+                return COLORS.error;
             case "warning":
-                return "warning";
+                return COLORS.warning;
             case "info":
-                return "primary";
+                return COLORS.primary;
             default:
-                return "primary";
+                return COLORS.primary;
         }
     };
 
@@ -55,7 +53,7 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
             {title && (
                 <View style={styles.header}>
                     {!image ? (
-                        <Icon source={getIcon()} size={SIZES.iconSize.lg} color={getColor()} />
+                        <Icon source={getIcon()} color={getColor()} size={SIZES.iconSize.lg} />
                     ) : (
                         <Image
                             resizeMode="contain"
@@ -64,29 +62,21 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
                         />
                     )}
 
-                    <Text style={{ fontWeight: "bold" }} type={getColor()}>
-                        {title}
-                    </Text>
+                    <Text style={{ fontWeight: "bold", color: getColor() }}>{title}</Text>
                 </View>
             )}
 
             {title && children && <Divider style={styles.divider} />}
-            {children && <View style={styles.children}>{children}</View>}
+            {children && <View>{children}</View>}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        left: SIZES.spacing.sm,
-        bottom: SIZES.spacing.md,
-        alignSelf: "flex-start",
-        maxWidth: deviceWidth > 600 ? "35%" : "70%",
-        marginTop: SIZES.spacing.sm,
         backgroundColor: COLORS.white_transparent,
         padding: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
-        zIndex: 999999,
     },
     header: {
         flexDirection: "row",
@@ -95,11 +85,7 @@ const styles = StyleSheet.create({
         marginHorizontal: "auto",
     },
     divider: {
-        marginTop: SIZES.spacing.xs,
-    },
-    children: {
-        marginHorizontal: "auto",
-        marginVertical: SIZES.spacing.sm,
+        marginVertical: SIZES.spacing.xs,
     },
 });
 

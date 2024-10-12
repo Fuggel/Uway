@@ -3,8 +3,6 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
 import { COLORS } from "@/constants/colors-constants";
 import { ROUTE_PROFILES } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
@@ -12,8 +10,7 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { Location } from "@/types/IMap";
-import { Direction, Instruction, RouteProfileType } from "@/types/INavigation";
-import { arrowDirection } from "@/utils/map-utils";
+import { Direction, RouteProfileType } from "@/types/INavigation";
 
 import Button from "../common/Button";
 import Card from "../common/Card";
@@ -65,109 +62,66 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
     }, [currentStep, directions]);
 
     return (
-        <>
-            {directions?.legs[0].steps.slice(currentStep, currentStep + 1).map((step: Instruction, index: number) => {
-                const arrowDir = arrowDirection(step.maneuver.modifier);
-
-                return (
-                    <View key={index} style={styles.instructionsContainer}>
-                        <Text type="dark" style={styles.stepInstruction}>
-                            {step.maneuver.instruction}
+        <View style={styles.flexBottom}>
+            {directions && isNavigationMode && (
+                <Card st={styles.card}>
+                    <View>
+                        <Text type="success" textStyle="header">
+                            {duration} · {distance}
                         </Text>
-
-                        <View style={styles.directionRow}>
-                            {arrowDir !== undefined && (
-                                <MaterialCommunityIcons
-                                    name={arrowDir}
-                                    size={SIZES.iconSize.xl}
-                                    color={COLORS.primary}
-                                />
-                            )}
-                            <Text type="secondary" textStyle="caption">
-                                {step.distance.toFixed(0)} m
-                            </Text>
+                        <View style={styles.navigationInfo}>
+                            <Text type="secondary">{address}</Text>
+                            <Text type="secondary">{place}</Text>
                         </View>
                     </View>
-                );
-            })}
 
-            <View style={styles.flexBottom}>
-                {directions && isNavigationMode && (
-                    <Card st={styles.card}>
-                        <View>
-                            <Text type="success" textStyle="header">
-                                {duration} · {distance}
-                            </Text>
-                            <View style={styles.navigationInfo}>
-                                <Text type="secondary">{address}</Text>
-                                <Text type="secondary">{place}</Text>
-                            </View>
-                        </View>
+                    <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                </Card>
+            )}
 
+            {locations && !isNavigationMode && (
+                <Card st={styles.card}>
+                    <View style={styles.profileActions}>
+                        <Text type="secondary" style={styles.navigationDuration}>
+                            {address}, {place}
+                        </Text>
+                        <SegmentedButtons
+                            value={profileType}
+                            onValueChange={(value) =>
+                                dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
+                            }
+                            buttons={ROUTE_PROFILES.map((p) => ({
+                                value: p.value,
+                                icon: p.icon,
+                                checkedColor: COLORS.white,
+                                style: {
+                                    backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
+                                },
+                            }))}
+                        />
+                    </View>
+
+                    <View style={styles.navigationActionButtons}>
                         <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
-                    </Card>
-                )}
-
-                {locations && !isNavigationMode && (
-                    <Card st={styles.card}>
-                        <View style={styles.profileActions}>
-                            <Text type="secondary" style={styles.navigationDuration}>
-                                {address}, {place}
-                            </Text>
-                            <SegmentedButtons
-                                value={profileType}
-                                onValueChange={(value) =>
-                                    dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
-                                }
-                                buttons={ROUTE_PROFILES.map((p) => ({
-                                    value: p.value,
-                                    icon: p.icon,
-                                    checkedColor: COLORS.white,
-                                    style: {
-                                        backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
-                                    },
-                                }))}
-                            />
-                        </View>
-
-                        <View style={styles.navigationActionButtons}>
-                            <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
-                            <Button
-                                icon="navigation"
-                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                                type="success"
-                                size="xl"
-                            />
-                        </View>
-                    </Card>
-                )}
-            </View>
-        </>
+                        <Button
+                            icon="navigation"
+                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                            type="success"
+                            size="xl"
+                        />
+                    </View>
+                </Card>
+            )}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    instructionsContainer: {
-        position: "absolute",
-        top: deviceHeight > 1000 ? "4%" : "7%",
-        left: SIZES.spacing.sm,
-        maxWidth: "60%",
-        backgroundColor: COLORS.white_transparent,
-        borderRadius: SIZES.borderRadius.sm,
-        padding: SIZES.spacing.sm,
-    },
     flexBottom: {
         flex: 1,
         maxHeight: deviceHeight > 1000 ? "12%" : "18%",
         justifyContent: "center",
         backgroundColor: COLORS.white_transparent,
-    },
-    stepInstruction: {
-        fontWeight: "bold",
-    },
-    directionRow: {
-        flexDirection: "row",
-        alignItems: "center",
     },
     card: {
         flexDirection: "row",

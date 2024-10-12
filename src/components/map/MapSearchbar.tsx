@@ -81,9 +81,8 @@ const styles = StyleSheet.create({
     search: {
         position: "absolute",
         top: deviceHeight > 1000 ? "4%" : "7%",
-        left: SIZES.spacing.sm,
-        minWidth: "65%",
-        maxWidth: "75%",
+        right: SIZES.spacing.sm,
+        width: "50%",
     },
     suggestions: {
         backgroundColor: COLORS.white_transparent,

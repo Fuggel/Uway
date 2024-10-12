@@ -93,7 +93,7 @@ const Map = () => {
 
                 {!directions && userLocation && <MapSearchbar />}
 
-                <MapAlerts />
+                <MapAlerts directions={directions} />
 
                 {showSheet && (
                     <MapBottomSheet
