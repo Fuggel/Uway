@@ -66,7 +66,7 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
             {directions && isNavigationMode && (
                 <Card st={styles.card}>
                     <View>
-                        <Text type="success" textStyle="header">
+                        <Text type="success" textStyle="header" style={{ textAlign: "center" }}>
                             {duration} · {distance}
                         </Text>
                         <View style={styles.navigationInfo}>
@@ -118,10 +118,8 @@ const MapNavigation = ({ directions, locations, setDirections, setLocations }: M
 
 const styles = StyleSheet.create({
     flexBottom: {
-        flex: 1,
         maxHeight: deviceHeight > 1000 ? "12%" : "18%",
         justifyContent: "center",
-        backgroundColor: COLORS.white_transparent,
     },
     card: {
         flexDirection: "row",
