@@ -7,7 +7,6 @@ import { Point } from "@turf/helpers";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
-import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import useIncidents from "@/hooks/useIncidents";
 import useParkAvailability from "@/hooks/useParkAvailability";
@@ -30,7 +29,6 @@ interface LayersProps {
 }
 
 const Layers = ({ directions }: LayersProps) => {
-    const { userLocation, userHeading } = useContext(UserLocationContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { openSheet } = useContext(MarkerBottomSheetContext);
     const { gasStations } = useGasStations();
@@ -170,24 +168,6 @@ const Layers = ({ directions }: LayersProps) => {
                     />
                 </View>
             ))}
-            {userLocation && (
-                <SymbolLayer
-                    sourceId="user-location"
-                    layerId="user-location-layer"
-                    coordinates={[userLocation.coords?.longitude, userLocation.coords?.latitude]}
-                    properties={{
-                        heading: userHeading,
-                        ...userLocation,
-                    }}
-                    style={{
-                        iconImage: "user-location",
-                        iconRotationAlignment: "map",
-                        iconPitchAlignment: "map",
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
-                        iconRotate: ["get", "heading"],
-                    }}
-                />
-            )}
         </>
     );
 };
