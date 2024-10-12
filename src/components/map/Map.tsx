@@ -17,8 +17,6 @@ import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData, sheetTitle } from "@/utils/sheet-utils";
 
 import Loading from "../common/Loading";
-import Text from "../common/Text";
-import Toast from "../common/Toast";
 import Layers from "../layer/Layers";
 import MapAlerts from "./MapAlerts";
 import MapBottomSheet from "./MapBottomSheet";
@@ -92,25 +90,6 @@ const Map = () => {
                 </MapView>
 
                 <MapButtons />
-
-                <View
-                    style={{
-                        position: "absolute",
-                        top: 150,
-                        right: 0,
-                        left: 0,
-                        zIndex: 999999,
-                    }}
-                >
-                    <Toast
-                        show={true}
-                        type="info"
-                        title="Info"
-                        image={require("@/assets/images/map-icons/incident-rain.png")}
-                    >
-                        <Text>Test</Text>
-                    </Toast>
-                </View>
 
                 {!directions && userLocation && <MapSearchbar />}
 

@@ -20,20 +20,14 @@ const MapBottomSheet = ({ title, data, onClose }: MapBottomSheetProps) => {
                     {title}
                 </Text>
 
-                {data &&
-                    data.length > 0 &&
-                    data.map((item, i) => (
-                        <View key={i} style={styles.itemContainer}>
-                            <Text type="secondary">{item.label}:</Text>
-                            {typeof item.value === "string" || typeof item.value === "number" ? (
-                                <Text type="dark" style={styles.textValue}>
-                                    {item.value}
-                                </Text>
-                            ) : (
-                                item.value
-                            )}
-                        </View>
-                    ))}
+                {data?.map((item, i) => (
+                    <View key={i} style={styles.itemContainer}>
+                        <Text type="secondary">{item.label}:</Text>
+                        <Text type="dark" style={styles.textValue}>
+                            {item.value}
+                        </Text>
+                    </View>
+                ))}
             </View>
         </BottomSheetComponent>
     );
