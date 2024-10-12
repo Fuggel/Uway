@@ -24,8 +24,8 @@ const Loading = ({ color, size, style }: LoadingProps) => {
 const styles = StyleSheet.create({
     loading: {
         position: "absolute",
-        top: "45%",
-        left: "45%",
+        top: "50%",
+        left: "50%",
         zIndex: 999999,
     },
 });
