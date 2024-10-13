@@ -1,9 +1,10 @@
-import * as Location from "expo-location";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
+
+import { Location } from "@rnmapbox/maps";
 
 interface ContextProps {
-    userLocation: Location.LocationObject | null;
-    userHeading: number | null;
+    userLocation: Location | null;
+    setUserLocation: React.Dispatch<React.SetStateAction<Location | null>>;
 }
 
 interface ProviderProps {
@@ -12,50 +13,15 @@ interface ProviderProps {
 
 export const UserLocationContext = createContext<ContextProps>({
     userLocation: null,
-    userHeading: null,
+    setUserLocation: () => {},
 });
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
-    const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
-    const [userHeading, setUserHeading] = useState<number | null>(null);
-
-    useEffect(() => {
-        let locationSubscription: Location.LocationSubscription | null = null;
-
-        const checkLocationPermission = async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            await Location.watchHeadingAsync((heading) => {
-                if (heading.trueHeading !== null && heading.accuracy >= 1) {
-                    setUserHeading(heading.trueHeading);
-                }
-            });
-
-            if (status === Location.PermissionStatus.GRANTED) {
-                locationSubscription = await Location.watchPositionAsync(
-                    {
-                        accuracy: Location.Accuracy.BestForNavigation,
-                        timeInterval: 1000,
-                        distanceInterval: 1,
-                    },
-                    (location) => {
-                        setUserLocation(location);
-                    }
-                );
-            } else {
-                setUserLocation(null);
-            }
-        };
-
-        checkLocationPermission();
-
-        return () => {
-            if (locationSubscription) {
-                locationSubscription.remove();
-            }
-        };
-    }, []);
+    const [userLocation, setUserLocation] = useState<Location | null>(null);
 
     return (
-        <UserLocationContext.Provider value={{ userLocation, userHeading }}>{children}</UserLocationContext.Provider>
+        <UserLocationContext.Provider value={{ userLocation, setUserLocation }}>
+            {children}
+        </UserLocationContext.Provider>
     );
 };

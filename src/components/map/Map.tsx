@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -29,10 +29,11 @@ Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 const Map = () => {
     const dispatch = useDispatch();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
-    const { userLocation, userHeading } = useContext(UserLocationContext);
+    const { userLocation } = useContext(UserLocationContext);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
+    const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
@@ -41,6 +42,20 @@ const Map = () => {
             lat: locations?.geometry?.coordinates[1] as number,
         },
     });
+
+    const defaultSettings = {
+        centerCoordinate: !userLocation
+            ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+            : ([userLocation.coords.longitude, userLocation.coords.latitude] as Position),
+        zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
+        pitch: MAP_CONFIG.pitch,
+    };
+
+    useEffect(() => {
+        if (tracking && navigationMode && !navigationView) {
+            dispatch(mapNavigationActions.setNavigationView(true));
+        }
+    }, [tracking, navigationMode, navigationView]);
 
     return (
         <>
@@ -56,6 +71,7 @@ const Map = () => {
                     onTouchStart={() => {
                         Keyboard.dismiss();
                         dispatch(mapNavigationActions.setTracking(false));
+                        dispatch(mapNavigationActions.setNavigationView(false));
                     }}
                 >
                     <Images images={MAP_ICONS} />
@@ -64,6 +80,7 @@ const Map = () => {
                         animationDuration={500}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
                         zoomLevel={
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
@@ -71,7 +88,6 @@ const Map = () => {
                                   ? MAP_CONFIG.followZoom
                                   : MAP_CONFIG.zoom
                         }
-                        heading={userLocation && userHeading && (tracking || navigationView) ? userHeading : undefined}
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
@@ -79,11 +95,7 @@ const Map = () => {
                                   ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
                                   : undefined
                         }
-                        defaultSettings={{
-                            centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
-                            zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
-                            pitch: MAP_CONFIG.pitch,
-                        }}
+                        defaultSettings={defaultSettings}
                     />
 
                     <Layers directions={directions} />

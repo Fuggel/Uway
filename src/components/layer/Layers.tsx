@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 
+import { UserLocation } from "@rnmapbox/maps";
 import { Point } from "@turf/helpers";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -10,6 +11,7 @@ import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import useIncidents from "@/hooks/useIncidents";
+import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import { mapViewSelectors } from "@/store/mapView";
@@ -30,9 +32,10 @@ interface LayersProps {
 }
 
 const Layers = ({ directions }: LayersProps) => {
-    const { userLocation, userHeading } = useContext(UserLocationContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { openSheet } = useContext(MarkerBottomSheetContext);
+    const { setUserLocation } = useContext(UserLocationContext);
+    const { hasLocationPermissions } = useLocationPermission();
     const { gasStations } = useGasStations();
     const { parkAvailability } = useParkAvailability();
     const { speedCameras } = useSpeedCameras();
@@ -74,7 +77,7 @@ const Layers = ({ directions }: LayersProps) => {
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}
-                        belowLayerId="user-location-layer"
+                        belowLayerId="mapboxUserLocationPulseCircle"
                     />
                 </View>
             ))}
@@ -93,7 +96,7 @@ const Layers = ({ directions }: LayersProps) => {
                         ),
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                     }}
-                    belowLayerId="user-location-layer"
+                    belowLayerId="mapboxUserLocationPulseCircle"
                 />
             ))}
             {speedCameras?.data?.features?.map((feature, i) => (
@@ -112,7 +115,7 @@ const Layers = ({ directions }: LayersProps) => {
                         iconImage: "speed-camera",
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                     }}
-                    belowLayerId="user-location-layer"
+                    belowLayerId="mapboxUserLocationPulseCircle"
                 />
             ))}
             {incidents?.data?.incidents?.map((incident, i) => (
@@ -126,7 +129,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                         }}
-                        belowLayerId="user-location-layer"
+                        belowLayerId="mapboxUserLocationPulseCircle"
                     />
                     <SymbolLayer
                         key={i}
@@ -166,26 +169,32 @@ const Layers = ({ directions }: LayersProps) => {
                                 "incident-caution",
                             ],
                         }}
-                        belowLayerId="user-location-layer"
+                        belowLayerId="mapboxUserLocationPulseCircle"
                     />
                 </View>
             ))}
-            {userLocation && (
-                <SymbolLayer
-                    sourceId="user-location"
-                    layerId="user-location-layer"
-                    coordinates={[userLocation.coords?.longitude, userLocation.coords?.latitude]}
-                    properties={{
-                        heading: userHeading,
-                        ...userLocation,
+
+            {hasLocationPermissions && (
+                <UserLocation
+                    animated
+                    showsUserHeadingIndicator
+                    styles={{
+                        pulse: {
+                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 15, 18, 18, 20, 21],
+                            circleColor: COLORS.primary,
+                            circleOpacity: 0.2,
+                        },
+                        background: {
+                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 9, 18, 12, 20, 15],
+                            circleColor: COLORS.white,
+                        },
+                        foreground: {
+                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 6, 18, 9, 20, 12],
+                            circleColor: COLORS.primary,
+                        },
                     }}
-                    style={{
-                        iconImage: "user-location",
-                        iconRotationAlignment: "map",
-                        iconPitchAlignment: "map",
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
-                        iconRotate: ["get", "heading"],
-                    }}
+                    headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 1, 18, 1.4, 20, 1.8]}
+                    onUpdate={(location) => setUserLocation(location)}
                 />
             )}
         </>
