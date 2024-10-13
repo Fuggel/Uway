@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 
+import { UserLocation } from "@rnmapbox/maps";
 import { Point } from "@turf/helpers";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -9,6 +10,7 @@ import { SIZES } from "@/constants/size-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import useGasStations from "@/hooks/useGasStations";
 import useIncidents from "@/hooks/useIncidents";
+import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import { mapViewSelectors } from "@/store/mapView";
@@ -31,6 +33,7 @@ interface LayersProps {
 const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { openSheet } = useContext(MarkerBottomSheetContext);
+    const { hasLocationPermissions } = useLocationPermission();
     const { gasStations } = useGasStations();
     const { parkAvailability } = useParkAvailability();
     const { speedCameras } = useSpeedCameras();
@@ -168,6 +171,29 @@ const Layers = ({ directions }: LayersProps) => {
                     />
                 </View>
             ))}
+
+            {hasLocationPermissions && (
+                <UserLocation
+                    animated
+                    showsUserHeadingIndicator
+                    styles={{
+                        pulse: {
+                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 15, 18, 18, 20, 21],
+                            circleColor: COLORS.primary,
+                            circleOpacity: 0.2,
+                        },
+                        background: {
+                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 9, 18, 12, 20, 15],
+                            circleColor: COLORS.white,
+                        },
+                        foreground: {
+                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 6, 18, 9, 20, 12],
+                            circleColor: COLORS.primary,
+                        },
+                    }}
+                    headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 1, 18, 1.4, 20, 1.8]}
+                />
+            )}
         </>
     );
 };

@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { Keyboard, StyleSheet, View } from "react-native";
+import { Keyboard, LogBox, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import Mapbox, { Camera, Images, MapView, UserLocation } from "@rnmapbox/maps";
+import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { Position } from "@turf/helpers";
 
 import { sessionToken } from "@/constants/auth-constants";
@@ -26,6 +26,7 @@ import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
+LogBox.ignoreLogs(["rnmapbox maps: UserLocationUpdate is not supported"]);
 
 const Map = () => {
     const dispatch = useDispatch();
@@ -55,6 +56,7 @@ const Map = () => {
                     style={styles.map}
                     styleURL={determineMapStyle(mapStyle)}
                     scaleBarEnabled={false}
+                    onUserLocationUpdate={(location) => setUserLocation(location)}
                     onTouchStart={() => {
                         Keyboard.dismiss();
                         dispatch(mapNavigationActions.setTracking(false));
@@ -75,14 +77,6 @@ const Map = () => {
                     />
 
                     <Layers directions={directions} />
-
-                    {hasLocationPermissions && (
-                        <UserLocation
-                            animated
-                            showsUserHeadingIndicator
-                            onUpdate={(location) => setUserLocation(location)}
-                        />
-                    )}
                 </MapView>
 
                 <MapButtons />
