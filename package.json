@@ -18,7 +18,7 @@
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^2.2.7",
-    "@rnmapbox/maps": "^10.1.28",
+    "@rnmapbox/maps": "git+https://github.com/Fuggel/maps.git#feat/injected-rnmapbox",
     "@tanstack/react-query": "^5.52.1",
     "@turf/helpers": "^6.5.0",
     "@turf/turf": "^7.1.0",
