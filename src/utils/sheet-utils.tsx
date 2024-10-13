@@ -76,6 +76,15 @@ function incidentData(incidentProperties: IncidentProperties | undefined) {
 }
 
 function gasStationData(gasStationProperties: GasStation | undefined) {
+    const street = gasStationProperties?.street;
+    const houseNumber = gasStationProperties?.houseNumber;
+    const postCode = gasStationProperties?.postCode;
+    const place = gasStationProperties?.place;
+
+    const address = street
+        ? `${street} ${houseNumber}, ${postCode} ${place}`
+        : (gasStationProperties?.name ?? "Unbekannt");
+
     return [
         {
             label: "Marke",
@@ -83,7 +92,7 @@ function gasStationData(gasStationProperties: GasStation | undefined) {
         },
         {
             label: "Straße",
-            value: gasStationProperties?.name ?? "Unbekannt",
+            value: address,
         },
         {
             label: "Diesel",
