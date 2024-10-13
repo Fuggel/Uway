@@ -43,7 +43,7 @@ const LineLayer = <T,>({
                     lineJoin: "round",
                     ...style,
                 }}
-                belowLayerID={belowLayerId ?? "user-location-layer"}
+                belowLayerID={belowLayerId ?? "mapboxUserLocationPulseCircle"}
                 aboveLayerID={aboveLayerId ?? undefined}
             />
         </ShapeSource>

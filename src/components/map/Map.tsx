@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Keyboard, LogBox, StyleSheet, View } from "react-native";
+import React, { useContext, useEffect } from "react";
+import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
@@ -10,7 +10,6 @@ import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useDirections from "@/hooks/useDirections";
-import useLocationPermission from "@/hooks/useLocationPermissions";
 import useSearchLocation from "@/hooks/useSearchLocation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
@@ -26,16 +25,15 @@ import MapNavigation from "./MapNavigation";
 import MapSearchbar from "./MapSearchbar";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
-LogBox.ignoreLogs(["rnmapbox maps: UserLocationUpdate is not supported"]);
 
 const Map = () => {
     const dispatch = useDispatch();
-    const { hasLocationPermissions } = useLocationPermission();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
-    const { userLocation, setUserLocation } = useContext(UserLocationContext);
+    const { userLocation } = useContext(UserLocationContext);
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
+    const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
@@ -44,6 +42,20 @@ const Map = () => {
             lat: locations?.geometry?.coordinates[1] as number,
         },
     });
+
+    const defaultSettings = {
+        centerCoordinate: !userLocation
+            ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+            : ([userLocation.coords.longitude, userLocation.coords.latitude] as Position),
+        zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
+        pitch: MAP_CONFIG.pitch,
+    };
+
+    useEffect(() => {
+        if (tracking && navigationMode && !navigationView) {
+            dispatch(mapNavigationActions.setNavigationView(true));
+        }
+    }, [tracking, navigationMode, navigationView]);
 
     return (
         <>
@@ -56,24 +68,34 @@ const Map = () => {
                     style={styles.map}
                     styleURL={determineMapStyle(mapStyle)}
                     scaleBarEnabled={false}
-                    onUserLocationUpdate={(location) => setUserLocation(location)}
                     onTouchStart={() => {
                         Keyboard.dismiss();
                         dispatch(mapNavigationActions.setTracking(false));
+                        dispatch(mapNavigationActions.setNavigationView(false));
                     }}
                 >
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        followUserLocation={(hasLocationPermissions && tracking) || navigationView}
-                        followPitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        followZoomLevel={navigationView ? MAP_CONFIG.followZoom : MAP_CONFIG.zoom}
-                        followHeading={tracking || navigationView ? userLocation?.coords.heading : undefined}
-                        defaultSettings={{
-                            centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
-                            zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
-                            pitch: MAP_CONFIG.pitch,
-                        }}
+                        animationDuration={500}
+                        animationMode="linearTo"
+                        pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
+                        zoomLevel={
+                            !userLocation
+                                ? MAP_CONFIG.noLocationZoom
+                                : navigationView
+                                  ? MAP_CONFIG.followZoom
+                                  : MAP_CONFIG.zoom
+                        }
+                        centerCoordinate={
+                            userLocation && (tracking || navigationView)
+                                ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
+                                : tracking && !userLocation
+                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                  : undefined
+                        }
+                        defaultSettings={defaultSettings}
                     />
 
                     <Layers directions={directions} />

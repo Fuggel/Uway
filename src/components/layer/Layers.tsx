@@ -8,6 +8,7 @@ import { Point } from "@turf/helpers";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import useIncidents from "@/hooks/useIncidents";
 import useLocationPermission from "@/hooks/useLocationPermissions";
@@ -33,6 +34,7 @@ interface LayersProps {
 const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { openSheet } = useContext(MarkerBottomSheetContext);
+    const { setUserLocation } = useContext(UserLocationContext);
     const { hasLocationPermissions } = useLocationPermission();
     const { gasStations } = useGasStations();
     const { parkAvailability } = useParkAvailability();
@@ -75,7 +77,7 @@ const Layers = ({ directions }: LayersProps) => {
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}
-                        belowLayerId="user-location-layer"
+                        belowLayerId="mapboxUserLocationPulseCircle"
                     />
                 </View>
             ))}
@@ -94,7 +96,7 @@ const Layers = ({ directions }: LayersProps) => {
                         ),
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                     }}
-                    belowLayerId="user-location-layer"
+                    belowLayerId="mapboxUserLocationPulseCircle"
                 />
             ))}
             {speedCameras?.data?.features?.map((feature, i) => (
@@ -113,7 +115,7 @@ const Layers = ({ directions }: LayersProps) => {
                         iconImage: "speed-camera",
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                     }}
-                    belowLayerId="user-location-layer"
+                    belowLayerId="mapboxUserLocationPulseCircle"
                 />
             ))}
             {incidents?.data?.incidents?.map((incident, i) => (
@@ -127,7 +129,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                         }}
-                        belowLayerId="user-location-layer"
+                        belowLayerId="mapboxUserLocationPulseCircle"
                     />
                     <SymbolLayer
                         key={i}
@@ -167,7 +169,7 @@ const Layers = ({ directions }: LayersProps) => {
                                 "incident-caution",
                             ],
                         }}
-                        belowLayerId="user-location-layer"
+                        belowLayerId="mapboxUserLocationPulseCircle"
                     />
                 </View>
             ))}
@@ -192,6 +194,7 @@ const Layers = ({ directions }: LayersProps) => {
                         },
                     }}
                     headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 1, 18, 1.4, 20, 1.8]}
+                    onUpdate={(location) => setUserLocation(location)}
                 />
             )}
         </>
