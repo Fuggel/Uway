@@ -113,7 +113,7 @@ const Map = () => {
                 )}
             </View>
 
-            {(locations || directions) && (
+            {(locations || directions) && !showSheet && (
                 <MapNavigation
                     directions={directions}
                     locations={locations}
