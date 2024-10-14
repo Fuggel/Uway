@@ -11,22 +11,22 @@ import useInstructions from "@/hooks/useInstructions";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { Direction, Instruction } from "@/types/INavigation";
-import { SpeedLimitFeature } from "@/types/ISpeed";
+import { SpeedCameraProperties, SpeedLimitFeature } from "@/types/ISpeed";
+import { IncidentProperties } from "@/types/ITraffic";
 import { arrowDirection, determineIncidentIcon, determineSpeedLimitIcon } from "@/utils/map-utils";
+import { incidentTitle } from "@/utils/sheet-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
 import MapSearchbar from "./MapSearchbar";
-import { incidentTitle } from "@/utils/sheet-utils";
 
 interface MapAlertsProps {
     directions: Direction | null;
-    alertProperties: any;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapAlerts = ({ directions, alertProperties }: MapAlertsProps) => {
+const MapAlerts = ({ directions }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useSpeedCameras();
     const { speedLimits } = useSpeedLimits();
@@ -35,6 +35,9 @@ const MapAlerts = ({ directions, alertProperties }: MapAlertsProps) => {
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
+
+    const speedCameraProperties = speedCameras?.data.features[0]?.properties as SpeedCameraProperties | undefined;
+    const incidentProperties = incidents?.data.incidents[0]?.properties as IncidentProperties | undefined;
 
     return (
         <>
@@ -69,23 +72,27 @@ const MapAlerts = ({ directions, alertProperties }: MapAlertsProps) => {
                             );
                         })}
 
-                    {speedCameras?.alert &&
+                    {speedCameras?.alert && (
                         <Toast
                             show={!!speedCameras.alert}
                             type="error"
                             title={`Blitzer in ${speedCameras.alert.distance.toFixed(0)} m`}
-                            subTitle={alertProperties.maxspeed ? `Max. ${alertProperties.maxspeed} km/h` : undefined}
+                            subTitle={
+                                speedCameraProperties?.maxspeed
+                                    ? `Max. ${speedCameraProperties.maxspeed} km/h`
+                                    : undefined
+                            }
                         />
-                    }
+                    )}
 
-                    {incidents?.alert &&
+                    {incidents?.alert && (
                         <Toast
                             show={!!incidents.alert}
                             type="error"
                             image={determineIncidentIcon(incidents.alert.events[0]?.iconCategory)}
-                            title={`${incidentTitle(alertProperties)} in ${incidents.alert?.distance.toFixed(0)} m`}
+                            title={`${incidentTitle(incidentProperties)} in ${incidents.alert?.distance.toFixed(0)} m`}
                         />
-                    }
+                    )}
                 </View>
             </View>
 
