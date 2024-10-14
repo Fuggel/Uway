@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,8 +14,6 @@ import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import Searchbar from "../common/Searchbar";
 import Text from "../common/Text";
-
-const deviceHeight = Dimensions.get("window").height;
 
 const MapSearchbar = () => {
     const dispatch = useDispatch();
@@ -79,10 +77,7 @@ const MapSearchbar = () => {
 
 const styles = StyleSheet.create({
     search: {
-        position: "absolute",
-        top: deviceHeight > 1000 ? "4%" : "7%",
-        right: SIZES.spacing.sm,
-        width: "50%",
+        width: "65%",
     },
     suggestions: {
         backgroundColor: COLORS.white_transparent,

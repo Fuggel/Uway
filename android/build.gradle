@@ -41,8 +41,6 @@ allprojects {
 }
 // @generated begin @rnmapbox/maps-v2-maven - expo prebuild (DO NOT MODIFY) sync-32f1b7024bb5099f2805443b1960a3233ccde124
 
-def token = System.getenv("EXPO_SECRET_MAPBOX_ACCESS_TOKEN") ?: project.findProperty("EXPO_SECRET_MAPBOX_ACCESS_TOKEN") 
-
 allprojects {
   repositories {
     maven {
@@ -50,7 +48,7 @@ allprojects {
       authentication { basic(BasicAuthentication) }
       credentials {
         username = 'mapbox'
-        password = token
+        password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
       }
     }
   }

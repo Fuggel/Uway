@@ -1,12 +1,12 @@
-import { LocationObject } from "expo-location";
 import { useEffect, useState } from "react";
 
 import { point, distance as turfDistance } from "@turf/turf";
 
 import { NEXT_STEP_THRESHOLD_IN_METERS } from "@/constants/map-constants";
 import { Direction, Instruction } from "@/types/INavigation";
+import { Location } from "@rnmapbox/maps";
 
-const useInstructions = (directions: Direction | null, userLocation: LocationObject | null) => {
+const useInstructions = (directions: Direction | null, userLocation: Location | null) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [remainingTime, setRemainingTime] = useState(0);
     const [remainingDistance, setRemainingDistance] = useState(0);

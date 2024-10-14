@@ -193,7 +193,7 @@ const Layers = ({ directions }: LayersProps) => {
                             circleColor: COLORS.primary,
                         },
                     }}
-                    headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 1, 18, 1.4, 20, 1.8]}
+                    headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 0, 18, 1.1, 20, 1.3]}
                     onUpdate={(location) => setUserLocation(location)}
                 />
             )}

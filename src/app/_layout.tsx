@@ -21,12 +21,12 @@ const Layout = () => {
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
                         <SettingsContextProvider>
+                            <Settings />
                             <UserLocationContextProvider>
                                 <MarkerBottomSheetContextProvider>
                                     <Map />
                                 </MarkerBottomSheetContextProvider>
                             </UserLocationContextProvider>
-                            <Settings />
                         </SettingsContextProvider>
                     </QueryClientProvider>
                 </PaperProvider>

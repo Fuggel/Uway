@@ -16,14 +16,17 @@ import { arrowDirection, determineIncidentIcon, determineSpeedLimitIcon } from "
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
+import MapSearchbar from "./MapSearchbar";
+import { incidentTitle } from "@/utils/sheet-utils";
 
 interface MapAlertsProps {
     directions: Direction | null;
+    alertProperties: any;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapAlerts = ({ directions }: MapAlertsProps) => {
+const MapAlerts = ({ directions, alertProperties }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useSpeedCameras();
     const { speedLimits } = useSpeedLimits();
@@ -36,53 +39,54 @@ const MapAlerts = ({ directions }: MapAlertsProps) => {
     return (
         <>
             <View style={styles.absoluteTop}>
-                {directions?.legs[0].steps
-                    .slice(currentStep, currentStep + 1)
-                    .map((step: Instruction, index: number) => {
-                        const arrowDir = arrowDirection(step.maneuver.modifier);
+                {!directions && userLocation && <MapSearchbar />}
 
-                        return (
-                            <View key={index} style={styles.instructionsContainer}>
-                                <Text type="dark" style={styles.stepInstruction}>
-                                    {step.maneuver.instruction}
-                                </Text>
+                <View style={styles.alertContainer}>
+                    {directions?.legs[0].steps
+                        .slice(currentStep, currentStep + 1)
+                        .map((step: Instruction, index: number) => {
+                            const arrowDir = arrowDirection(step.maneuver.modifier);
 
-                                <View style={styles.directionRow}>
-                                    {arrowDir !== undefined && (
-                                        <MaterialCommunityIcons
-                                            name={arrowDir}
-                                            size={SIZES.iconSize.xl}
-                                            color={COLORS.primary}
-                                        />
-                                    )}
-                                    <Text type="secondary" textStyle="caption">
-                                        {step.distance.toFixed(0)} m
+                            return (
+                                <View key={index} style={styles.instructionsContainer}>
+                                    <Text type="dark" style={styles.stepInstruction}>
+                                        {step.maneuver.instruction}
                                     </Text>
+
+                                    <View style={styles.directionRow}>
+                                        {arrowDir !== undefined && (
+                                            <MaterialCommunityIcons
+                                                name={arrowDir}
+                                                size={SIZES.iconSize.xl}
+                                                color={COLORS.primary}
+                                            />
+                                        )}
+                                        <Text type="secondary" textStyle="caption">
+                                            {step.distance.toFixed(0)} m
+                                        </Text>
+                                    </View>
                                 </View>
-                            </View>
-                        );
-                    })}
+                            );
+                        })}
 
-                {speedCameras?.alert && (
-                    <Toast
-                        show={!!speedCameras.alert}
-                        type="error"
-                        title={`Blitzer in ${speedCameras.alert.distance.toFixed(0)} m`}
-                    />
-                )}
+                    {speedCameras?.alert &&
+                        <Toast
+                            show={!!speedCameras.alert}
+                            type="error"
+                            title={`Blitzer in ${speedCameras.alert.distance.toFixed(0)} m`}
+                            subTitle={alertProperties.maxspeed ? `Max. ${alertProperties.maxspeed} km/h` : undefined}
+                        />
+                    }
 
-                {incidents?.alert && (
-                    <Toast
-                        show={!!incidents.alert}
-                        type="error"
-                        image={determineIncidentIcon(incidents.alert.events[0]?.iconCategory)}
-                        title={`Achtung! Gefahr in ${incidents.alert.distance.toFixed(0)} m`}
-                    >
-                        <Text type="dark" style={styles.alertMsg}>
-                            {incidents.alert.events[0]?.description}
-                        </Text>
-                    </Toast>
-                )}
+                    {incidents?.alert &&
+                        <Toast
+                            show={!!incidents.alert}
+                            type="error"
+                            image={determineIncidentIcon(incidents.alert.events[0]?.iconCategory)}
+                            title={`${incidentTitle(alertProperties)} in ${incidents.alert?.distance.toFixed(0)} m`}
+                        />
+                    }
+                </View>
             </View>
 
             <View style={styles.absoluteBottom}>
@@ -117,17 +121,22 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: deviceHeight > 1000 ? "4%" : "7%",
         left: SIZES.spacing.sm,
+        right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
-        maxWidth: "60%",
+    },
+    alertContainer: {
+        gap: SIZES.spacing.sm,
+        width: "55%",
     },
     instructionsContainer: {
         borderRadius: SIZES.borderRadius.sm,
         padding: SIZES.spacing.sm,
         backgroundColor: COLORS.white_transparent,
+        gap: SIZES.spacing.xs,
     },
     absoluteBottom: {
         position: "absolute",
-        bottom: deviceHeight > 1000 ? "2%" : "4%",
+        bottom: "2%",
         left: SIZES.spacing.sm,
         width: "100%",
         pointerEvents: "none",

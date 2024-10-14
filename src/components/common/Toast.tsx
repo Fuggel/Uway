@@ -13,11 +13,12 @@ interface ToastProps {
     show: boolean;
     type: "error" | "warning" | "info";
     title?: string;
+    subTitle?: string;
     image?: ImageProps;
     children?: React.ReactNode;
 }
 
-const Toast = ({ show, type, title, image, children }: ToastProps) => {
+const Toast = ({ show, type, title, subTitle, image, children }: ToastProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     const getIcon = () => {
@@ -62,7 +63,8 @@ const Toast = ({ show, type, title, image, children }: ToastProps) => {
                         />
                     )}
 
-                    <Text style={{ fontWeight: "bold", color: getColor() }}>{title}</Text>
+                    <Text style={{ fontWeight: "bold", color: getColor(), textAlign: "center" }}>{title}</Text>
+                    {subTitle && <Text style={{ color: getColor(), textAlign: "center" }}>{subTitle}</Text>}
                 </View>
             )}
 
@@ -79,10 +81,8 @@ const styles = StyleSheet.create({
         borderRadius: SIZES.borderRadius.sm,
     },
     header: {
-        flexDirection: "row",
         alignItems: "center",
-        gap: SIZES.spacing.sm,
-        marginHorizontal: "auto",
+        gap: SIZES.spacing.xs,
     },
     divider: {
         marginVertical: SIZES.spacing.xs,

@@ -22,7 +22,6 @@ import MapAlerts from "./MapAlerts";
 import MapBottomSheet from "./MapBottomSheet";
 import MapButtons from "./MapButtons";
 import MapNavigation from "./MapNavigation";
-import MapSearchbar from "./MapSearchbar";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -85,15 +84,15 @@ const Map = () => {
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
                                 : navigationView
-                                  ? MAP_CONFIG.followZoom
-                                  : MAP_CONFIG.zoom
+                                    ? MAP_CONFIG.followZoom
+                                    : MAP_CONFIG.zoom
                         }
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
                                 : tracking && !userLocation
-                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                                  : undefined
+                                    ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                    : undefined
                         }
                         defaultSettings={defaultSettings}
                     />
@@ -103,9 +102,7 @@ const Map = () => {
 
                 <MapButtons />
 
-                {!directions && userLocation && <MapSearchbar />}
-
-                <MapAlerts directions={directions} />
+                <MapAlerts directions={directions} alertProperties={markerData?.properties} />
 
                 {showSheet && (
                     <MapBottomSheet

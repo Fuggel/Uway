@@ -27,7 +27,7 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
 export function sheetData<T>(
     marker: MarkerSheet | undefined,
     properties: T
-): { label: string; value: string | JSX.Element | IncidentType }[] | null {
+): { label: string; value: string | JSX.Element | IncidentType; }[] | null {
     switch (marker) {
         case MarkerSheet.INCIDENT:
             return incidentData(properties as IncidentProperties);
@@ -137,7 +137,7 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
     ];
 }
 
-function incidentTitle(incidentProperties: IncidentProperties | undefined) {
+export function incidentTitle(incidentProperties: IncidentProperties | undefined) {
     switch (incidentProperties?.iconCategory) {
         case IncidentType.Accident:
             return "Unfall";
@@ -160,7 +160,7 @@ function incidentTitle(incidentProperties: IncidentProperties | undefined) {
         case IncidentType.BrokenDownVehicle:
             return "Fahrzeugpanne";
         default:
-            return "Unbekannt";
+            return "Gefahr";
     }
 }
 
@@ -170,9 +170,8 @@ function gasStationTitle(gasStationProperties: GasStation | undefined) {
 
 function parkingTitle(parkingProperties: ParkAvailabilityProperties | undefined) {
     const title = parkingProperties?.name ?? "Unbekannt";
-    const fullTitle = `${
-        !title.includes(parkingProperties?.lot_type as string) ? `${parkingProperties?.lot_type} ${title}` : title
-    }`;
+    const fullTitle = `${!title.includes(parkingProperties?.lot_type as string) ? `${parkingProperties?.lot_type} ${title}` : title
+        }`;
 
     return fullTitle;
 }
