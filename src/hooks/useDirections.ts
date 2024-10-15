@@ -13,7 +13,10 @@ import { LonLat } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { isValidLonLat } from "@/utils/map-utils";
 
-const useDirections = (params: { destinationLngLat: LonLat }) => {
+const useDirections = (params: {
+    destinationLngLat: LonLat;
+    setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+}) => {
     const { userLocation } = useContext(UserLocationContext);
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -77,6 +80,11 @@ const useDirections = (params: { destinationLngLat: LonLat }) => {
             }
         }
     }, [directions, longitude, latitude]);
+
+    useEffect(() => {
+        setDirections(null);
+        params.setCurrentStep(0);
+    }, [recalculateRoute]);
 
     useEffect(() => {
         if (data?.routes?.length > 0 && longitude && latitude) {

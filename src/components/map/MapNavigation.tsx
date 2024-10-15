@@ -21,16 +21,30 @@ interface MapNavigationProps {
     locations: Location | null;
     setDirections: (directions: Direction | null) => void;
     setLocations: (locations: Location | null) => void;
+    currentStep: number;
+    setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapNavigation = ({ directions, locations, setDirections, setLocations }: MapNavigationProps) => {
+const MapNavigation = ({
+    directions,
+    locations,
+    setDirections,
+    setLocations,
+    currentStep,
+    setCurrentStep,
+}: MapNavigationProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const profileType = useSelector(mapNavigationSelectors.navigationProfile);
-    const { currentStep, setCurrentStep, remainingDistance, remainingTime } = useInstructions(directions, userLocation);
+    const { remainingDistance, remainingTime } = useInstructions({
+        currentStep,
+        setCurrentStep,
+        directions,
+        userLocation,
+    });
 
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
     const duration = `${(remainingTime / 60).toFixed(0)} min`;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -34,12 +34,14 @@ const Map = () => {
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const [currentStep, setCurrentStep] = useState(0);
     const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
         destinationLngLat: {
             lon: locations?.geometry?.coordinates[0] as number,
             lat: locations?.geometry?.coordinates[1] as number,
         },
+        setCurrentStep,
     });
 
     const defaultSettings = {
@@ -102,7 +104,7 @@ const Map = () => {
 
                 <MapButtons />
 
-                <MapAlerts directions={directions} />
+                <MapAlerts directions={directions} currentStep={currentStep} />
 
                 {showSheet && (
                     <MapBottomSheet
@@ -119,6 +121,8 @@ const Map = () => {
                     locations={locations}
                     setDirections={setDirections}
                     setLocations={setLocations}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
                 />
             )}
         </>

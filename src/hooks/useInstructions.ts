@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
 
+import { Location } from "@rnmapbox/maps";
 import { point, distance as turfDistance } from "@turf/turf";
 
 import { NEXT_STEP_THRESHOLD_IN_METERS } from "@/constants/map-constants";
 import { Direction, Instruction } from "@/types/INavigation";
-import { Location } from "@rnmapbox/maps";
 
-const useInstructions = (directions: Direction | null, userLocation: Location | null) => {
-    const [currentStep, setCurrentStep] = useState(0);
+const useInstructions = (params: {
+    currentStep: number;
+    setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+    directions: Direction | null;
+    userLocation: Location | null;
+}) => {
     const [remainingTime, setRemainingTime] = useState(0);
     const [remainingDistance, setRemainingDistance] = useState(0);
 
     useEffect(() => {
-        if (directions && userLocation) {
-            const steps = directions.legs[0].steps;
-            const nextStep = steps[currentStep + 1] as Instruction;
+        if (params.directions && params.userLocation) {
+            const steps = params.directions.legs[0].steps;
+            const nextStep = steps[params.currentStep + 1] as Instruction;
 
             const calculateRemainingTimeAndDistance = () => {
                 let totalRemainingTime = 0;
                 let totalRemainingDistance = 0;
 
-                for (let i = currentStep; i < steps.length; i++) {
+                for (let i = params.currentStep; i < steps.length; i++) {
                     totalRemainingTime += steps[i].duration;
                     totalRemainingDistance += steps[i].distance;
                 }
@@ -30,7 +34,7 @@ const useInstructions = (directions: Direction | null, userLocation: Location | 
             };
 
             if (nextStep) {
-                const userPoint = point([userLocation.coords.longitude, userLocation.coords.latitude]);
+                const userPoint = point([params.userLocation.coords.longitude, params.userLocation.coords.latitude]);
                 const stepPoint = point(nextStep.maneuver.location);
 
                 const distanceToNextStep = turfDistance(userPoint, stepPoint, {
@@ -38,15 +42,15 @@ const useInstructions = (directions: Direction | null, userLocation: Location | 
                 });
 
                 if (distanceToNextStep < NEXT_STEP_THRESHOLD_IN_METERS) {
-                    setCurrentStep(currentStep + 1);
+                    params.setCurrentStep(params.currentStep + 1);
                 }
             }
 
             calculateRemainingTimeAndDistance();
         }
-    }, [userLocation, currentStep, directions]);
+    }, [params.userLocation, params.currentStep, params.directions]);
 
-    return { currentStep, setCurrentStep, remainingTime, remainingDistance };
+    return { remainingTime, remainingDistance };
 };
 
 export default useInstructions;

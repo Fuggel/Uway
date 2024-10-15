@@ -22,16 +22,16 @@ import MapSearchbar from "./MapSearchbar";
 
 interface MapAlertsProps {
     directions: Direction | null;
+    currentStep: number;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapAlerts = ({ directions }: MapAlertsProps) => {
+const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useSpeedCameras();
     const { speedLimits } = useSpeedLimits();
     const { incidents } = useIncidents();
-    const { currentStep } = useInstructions(directions, userLocation);
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
