@@ -14,9 +14,12 @@ import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
 import { IncidentAlert, IncidentFc } from "@/types/ITraffic";
 
+import useSound from "./useAlert";
+
 const useIncidents = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
+    const { playSound } = useSound();
     const [incidents, setIncidents] = useState<{ data: IncidentFc; alert: IncidentAlert | null }>();
 
     const longitude = userLocation?.coords?.longitude;
@@ -57,6 +60,7 @@ const useIncidents = () => {
                 const isCloserThanPrevious = !closestIncident || distanceToIncident < closestIncident.distance;
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
+                    playSound();
                     closestIncident = {
                         distance: distanceToIncident,
                         events: incident.properties.events,

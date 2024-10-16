@@ -15,9 +15,12 @@ import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { SpeedCameraAlert } from "@/types/ISpeed";
 
+import useSound from "./useAlert";
+
 const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const { playSound } = useSound();
     const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
 
     const longitude = userLocation?.coords?.longitude;
@@ -57,6 +60,7 @@ const useSpeedCameras = () => {
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
                     closestCamera = { distance: distanceToCamera };
+                    playSound();
                 }
             });
 
