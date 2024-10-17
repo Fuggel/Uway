@@ -7,6 +7,7 @@ import { distance, point } from "@turf/turf";
 
 import {
     DEFAULT_FC,
+    IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES,
     PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
@@ -35,6 +36,7 @@ const useSpeedCameras = () => {
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
+    const heading = userLocation?.coords?.heading || 0;
 
     const {
         data,
@@ -62,17 +64,24 @@ const useSpeedCameras = () => {
                     feature.geometry.coordinates[1] as number,
                 ]);
                 const userPoint = point([longitude, latitude]);
-                const distanceToCamera = distance(userPoint, cameraPoint, {
-                    units: "meters",
-                });
+                const distanceToCamera = distance(userPoint, cameraPoint, { units: "meters" });
+
+                const directionsString = (feature.properties as unknown as SpeedCameraProperties).direction;
+                const directions = directionsString ? directionsString.split(";").map(Number) : [];
+
+                const isSameLane = directions.some(
+                    (dir) =>
+                        Math.abs(heading - dir) < IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES ||
+                        Math.abs(heading - dir) > 360 - IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES
+                );
 
                 const isWithinWarningDistance = distanceToCamera <= showWarningThresholdInMeters;
                 const isWithinAcousticWarningDistance = distanceToCamera <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
 
-                if (isWithinWarningDistance && isCloserThanPrevious) {
-                    closestCamera = { distance: distanceToCamera };
+                if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
                     isWithinAnyWarningZone = true;
+                    closestCamera = { distance: distanceToCamera };
 
                     setSpeedCameraWarningText({
                         ...speedCameraWarningText,
@@ -84,7 +93,8 @@ const useSpeedCameras = () => {
                     playAcousticWarning &&
                     isWithinAcousticWarningDistance &&
                     !hasPlayedWarning &&
-                    speedCameraWarningText?.textToSpeech
+                    speedCameraWarningText?.textToSpeech &&
+                    isSameLane
                 ) {
                     startSpeech(speedCameraWarningText.textToSpeech);
                     setHasPlayedWarning(true);

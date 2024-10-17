@@ -111,7 +111,7 @@ const Layers = ({ directions }: LayersProps) => {
                     }
                     style={{
                         iconImage: "speed-camera",
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
+                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.6, 20, 0.9],
                     }}
                     belowLayerId="mapboxUserLocationPulseCircle"
                 />

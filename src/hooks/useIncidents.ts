@@ -2,9 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
-import { distance, point } from "@turf/turf";
+import { bearing, distance, point } from "@turf/turf";
 
 import {
+    IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES,
     PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
     SHOW_INCIDENTS_THRESHOLD_IN_METERS,
     SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
@@ -34,6 +35,7 @@ const useIncidents = () => {
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
+    const heading = userLocation?.coords?.heading || 0;
 
     const {
         data,
@@ -63,15 +65,18 @@ const useIncidents = () => {
             filteredIncidents?.forEach((incident) => {
                 const incidentPoint = point(incident.geometry.coordinates[0]);
                 const userPoint = point([longitude, latitude]);
-                const distanceToIncident = distance(userPoint, incidentPoint, {
-                    units: "meters",
-                });
+                const distanceToIncident = distance(userPoint, incidentPoint, { units: "meters" });
+
+                const bearingToIncident = bearing(userPoint, incidentPoint);
+                const isSameLane =
+                    Math.abs(heading - bearingToIncident) < IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES ||
+                    Math.abs(heading - bearingToIncident) > 360 - IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES;
 
                 const isWithinWarningDistance = distanceToIncident <= showWarningThresholdInMeters;
                 const isWithinAcousticWarningDistance = distanceToIncident <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestIncident || distanceToIncident < closestIncident.distance;
 
-                if (isWithinWarningDistance && isCloserThanPrevious) {
+                if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
                     isWithinAnyWarningZone = true;
                     closestIncident = {
                         distance: distanceToIncident,
@@ -88,7 +93,8 @@ const useIncidents = () => {
                     playAcousticWarning &&
                     isWithinAcousticWarningDistance &&
                     !hasPlayedWarning &&
-                    incidentWarningText?.textToSpeech
+                    incidentWarningText?.textToSpeech &&
+                    isSameLane
                 ) {
                     startSpeech(incidentWarningText?.textToSpeech);
                     setHasPlayedWarning(true);
