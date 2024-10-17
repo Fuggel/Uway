@@ -13,9 +13,10 @@ import { INCIDENTS_REFETCH_INTERVAL } from "@/constants/time-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
-import { IncidentAlert, IncidentFc } from "@/types/ITraffic";
+import { IncidentAlert, IncidentFc, WarningAlertIncident } from "@/types/ITraffic";
+import { incidentTitle } from "@/utils/sheet-utils";
 
-import useAlert from "./useAlert";
+import useTextToSpeech from "./useTextToSpeech";
 
 const useIncidents = () => {
     const { userLocation } = useContext(UserLocationContext);
@@ -26,9 +27,10 @@ const useIncidents = () => {
     const playAcousticWarningThresholdInMeters =
         useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
         PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS;
-    const { playSound } = useAlert();
+    const { startSpeech } = useTextToSpeech();
     const [incidents, setIncidents] = useState<{ data: IncidentFc; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
+    const [incidentWarningText, setIncidentWarningText] = useState<WarningAlertIncident | null>(null);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -70,16 +72,25 @@ const useIncidents = () => {
                 const isCloserThanPrevious = !closestIncident || distanceToIncident < closestIncident.distance;
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
+                    isWithinAnyWarningZone = true;
                     closestIncident = {
                         distance: distanceToIncident,
                         events: incident.properties.events,
                     };
 
-                    isWithinAnyWarningZone = true;
+                    setIncidentWarningText({
+                        ...incidentWarningText,
+                        properties: incident.properties,
+                    });
                 }
 
-                if (playAcousticWarning && isWithinAcousticWarningDistance && !hasPlayedWarning) {
-                    playSound();
+                if (
+                    playAcousticWarning &&
+                    isWithinAcousticWarningDistance &&
+                    !hasPlayedWarning &&
+                    incidentWarningText?.textToSpeech
+                ) {
+                    startSpeech(incidentWarningText?.textToSpeech);
                     setHasPlayedWarning(true);
                 }
             });
@@ -99,9 +110,27 @@ const useIncidents = () => {
             });
             setHasPlayedWarning(false);
         }
-    }, [data, longitude, latitude, hasPlayedWarning]);
+    }, [
+        data,
+        longitude,
+        latitude,
+        hasPlayedWarning,
+        playAcousticWarningThresholdInMeters,
+        showWarningThresholdInMeters,
+    ]);
 
-    return { incidents, loadingIncidents, errorIncidents };
+    useEffect(() => {
+        if (incidents?.alert) {
+            const distance = incidents.alert.distance.toFixed(0);
+
+            setIncidentWarningText({
+                textToSpeech: `${incidentTitle(incidentWarningText?.properties)} in ${distance} Metern.`,
+                title: `${incidentTitle(incidentWarningText?.properties)} in ${distance} m.`,
+            });
+        }
+    }, [incidents?.alert]);
+
+    return { incidents, incidentWarningText, loadingIncidents, errorIncidents };
 };
 
 export default useIncidents;

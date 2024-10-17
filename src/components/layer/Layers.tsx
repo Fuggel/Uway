@@ -7,13 +7,12 @@ import { Point } from "@turf/helpers";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
-import useIncidents from "@/hooks/useIncidents";
 import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
-import useSpeedCameras from "@/hooks/useSpeedCameras";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
 import { Direction } from "@/types/INavigation";
@@ -35,11 +34,10 @@ const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { openSheet } = useContext(MarkerBottomSheetContext);
     const { setUserLocation } = useContext(UserLocationContext);
+    const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { hasLocationPermissions } = useLocationPermission();
     const { gasStations } = useGasStations();
     const { parkAvailability } = useParkAvailability();
-    const { speedCameras } = useSpeedCameras();
-    const { incidents } = useIncidents();
 
     return (
         <>
@@ -99,7 +97,7 @@ const Layers = ({ directions }: LayersProps) => {
                     belowLayerId="mapboxUserLocationPulseCircle"
                 />
             ))}
-            {speedCameras?.data?.features?.map((feature, i) => (
+            {speedCameras?.speedCameras?.data?.features?.map((feature, i) => (
                 <SymbolLayer
                     key={i}
                     sourceId={`speed-camera-source-${i}`}
@@ -118,7 +116,7 @@ const Layers = ({ directions }: LayersProps) => {
                     belowLayerId="mapboxUserLocationPulseCircle"
                 />
             ))}
-            {incidents?.data?.incidents?.map((incident, i) => (
+            {incidents?.incidents?.data?.incidents?.map((incident, i) => (
                 <View key={i}>
                     <LineLayer
                         sourceId={`incident-line-source-${i}`}

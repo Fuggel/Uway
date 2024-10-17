@@ -7,6 +7,7 @@ import { SIZES } from "@/constants/size-constants";
 import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
 import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
 import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/store/mapSpeedLimit";
+import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { mapViewActions, mapViewSelectors } from "@/store/mapView";
 import { MapboxStyle } from "@/types/IMap";
 
@@ -21,16 +22,15 @@ const Settings = () => {
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
+    const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
         <View style={styles.container}>
-            <SettingsSection title="Map Style">
-                <SettingsItem>
-                    <Dropdown
-                        value={mapStyle}
-                        data={MAP_STYLES}
-                        icon="map"
-                        onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
+            <SettingsSection title="Allgemein">
+                <SettingsItem title="Sprachausgabe">
+                    <Switch
+                        checked={allowTextToSpeech}
+                        onChange={() => dispatch(mapTextToSpeechActions.setAllowTextToSpeech(!allowTextToSpeech))}
                     />
                 </SettingsItem>
             </SettingsSection>
@@ -60,6 +60,17 @@ const Settings = () => {
                     <Switch
                         checked={showGasStations}
                         onChange={() => dispatch(mapGasStationActions.setShowGasStation(!showGasStations))}
+                    />
+                </SettingsItem>
+            </SettingsSection>
+
+            <SettingsSection title="Map Style">
+                <SettingsItem>
+                    <Dropdown
+                        value={mapStyle}
+                        data={MAP_STYLES}
+                        icon="map"
+                        onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
                     />
                 </SettingsItem>
             </SettingsSection>
