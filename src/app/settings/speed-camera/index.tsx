@@ -8,6 +8,7 @@ import {
 } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
+import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
 import Input from "@/components/common/Input";
 import Switch from "@/components/common/Switch";
@@ -23,6 +24,7 @@ const SpeedCameraSettings = () => {
     const playAcousticWarningThresholdInMeters =
         useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
         PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS;
+    const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
         <View style={styles.container}>
@@ -34,7 +36,8 @@ const SpeedCameraSettings = () => {
             </SettingsItem>
             <SettingsItem title="Akustische Warnung">
                 <Switch
-                    checked={playAcousticWarning}
+                    checked={allowTextToSpeech && playAcousticWarning}
+                    disabled={!allowTextToSpeech}
                     onChange={() => dispatch(mapSpeedCameraActions.setPlayAcousticWarning(!playAcousticWarning))}
                 />
             </SettingsItem>

@@ -8,6 +8,7 @@ import {
 } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapIncidentActions, mapIncidentSelectors } from "@/store/mapIncident";
+import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
 import Input from "@/components/common/Input";
 import Switch from "@/components/common/Switch";
@@ -22,6 +23,7 @@ const IncidentsSettings = () => {
     const playAcousticWarningThresholdInMeters =
         useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
         PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS;
+    const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
         <View style={styles.container}>
@@ -33,7 +35,8 @@ const IncidentsSettings = () => {
             </SettingsItem>
             <SettingsItem title="Akustische Warnung">
                 <Switch
-                    checked={playAcousticWarning}
+                    checked={allowTextToSpeech && playAcousticWarning}
+                    disabled={!allowTextToSpeech}
                     onChange={() => dispatch(mapIncidentActions.setPlayAcousticWarning(!playAcousticWarning))}
                 />
             </SettingsItem>
