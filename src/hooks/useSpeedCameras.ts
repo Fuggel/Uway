@@ -15,13 +15,14 @@ import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { SpeedCameraAlert } from "@/types/ISpeed";
 
-import useSound from "./useAlert";
+import useAlert from "./useAlert";
 
 const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
-    const { playSound } = useSound();
+    const { playSound } = useAlert();
     const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
+    const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -44,6 +45,7 @@ const useSpeedCameras = () => {
     useEffect(() => {
         if (data && showSpeedCameras && longitude && latitude) {
             let closestCamera: SpeedCameraAlert | null = null;
+            let isWithinAnyWarningZone = false;
 
             data?.features?.forEach((feature) => {
                 const cameraPoint = point([
@@ -60,15 +62,25 @@ const useSpeedCameras = () => {
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
                     closestCamera = { distance: distanceToCamera };
-                    playSound();
+                    isWithinAnyWarningZone = true;
+
+                    if (!hasPlayedWarning) {
+                        playSound();
+                        setHasPlayedWarning(true);
+                    }
                 }
             });
+
+            if (!isWithinAnyWarningZone) {
+                setHasPlayedWarning(false);
+            }
 
             setSpeedCameras({ data, alert: closestCamera });
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
+            setHasPlayedWarning(false);
         }
-    }, [data, longitude, latitude]);
+    }, [data, longitude, latitude, hasPlayedWarning]);
 
     return { speedCameras, loadingSpeedCameras, errorSpeedCameras };
 };

@@ -1,7 +1,7 @@
 import { Audio } from "expo-av";
 import { useEffect, useState } from "react";
 
-const useSound = (volume: number = 1) => {
+const useAlert = (volume: number = 0.1) => {
     const [sound, setSound] = useState<Audio.Sound | null>(null);
 
     const playSound = async () => {
@@ -38,4 +38,4 @@ const useSound = (volume: number = 1) => {
     return { playSound };
 };
 
-export default useSound;
+export default useAlert;

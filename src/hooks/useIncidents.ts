@@ -14,13 +14,14 @@ import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
 import { IncidentAlert, IncidentFc } from "@/types/ITraffic";
 
-import useSound from "./useAlert";
+import useAlert from "./useAlert";
 
 const useIncidents = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
-    const { playSound } = useSound();
+    const { playSound } = useAlert();
     const [incidents, setIncidents] = useState<{ data: IncidentFc; alert: IncidentAlert | null }>();
+    const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -44,6 +45,7 @@ const useIncidents = () => {
     useEffect(() => {
         if (data && showIncidents && longitude && latitude) {
             let closestIncident: IncidentAlert | null = null;
+            let isWithinAnyWarningZone = false;
 
             const filteredIncidents = data.incidents.filter(
                 (incident) => incident.properties.probabilityOfOccurrence === "certain"
@@ -60,13 +62,23 @@ const useIncidents = () => {
                 const isCloserThanPrevious = !closestIncident || distanceToIncident < closestIncident.distance;
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
-                    playSound();
                     closestIncident = {
                         distance: distanceToIncident,
                         events: incident.properties.events,
                     };
+
+                    isWithinAnyWarningZone = true;
+
+                    if (!hasPlayedWarning) {
+                        playSound();
+                        setHasPlayedWarning(true);
+                    }
                 }
             });
+
+            if (!isWithinAnyWarningZone) {
+                setHasPlayedWarning(false);
+            }
 
             setIncidents({
                 data: { ...data, incidents: filteredIncidents },
@@ -77,8 +89,9 @@ const useIncidents = () => {
                 data: { type: "FeatureCollection", incidents: [] },
                 alert: null,
             });
+            setHasPlayedWarning(false);
         }
-    }, [data, longitude, latitude]);
+    }, [data, longitude, latitude, hasPlayedWarning]);
 
     return { incidents, loadingIncidents, errorIncidents };
 };
