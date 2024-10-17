@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, ViewStyle } from "react-native";
 import { IconButton } from "react-native-paper";
 import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
 
@@ -8,11 +8,12 @@ import { SIZES } from "@/constants/size-constants";
 interface ButtonProps {
     icon: IconSource;
     onPress: () => void;
-    type?: "primary" | "success" | "error";
+    type?: "primary" | "success" | "error" | "white";
     size?: "sm" | "md" | "lg" | "xl";
+    style?: ViewStyle;
 }
 
-const Button = ({ icon, onPress, type, size }: ButtonProps) => {
+const Button = ({ icon, onPress, type, size, style }: ButtonProps) => {
     const getButtonSize = () => {
         switch (size) {
             case "sm":
@@ -24,7 +25,7 @@ const Button = ({ icon, onPress, type, size }: ButtonProps) => {
             case "xl":
                 return SIZES.iconSize.xl;
             default:
-                return SIZES.iconSize.md;
+                return 24;
         }
     };
 
@@ -36,6 +37,8 @@ const Button = ({ icon, onPress, type, size }: ButtonProps) => {
                 return COLORS.success;
             case "error":
                 return COLORS.error;
+            case "white":
+                return COLORS.white;
             default:
                 return COLORS.primary;
         }
@@ -43,7 +46,13 @@ const Button = ({ icon, onPress, type, size }: ButtonProps) => {
 
     return (
         <TouchableOpacity>
-            <IconButton icon={icon} size={getButtonSize()} iconColor={getButtonColor()} onPress={onPress} />
+            <IconButton
+                style={style}
+                icon={icon}
+                size={getButtonSize()}
+                iconColor={getButtonColor()}
+                onPress={onPress}
+            />
         </TouchableOpacity>
     );
 };

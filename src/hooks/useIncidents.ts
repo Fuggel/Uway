@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { distance, point } from "@turf/turf";
 
 import {
+    PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
     SHOW_INCIDENTS_THRESHOLD_IN_METERS,
     SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
 } from "@/constants/map-constants";
@@ -19,6 +20,12 @@ import useAlert from "./useAlert";
 const useIncidents = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
+    const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
+    const showWarningThresholdInMeters =
+        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS;
+    const playAcousticWarningThresholdInMeters =
+        useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
+        PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS;
     const { playSound } = useAlert();
     const [incidents, setIncidents] = useState<{ data: IncidentFc; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
@@ -58,7 +65,8 @@ const useIncidents = () => {
                     units: "meters",
                 });
 
-                const isWithinWarningDistance = distanceToIncident <= SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS;
+                const isWithinWarningDistance = distanceToIncident <= showWarningThresholdInMeters;
+                const isWithinAcousticWarningDistance = distanceToIncident <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestIncident || distanceToIncident < closestIncident.distance;
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
@@ -68,11 +76,11 @@ const useIncidents = () => {
                     };
 
                     isWithinAnyWarningZone = true;
+                }
 
-                    if (!hasPlayedWarning) {
-                        playSound();
-                        setHasPlayedWarning(true);
-                    }
+                if (playAcousticWarning && isWithinAcousticWarningDistance && !hasPlayedWarning) {
+                    playSound();
+                    setHasPlayedWarning(true);
                 }
             });
 

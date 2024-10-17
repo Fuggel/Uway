@@ -1,3 +1,4 @@
+import { Stack } from "expo-router";
 import { PaperProvider } from "react-native-paper";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -5,29 +6,24 @@ import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { MarkerBottomSheetContextProvider } from "@/contexts/MarkerBottomSheetContext";
-import { SettingsContextProvider } from "@/contexts/SettingsContext";
 import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
 import store, { persistor } from "@/store";
 
-import Map from "@/components/map/Map";
-import Settings from "@/components/settings/Settings";
-
 const queryClient = new QueryClient();
 
-const Layout = () => {
+const RootLayout = () => {
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
-                        <SettingsContextProvider>
-                            <Settings />
-                            <UserLocationContextProvider>
-                                <MarkerBottomSheetContextProvider>
-                                    <Map />
-                                </MarkerBottomSheetContextProvider>
-                            </UserLocationContextProvider>
-                        </SettingsContextProvider>
+                        <UserLocationContextProvider>
+                            <MarkerBottomSheetContextProvider>
+                                <Stack screenOptions={{ headerShown: false }}>
+                                    <Stack.Screen name="index" />
+                                </Stack>
+                            </MarkerBottomSheetContextProvider>
+                        </UserLocationContextProvider>
                     </QueryClientProvider>
                 </PaperProvider>
             </PersistGate>
@@ -35,4 +31,4 @@ const Layout = () => {
     );
 };
 
-export default Layout;
+export default RootLayout;

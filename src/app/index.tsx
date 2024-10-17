@@ -16,12 +16,12 @@ import { mapViewSelectors } from "@/store/mapView";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData, sheetTitle } from "@/utils/sheet-utils";
 
-import Loading from "../common/Loading";
-import Layers from "../layer/Layers";
-import MapAlerts from "./MapAlerts";
-import MapBottomSheet from "./MapBottomSheet";
-import MapButtons from "./MapButtons";
-import MapNavigation from "./MapNavigation";
+import Loading from "@/components/common/Loading";
+import Layers from "@/components/layer/Layers";
+import MapAlerts from "@/components/map/MapAlerts";
+import MapBottomSheet from "@/components/map/MapBottomSheet";
+import MapButtons from "@/components/map/MapButtons";
+import MapNavigation from "@/components/map/MapNavigation";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 

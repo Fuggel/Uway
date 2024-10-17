@@ -32,7 +32,7 @@ const MapSearchbar = () => {
 
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const selectedSuggestion = suggestions?.suggestions.find((suggestion) => suggestion.mapbox_id === locationId);
+    const selectedSuggestion = suggestions?.suggestions?.find((suggestion) => suggestion.mapbox_id === locationId);
     const searchbarValue = selectedSuggestion
         ? `${selectedSuggestion.name} ${selectedSuggestion.place_formatted}`
         : searchQuery;

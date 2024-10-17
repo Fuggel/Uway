@@ -6,6 +6,10 @@ const useAlert = (volume: number = 0.1) => {
 
     const playSound = async () => {
         try {
+            if (sound) {
+                await stopSound();
+            }
+
             const { sound: soundObject } = await Audio.Sound.createAsync(require(`../assets/sounds/warning.mp3`), {
                 volume,
             });

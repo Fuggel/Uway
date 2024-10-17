@@ -7,6 +7,7 @@ import { distance, point } from "@turf/turf";
 
 import {
     DEFAULT_FC,
+    PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
 } from "@/constants/map-constants";
@@ -20,6 +21,14 @@ import useAlert from "./useAlert";
 const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
+    const showWarningThresholdInMeters =
+        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
+        SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
+    const playAcousticWarningThresholdInMeters =
+        useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
+        PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS;
+
     const { playSound } = useAlert();
     const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
@@ -57,17 +66,18 @@ const useSpeedCameras = () => {
                     units: "meters",
                 });
 
-                const isWithinWarningDistance = distanceToCamera <= SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
+                const isWithinWarningDistance = distanceToCamera <= showWarningThresholdInMeters;
+                const isWithinAcousticWarningDistance = distanceToCamera <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
 
                 if (isWithinWarningDistance && isCloserThanPrevious) {
                     closestCamera = { distance: distanceToCamera };
                     isWithinAnyWarningZone = true;
+                }
 
-                    if (!hasPlayedWarning) {
-                        playSound();
-                        setHasPlayedWarning(true);
-                    }
+                if (playAcousticWarning && isWithinAcousticWarningDistance && !hasPlayedWarning) {
+                    playSound();
+                    setHasPlayedWarning(true);
                 }
             });
 
