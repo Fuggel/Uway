@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -9,6 +9,8 @@ import { mapViewSelectors } from "@/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import Button from "../common/Button";
+
+const deviceHeight = Dimensions.get("window").height;
 
 const MapButtons = () => {
     const dispatch = useDispatch();
@@ -31,7 +33,7 @@ const MapButtons = () => {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        bottom: "2%",
+        bottom: deviceHeight > 1000 ? "2%" : "4%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },

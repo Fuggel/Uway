@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -25,7 +25,7 @@ const Settings = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <SettingsSection title="Allgemein">
                 <SettingsItem title="Sprachausgabe">
                     <Switch
@@ -74,7 +74,7 @@ const Settings = () => {
                     />
                 </SettingsItem>
             </SettingsSection>
-        </View>
+        </ScrollView>
     );
 };
 

@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     },
     absoluteBottom: {
         position: "absolute",
-        bottom: "2%",
+        bottom: deviceHeight > 1000 ? "2%" : "4%",
         left: SIZES.spacing.sm,
         width: "100%",
         pointerEvents: "none",
