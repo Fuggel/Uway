@@ -44,3 +44,9 @@ export interface Location {
     };
     geometry: Geometry;
 }
+
+export interface WarningAlert {
+    textToSpeech?: string;
+    title?: string;
+    subTitle?: string;
+}

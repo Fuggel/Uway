@@ -1,5 +1,7 @@
 import { Feature, Geometry, GeometryCollection } from "@turf/helpers";
 
+import { WarningAlert } from "./IMap";
+
 export interface SpeedCameraAlert {
     distance: number;
 }
@@ -36,3 +38,7 @@ export interface SpeedLimitAlert {
 }
 
 export type SpeedLimitFeature = GeometryCollection & SpeedLimitProperties;
+
+export interface WarningAlertSpeed extends WarningAlert {
+    maxSpeed?: string;
+}

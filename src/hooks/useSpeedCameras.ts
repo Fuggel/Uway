@@ -7,21 +7,36 @@ import { distance, point } from "@turf/turf";
 
 import {
     DEFAULT_FC,
+    IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES,
+    PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
 } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
-import { SpeedCameraAlert } from "@/types/ISpeed";
+import { SpeedCameraAlert, SpeedCameraProperties, WarningAlertSpeed } from "@/types/ISpeed";
+
+import useTextToSpeech from "./useTextToSpeech";
 
 const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
+    const showWarningThresholdInMeters =
+        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
+        SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
+    const playAcousticWarningThresholdInMeters =
+        useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
+        PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS;
+    const { startSpeech } = useTextToSpeech();
     const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
+    const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
+    const [speedCameraWarningText, setSpeedCameraWarningText] = useState<WarningAlertSpeed | null>(null);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
+    const heading = userLocation?.coords?.heading || 0;
 
     const {
         data,
@@ -41,6 +56,7 @@ const useSpeedCameras = () => {
     useEffect(() => {
         if (data && showSpeedCameras && longitude && latitude) {
             let closestCamera: SpeedCameraAlert | null = null;
+            let isWithinAnyWarningZone = false;
 
             data?.features?.forEach((feature) => {
                 const cameraPoint = point([
@@ -48,25 +64,75 @@ const useSpeedCameras = () => {
                     feature.geometry.coordinates[1] as number,
                 ]);
                 const userPoint = point([longitude, latitude]);
-                const distanceToCamera = distance(userPoint, cameraPoint, {
-                    units: "meters",
-                });
+                const distanceToCamera = distance(userPoint, cameraPoint, { units: "meters" });
 
-                const isWithinWarningDistance = distanceToCamera <= SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
+                const directionsString = (feature.properties as unknown as SpeedCameraProperties).direction;
+                const directions = directionsString ? directionsString.split(";").map(Number) : [];
+
+                const isSameLane = directions.some(
+                    (dir) =>
+                        Math.abs(heading - dir) < IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES ||
+                        Math.abs(heading - dir) > 360 - IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES
+                );
+
+                const isWithinWarningDistance = distanceToCamera <= showWarningThresholdInMeters;
+                const isWithinAcousticWarningDistance = distanceToCamera <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
 
-                if (isWithinWarningDistance && isCloserThanPrevious) {
+                if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
+                    isWithinAnyWarningZone = true;
                     closestCamera = { distance: distanceToCamera };
+
+                    setSpeedCameraWarningText({
+                        ...speedCameraWarningText,
+                        maxSpeed: (feature.properties as unknown as SpeedCameraProperties).maxspeed,
+                    });
+                }
+
+                if (
+                    playAcousticWarning &&
+                    isWithinAcousticWarningDistance &&
+                    !hasPlayedWarning &&
+                    speedCameraWarningText?.textToSpeech &&
+                    isSameLane
+                ) {
+                    startSpeech(speedCameraWarningText.textToSpeech);
+                    setHasPlayedWarning(true);
                 }
             });
+
+            if (!isWithinAnyWarningZone) {
+                setHasPlayedWarning(false);
+            }
 
             setSpeedCameras({ data, alert: closestCamera });
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
+            setHasPlayedWarning(false);
         }
-    }, [data, longitude, latitude]);
+    }, [
+        data,
+        longitude,
+        latitude,
+        hasPlayedWarning,
+        playAcousticWarningThresholdInMeters,
+        showWarningThresholdInMeters,
+    ]);
 
-    return { speedCameras, loadingSpeedCameras, errorSpeedCameras };
+    useEffect(() => {
+        if (speedCameras?.alert) {
+            const distance = speedCameras.alert.distance.toFixed(0);
+
+            setSpeedCameraWarningText({
+                ...speedCameraWarningText,
+                textToSpeech: `Blitzer in ${distance} Metern. Maximalgeschwindigkeit ${speedCameraWarningText?.maxSpeed} km/h`,
+                title: `Blitzer in ${distance} m.`,
+                subTitle: `Max. ${speedCameraWarningText?.maxSpeed} km/h`,
+            });
+        }
+    }, [speedCameras?.alert]);
+
+    return { speedCameras, speedCameraWarningText, loadingSpeedCameras, errorSpeedCameras };
 };
 
 export default useSpeedCameras;

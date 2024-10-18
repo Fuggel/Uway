@@ -1,20 +1,17 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useIncidents from "@/hooks/useIncidents";
-import useInstructions from "@/hooks/useInstructions";
-import useSpeedCameras from "@/hooks/useSpeedCameras";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
+import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { Direction, Instruction } from "@/types/INavigation";
-import { SpeedCameraProperties, SpeedLimitFeature } from "@/types/ISpeed";
-import { IncidentProperties } from "@/types/ITraffic";
+import { SpeedLimitFeature } from "@/types/ISpeed";
 import { arrowDirection, determineIncidentIcon, determineSpeedLimitIcon } from "@/utils/map-utils";
-import { incidentTitle } from "@/utils/sheet-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
@@ -29,15 +26,19 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
-    const { speedCameras } = useSpeedCameras();
+    const { speedCameras, incidents } = useContext(MapFeatureContext);
     const { speedLimits } = useSpeedLimits();
-    const { incidents } = useIncidents();
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
 
-    const speedCameraProperties = speedCameras?.data.features[0]?.properties as SpeedCameraProperties | undefined;
-    const incidentProperties = incidents?.data.incidents[0]?.properties as IncidentProperties | undefined;
+    const currentInstruction = directions?.legs[0].steps[currentStep].maneuver.instruction;
+
+    const { startSpeech } = useTextToSpeech();
+
+    useEffect(() => {
+        startSpeech(currentInstruction);
+    }, [currentInstruction, currentStep]);
 
     return (
         <>
@@ -72,25 +73,21 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
                             );
                         })}
 
-                    {speedCameras?.alert && (
+                    {speedCameras?.speedCameras?.alert && speedCameras.speedCameraWarningText && (
                         <Toast
-                            show={!!speedCameras.alert}
+                            show={!!speedCameras.speedCameras.alert}
                             type="error"
-                            title={`Blitzer in ${speedCameras.alert.distance.toFixed(0)} m`}
-                            subTitle={
-                                speedCameraProperties?.maxspeed
-                                    ? `Max. ${speedCameraProperties.maxspeed} km/h`
-                                    : undefined
-                            }
+                            title={speedCameras.speedCameraWarningText.title}
+                            subTitle={speedCameras.speedCameraWarningText.subTitle}
                         />
                     )}
 
-                    {incidents?.alert && (
+                    {incidents?.incidents?.alert && incidents.incidentWarningText && (
                         <Toast
-                            show={!!incidents.alert}
+                            show={!!incidents.incidents.alert}
                             type="error"
-                            image={determineIncidentIcon(incidents.alert.events[0]?.iconCategory)}
-                            title={`${incidentTitle(incidentProperties)} in ${incidents.alert?.distance.toFixed(0)} m`}
+                            image={determineIncidentIcon(incidents.incidents.alert.events[0]?.iconCategory)}
+                            title={incidents.incidentWarningText.title}
                         />
                     )}
                 </View>

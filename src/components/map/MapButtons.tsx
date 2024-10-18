@@ -1,10 +1,9 @@
-import { useContext } from "react";
+import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import { SettingsContext } from "@/contexts/SettingsContext";
 import { mapNavigationActions } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
@@ -13,7 +12,7 @@ import Button from "../common/Button";
 
 const MapButtons = () => {
     const dispatch = useDispatch();
-    const { open, setOpen } = useContext(SettingsContext);
+    const router = useRouter();
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
@@ -23,7 +22,7 @@ const MapButtons = () => {
             </View>
 
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <Button icon="cog" onPress={() => setOpen(!open)} />
+                <Button icon="cog" onPress={() => router.push("/settings")} />
             </View>
         </View>
     );

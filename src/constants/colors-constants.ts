@@ -3,6 +3,7 @@ export const COLORS = {
     secondary: "#FFA500",
     gray: "#777",
     light_gray: "#A9A9A9",
+    ultra_light_gray: "#BFC0C2",
     white: "#FFF",
     white_transparent: "rgba(255, 255, 255, 0.9)",
     dark: "#000",
