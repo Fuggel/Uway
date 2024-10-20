@@ -86,15 +86,15 @@ const Map = () => {
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
                                 : navigationView
-                                  ? MAP_CONFIG.followZoom
-                                  : MAP_CONFIG.zoom
+                                    ? MAP_CONFIG.followZoom
+                                    : MAP_CONFIG.zoom
                         }
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
                                 : tracking && !userLocation
-                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                                  : undefined
+                                    ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                    : undefined
                         }
                         defaultSettings={defaultSettings}
                     />
