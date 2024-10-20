@@ -5,12 +5,13 @@ import { SIZES } from "@/constants/size-constants";
 
 interface InputProps {
     value: string;
-    onChange: (text: string) => void;
     type: KeyboardTypeOptions;
+    onChange?: (text: string) => void;
+    onBlur?: (text: string) => void;
     placeholder?: string;
 }
 
-const Input = ({ value, onChange, type, placeholder }: InputProps) => {
+const Input = ({ value, onChange, type, onBlur, placeholder }: InputProps) => {
     const [inputValue, setInputValue] = useState(value);
 
     return (
@@ -21,7 +22,8 @@ const Input = ({ value, onChange, type, placeholder }: InputProps) => {
                 value={inputValue}
                 keyboardType={type}
                 placeholder={placeholder}
-                onSubmitEditing={() => onChange(inputValue)}
+                onSubmitEditing={onChange ? () => onChange(inputValue) : undefined}
+                onBlur={onBlur ? () => onBlur(inputValue) : undefined}
                 returnKeyType="done"
             />
         </SafeAreaView>

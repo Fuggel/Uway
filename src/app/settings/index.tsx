@@ -26,6 +26,17 @@ const Settings = () => {
 
     return (
         <ScrollView style={styles.container}>
+            <SettingsSection title="Map Style">
+                <SettingsItem>
+                    <Dropdown
+                        value={mapStyle}
+                        data={MAP_STYLES}
+                        icon="map"
+                        onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
+                    />
+                </SettingsItem>
+            </SettingsSection>
+
             <SettingsSection title="Allgemein">
                 <SettingsItem title="Sprachausgabe">
                     <Switch
@@ -60,17 +71,6 @@ const Settings = () => {
                     <Switch
                         checked={showGasStations}
                         onChange={() => dispatch(mapGasStationActions.setShowGasStation(!showGasStations))}
-                    />
-                </SettingsItem>
-            </SettingsSection>
-
-            <SettingsSection title="Map Style">
-                <SettingsItem>
-                    <Dropdown
-                        value={mapStyle}
-                        data={MAP_STYLES}
-                        icon="map"
-                        onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
                     />
                 </SettingsItem>
             </SettingsSection>

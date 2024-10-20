@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -26,37 +26,39 @@ const IncidentsSettings = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
-        <View style={styles.container}>
-            <SettingsItem title="Verkehrsdaten zeigen">
-                <Switch
-                    checked={showIncidents}
-                    onChange={() => dispatch(mapIncidentActions.setShowIncident(!showIncidents))}
-                />
-            </SettingsItem>
-            <SettingsItem title="Akustische Warnung">
-                <Switch
-                    checked={allowTextToSpeech && playAcousticWarning}
-                    disabled={!allowTextToSpeech}
-                    onChange={() => dispatch(mapIncidentActions.setPlayAcousticWarning(!playAcousticWarning))}
-                />
-            </SettingsItem>
-            <SettingsItem title="Warnung anzeigen in Metern">
-                <Input
-                    value={String(showWarningThresholdInMeters)}
-                    onChange={(val) => dispatch(mapIncidentActions.setShowWarningThresholdInMeters(Number(val)))}
-                    type="numeric"
-                />
-            </SettingsItem>
-            <SettingsItem title="Akustische Warnung in Metern">
-                <Input
-                    value={String(playAcousticWarningThresholdInMeters)}
-                    onChange={(val) =>
-                        dispatch(mapIncidentActions.setPlayAcousticWarningThresholdInMeters(Number(val)))
-                    }
-                    type="numeric"
-                />
-            </SettingsItem>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView style={styles.container}>
+                <SettingsItem title="Verkehrsdaten zeigen">
+                    <Switch
+                        checked={showIncidents}
+                        onChange={() => dispatch(mapIncidentActions.setShowIncident(!showIncidents))}
+                    />
+                </SettingsItem>
+                <SettingsItem title="Akustische Warnung">
+                    <Switch
+                        checked={allowTextToSpeech && playAcousticWarning}
+                        disabled={!allowTextToSpeech}
+                        onChange={() => dispatch(mapIncidentActions.setPlayAcousticWarning(!playAcousticWarning))}
+                    />
+                </SettingsItem>
+                <SettingsItem title="Warnung anzeigen in Metern">
+                    <Input
+                        value={String(showWarningThresholdInMeters)}
+                        onBlur={(val) => dispatch(mapIncidentActions.setShowWarningThresholdInMeters(Number(val)))}
+                        type="numeric"
+                    />
+                </SettingsItem>
+                <SettingsItem title="Akustische Warnung in Metern">
+                    <Input
+                        value={String(playAcousticWarningThresholdInMeters)}
+                        onBlur={(val) =>
+                            dispatch(mapIncidentActions.setPlayAcousticWarningThresholdInMeters(Number(val)))
+                        }
+                        type="numeric"
+                    />
+                </SettingsItem>
+            </ScrollView>
+        </TouchableWithoutFeedback>
     );
 };
 

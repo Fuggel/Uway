@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -27,37 +27,39 @@ const SpeedCameraSettings = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
-        <View style={styles.container}>
-            <SettingsItem title="Blitzer zeigen">
-                <Switch
-                    checked={showSpeedCameras}
-                    onChange={() => dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras))}
-                />
-            </SettingsItem>
-            <SettingsItem title="Akustische Warnung">
-                <Switch
-                    checked={allowTextToSpeech && playAcousticWarning}
-                    disabled={!allowTextToSpeech}
-                    onChange={() => dispatch(mapSpeedCameraActions.setPlayAcousticWarning(!playAcousticWarning))}
-                />
-            </SettingsItem>
-            <SettingsItem title="Warnung anzeigen in Metern">
-                <Input
-                    value={String(showWarningThresholdInMeters)}
-                    onChange={(val) => dispatch(mapSpeedCameraActions.setShowWarningThresholdInMeters(Number(val)))}
-                    type="numeric"
-                />
-            </SettingsItem>
-            <SettingsItem title="Akustische Warnung in Metern">
-                <Input
-                    value={String(playAcousticWarningThresholdInMeters)}
-                    onChange={(val) =>
-                        dispatch(mapSpeedCameraActions.setPlayAcousticWarningThresholdInMeters(Number(val)))
-                    }
-                    type="numeric"
-                />
-            </SettingsItem>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView style={styles.container}>
+                <SettingsItem title="Blitzer zeigen">
+                    <Switch
+                        checked={showSpeedCameras}
+                        onChange={() => dispatch(mapSpeedCameraActions.setShowSpeedCameras(!showSpeedCameras))}
+                    />
+                </SettingsItem>
+                <SettingsItem title="Akustische Warnung">
+                    <Switch
+                        checked={allowTextToSpeech && playAcousticWarning}
+                        disabled={!allowTextToSpeech}
+                        onChange={() => dispatch(mapSpeedCameraActions.setPlayAcousticWarning(!playAcousticWarning))}
+                    />
+                </SettingsItem>
+                <SettingsItem title="Warnung anzeigen in Metern">
+                    <Input
+                        value={String(showWarningThresholdInMeters)}
+                        onBlur={(val) => dispatch(mapSpeedCameraActions.setShowWarningThresholdInMeters(Number(val)))}
+                        type="numeric"
+                    />
+                </SettingsItem>
+                <SettingsItem title="Akustische Warnung in Metern">
+                    <Input
+                        value={String(playAcousticWarningThresholdInMeters)}
+                        onBlur={(val) =>
+                            dispatch(mapSpeedCameraActions.setPlayAcousticWarningThresholdInMeters(Number(val)))
+                        }
+                        type="numeric"
+                    />
+                </SettingsItem>
+            </ScrollView>
+        </TouchableWithoutFeedback>
     );
 };
 
