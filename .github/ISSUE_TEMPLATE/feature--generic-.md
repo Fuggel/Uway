@@ -1,7 +1,7 @@
 ---
 name: Feature (Generic)
 about: Suggest a feature for this project
-title: "feature: [add your feature title here]"
+title: "feat: [add your feature title here]"
 labels: enhancement
 assignees: ""
 ---
