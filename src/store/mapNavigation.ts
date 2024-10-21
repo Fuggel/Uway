@@ -1,12 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { RouteProfileType } from "@/types/INavigation";
+import { SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
 
 interface IMapNavigationState {
     searchQuery: string;
-    locationId: string;
+    location: SearchLocation | null;
     tracking: boolean;
     navigationView: boolean;
     isNavigationMode: boolean;
@@ -15,7 +16,7 @@ interface IMapNavigationState {
 
 const initialMapNavigationState: IMapNavigationState = {
     searchQuery: "",
-    locationId: "",
+    location: null,
     tracking: true,
     navigationView: false,
     isNavigationMode: false,
@@ -29,8 +30,8 @@ const mapNavigationSlice = createSlice({
         setSearchQuery(state, action: PayloadAction<string>) {
             state.searchQuery = action.payload;
         },
-        setLocationId(state, action: PayloadAction<string>) {
-            state.locationId = action.payload;
+        setLocation(state, action: PayloadAction<SearchLocation | null>) {
+            state.location = action.payload;
         },
         setTracking(state, action: PayloadAction<boolean>) {
             state.tracking = action.payload;
@@ -49,7 +50,7 @@ const mapNavigationSlice = createSlice({
 
 export const mapNavigationSelectors = {
     searchQuery: (state: RootState): string => state.mapNavigation.searchQuery,
-    locationId: (state: RootState): string => state.mapNavigation.locationId,
+    location: (state: RootState): SearchLocation | null => state.mapNavigation.location,
     tracking: (state: RootState): boolean => state.mapNavigation.tracking,
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,

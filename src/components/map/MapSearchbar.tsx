@@ -1,15 +1,14 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-import { sessionToken } from "@/constants/auth-constants";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useSearchSuggestion from "@/hooks/useSearchSuggestion";
+import useSearch from "@/hooks/useSearch";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
+import { SearchLocation } from "@/types/ISearch";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import Searchbar from "../common/Searchbar";
@@ -18,32 +17,23 @@ import Text from "../common/Text";
 const MapSearchbar = () => {
     const dispatch = useDispatch();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
-    const locationId = useSelector(mapNavigationSelectors.locationId);
+    const location = useSelector(mapNavigationSelectors.location);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const { userLocation } = useContext(UserLocationContext);
-    const { suggestions } = useSearchSuggestion({
-        query: searchQuery,
-        sessionToken,
-        lngLat: {
-            lon: userLocation?.coords?.longitude as number,
-            lat: userLocation?.coords?.latitude as number,
-        },
-    });
-
+    const { suggestions } = useSearch({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const selectedSuggestion = suggestions?.suggestions?.find((suggestion) => suggestion.mapbox_id === locationId);
-    const searchbarValue = selectedSuggestion
-        ? `${selectedSuggestion.name} ${selectedSuggestion.place_formatted}`
-        : searchQuery;
+    const selectedSuggestion = suggestions?.find(
+        (suggestion) => suggestion.lon === location?.lon && suggestion.lat === location?.lat
+    );
+    const searchbarValue = selectedSuggestion ? `${selectedSuggestion.formatted}` : searchQuery;
 
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
         setShowSuggestions(true);
     };
 
-    const handleSelectLocation = (id: string) => {
-        dispatch(mapNavigationActions.setLocationId(id));
+    const handleSelectLocation = (newLocation: SearchLocation) => {
+        dispatch(mapNavigationActions.setLocation(newLocation));
         setShowSuggestions(false);
     };
 
@@ -57,15 +47,28 @@ const MapSearchbar = () => {
         >
             {showSuggestions && suggestions && (
                 <ScrollView>
-                    {suggestions.suggestions.map((suggestion) => (
+                    {suggestions.map((suggestion, i) => (
                         <TouchableOpacity
-                            key={suggestion.mapbox_id}
+                            key={i}
                             style={styles.scrollContainer}
-                            onPress={() => handleSelectLocation(suggestion.mapbox_id)}
+                            onPress={() =>
+                                handleSelectLocation({
+                                    formatted: suggestion.formatted,
+                                    lat: suggestion.lat,
+                                    lon: suggestion.lon,
+                                    country: suggestion.country,
+                                    country_code: suggestion.country_code,
+                                    city: suggestion.city,
+                                    district: suggestion.district,
+                                    address_line1: suggestion.address_line1,
+                                    address_line2: suggestion.address_line2,
+                                    category: suggestion.category,
+                                    place_id: suggestion.place_id,
+                                    suburb: suggestion.suburb,
+                                })
+                            }
                         >
-                            <Text type="dark">
-                                {suggestion.name}, {suggestion.place_formatted}
-                            </Text>
+                            <Text type="dark">{suggestion.formatted}</Text>
                             <Divider style={styles.divider} />
                         </TouchableOpacity>
                     ))}

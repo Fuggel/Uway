@@ -9,7 +9,6 @@ import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { Location } from "@/types/IMap";
 import { Direction, RouteProfileType } from "@/types/INavigation";
 
 import Button from "../common/Button";
@@ -18,25 +17,17 @@ import Text from "../common/Text";
 
 interface MapNavigationProps {
     directions: Direction | null;
-    locations: Location | null;
     setDirections: (directions: Direction | null) => void;
-    setLocations: (locations: Location | null) => void;
     currentStep: number;
     setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapNavigation = ({
-    directions,
-    locations,
-    setDirections,
-    setLocations,
-    currentStep,
-    setCurrentStep,
-}: MapNavigationProps) => {
+const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
+    const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const profileType = useSelector(mapNavigationSelectors.navigationProfile);
     const { remainingDistance, remainingTime } = useInstructions({
@@ -48,21 +39,20 @@ const MapNavigation = ({
 
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
     const duration = `${(remainingTime / 60).toFixed(0)} min`;
-    const address = locations?.properties.name;
-    const place = locations?.properties.place_formatted;
+    const address = location?.address_line1;
+    const place = location?.address_line2;
 
     const handleCancelNavigation = () => {
         setDirections(null);
         setCurrentStep(0);
-        setLocations(null);
+        dispatch(mapNavigationActions.setLocation(null));
         dispatch(mapNavigationActions.setNavigationView(false));
         dispatch(mapNavigationActions.setIsNavigationMode(false));
         dispatch(mapNavigationActions.setSearchQuery(""));
-        dispatch(mapNavigationActions.setLocationId(""));
     };
 
     useEffect(() => {
-        if (directions && isNavigationMode && locations) {
+        if (directions && isNavigationMode && location) {
             dispatch(mapNavigationActions.setNavigationView(true));
             dispatch(mapNavigationActions.setSearchQuery(""));
             setCurrentStep(0);
@@ -93,7 +83,7 @@ const MapNavigation = ({
                 </Card>
             )}
 
-            {locations && !isNavigationMode && (
+            {location && !isNavigationMode && (
                 <Card st={styles.card}>
                     <View style={styles.profileActions}>
                         <Text type="secondary" style={styles.navigationDuration}>

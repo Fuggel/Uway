@@ -1,12 +1,17 @@
-export interface Suggestion {
-    suggestions: {
-        full_address: string;
-        mapbox_id: string;
-        name: string;
-        place_formatted: string;
-    }[];
+export interface SearchLocation {
+    country: string;
+    country_code: string;
+    city: string;
+    district: string;
+    suburb: string;
+    lon: number;
+    lat: number;
+    formatted: string;
+    address_line1: string;
+    address_line2: string;
+    category: string;
+    place_id: string;
 }
-
 export interface ReverseGeocodeProperties {
     full_address: string;
     name: string;

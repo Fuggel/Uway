@@ -5,12 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { Position } from "@turf/helpers";
 
-import { sessionToken } from "@/constants/auth-constants";
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useDirections from "@/hooks/useDirections";
-import useSearchLocation from "@/hooks/useSearchLocation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
 import { determineMapStyle } from "@/utils/map-utils";
@@ -29,17 +27,16 @@ const Map = () => {
     const dispatch = useDispatch();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const locationId = useSelector(mapNavigationSelectors.locationId);
+    const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [currentStep, setCurrentStep] = useState(0);
-    const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
     const { directions, setDirections, loadingDirections } = useDirections({
         destinationLngLat: {
-            lon: locations?.geometry?.coordinates[0] as number,
-            lat: locations?.geometry?.coordinates[1] as number,
+            lon: location?.lon,
+            lat: location?.lat,
         },
         setCurrentStep,
     });
@@ -86,15 +83,15 @@ const Map = () => {
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
                                 : navigationView
-                                    ? MAP_CONFIG.followZoom
-                                    : MAP_CONFIG.zoom
+                                  ? MAP_CONFIG.followZoom
+                                  : MAP_CONFIG.zoom
                         }
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
                                 : tracking && !userLocation
-                                    ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                                    : undefined
+                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                  : undefined
                         }
                         defaultSettings={defaultSettings}
                     />
@@ -115,12 +112,10 @@ const Map = () => {
                 )}
             </View>
 
-            {(locations || directions) && !showSheet && (
+            {(location || directions) && !showSheet && (
                 <MapNavigation
                     directions={directions}
-                    locations={locations}
                     setDirections={setDirections}
-                    setLocations={setLocations}
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
                 />
