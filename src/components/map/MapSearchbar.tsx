@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -22,11 +22,6 @@ const MapSearchbar = () => {
     const { suggestions } = useSearch({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const selectedSuggestion = suggestions?.find(
-        (suggestion) => suggestion.lon === location?.lon && suggestion.lat === location?.lat
-    );
-    const searchbarValue = selectedSuggestion ? `${selectedSuggestion.formatted}` : searchQuery;
-
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
         setShowSuggestions(true);
@@ -43,35 +38,43 @@ const MapSearchbar = () => {
             listSt={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}
             placeholder="Suche nach Ort"
             onChangeText={handleSearch}
-            value={searchbarValue}
+            value={location?.formatted || searchQuery}
         >
-            {showSuggestions && suggestions && (
+            {showSuggestions && searchQuery && (
                 <ScrollView>
-                    {suggestions.map((suggestion, i) => (
-                        <TouchableOpacity
-                            key={i}
-                            style={styles.scrollContainer}
-                            onPress={() =>
-                                handleSelectLocation({
-                                    formatted: suggestion.formatted,
-                                    lat: suggestion.lat,
-                                    lon: suggestion.lon,
-                                    country: suggestion.country,
-                                    country_code: suggestion.country_code,
-                                    city: suggestion.city,
-                                    district: suggestion.district,
-                                    address_line1: suggestion.address_line1,
-                                    address_line2: suggestion.address_line2,
-                                    category: suggestion.category,
-                                    place_id: suggestion.place_id,
-                                    suburb: suggestion.suburb,
-                                })
-                            }
-                        >
-                            <Text type="dark">{suggestion.formatted}</Text>
-                            <Divider style={styles.divider} />
-                        </TouchableOpacity>
-                    ))}
+                    {suggestions && suggestions.length > 0 ? (
+                        suggestions.map((suggestion, i) => (
+                            <TouchableOpacity
+                                key={i}
+                                style={styles.scrollContainer}
+                                onPress={() =>
+                                    handleSelectLocation({
+                                        formatted: suggestion.formatted,
+                                        lat: suggestion.lat,
+                                        lon: suggestion.lon,
+                                        country: suggestion.country,
+                                        country_code: suggestion.country_code,
+                                        city: suggestion.city,
+                                        district: suggestion.district,
+                                        address_line1: suggestion.address_line1,
+                                        address_line2: suggestion.address_line2,
+                                        category: suggestion.category,
+                                        place_id: suggestion.place_id,
+                                        suburb: suggestion.suburb,
+                                    })
+                                }
+                            >
+                                <Text type="dark">{suggestion.formatted}</Text>
+                                <Divider style={styles.divider} />
+                            </TouchableOpacity>
+                        ))
+                    ) : (
+                        <View style={styles.noResultsContainer}>
+                            <Text type="dark" style={styles.noResultsText}>
+                                Keine Ergebnisse gefunden.
+                            </Text>
+                        </View>
+                    )}
                 </ScrollView>
             )}
         </Searchbar>
@@ -93,6 +96,13 @@ const styles = StyleSheet.create({
     },
     divider: {
         marginTop: SIZES.spacing.xs,
+    },
+    noResultsContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    noResultsText: {
+        color: COLORS.gray,
     },
 });
 
