@@ -11,6 +11,8 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useDirections from "@/hooks/useDirections";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
+import { GasStationNavigation } from "@/types/IGasStation";
+import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData, sheetTitle } from "@/utils/sheet-utils";
 
@@ -33,6 +35,7 @@ const Map = () => {
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [currentStep, setCurrentStep] = useState(0);
+    const [gasStationAddress, setGasStationAddress] = useState<GasStationNavigation | null>({ address: "", place: "" });
     const { directions, setDirections, loadingDirections } = useDirections({
         destinationLngLat: {
             lon: location?.lon,
@@ -54,6 +57,28 @@ const Map = () => {
             dispatch(mapNavigationActions.setNavigationView(true));
         }
     }, [tracking, navigationMode, navigationView]);
+
+    const handleGasStationPress = () => {
+        const gasStationCoords = {
+            lon: markerData?.properties?.lng,
+            lat: markerData?.properties?.lat,
+        };
+
+        const street = markerData?.properties.street;
+        const houseNumber = markerData?.properties.houseNumber || "";
+        const postcode = markerData?.properties.postCode || "";
+        const city = markerData?.properties.place || "";
+        const country = "Deutschland";
+
+        setGasStationAddress({
+            address: `${street} ${houseNumber}`,
+            place: `${postcode} ${city}, ${country}`,
+        });
+
+        console.log("Gas Station Address: ", gasStationCoords);
+
+        closeSheet();
+    };
 
     return (
         <>
@@ -108,6 +133,10 @@ const Map = () => {
                         title={sheetTitle(markerData?.type, markerData?.properties)}
                         data={sheetData(markerData?.type, markerData?.properties)}
                         onClose={closeSheet}
+                        gasStation={{
+                            show: markerData?.type === MarkerSheet.GAS_STATION,
+                            onPress: () => handleGasStationPress(),
+                        }}
                     />
                 )}
             </View>
