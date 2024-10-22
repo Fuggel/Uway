@@ -14,8 +14,3 @@ export interface GasStation {
     houseNumber: string;
     postCode: number;
 }
-
-export interface GasStationNavigation {
-    address: string;
-    place: string;
-}

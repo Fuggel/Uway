@@ -1,9 +1,9 @@
 export interface SearchLocation {
     country: string;
-    country_code: string;
+    country_code?: string;
     city: string;
-    district: string;
-    suburb: string;
+    district?: string;
+    suburb?: string;
     lon: number;
     lat: number;
     formatted: string;

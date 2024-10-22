@@ -11,7 +11,6 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useDirections from "@/hooks/useDirections";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
-import { GasStationNavigation } from "@/types/IGasStation";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData, sheetTitle } from "@/utils/sheet-utils";
@@ -35,7 +34,6 @@ const Map = () => {
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [currentStep, setCurrentStep] = useState(0);
-    const [gasStationAddress, setGasStationAddress] = useState<GasStationNavigation | null>({ address: "", place: "" });
     const { directions, setDirections, loadingDirections } = useDirections({
         destinationLngLat: {
             lon: location?.lon,
@@ -59,24 +57,25 @@ const Map = () => {
     }, [tracking, navigationMode, navigationView]);
 
     const handleGasStationPress = () => {
-        const gasStationCoords = {
-            lon: markerData?.properties?.lng,
-            lat: markerData?.properties?.lat,
-        };
-
         const street = markerData?.properties.street;
         const houseNumber = markerData?.properties.houseNumber || "";
         const postcode = markerData?.properties.postCode || "";
         const city = markerData?.properties.place || "";
         const country = "Deutschland";
 
-        setGasStationAddress({
-            address: `${street} ${houseNumber}`,
-            place: `${postcode} ${city}, ${country}`,
-        });
+        const newLocation = {
+            country,
+            city,
+            lon: markerData?.properties.lng,
+            lat: markerData?.properties.lat,
+            formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
+            address_line1: `${street} ${houseNumber}`,
+            address_line2: `${postcode} ${city}, ${country}`,
+            category: "commercial.gas",
+            place_id: markerData?.properties.id,
+        };
 
-        console.log("Gas Station Address: ", gasStationCoords);
-
+        dispatch(mapNavigationActions.setLocation(newLocation));
         closeSheet();
     };
 
