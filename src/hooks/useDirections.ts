@@ -30,7 +30,7 @@ const useDirections = (params: {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", directions, navigationProfile, isNavigationMode],
+        queryKey: ["directions", directions, navigationProfile, isNavigationMode, params.destinationLngLat],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
@@ -90,7 +90,7 @@ const useDirections = (params: {
         if (data?.routes?.length > 0 && longitude && latitude) {
             setDirections(data.routes[0]);
         }
-    }, [data, isNavigationMode, navigationProfile]);
+    }, [data, isNavigationMode, navigationProfile, params.destinationLngLat]);
 
     return { directions, setDirections, loadingDirections, errorDirections };
 };
