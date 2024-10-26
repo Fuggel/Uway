@@ -4,11 +4,11 @@ import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import useSearch from "@/hooks/useSearch";
+import useSpeechToText from "@/hooks/useSpeechToText";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
@@ -25,6 +25,7 @@ const MapSearchbar = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
+    const { text, isListening, startListening, stopListening } = useSpeechToText();
     const { suggestions } = useSearch({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -50,7 +51,13 @@ const MapSearchbar = () => {
         }
     }, [location]);
 
-    AsyncStorage.clear();
+    useEffect(() => {
+        if (text) {
+            dispatch(mapNavigationActions.setSearchQuery(text));
+            setShowSuggestions(true);
+            stopListening();
+        }
+    }, [text]);
 
     return (
         <TouchableWithoutFeedback
@@ -66,8 +73,9 @@ const MapSearchbar = () => {
                     onChangeText={handleSearch}
                     value={location?.formatted || searchQuery}
                     onFocus={() => setIsFocused(true)}
+                    speechToText={{ isListening, startListening, stopListening }}
                 >
-                    {showSuggestions && searchQuery && (
+                    {isFocused && showSuggestions && searchQuery && (
                         <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
                             {suggestions && suggestions.length > 0 ? (
                                 suggestions.map((suggestion, i) => (
