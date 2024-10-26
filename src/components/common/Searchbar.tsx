@@ -10,12 +10,13 @@ interface SearchbarProps {
     placeholder: string;
     onChangeText: (query: string) => void;
     value: string;
+    onFocus?: () => void;
     children?: React.ReactNode;
     st?: ViewStyle;
     listSt?: ViewStyle;
 }
 
-const Searchbar = ({ placeholder, onChangeText, value, children, st, listSt }: SearchbarProps) => {
+const Searchbar = ({ placeholder, onChangeText, value, onFocus, children, st, listSt }: SearchbarProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
@@ -26,7 +27,9 @@ const Searchbar = ({ placeholder, onChangeText, value, children, st, listSt }: S
                 inputStyle={dynamicThemeStyles(styles.searchbar, determineTheme(mapStyle))}
                 placeholder={placeholder}
                 onChangeText={onChangeText}
+                onClear={() => onChangeText("")}
                 value={value}
+                onFocus={onFocus}
             />
             {children && <View style={listSt}>{children}</View>}
         </View>
