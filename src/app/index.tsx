@@ -10,6 +10,7 @@ import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useNavigation from "@/hooks/useNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
@@ -31,6 +32,7 @@ const Map = () => {
     const { userLocation } = useContext(UserLocationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
+    const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
@@ -80,6 +82,16 @@ const Map = () => {
         dispatch(mapNavigationActions.setLocation(newLocation));
         closeSheet();
     };
+
+    useEffect(() => {
+        if (location) {
+            dispatch(
+                mapSearchActions.setRecentSearches(
+                    [location, ...recentSearches.filter((loc) => loc.formatted !== location.formatted)].slice(0, 5)
+                )
+            );
+        }
+    }, [location]);
 
     return (
         <>

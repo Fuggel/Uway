@@ -10,7 +10,7 @@ import { SIZES } from "@/constants/size-constants";
 import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
+import { mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
 import { SearchLocation } from "@/types/ISearch";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
@@ -33,6 +33,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
     const { text, isListening, startListening, stopListening } = useSpeechToText();
     const { suggestions } = useSearch({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
+
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
         setShowSuggestions(true);
@@ -43,16 +44,6 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
         setShowSuggestions(false);
         setOpen(false);
     };
-
-    useEffect(() => {
-        if (location) {
-            dispatch(
-                mapSearchActions.setRecentSearches(
-                    [location, ...recentSearches.filter((loc) => loc.formatted !== location.formatted)].slice(0, 5)
-                )
-            );
-        }
-    }, [location]);
 
     useEffect(() => {
         if (text) {
