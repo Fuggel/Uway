@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Keyboard, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { Dimensions, Keyboard, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -60,79 +60,79 @@ const MapSearchbar = () => {
     }, [text]);
 
     return (
-        <TouchableWithoutFeedback
+        <TouchableOpacity
+            activeOpacity={1}
+            style={{ height: Dimensions.get("window").height }}
             onPress={() => {
                 setIsFocused(false);
                 Keyboard.dismiss();
             }}
         >
-            <View>
-                <Searchbar
-                    st={styles.search}
-                    placeholder="Suche nach Ort"
-                    onChangeText={handleSearch}
-                    value={location?.formatted || searchQuery}
-                    onFocus={() => setIsFocused(true)}
-                    speechToText={{ isListening, startListening, stopListening }}
-                >
-                    {isFocused && showSuggestions && searchQuery && (
-                        <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
-                            {suggestions && suggestions.length > 0 ? (
-                                suggestions.map((suggestion, i) => (
-                                    <TouchableOpacity
-                                        key={i}
-                                        style={styles.scrollContainer}
-                                        onPress={() =>
-                                            handleSelectLocation({
-                                                formatted: suggestion.formatted,
-                                                lat: suggestion.lat,
-                                                lon: suggestion.lon,
-                                                country: suggestion.country,
-                                                country_code: suggestion.country_code,
-                                                city: suggestion.city,
-                                                district: suggestion.district,
-                                                address_line1: suggestion.address_line1,
-                                                address_line2: suggestion.address_line2,
-                                                category: suggestion.category,
-                                                place_id: suggestion.place_id,
-                                                suburb: suggestion.suburb,
-                                            })
-                                        }
-                                    >
-                                        <Text type="dark">{suggestion.formatted}</Text>
-                                        <Divider style={styles.divider} />
-                                    </TouchableOpacity>
-                                ))
-                            ) : (
-                                <NoResults text="Keine Ergebnisse gefunden." />
-                            )}
-                        </ScrollView>
-                    )}
+            <Searchbar
+                st={styles.search}
+                placeholder="Suche nach Ort"
+                onChangeText={handleSearch}
+                value={location?.formatted || searchQuery}
+                onFocus={() => setIsFocused(true)}
+                speechToText={{ isListening, startListening, stopListening }}
+            >
+                {isFocused && showSuggestions && searchQuery && (
+                    <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
+                        {suggestions && suggestions.length > 0 ? (
+                            suggestions.map((suggestion, i) => (
+                                <TouchableOpacity
+                                    key={i}
+                                    style={styles.scrollContainer}
+                                    onPress={() =>
+                                        handleSelectLocation({
+                                            formatted: suggestion.formatted,
+                                            lat: suggestion.lat,
+                                            lon: suggestion.lon,
+                                            country: suggestion.country,
+                                            country_code: suggestion.country_code,
+                                            city: suggestion.city,
+                                            district: suggestion.district,
+                                            address_line1: suggestion.address_line1,
+                                            address_line2: suggestion.address_line2,
+                                            category: suggestion.category,
+                                            place_id: suggestion.place_id,
+                                            suburb: suggestion.suburb,
+                                        })
+                                    }
+                                >
+                                    <Text type="dark">{suggestion.formatted}</Text>
+                                    <Divider style={styles.divider} />
+                                </TouchableOpacity>
+                            ))
+                        ) : (
+                            <NoResults text="Keine Ergebnisse gefunden." />
+                        )}
+                    </ScrollView>
+                )}
 
-                    {isFocused && !searchQuery && (
-                        <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
-                            {recentSearches.length > 0 ? (
-                                recentSearches.map((location, i) => (
-                                    <TouchableOpacity
-                                        key={i}
-                                        style={styles.scrollContainer}
-                                        onPress={() => handleSelectLocation(location as SearchLocation)}
-                                    >
-                                        <View style={styles.item}>
-                                            <MaterialCommunityIcons name="history" size={24} color="black" />
-                                            <Text type="dark">{location?.formatted}</Text>
-                                        </View>
-                                        <Divider style={styles.divider} />
-                                    </TouchableOpacity>
-                                ))
-                            ) : (
-                                <NoResults text="Keine letzten Suchen." />
-                            )}
-                        </ScrollView>
-                    )}
-                </Searchbar>
-            </View>
-        </TouchableWithoutFeedback>
+                {isFocused && !searchQuery && (
+                    <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
+                        {recentSearches.length > 0 ? (
+                            recentSearches.map((location, i) => (
+                                <TouchableOpacity
+                                    key={i}
+                                    style={styles.scrollContainer}
+                                    onPress={() => handleSelectLocation(location as SearchLocation)}
+                                >
+                                    <View style={styles.item}>
+                                        <MaterialCommunityIcons name="history" size={24} color="black" />
+                                        <Text type="dark">{location?.formatted}</Text>
+                                    </View>
+                                    <Divider style={styles.divider} />
+                                </TouchableOpacity>
+                            ))
+                        ) : (
+                            <NoResults text="Keine letzten Suchen." />
+                        )}
+                    </ScrollView>
+                )}
+            </Searchbar>
+        </TouchableOpacity>
     );
 };
 
