@@ -31,7 +31,7 @@ const useDirections = (params: {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", directions, navigationProfile, isNavigationMode, locations],
+        queryKey: ["directions", navigationProfile, locations],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
@@ -39,7 +39,6 @@ const useDirections = (params: {
                 destinationLngLat: params.destinationLngLat,
             }),
         enabled:
-            isNavigationMode &&
             isValidLonLat(longitude, latitude) &&
             isValidLonLat(params.destinationLngLat.lon, params.destinationLngLat.lat),
         staleTime: Infinity,
@@ -65,7 +64,7 @@ const useDirections = (params: {
     });
 
     useEffect(() => {
-        if (directions && longitude && latitude) {
+        if (directions && longitude && latitude && isNavigationMode) {
             const routeCoordinates = directions.geometry.coordinates;
             const userPoint = point([longitude, latitude]);
 
@@ -82,13 +81,13 @@ const useDirections = (params: {
                 recalculateRoute();
             }
         }
-    }, [directions, longitude, latitude]);
+    }, [directions, longitude, latitude, isNavigationMode]);
 
     useEffect(() => {
-        if (data?.routes?.length > 0 && longitude && latitude) {
+        if (data?.routes?.length > 0) {
             setDirections(data.routes[0]);
         }
-    }, [data, isNavigationMode, navigationProfile]);
+    }, [data]);
 
     return { directions, setDirections, loadingDirections, errorDirections };
 };

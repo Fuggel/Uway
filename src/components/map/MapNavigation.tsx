@@ -67,52 +67,44 @@ const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep 
 
     return (
         <View style={styles.flexBottom}>
-            {directions && isNavigationMode && (
+            {directions && location && (
                 <Card st={styles.card}>
-                    <View>
-                        <Text type="success" textStyle="header" style={{ textAlign: "center" }}>
-                            {duration} · {distance}
-                        </Text>
+                    <View style={styles.profileActions}>
                         <View style={styles.navigationInfo}>
                             <Text type="secondary">{address}</Text>
                             <Text type="secondary">{place}</Text>
                         </View>
-                    </View>
-
-                    <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
-                </Card>
-            )}
-
-            {location && !isNavigationMode && (
-                <Card st={styles.card}>
-                    <View style={styles.profileActions}>
-                        <Text type="secondary" style={styles.navigationDuration}>
-                            {address}, {place}
+                        <Text type="success" textStyle="header" style={{ textAlign: "center" }}>
+                            {duration} · {distance}
                         </Text>
-                        <SegmentedButtons
-                            value={profileType}
-                            onValueChange={(value) =>
-                                dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
-                            }
-                            buttons={ROUTE_PROFILES.map((p) => ({
-                                value: p.value,
-                                icon: p.icon,
-                                checkedColor: COLORS.white,
-                                style: {
-                                    backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
-                                },
-                            }))}
-                        />
+                        {!isNavigationMode && (
+                            <SegmentedButtons
+                                value={profileType}
+                                onValueChange={(value) =>
+                                    dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
+                                }
+                                buttons={ROUTE_PROFILES.map((p) => ({
+                                    value: p.value,
+                                    icon: p.icon,
+                                    checkedColor: COLORS.white,
+                                    style: {
+                                        backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
+                                    },
+                                }))}
+                            />
+                        )}
                     </View>
 
                     <View style={styles.navigationActionButtons}>
                         <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
-                        <Button
-                            icon="navigation"
-                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                            type="success"
-                            size="xl"
-                        />
+                        {!isNavigationMode && (
+                            <Button
+                                icon="navigation"
+                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                                type="success"
+                                size="xl"
+                            />
+                        )}
                     </View>
                 </Card>
             )}
