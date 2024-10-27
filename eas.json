@@ -15,22 +15,8 @@
                 "simulator": true
             }
         },
-        "production": {
-            "env": {
-                "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
-                "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
-                "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
-                "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY"
-            }
-        },
-        "test": {
-            "env": {
-                "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
-                "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
-                "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
-                "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY"
-            }
-        }
+        "production": {},
+        "test": {}
     },
     "submit": {
         "production": {}

@@ -13,7 +13,7 @@ import { LonLat } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { isValidLonLat } from "@/utils/map-utils";
 
-const useDirections = (params: {
+const useNavigation = (params: {
     destinationLngLat: LonLat;
     setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
@@ -21,6 +21,7 @@ const useDirections = (params: {
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [directions, setDirections] = useState<Direction | null>(null);
+    const locations = useSelector(mapNavigationSelectors.location);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -30,7 +31,7 @@ const useDirections = (params: {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", directions, navigationProfile, isNavigationMode],
+        queryKey: ["directions", navigationProfile, locations],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
@@ -38,7 +39,6 @@ const useDirections = (params: {
                 destinationLngLat: params.destinationLngLat,
             }),
         enabled:
-            isNavigationMode &&
             isValidLonLat(longitude, latitude) &&
             isValidLonLat(params.destinationLngLat.lon, params.destinationLngLat.lat),
         staleTime: Infinity,
@@ -53,6 +53,8 @@ const useDirections = (params: {
             }),
         onSuccess: (data) => {
             if (data?.routes?.length > 0) {
+                setDirections(null);
+                params.setCurrentStep(0);
                 setDirections(data.routes[0]);
             }
         },
@@ -62,7 +64,7 @@ const useDirections = (params: {
     });
 
     useEffect(() => {
-        if (directions && longitude && latitude) {
+        if (directions && longitude && latitude && isNavigationMode) {
             const routeCoordinates = directions.geometry.coordinates;
             const userPoint = point([longitude, latitude]);
 
@@ -79,20 +81,15 @@ const useDirections = (params: {
                 recalculateRoute();
             }
         }
-    }, [directions, longitude, latitude]);
+    }, [directions, longitude, latitude, isNavigationMode]);
 
     useEffect(() => {
-        setDirections(null);
-        params.setCurrentStep(0);
-    }, [recalculateRoute]);
-
-    useEffect(() => {
-        if (data?.routes?.length > 0 && longitude && latitude) {
+        if (data?.routes?.length > 0) {
             setDirections(data.routes[0]);
         }
-    }, [data, isNavigationMode, navigationProfile]);
+    }, [data]);
 
     return { directions, setDirections, loadingDirections, errorDirections };
 };
 
-export default useDirections;
+export default useNavigation;

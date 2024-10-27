@@ -5,14 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { Position } from "@turf/helpers";
 
-import { sessionToken } from "@/constants/auth-constants";
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useDirections from "@/hooks/useDirections";
-import useSearchLocation from "@/hooks/useSearchLocation";
+import useNavigation from "@/hooks/useNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
+import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData, sheetTitle } from "@/utils/sheet-utils";
 
@@ -29,17 +28,16 @@ const Map = () => {
     const dispatch = useDispatch();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const locationId = useSelector(mapNavigationSelectors.locationId);
+    const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [currentStep, setCurrentStep] = useState(0);
-    const { locations, setLocations } = useSearchLocation({ mapboxId: locationId, sessionToken });
-    const { directions, setDirections, loadingDirections } = useDirections({
+    const { directions, setDirections, loadingDirections } = useNavigation({
         destinationLngLat: {
-            lon: locations?.geometry?.coordinates[0] as number,
-            lat: locations?.geometry?.coordinates[1] as number,
+            lon: location?.lon,
+            lat: location?.lat,
         },
         setCurrentStep,
     });
@@ -57,6 +55,29 @@ const Map = () => {
             dispatch(mapNavigationActions.setNavigationView(true));
         }
     }, [tracking, navigationMode, navigationView]);
+
+    const handleGasStationPress = () => {
+        const street = markerData?.properties.street;
+        const houseNumber = markerData?.properties.houseNumber || "";
+        const postcode = markerData?.properties.postCode || "";
+        const city = markerData?.properties.place || "";
+        const country = "Deutschland";
+
+        const newLocation = {
+            country,
+            city,
+            lon: markerData?.properties.lng,
+            lat: markerData?.properties.lat,
+            formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
+            address_line1: `${street} ${houseNumber}`,
+            address_line2: `${postcode} ${city}, ${country}`,
+            category: "commercial.gas",
+            place_id: markerData?.properties.id,
+        };
+
+        dispatch(mapNavigationActions.setLocation(newLocation));
+        closeSheet();
+    };
 
     return (
         <>
@@ -86,15 +107,15 @@ const Map = () => {
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
                                 : navigationView
-                                    ? MAP_CONFIG.followZoom
-                                    : MAP_CONFIG.zoom
+                                  ? MAP_CONFIG.followZoom
+                                  : MAP_CONFIG.zoom
                         }
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
                                 : tracking && !userLocation
-                                    ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                                    : undefined
+                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                                  : undefined
                         }
                         defaultSettings={defaultSettings}
                     />
@@ -111,16 +132,18 @@ const Map = () => {
                         title={sheetTitle(markerData?.type, markerData?.properties)}
                         data={sheetData(markerData?.type, markerData?.properties)}
                         onClose={closeSheet}
+                        gasStation={{
+                            show: markerData?.type === MarkerSheet.GAS_STATION,
+                            onPress: () => handleGasStationPress(),
+                        }}
                     />
                 )}
             </View>
 
-            {(locations || directions) && !showSheet && (
+            {(location || directions) && !showSheet && (
                 <MapNavigation
                     directions={directions}
-                    locations={locations}
                     setDirections={setDirections}
-                    setLocations={setLocations}
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
                 />

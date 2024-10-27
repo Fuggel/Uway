@@ -1,7 +1,7 @@
-import { ScrollView, StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet, ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 interface BottomSheetComponentProps {
     onClose: () => void;
@@ -12,10 +12,8 @@ interface BottomSheetComponentProps {
 const BottomSheetComponent = ({ onClose, children, st }: BottomSheetComponentProps) => {
     return (
         <GestureHandlerRootView style={styles.container}>
-            <BottomSheet snapPoints={["50%", "100%"]} enablePanDownToClose onClose={onClose}>
-                <ScrollView>
-                    <BottomSheetView style={{ ...styles.contentContainer, ...st }}>{children}</BottomSheetView>
-                </ScrollView>
+            <BottomSheet snapPoints={["100%"]} enablePanDownToClose onClose={onClose} enableDynamicSizing>
+                <BottomSheetScrollView style={{ ...styles.contentContainer, ...st }}>{children}</BottomSheetScrollView>
             </BottomSheet>
         </GestureHandlerRootView>
     );
@@ -32,7 +30,6 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flex: 1,
-        alignItems: "center",
     },
 });
 

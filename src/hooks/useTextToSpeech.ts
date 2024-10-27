@@ -5,10 +5,9 @@ import { useSelector } from "react-redux";
 
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
-const soundObject = new Audio.Sound();
-
 const useTextToSpeech = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
+    const soundObject = new Audio.Sound();
 
     const startSpeech = async (speakText: string) => {
         if (!allowTextToSpeech || !speakText) return;
@@ -28,6 +27,7 @@ const useTextToSpeech = () => {
 
     useEffect(() => {
         return () => {
+            soundObject.unloadAsync();
             Speech.stop();
         };
     }, []);

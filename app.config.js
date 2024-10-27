@@ -56,6 +56,13 @@ export default ({ config }) => {
                     locationWhenInUsePermission: "Show current location on map.",
                 },
             ],
+            [
+                "@react-native-voice/voice",
+                {
+                    microphonePermission: "Allow to access the microphone to search for locations.",
+                    speechRecognitionPermission: "Allow to securely recognize user speech.",
+                },
+            ],
         ],
     };
 };

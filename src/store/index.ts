@@ -7,10 +7,11 @@ import mapGasStationReduce from "./mapGasStation";
 import mapIncidentReduce from "./mapIncident";
 import mapNavigationReduce from "./mapNavigation";
 import mapParkAvailabilityReduce from "./mapParkAvailability";
+import mapSearchReduce from "./mapSearch";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
 import mapSpeedLimitReduce from "./mapSpeedLimit";
 import mapTextToSpeechReduce from "./mapTextToSpeech";
-import mapViewReducer from "./mapView";
+import mapViewReduce from "./mapView";
 
 const persistConfig = {
     key: "root",
@@ -23,11 +24,12 @@ const persistConfig = {
         "mapGasStation",
         "mapIncident",
         "mapTextToSpeech",
+        "mapSearch",
     ],
 };
 
 const reducer = combineReducers({
-    mapView: mapViewReducer,
+    mapView: mapViewReduce,
     mapNavigation: mapNavigationReduce,
     mapSpeedCamera: mapSpeedCameraReduce,
     mapSpeedLimit: mapSpeedLimitReduce,
@@ -35,6 +37,7 @@ const reducer = combineReducers({
     mapGasStation: mapGasStationReduce,
     mapIncident: mapIncidentReduce,
     mapTextToSpeech: mapTextToSpeechReduce,
+    mapSearch: mapSearchReduce,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

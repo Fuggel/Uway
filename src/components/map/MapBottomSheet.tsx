@@ -4,21 +4,31 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 
 import BottomSheetComponent from "../common/BottomSheet";
+import Button from "../common/Button";
 import Text from "../common/Text";
 
 interface MapBottomSheetProps {
     title: string;
     data: { label: string; value: string | number | React.ReactNode }[] | null;
     onClose: () => void;
+    gasStation?: {
+        show: boolean;
+        onPress: () => void;
+    };
 }
 
-const MapBottomSheet = ({ title, data, onClose }: MapBottomSheetProps) => {
+const MapBottomSheet = ({ title, data, onClose, gasStation }: MapBottomSheetProps) => {
     return (
         <BottomSheetComponent onClose={onClose}>
             <View style={styles.container}>
-                <Text textStyle="header" style={styles.title}>
-                    {title}
-                </Text>
+                <View style={styles.titleContainer}>
+                    <Text textStyle="header" style={styles.title}>
+                        {title}
+                    </Text>
+                    {gasStation?.show && (
+                        <Button icon="directions" size="lg" onPress={gasStation.onPress} style={styles.button} />
+                    )}
+                </View>
 
                 {data?.map((item, i) => (
                     <View key={i} style={styles.itemContainer}>
@@ -38,9 +48,18 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingHorizontal: SIZES.spacing.md,
     },
+    titleContainer: {
+        flexDirection: "row",
+    },
     title: {
         textAlign: "center",
         marginVertical: SIZES.spacing.md,
+        alignSelf: "center",
+        flex: 1,
+    },
+    button: {
+        position: "absolute",
+        right: 0,
     },
     itemContainer: {
         flexDirection: "row",

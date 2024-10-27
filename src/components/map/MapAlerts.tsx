@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -9,6 +10,7 @@ import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { Direction, Instruction } from "@/types/INavigation";
 import { SpeedLimitFeature } from "@/types/ISpeed";
 import { arrowDirection, determineIncidentIcon, determineSpeedLimitIcon } from "@/utils/map-utils";
@@ -27,6 +29,7 @@ const deviceHeight = Dimensions.get("window").height;
 const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const { speedLimits } = useSpeedLimits();
 
     const userSpeed = userLocation?.coords?.speed;
@@ -37,8 +40,10 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
     const { startSpeech } = useTextToSpeech();
 
     useEffect(() => {
-        startSpeech(currentInstruction);
-    }, [currentInstruction, currentStep]);
+        if (isNavigationMode) {
+            startSpeech(currentInstruction);
+        }
+    }, [isNavigationMode, currentInstruction, currentStep]);
 
     return (
         <>
@@ -46,32 +51,33 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
                 {!directions && userLocation && <MapSearchbar />}
 
                 <View style={styles.alertContainer}>
-                    {directions?.legs[0].steps
-                        .slice(currentStep, currentStep + 1)
-                        .map((step: Instruction, index: number) => {
-                            const arrowDir = arrowDirection(step.maneuver.modifier);
+                    {isNavigationMode &&
+                        directions?.legs[0].steps
+                            .slice(currentStep, currentStep + 1)
+                            .map((step: Instruction, index: number) => {
+                                const arrowDir = arrowDirection(step.maneuver.modifier);
 
-                            return (
-                                <View key={index} style={styles.instructionsContainer}>
-                                    <Text type="dark" style={styles.stepInstruction}>
-                                        {step.maneuver.instruction}
-                                    </Text>
-
-                                    <View style={styles.directionRow}>
-                                        {arrowDir !== undefined && (
-                                            <MaterialCommunityIcons
-                                                name={arrowDir}
-                                                size={SIZES.iconSize.xl}
-                                                color={COLORS.primary}
-                                            />
-                                        )}
-                                        <Text type="secondary" textStyle="caption">
-                                            {step.distance.toFixed(0)} m
+                                return (
+                                    <View key={index} style={styles.instructionsContainer}>
+                                        <Text type="dark" style={styles.stepInstruction}>
+                                            {step.maneuver.instruction}
                                         </Text>
+
+                                        <View style={styles.directionRow}>
+                                            {arrowDir !== undefined && (
+                                                <MaterialCommunityIcons
+                                                    name={arrowDir}
+                                                    size={SIZES.iconSize.xl}
+                                                    color={COLORS.primary}
+                                                />
+                                            )}
+                                            <Text type="secondary" textStyle="caption">
+                                                {step.distance.toFixed(0)} m
+                                            </Text>
+                                        </View>
                                     </View>
-                                </View>
-                            );
-                        })}
+                                );
+                            })}
 
                     {speedCameras?.speedCameras?.alert && speedCameras.speedCameraWarningText && (
                         <Toast
