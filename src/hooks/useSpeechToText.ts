@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LogBox } from "react-native";
 
 import Voice from "@react-native-voice/voice";
@@ -8,6 +8,7 @@ LogBox.ignoreLogs([`new NativeEventEmitter()`]);
 const useSpeechToText = () => {
     const [text, setText] = useState<string | null>(null);
     const [isListening, setIsListening] = useState(false);
+    const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const startListening = async () => {
         try {
@@ -23,6 +24,7 @@ const useSpeechToText = () => {
         try {
             await Voice.stop();
             setIsListening(false);
+            clearTimeout(silenceTimeout.current!);
         } catch (error) {
             console.log(`Failed to stop voice recognition: ${error}`);
         }
@@ -32,12 +34,18 @@ const useSpeechToText = () => {
         Voice.onSpeechResults = (event) => {
             if (event.value) {
                 setText(event.value[0]);
+
+                if (silenceTimeout.current) clearTimeout(silenceTimeout.current);
+
+                silenceTimeout.current = setTimeout(() => {
+                    stopListening();
+                }, 2000);
             }
         };
 
         return () => {
             Voice.destroy().then(Voice.removeAllListeners);
-            setIsListening(false);
+            if (silenceTimeout.current) clearTimeout(silenceTimeout.current);
         };
     }, []);
 

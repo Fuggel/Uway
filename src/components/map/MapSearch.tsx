@@ -58,7 +58,6 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
         if (text) {
             dispatch(mapNavigationActions.setSearchQuery(text));
             setShowSuggestions(true);
-            stopListening();
         }
     }, [text]);
 
