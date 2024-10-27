@@ -1,10 +1,12 @@
 import { useRouter } from "expo-router";
+import { useContext } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import { mapNavigationActions } from "@/store/mapNavigation";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
@@ -12,13 +14,24 @@ import Button from "../common/Button";
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapButtons = () => {
+interface MapButtonsProps {
+    openMapSearch: () => void;
+}
+
+const MapButtons = ({ openMapSearch }: MapButtonsProps) => {
     const dispatch = useDispatch();
     const router = useRouter();
+    const { userLocation } = useContext(UserLocationContext);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     return (
         <View style={styles.container}>
+            {userLocation && !isNavigationMode && (
+                <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
+                    <Button icon="magnify" onPress={openMapSearch} />
+                </View>
+            )}
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
                 <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
             </View>

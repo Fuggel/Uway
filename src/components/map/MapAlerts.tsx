@@ -17,7 +17,6 @@ import { arrowDirection, determineIncidentIcon, determineSpeedLimitIcon } from "
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
-import MapSearchbar from "./MapSearchbar";
 
 interface MapAlertsProps {
     directions: Direction | null;
@@ -48,8 +47,6 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
     return (
         <>
             <View style={styles.absoluteTop}>
-                {!directions && userLocation && <MapSearchbar />}
-
                 <View style={styles.alertContainer}>
                     {isNavigationMode &&
                         directions?.legs[0].steps

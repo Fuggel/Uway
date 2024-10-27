@@ -21,6 +21,7 @@ import MapAlerts from "@/components/map/MapAlerts";
 import MapBottomSheet from "@/components/map/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
+import MapSearch from "@/components/map/MapSearch";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -33,6 +34,7 @@ const Map = () => {
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const [openMapSearch, setOpenMapSearch] = useState(false);
     const [currentStep, setCurrentStep] = useState(0);
     const { directions, setDirections, loadingDirections } = useNavigation({
         destinationLngLat: {
@@ -123,9 +125,11 @@ const Map = () => {
                     <Layers directions={directions} />
                 </MapView>
 
-                <MapButtons />
+                <MapButtons openMapSearch={() => setOpenMapSearch(true)} />
 
                 <MapAlerts directions={directions} currentStep={currentStep} />
+
+                {openMapSearch && <MapSearch setOpen={setOpenMapSearch} />}
 
                 {showSheet && (
                     <MapBottomSheet

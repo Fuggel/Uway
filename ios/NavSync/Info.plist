@@ -50,9 +50,12 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Show current location on map.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>Allow to access the microphone to search for locations.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>Allow to securely recognize user speech.</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
