@@ -8,7 +8,7 @@ import { Position } from "@turf/helpers";
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useDirections from "@/hooks/useDirections";
+import useNavigation from "@/hooks/useNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
 import { MarkerSheet } from "@/types/ISheet";
@@ -34,7 +34,7 @@ const Map = () => {
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [currentStep, setCurrentStep] = useState(0);
-    const { directions, setDirections, loadingDirections } = useDirections({
+    const { directions, setDirections, loadingDirections } = useNavigation({
         destinationLngLat: {
             lon: location?.lon,
             lat: location?.lat,

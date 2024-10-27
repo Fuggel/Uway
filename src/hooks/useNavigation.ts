@@ -13,7 +13,7 @@ import { LonLat } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { isValidLonLat } from "@/utils/map-utils";
 
-const useDirections = (params: {
+const useNavigation = (params: {
     destinationLngLat: LonLat;
     setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
 }) => {
@@ -92,4 +92,4 @@ const useDirections = (params: {
     return { directions, setDirections, loadingDirections, errorDirections };
 };
 
-export default useDirections;
+export default useNavigation;
