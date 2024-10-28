@@ -4,12 +4,13 @@ import { FeatureCollection } from "@turf/helpers";
 
 import useIncidents from "@/hooks/useIncidents";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
-import { SpeedCameraAlert, WarningAlertSpeed } from "@/types/ISpeed";
+import { WarningAlert } from "@/types/IMap";
+import { SpeedCameraAlert } from "@/types/ISpeed";
 import { IncidentAlert, IncidentFc, WarningAlertIncident } from "@/types/ITraffic";
 
 type SpeedCamera = {
     speedCameras: { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined;
-    speedCameraWarningText: WarningAlertSpeed | null;
+    speedCameraWarningText: WarningAlert | null;
     loadingSpeedCameras: boolean;
     errorSpeedCameras: Error | null;
 };

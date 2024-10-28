@@ -1,21 +1,18 @@
 import { Feature, Geometry, GeometryCollection } from "@turf/helpers";
 
-import { WarningAlert } from "./IMap";
-
 export interface SpeedCameraAlert {
     distance: number;
 }
 
+export enum SpeedCameraType {
+    STATIONARY = "stationary",
+    MOBILE = "mobile",
+}
+
 export interface SpeedCameraProperties {
-    direction: string;
-    highway: string;
-    man_made: string;
-    mapillary: string;
-    maxspeed: string;
-    height: string;
-    colour: string;
-    name: string;
+    type: SpeedCameraType;
     address: string;
+    direction: string;
     geometry: {
         type: string;
         coordinates: number[];
@@ -38,7 +35,3 @@ export interface SpeedLimitAlert {
 }
 
 export type SpeedLimitFeature = GeometryCollection & SpeedLimitProperties;
-
-export interface WarningAlertSpeed extends WarningAlert {
-    maxSpeed?: string;
-}

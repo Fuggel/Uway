@@ -15,7 +15,8 @@ import {
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
-import { SpeedCameraAlert, SpeedCameraProperties, WarningAlertSpeed } from "@/types/ISpeed";
+import { WarningAlert } from "@/types/IMap";
+import { SpeedCameraAlert, SpeedCameraProperties } from "@/types/ISpeed";
 
 import useTextToSpeech from "./useTextToSpeech";
 
@@ -32,7 +33,7 @@ const useSpeedCameras = () => {
     const { startSpeech } = useTextToSpeech();
     const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
-    const [speedCameraWarningText, setSpeedCameraWarningText] = useState<WarningAlertSpeed | null>(null);
+    const [speedCameraWarningText, setSpeedCameraWarningText] = useState<WarningAlert | null>(null);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -82,11 +83,6 @@ const useSpeedCameras = () => {
                 if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
                     isWithinAnyWarningZone = true;
                     closestCamera = { distance: distanceToCamera };
-
-                    setSpeedCameraWarningText({
-                        ...speedCameraWarningText,
-                        maxSpeed: (feature.properties as unknown as SpeedCameraProperties).maxspeed,
-                    });
                 }
 
                 if (
@@ -125,9 +121,8 @@ const useSpeedCameras = () => {
 
             setSpeedCameraWarningText({
                 ...speedCameraWarningText,
-                textToSpeech: `Blitzer in ${distance} Metern. Maximalgeschwindigkeit ${speedCameraWarningText?.maxSpeed} km/h`,
+                textToSpeech: `Blitzer in ${distance} Metern.`,
                 title: `Blitzer in ${distance} m.`,
-                subTitle: `Max. ${speedCameraWarningText?.maxSpeed} km/h`,
             });
         }
     }, [speedCameras?.alert]);

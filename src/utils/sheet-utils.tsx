@@ -1,7 +1,7 @@
 import { GasStation } from "@/types/IGasStation";
 import { ParkAvailabilityProperties } from "@/types/IParking";
 import { MarkerSheet } from "@/types/ISheet";
-import { SpeedCameraProperties } from "@/types/ISpeed";
+import { SpeedCameraProperties, SpeedCameraType } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 
 import { toGermanDate } from "./date-utils";
@@ -27,7 +27,7 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
 export function sheetData<T>(
     marker: MarkerSheet | undefined,
     properties: T
-): { label: string; value: string | JSX.Element | IncidentType; }[] | null {
+): { label: string; value: string | JSX.Element | IncidentType }[] | null {
     switch (marker) {
         case MarkerSheet.INCIDENT:
             return incidentData(properties as IncidentProperties);
@@ -131,8 +131,8 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
             value: speedCameraProperties?.address ?? "Unbekannt",
         },
         {
-            label: "Max. Geschwindigkeit",
-            value: speedCameraProperties?.maxspeed ? `${speedCameraProperties?.maxspeed} km/h` : "Unbekannt",
+            label: "Typ",
+            value: speedCameraProperties?.type === SpeedCameraType.MOBILE ? "Mobil" : "Stationär",
         },
     ];
 }
@@ -170,12 +170,13 @@ function gasStationTitle(gasStationProperties: GasStation | undefined) {
 
 function parkingTitle(parkingProperties: ParkAvailabilityProperties | undefined) {
     const title = parkingProperties?.name ?? "Unbekannt";
-    const fullTitle = `${!title.includes(parkingProperties?.lot_type as string) ? `${parkingProperties?.lot_type} ${title}` : title
-        }`;
+    const fullTitle = `${
+        !title.includes(parkingProperties?.lot_type as string) ? `${parkingProperties?.lot_type} ${title}` : title
+    }`;
 
     return fullTitle;
 }
 
 function speedCameraTitle(speedCameraProperties: SpeedCameraProperties | undefined) {
-    return speedCameraProperties?.name ?? "Unbekannt";
+    return `Blitzer: ${speedCameraProperties?.type === SpeedCameraType.MOBILE ? "Mobil" : "Stationär"}`;
 }
