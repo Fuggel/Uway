@@ -12,6 +12,7 @@ import useSpeechToText from "@/hooks/useSpeechToText";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
+import { OpenSheet } from "@/types/IMap";
 import { SearchLocation } from "@/types/ISearch";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
@@ -21,7 +22,7 @@ import Text from "../common/Text";
 import NoResults from "../ui/NoResults";
 
 interface MapSearchProps {
-    setOpen: (open: boolean) => void;
+    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
 }
 
 const MapSearch = ({ setOpen }: MapSearchProps) => {
@@ -42,7 +43,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
     const handleSelectLocation = (newLocation: SearchLocation) => {
         dispatch(mapNavigationActions.setLocation(newLocation));
         setShowSuggestions(false);
-        setOpen(false);
+        setOpen((prev) => ({ ...prev, search: false }));
     };
 
     useEffect(() => {
@@ -57,7 +58,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
             height="100%"
             snapPoints={["85%", "100%"]}
             onClose={() => {
-                setOpen(false);
+                setOpen((prev) => ({ ...prev, search: false }));
                 dispatch(mapNavigationActions.setSearchQuery(""));
             }}
         >

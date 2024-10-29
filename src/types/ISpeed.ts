@@ -35,3 +35,15 @@ export interface SpeedLimitAlert {
 }
 
 export type SpeedLimitFeature = GeometryCollection & SpeedLimitProperties;
+
+export interface SpeedCameraProfile {
+    value: SpeedCameraType;
+    label: string;
+}
+
+export interface SpeedCameraReport {
+    deviceId: string;
+    type: SpeedCameraType;
+    direction: string;
+    coordinates: number[];
+}

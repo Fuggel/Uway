@@ -50,3 +50,8 @@ export interface WarningAlert {
     title?: string;
     subTitle?: string;
 }
+
+export interface OpenSheet {
+    search: boolean;
+    speedCamera: boolean;
+}

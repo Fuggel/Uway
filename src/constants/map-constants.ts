@@ -4,6 +4,7 @@ import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { MapConfig, MapboxStyle } from "@/types/IMap";
 import { RouteProfile, RouteProfileType } from "@/types/INavigation";
 import { DropdownItem } from "@/types/ISettings";
+import { SpeedCameraProfile, SpeedCameraType } from "@/types/ISpeed";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 const MAP_ICONS_URL = "../assets/images/map-icons";
@@ -100,6 +101,17 @@ export const ROUTE_PROFILES: RouteProfile[] = [
     {
         value: RouteProfileType.CYCLING,
         icon: "bike",
+    },
+];
+
+export const SPEED_CAMERA_TYPE: SpeedCameraProfile[] = [
+    {
+        value: SpeedCameraType.STATIONARY,
+        label: "Stationär",
+    },
+    {
+        value: SpeedCameraType.MOBILE,
+        label: "Mobil",
     },
 ];
 

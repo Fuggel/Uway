@@ -1,4 +1,5 @@
-import { Image, ImageProps, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Image, ImageProps, StyleSheet, View, ViewStyle } from "react-native";
 import { Divider, Icon } from "react-native-paper";
 import { useSelector } from "react-redux";
 
@@ -11,18 +12,38 @@ import Text from "./Text";
 
 interface ToastProps {
     show: boolean;
-    type: "error" | "warning" | "info";
+    type: "success" | "error" | "warning" | "info";
     title?: string;
     subTitle?: string;
     image?: ImageProps;
     children?: React.ReactNode;
+    autoHide?: boolean;
+    duration?: number;
+    st?: ViewStyle;
 }
 
-const Toast = ({ show, type, title, subTitle, image, children }: ToastProps) => {
+const Toast = ({ show, type, title, subTitle, image, children, autoHide, duration = 3000, st }: ToastProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const [isVisible, setIsVisible] = useState(show);
+
+    useEffect(() => {
+        if (show) {
+            setIsVisible(true);
+            if (autoHide) {
+                const timer = setTimeout(() => {
+                    setIsVisible(false);
+                }, duration);
+                return () => clearTimeout(timer);
+            }
+        } else {
+            setIsVisible(false);
+        }
+    }, [show, autoHide]);
 
     const getIcon = () => {
         switch (type) {
+            case "success":
+                return "check-circle";
             case "error":
                 return "alert-circle";
             case "warning":
@@ -36,6 +57,8 @@ const Toast = ({ show, type, title, subTitle, image, children }: ToastProps) => 
 
     const getColor = () => {
         switch (type) {
+            case "success":
+                return COLORS.success;
             case "error":
                 return COLORS.error;
             case "warning":
@@ -47,10 +70,10 @@ const Toast = ({ show, type, title, subTitle, image, children }: ToastProps) => 
         }
     };
 
-    if (!show) return null;
+    if (!show || !isVisible) return null;
 
     return (
-        <View style={{ ...dynamicThemeStyles(styles.container, determineTheme(mapStyle)) }}>
+        <View style={{ ...dynamicThemeStyles({ ...styles.container }, determineTheme(mapStyle)), ...st }}>
             {title && (
                 <View style={styles.header}>
                     {!image ? (

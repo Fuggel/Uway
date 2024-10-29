@@ -5,6 +5,7 @@ import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 import { NAVSYNC_API } from "@/constants/api-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { LonLat } from "@/types/IMap";
+import { SpeedCameraReport } from "@/types/ISpeed";
 
 export async function fetchSpeedCameras(params: {
     userLonLat: LonLat;
@@ -22,4 +23,9 @@ export async function fetchSpeedCameras(params: {
         console.log(`Error fetching speed cameras: ${error}`);
         return DEFAULT_FC;
     }
+}
+
+export async function reportSpeedCamera(data: SpeedCameraReport) {
+    const response = await axios.post(`${NAVSYNC_API}/report-speed-camera`, data);
+    return response.data;
 }

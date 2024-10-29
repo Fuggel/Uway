@@ -8,6 +8,7 @@ import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapViewSelectors } from "@/store/mapView";
+import { OpenSheet } from "@/types/IMap";
 import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import Button from "../common/Button";
@@ -15,10 +16,10 @@ import Button from "../common/Button";
 const deviceHeight = Dimensions.get("window").height;
 
 interface MapButtonsProps {
-    openMapSearch: () => void;
+    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
 }
 
-const MapButtons = ({ openMapSearch }: MapButtonsProps) => {
+const MapButtons = ({ setOpen }: MapButtonsProps) => {
     const dispatch = useDispatch();
     const router = useRouter();
     const { userLocation } = useContext(UserLocationContext);
@@ -27,11 +28,18 @@ const MapButtons = ({ openMapSearch }: MapButtonsProps) => {
 
     return (
         <View style={styles.container}>
-            {userLocation && !isNavigationMode && (
+            {userLocation && (
                 <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                    <Button icon="magnify" onPress={openMapSearch} />
+                    <Button icon="camera" onPress={() => setOpen((prev) => ({ ...prev, speedCamera: true }))} />
                 </View>
             )}
+
+            {userLocation && !isNavigationMode && (
+                <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
+                    <Button icon="magnify" onPress={() => setOpen((prev) => ({ ...prev, search: true }))} />
+                </View>
+            )}
+
             <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
                 <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
             </View>
