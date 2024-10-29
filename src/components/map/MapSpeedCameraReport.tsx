@@ -74,7 +74,7 @@ const MapSpeedCameraReport = ({ setOpen }: MapSpeedCameraReportProps) => {
             <Toast
                 st={styles.toast}
                 show={!!error}
-                // autoHide
+                autoHide
                 type="error"
                 title="Fehler beim Melden"
                 subTitle={
