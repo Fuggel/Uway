@@ -74,7 +74,7 @@ const MapSpeedCameraReport = ({ setOpen }: MapSpeedCameraReportProps) => {
             <Toast
                 st={styles.toast}
                 show={!!error}
-                autoHide
+                // autoHide
                 type="error"
                 title="Fehler beim Melden"
                 subTitle={
@@ -94,7 +94,7 @@ const MapSpeedCameraReport = ({ setOpen }: MapSpeedCameraReportProps) => {
             />
 
             <BottomSheetComponent
-                height="20%"
+                height={deviceHeight > 1000 ? "20%" : "30%"}
                 snapPoints={["100%"]}
                 onClose={() => {
                     setOpen((prev) => ({ ...prev, speedCamera: false }));
@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: SIZES.spacing.md,
+        gap: SIZES.spacing.md,
     },
     header: {
         marginHorizontal: "auto",
-        marginVertical: SIZES.spacing.sm,
+        marginTop: SIZES.spacing.sm,
     },
     reportForm: {
-        marginTop: SIZES.spacing.md,
         justifyContent: "center",
         alignItems: "center",
         gap: SIZES.spacing.md,
@@ -164,11 +164,9 @@ const styles = StyleSheet.create({
     toast: {
         position: "absolute",
         top: deviceHeight > 1000 ? "4%" : "7%",
-        left: "25%",
-        right: "25%",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "50%",
+        left: SIZES.spacing.sm,
+        right: SIZES.spacing.sm,
+        backgroundColor: COLORS.white,
     },
 });
 
