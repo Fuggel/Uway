@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 import { distance, point } from "@turf/turf";
 
@@ -12,10 +12,12 @@ import {
     SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
     SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
 } from "@/constants/map-constants";
+import { SPEED_CAMERAS_REFETCH_INTERVAL } from "@/constants/time-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
-import { SpeedCameraAlert, SpeedCameraProperties, WarningAlertSpeed } from "@/types/ISpeed";
+import { WarningAlert } from "@/types/IMap";
+import { SpeedCameraAlert, SpeedCameraProperties } from "@/types/ISpeed";
 
 import useTextToSpeech from "./useTextToSpeech";
 
@@ -30,9 +32,16 @@ const useSpeedCameras = () => {
         useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
         PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS;
     const { startSpeech } = useTextToSpeech();
-    const [speedCameras, setSpeedCameras] = useState<{ data: FeatureCollection; alert: SpeedCameraAlert | null }>();
+    const [speedCameras, setSpeedCameras] = useState<
+        | {
+              data: FeatureCollection;
+              alert: SpeedCameraAlert | null;
+          }
+        | undefined
+    >(undefined);
+    const [newSpeedCameras, setNewSpeedCameras] = useState<FeatureCollection | null>(null);
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
-    const [speedCameraWarningText, setSpeedCameraWarningText] = useState<WarningAlertSpeed | null>(null);
+    const [speedCameraWarningText, setSpeedCameraWarningText] = useState<WarningAlert | null>(null);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -51,6 +60,22 @@ const useSpeedCameras = () => {
             }),
         enabled: showSpeedCameras && !!longitude && !!latitude,
         staleTime: Infinity,
+        refetchInterval: SPEED_CAMERAS_REFETCH_INTERVAL,
+    });
+
+    const { mutate: refetchSpeedCameras } = useMutation({
+        mutationFn: () => {
+            return fetchSpeedCameras({
+                userLonLat: { lon: longitude, lat: latitude },
+                distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
+            });
+        },
+        onSuccess: (data) => {
+            setNewSpeedCameras(data);
+        },
+        onError: (error) => {
+            console.log(`Failed to refetch speed cameras: ${error}`);
+        },
     });
 
     useEffect(() => {
@@ -82,11 +107,6 @@ const useSpeedCameras = () => {
                 if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
                     isWithinAnyWarningZone = true;
                     closestCamera = { distance: distanceToCamera };
-
-                    setSpeedCameraWarningText({
-                        ...speedCameraWarningText,
-                        maxSpeed: (feature.properties as unknown as SpeedCameraProperties).maxspeed,
-                    });
                 }
 
                 if (
@@ -105,7 +125,7 @@ const useSpeedCameras = () => {
                 setHasPlayedWarning(false);
             }
 
-            setSpeedCameras({ data, alert: closestCamera });
+            setSpeedCameras({ data: { ...data, ...newSpeedCameras }, alert: closestCamera });
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
             setHasPlayedWarning(false);
@@ -125,14 +145,13 @@ const useSpeedCameras = () => {
 
             setSpeedCameraWarningText({
                 ...speedCameraWarningText,
-                textToSpeech: `Blitzer in ${distance} Metern. Maximalgeschwindigkeit ${speedCameraWarningText?.maxSpeed} km/h`,
+                textToSpeech: `Blitzer in ${distance} Metern.`,
                 title: `Blitzer in ${distance} m.`,
-                subTitle: `Max. ${speedCameraWarningText?.maxSpeed} km/h`,
             });
         }
     }, [speedCameras?.alert]);
 
-    return { speedCameras, speedCameraWarningText, loadingSpeedCameras, errorSpeedCameras };
+    return { speedCameras, speedCameraWarningText, refetchSpeedCameras, loadingSpeedCameras, errorSpeedCameras };
 };
 
 export default useSpeedCameras;

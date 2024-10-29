@@ -12,6 +12,7 @@ import useNavigation from "@/hooks/useNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
+import { OpenSheet } from "@/types/IMap";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData, sheetTitle } from "@/utils/sheet-utils";
@@ -23,6 +24,7 @@ import MapBottomSheet from "@/components/map/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
 import MapSearch from "@/components/map/MapSearch";
+import MapSpeedCameraReport from "@/components/map/MapSpeedCameraReport";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -36,7 +38,7 @@ const Map = () => {
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const [openMapSearch, setOpenMapSearch] = useState(false);
+    const [openSheet, setOpenSheet] = useState<OpenSheet>({ search: false, speedCamera: false });
     const [currentStep, setCurrentStep] = useState(0);
     const { directions, setDirections, loadingDirections } = useNavigation({
         destinationLngLat: {
@@ -137,11 +139,12 @@ const Map = () => {
                     <Layers directions={directions} />
                 </MapView>
 
-                <MapButtons openMapSearch={() => setOpenMapSearch(true)} />
+                <MapButtons setOpen={setOpenSheet} />
 
                 <MapAlerts directions={directions} currentStep={currentStep} />
 
-                {openMapSearch && <MapSearch setOpen={setOpenMapSearch} />}
+                {openSheet.search && <MapSearch setOpen={setOpenSheet} />}
+                {openSheet.speedCamera && <MapSpeedCameraReport setOpen={setOpenSheet} />}
 
                 {showSheet && (
                     <MapBottomSheet
