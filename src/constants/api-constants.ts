@@ -6,7 +6,7 @@ export const MAPBOX_REVERSE_GEOCODING_API = "https://api.mapbox.com/search/geoco
 export const OPENSTREETMAP_API = "https://overpass-api.de/api/interpreter";
 
 // NavSync
-export const NAVSYNC_API = "https://navsync-backend.onrender.com/api";
+export const NAVSYNC_API = process.env.EXPO_PUBLIC_NAVSYNC_API_URL || "";
 
 // ParkAPI
 export const PARK_API = "https://api.parkendd.de";
