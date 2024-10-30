@@ -27,10 +27,3 @@ Track your device location for navigation experiences based on your real-time po
 ### 🗺️ Customizable Map and Sidebar
 
 Toggle between different features in the sidebar and customize the map view with various styles
-
-## Tech Stack
-
--   React Native (Expo)
--   Mapbox
--   Redux
--   Jest
