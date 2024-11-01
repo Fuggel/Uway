@@ -31,7 +31,7 @@ Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 const MapScreen = () => {
     const dispatch = useDispatch();
-    const [isSubscriptionActive, setSubscriptionActive] = useState(true);
+    const [isSubscriptionActive, setSubscriptionActive] = useState(false);
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const location = useSelector(mapNavigationSelectors.location);
