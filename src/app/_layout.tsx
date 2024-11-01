@@ -1,5 +1,8 @@
 import { Stack } from "expo-router";
+import { useEffect } from "react";
+import { Platform } from "react-native";
 import { PaperProvider } from "react-native-paper";
+import Purchases from "react-native-purchases";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
@@ -13,6 +16,25 @@ import store, { persistor } from "@/store";
 const queryClient = new QueryClient();
 
 const RootLayout = () => {
+    useEffect(() => {
+        const configurePurchases = async () => {
+            try {
+                if (Platform.OS === "ios") {
+                    Purchases.configure({ apiKey: String(process.env.EXPO_PUBLIC_RC_IOS) });
+                } else if (Platform.OS === "android") {
+                    Purchases.configure({ apiKey: String(process.env.EXPO_PUBLIC_RC_ANDROID) });
+                }
+
+                const offerings = await Purchases.getOfferings();
+                console.log(offerings);
+            } catch (error) {
+                console.log(`Error configuring purchases: ${error}`);
+            }
+        };
+
+        configurePurchases();
+    }, []);
+
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
