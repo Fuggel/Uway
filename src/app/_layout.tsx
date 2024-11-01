@@ -42,7 +42,8 @@ export default function RootLayout() {
                             <MarkerBottomSheetContextProvider>
                                 <MapFeatureContextProvider>
                                     <Stack screenOptions={{ headerShown: false }}>
-                                        <Stack.Screen name="map" />
+                                        <Stack.Screen name="index" />
+                                        <Stack.Screen name="settings" />
                                     </Stack>
                                 </MapFeatureContextProvider>
                             </MarkerBottomSheetContextProvider>
