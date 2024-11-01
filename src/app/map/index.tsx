@@ -28,7 +28,7 @@ import MapSpeedCameraReport from "@/components/map/MapSpeedCameraReport";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
-const Map = () => {
+const MapScreen = () => {
     const dispatch = useDispatch();
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
@@ -181,4 +181,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Map;
+export default MapScreen;
