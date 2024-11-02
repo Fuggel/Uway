@@ -41,9 +41,20 @@ export default function RootLayout() {
                         <UserLocationContextProvider>
                             <MarkerBottomSheetContextProvider>
                                 <MapFeatureContextProvider>
-                                    <Stack screenOptions={{ headerShown: false }}>
-                                        <Stack.Screen name="index" />
-                                        <Stack.Screen name="settings" />
+                                    <Stack>
+                                        <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
+                                        <Stack.Screen
+                                            name="settings/index"
+                                            options={{ title: "Einstellungen", headerBackTitle: "Map" }}
+                                        />
+                                        <Stack.Screen
+                                            name="settings/speed-camera/index"
+                                            options={{ title: "Blitzer" }}
+                                        />
+                                        <Stack.Screen
+                                            name="settings/incidents/index"
+                                            options={{ title: "Verkehrsdaten" }}
+                                        />
                                     </Stack>
                                 </MapFeatureContextProvider>
                             </MarkerBottomSheetContextProvider>

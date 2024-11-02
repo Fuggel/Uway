@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
-import RevenueCatUI from "react-native-purchases-ui";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
@@ -29,9 +28,8 @@ import MapSpeedCameraReport from "@/components/map/MapSpeedCameraReport";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
-const MapScreen = () => {
+const Map = () => {
     const dispatch = useDispatch();
-    const [isSubscriptionActive, setSubscriptionActive] = useState(false);
     const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const location = useSelector(mapNavigationSelectors.location);
@@ -96,21 +94,6 @@ const MapScreen = () => {
             );
         }
     }, [location]);
-
-    if (!isSubscriptionActive) {
-        return (
-            <RevenueCatUI.Paywall
-                onPurchaseCompleted={() => {
-                    console.log("Purchase completed");
-                    setSubscriptionActive(true);
-                }}
-                onRestoreCompleted={() => {
-                    console.log("Restore completed");
-                    setSubscriptionActive(false);
-                }}
-            />
-        );
-    }
 
     return (
         <>
@@ -198,4 +181,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MapScreen;
+export default Map;
