@@ -25,7 +25,7 @@ export default function RootLayout() {
                     Purchases.configure({ apiKey: String(process.env.EXPO_PUBLIC_RC_ANDROID) });
                 }
             } catch (error) {
-                console.log("Error configuring RevenueCat:", error);
+                console.log(`Failed to configure Purchases: ${error}`);
             }
         };
         configurePurchases();
