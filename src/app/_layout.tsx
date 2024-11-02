@@ -24,8 +24,6 @@ export default function RootLayout() {
                 } else if (Platform.OS === "android") {
                     Purchases.configure({ apiKey: String(process.env.EXPO_PUBLIC_RC_ANDROID) });
                 }
-                const offerings = await Purchases.getOfferings();
-                console.log(JSON.stringify(offerings, null, 2));
             } catch (error) {
                 console.log("Error configuring RevenueCat:", error);
             }
@@ -43,6 +41,8 @@ export default function RootLayout() {
                                 <MapFeatureContextProvider>
                                     <Stack>
                                         <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
+                                        <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
+                                        <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
                                         <Stack.Screen
                                             name="settings/index"
                                             options={{ title: "Einstellungen", headerBackTitle: "Map" }}
