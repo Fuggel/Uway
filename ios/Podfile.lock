@@ -88,6 +88,11 @@ PODS:
     - MapboxMobileEvents (= 1.0.10)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.10)
+  - PurchasesHybridCommon (13.7.0):
+    - RevenueCat (= 5.7.0)
+  - PurchasesHybridCommonUI (13.7.0):
+    - PurchasesHybridCommon (= 13.7.0)
+    - RevenueCatUI (= 5.7.0)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1249,6 +1254,9 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
+  - RevenueCat (5.7.0)
+  - RevenueCatUI (5.7.0):
+    - RevenueCat (= 5.7.0)
   - RNCAsyncStorage (2.0.0):
     - React-Core
   - RNGestureHandler (2.15.0):
@@ -1283,6 +1291,12 @@ PODS:
     - React
     - React-Core
     - Turf
+  - RNPaywalls (8.2.5):
+    - PurchasesHybridCommonUI (= 13.7.0)
+    - React-Core
+  - RNPurchases (8.2.5):
+    - PurchasesHybridCommon (= 13.7.0)
+    - React-Core
   - RNReanimated (3.10.1):
     - DoubleConversion
     - glog
@@ -1429,6 +1443,8 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
+  - RNPaywalls (from `../node_modules/react-native-purchases-ui`)
+  - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -1441,6 +1457,10 @@ SPEC REPOS:
     - MapboxCoreMaps
     - MapboxMaps
     - MapboxMobileEvents
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
+    - RevenueCat
+    - RevenueCatUI
     - SocketRocket
     - Turf
 
@@ -1592,6 +1612,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   rnmapbox-maps:
     :path: "../node_modules/@rnmapbox/maps"
+  RNPaywalls:
+    :path: "../node_modules/react-native-purchases-ui"
+  RNPurchases:
+    :path: "../node_modules/react-native-purchases"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -1629,6 +1653,8 @@ SPEC CHECKSUMS:
   MapboxCoreMaps: faa14a797417dc32088c98019a3ce72e46cda5cd
   MapboxMaps: f10aecadbfb7cf96368852ca313101eb4171da53
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
+  PurchasesHybridCommon: cfcbc24de93b4fd30181233f83814e29b87c48b5
+  PurchasesHybridCommonUI: d4fe9a816da5bed8a07b9038574c372a50295207
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
   RCTDeprecation: 3afceddffa65aee666dafd6f0116f1d975db1584
   RCTRequired: ec1239bc9d8bf63e10fb92bd8b26171a9258e0c1
@@ -1678,9 +1704,13 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cfbe85c3510c541ec6dc815c7729b41304b67961
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
+  RevenueCat: f4d2291de0fa400f7880e62283fb19a148567a6a
+  RevenueCatUI: b6f1f34b78fde7fd2cd0fe000bbc32adff73ce06
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNGestureHandler: 9b113eb9b7a4cbe66e1dbf4d9914281863ee0703
   rnmapbox-maps: 10396fe37a1aff03c6f2097367ca9c31e06b156c
+  RNPaywalls: e42bdbd68dfe88cf26066bce590cbe075a6d40f0
+  RNPurchases: 1564013718b159e6bc0cd15ab797fb05fa50f663
   RNReanimated: 35f9ac9c3ac42d0497ebd1cce5c39d7687a8493e
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
   RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec

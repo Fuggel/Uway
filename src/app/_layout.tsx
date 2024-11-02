@@ -15,7 +15,7 @@ import store, { persistor } from "@/store";
 
 const queryClient = new QueryClient();
 
-const RootLayout = () => {
+export default function RootLayout() {
     useEffect(() => {
         const configurePurchases = async () => {
             try {
@@ -24,14 +24,10 @@ const RootLayout = () => {
                 } else if (Platform.OS === "android") {
                     Purchases.configure({ apiKey: String(process.env.EXPO_PUBLIC_RC_ANDROID) });
                 }
-
-                const offerings = await Purchases.getOfferings();
-                console.log(offerings);
             } catch (error) {
-                console.log(`Error configuring purchases: ${error}`);
+                console.log(`Failed to configure Purchases: ${error}`);
             }
         };
-
         configurePurchases();
     }, []);
 
@@ -43,8 +39,22 @@ const RootLayout = () => {
                         <UserLocationContextProvider>
                             <MarkerBottomSheetContextProvider>
                                 <MapFeatureContextProvider>
-                                    <Stack screenOptions={{ headerShown: false }}>
-                                        <Stack.Screen name="index" />
+                                    <Stack>
+                                        <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
+                                        <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
+                                        <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
+                                        <Stack.Screen
+                                            name="settings/index"
+                                            options={{ title: "Einstellungen", headerBackTitle: "Map" }}
+                                        />
+                                        <Stack.Screen
+                                            name="settings/speed-camera/index"
+                                            options={{ title: "Blitzer" }}
+                                        />
+                                        <Stack.Screen
+                                            name="settings/incidents/index"
+                                            options={{ title: "Verkehrsdaten" }}
+                                        />
                                     </Stack>
                                 </MapFeatureContextProvider>
                             </MarkerBottomSheetContextProvider>
@@ -54,6 +64,4 @@ const RootLayout = () => {
             </PersistGate>
         </Provider>
     );
-};
-
-export default RootLayout;
+}
