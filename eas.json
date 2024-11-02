@@ -15,8 +15,30 @@
                 "simulator": true
             }
         },
-        "production": {},
-        "test": {}
+        "production": {
+            "env": {
+                "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
+                "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
+                "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
+                "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY",
+                "EXPO_PUBLIC_GEOAPIFY_API_KEY": "EXPO_PUBLIC_GEOAPIFY_API_KEY",
+                "EXPO_PUBLIC_NAVSYNC_API_URL": "EXPO_PUBLIC_NAVSYNC_API_URL",
+                "EXPO_PUBLIC_RC_IOS": "EXPO_PUBLIC_RC_IOS",
+                "EXPO_PUBLIC_RC_ANDROID": "EXPO_PUBLIC_RC_ANDROID"
+            }
+        },
+        "test": {
+            "env": {
+                "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN",
+                "EXPO_SECRET_MAPBOX_ACCESS_TOKEN": "EXPO_SECRET_MAPBOX_ACCESS_TOKEN",
+                "EXPO_PUBLIC_TANKERKOENIG_API_KEY": "EXPO_PUBLIC_TANKERKOENIG_API_KEY",
+                "EXPO_PUBLIC_TOMTOM_API_KEY": "EXPO_PUBLIC_TOMTOM_API_KEY",
+                "EXPO_PUBLIC_GEOAPIFY_API_KEY": "EXPO_PUBLIC_GEOAPIFY_API_KEY",
+                "EXPO_PUBLIC_NAVSYNC_API_URL": "EXPO_PUBLIC_NAVSYNC_API_URL",
+                "EXPO_PUBLIC_RC_IOS": "EXPO_PUBLIC_RC_IOS",
+                "EXPO_PUBLIC_RC_ANDROID": "EXPO_PUBLIC_RC_ANDROID"
+            }
+        }
     },
     "submit": {
         "production": {}
