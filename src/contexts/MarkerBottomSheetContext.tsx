@@ -9,7 +9,7 @@ interface MarkerProperties {
 
 interface ContextProps {
     markerData: MarkerProperties | null;
-    showSheet: boolean;
+    showMarkerSheet: boolean;
     openSheet: <T>(type: MarkerSheet, properties: T) => void;
     closeSheet: () => void;
 }
@@ -20,27 +20,27 @@ interface ProviderProps {
 
 export const MarkerBottomSheetContext = createContext<ContextProps>({
     markerData: null,
-    showSheet: false,
+    showMarkerSheet: false,
     openSheet: () => {},
     closeSheet: () => {},
 });
 
 export const MarkerBottomSheetContextProvider: React.FC<ProviderProps> = ({ children }) => {
-    const [showSheet, setShowSheet] = useState(false);
+    const [showMarkerSheet, setShowMarkerSheet] = useState(false);
     const [markerData, setMarkerData] = useState<MarkerProperties | null>(null);
 
     const openSheet = <T,>(type: MarkerSheet, properties: T) => {
         setMarkerData({ type, properties });
-        setShowSheet(true);
+        setShowMarkerSheet(true);
     };
 
     const closeSheet = () => {
-        setShowSheet(false);
+        setShowMarkerSheet(false);
         setMarkerData(null);
     };
 
     return (
-        <MarkerBottomSheetContext.Provider value={{ markerData, showSheet, openSheet, closeSheet }}>
+        <MarkerBottomSheetContext.Provider value={{ markerData, showMarkerSheet, openSheet, closeSheet }}>
             {children}
         </MarkerBottomSheetContext.Provider>
     );

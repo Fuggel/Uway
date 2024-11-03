@@ -30,7 +30,7 @@ Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 const Map = () => {
     const dispatch = useDispatch();
-    const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
+    const { showMarkerSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -146,7 +146,7 @@ const Map = () => {
                 {openSheet.search && <MapSearch setOpen={setOpenSheet} />}
                 {openSheet.speedCamera && <MapSpeedCameraReport setOpen={setOpenSheet} />}
 
-                {showSheet && (
+                {showMarkerSheet && (
                     <MapBottomSheet
                         title={sheetTitle(markerData?.type, markerData?.properties)}
                         data={sheetData(markerData?.type, markerData?.properties)}
@@ -159,7 +159,7 @@ const Map = () => {
                 )}
             </View>
 
-            {(location || directions) && !showSheet && (
+            {(location || directions) && !showMarkerSheet && (
                 <MapNavigation
                     directions={directions}
                     setDirections={setDirections}
