@@ -41,4 +41,4 @@ yarn-error.*
 expo-env.d.ts
 # @end expo-cli
 
-android/app/src/main/res/values/developer-config.xml
+secret*
