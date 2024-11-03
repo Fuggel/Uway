@@ -118,7 +118,7 @@ const Map = () => {
                         animationDuration={500}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
+                        heading={tracking || navigationView ? userLocation?.coords.heading : 0}
                         zoomLevel={
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
