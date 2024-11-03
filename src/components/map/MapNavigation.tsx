@@ -11,8 +11,8 @@ import useInstructions from "@/hooks/useInstructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { Direction, RouteProfileType } from "@/types/INavigation";
 
-import Button from "../common/Button";
 import Card from "../common/Card";
+import IconButton from "../common/IconButton";
 import Text from "../common/Text";
 
 interface MapNavigationProps {
@@ -95,10 +95,10 @@ const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep 
                         )}
                     </View>
 
-                    <View style={styles.navigationActionButtons}>
-                        <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                    <View style={styles.navigationActionIconButtons}>
+                        <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
                         {!isNavigationMode && (
-                            <Button
+                            <IconButton
                                 icon="navigation"
                                 onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
                                 type="success"
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         maxWidth: "65%",
         gap: SIZES.spacing.xs,
     },
-    navigationActionButtons: {
+    navigationActionIconButtons: {
         flexDirection: "row",
         justifyContent: "space-around",
         maxWidth: "30%",

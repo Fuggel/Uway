@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: deviceHeight > 1000 ? "2%" : "4%",
         left: SIZES.spacing.sm,
-        width: "100%",
         pointerEvents: "none",
     },
     stepInstruction: {

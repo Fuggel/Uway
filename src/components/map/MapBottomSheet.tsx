@@ -4,7 +4,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 
 import BottomSheetComponent from "../common/BottomSheet";
-import Button from "../common/Button";
+import IconButton from "../common/IconButton";
 import Text from "../common/Text";
 
 interface MapBottomSheetProps {
@@ -26,7 +26,12 @@ const MapBottomSheet = ({ title, data, onClose, gasStation }: MapBottomSheetProp
                         {title}
                     </Text>
                     {gasStation?.show && (
-                        <Button icon="directions" size="lg" onPress={gasStation.onPress} style={styles.button} />
+                        <IconButton
+                            icon="directions"
+                            size="lg"
+                            onPress={gasStation.onPress}
+                            style={styles.iconButton}
+                        />
                     )}
                 </View>
 
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         flex: 1,
     },
-    button: {
+    iconButton: {
         position: "absolute",
         right: 0,
     },
