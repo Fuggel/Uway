@@ -30,7 +30,7 @@ const MapButtons = ({ setOpen }: MapButtonsProps) => {
         <View style={styles.container}>
             {userLocation && (
                 <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                    <Button icon="camera" onPress={() => setOpen((prev) => ({ ...prev, speedCamera: true }))} />
+                    <Button icon="alert" onPress={() => setOpen((prev) => ({ ...prev, speedCamera: true }))} />
                 </View>
             )}
 
