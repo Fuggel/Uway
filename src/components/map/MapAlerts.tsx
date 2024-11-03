@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     speedLimitImage: {
-        width: 75,
-        height: 75,
+        width: SIZES.iconSize.xxl,
+        height: SIZES.iconSize.xxl,
     },
 });
 
