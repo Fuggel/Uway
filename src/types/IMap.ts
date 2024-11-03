@@ -55,3 +55,13 @@ export interface OpenSheet {
     search: boolean;
     speedCamera: boolean;
 }
+
+export enum FirstLayerId {
+    ROUTE = "route-layer",
+    PARKING_AVAILABILITY = "parking-availability-layer-0",
+    GAS_STATION = "gas-station-layer-0",
+    SPEED_CAMERA = "speed-camera-layer-0",
+    INCIDENT_LINE = "incident-line-layer-0",
+    INCIDENT_SYMBOL = "incident-symbol-layer-0",
+    USER_LOCATION = "mapboxUserLocationPulseCircle",
+}

@@ -15,6 +15,7 @@ import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
+import { FirstLayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { ParkAvailabilityProperties } from "@/types/IParking";
 import { MarkerSheet } from "@/types/ISheet";
@@ -49,6 +50,7 @@ const Layers = ({ directions }: LayersProps) => {
                     style={{
                         lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                     }}
+                    belowLayerId={FirstLayerId.INCIDENT_LINE}
                 />
             )}
             {parkAvailability?.features?.map((feature, i) => (
@@ -75,7 +77,7 @@ const Layers = ({ directions }: LayersProps) => {
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}
-                        belowLayerId="mapboxUserLocationPulseCircle"
+                        belowLayerId={FirstLayerId.GAS_STATION}
                     />
                 </View>
             ))}
@@ -94,7 +96,7 @@ const Layers = ({ directions }: LayersProps) => {
                         ),
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                     }}
-                    belowLayerId="mapboxUserLocationPulseCircle"
+                    belowLayerId={FirstLayerId.SPEED_CAMERA}
                 />
             ))}
             {speedCameras?.speedCameras?.data?.features?.map((feature, i) => (
@@ -113,7 +115,7 @@ const Layers = ({ directions }: LayersProps) => {
                         iconImage: "speed-camera",
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.6, 20, 0.9],
                     }}
-                    belowLayerId="mapboxUserLocationPulseCircle"
+                    belowLayerId={FirstLayerId.INCIDENT_SYMBOL}
                 />
             ))}
             {incidents?.incidents?.data?.incidents?.map((incident, i) => (
@@ -127,7 +129,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                         }}
-                        belowLayerId="mapboxUserLocationPulseCircle"
+                        belowLayerId={FirstLayerId.PARKING_AVAILABILITY}
                     />
                     <SymbolLayer
                         key={i}
@@ -167,7 +169,7 @@ const Layers = ({ directions }: LayersProps) => {
                                 "incident-caution",
                             ],
                         }}
-                        belowLayerId="mapboxUserLocationPulseCircle"
+                        belowLayerId={FirstLayerId.USER_LOCATION}
                     />
                 </View>
             ))}
