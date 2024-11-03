@@ -1,5 +1,8 @@
 import axios from "axios";
 
+import { Position, point } from "@turf/helpers";
+import { distance } from "@turf/turf";
+
 import { MAPBOX_REVERSE_GEOCODING_API } from "@/constants/api-constants";
 import { MAP_CONFIG } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
@@ -166,4 +169,18 @@ export async function reverseGeocode(lon: number, lat: number): Promise<ReverseG
         name: name,
         full_address: fullAddress,
     };
+}
+
+export function distanceToPointText(params: { pos1: Position; pos2: Position }) {
+    const point1 = point(params.pos1);
+    const point2 = point(params.pos2);
+
+    const distanceInKm = distance(point1, point2, { units: "kilometers" });
+
+    if (distanceInKm >= 1) {
+        return `${distanceInKm.toFixed(1)} km`;
+    } else {
+        const distanceInMeters = distanceInKm * 1000;
+        return `${Math.round(distanceInMeters)} m`;
+    }
 }
