@@ -21,11 +21,13 @@ import Toast from "../common/Toast";
 interface MapAlertsProps {
     directions: Direction | null;
     currentStep: number;
+    speedCameraSuccess: boolean;
+    speedCameraError: any;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
+const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraError }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -76,16 +78,15 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
                                 );
                             })}
 
-                    {speedCameras?.speedCameras?.alert && speedCameras.speedCameraWarningText && (
+                    {speedCameras?.speedCameras?.alert && speedCameras?.speedCameraWarningText?.title && (
                         <Toast
                             show={!!speedCameras.speedCameras.alert}
                             type="error"
                             title={speedCameras.speedCameraWarningText.title}
-                            subTitle={speedCameras.speedCameraWarningText.subTitle}
                         />
                     )}
 
-                    {incidents?.incidents?.alert && incidents.incidentWarningText && (
+                    {incidents?.incidents?.alert && incidents?.incidentWarningText?.title && (
                         <Toast
                             show={!!incidents.incidents.alert}
                             type="error"
@@ -93,20 +94,40 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
                             title={incidents.incidentWarningText.title}
                         />
                     )}
+
+                    <Toast
+                        show={!!speedCameraError}
+                        autoHide
+                        type="error"
+                        title="Fehler beim Melden"
+                        subTitle={
+                            speedCameraError?.response?.status === 403
+                                ? "Du kannst nur alle 30 Minuten einen Blitzer melden."
+                                : "Bitte versuche es erneut."
+                        }
+                    />
+
+                    <Toast
+                        show={speedCameraSuccess}
+                        autoHide
+                        type="success"
+                        title="Blitzer gemeldet"
+                        subTitle="Danke für deine Meldung."
+                    />
                 </View>
             </View>
 
             <View style={styles.absoluteBottom}>
                 <View style={styles.speedContainer}>
                     {userLocation?.coords && (
-                        <Toast show type="info">
+                        <View>
                             <Text type="dark" style={styles.alertMsg}>
                                 {currentSpeed}
                             </Text>
                             <Text type="dark" style={{ textAlign: "center" }}>
                                 km/h
                             </Text>
-                        </Toast>
+                        </View>
                     )}
 
                     {speedLimits?.alert && (
@@ -133,7 +154,7 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         gap: SIZES.spacing.sm,
-        width: "55%",
+        // width: "55%",
     },
     instructionsContainer: {
         borderRadius: SIZES.borderRadius.sm,
@@ -158,6 +179,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: SIZES.spacing.sm,
+        backgroundColor: COLORS.white_transparent,
+        padding: SIZES.spacing.sm,
+        borderRadius: SIZES.borderRadius.sm,
     },
     alertMsg: {
         fontWeight: "bold",

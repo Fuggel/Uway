@@ -3,12 +3,14 @@ import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
+import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useNavigation from "@/hooks/useNavigation";
+import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
@@ -46,6 +48,18 @@ const Map = () => {
             lat: location?.lat,
         },
         setCurrentStep,
+    });
+    const {
+        mutate: refetchSpeedCamera,
+        isSuccess: mutatedSpeedCameraSuccess,
+        error: mutatedSpeedCameraError,
+    } = useMutation({
+        mutationFn: reportSpeedCamera,
+        onSuccess: () => {
+            setTimeout(() => {
+                setOpenSheet((prev) => ({ ...prev, speedCamera: false }));
+            }, 3000);
+        },
     });
 
     const defaultSettings = {
@@ -141,10 +155,21 @@ const Map = () => {
 
                 <MapButtons setOpen={setOpenSheet} />
 
-                <MapAlerts directions={directions} currentStep={currentStep} />
+                <MapAlerts
+                    directions={directions}
+                    currentStep={currentStep}
+                    speedCameraSuccess={mutatedSpeedCameraSuccess}
+                    speedCameraError={mutatedSpeedCameraError}
+                />
 
                 {openSheet.search && <MapSearch setOpen={setOpenSheet} />}
-                {openSheet.speedCamera && <MapSpeedCameraReport setOpen={setOpenSheet} />}
+                {openSheet.speedCamera && (
+                    <MapSpeedCameraReport
+                        refetchData={refetchSpeedCamera}
+                        error={mutatedSpeedCameraError}
+                        setOpen={setOpenSheet}
+                    />
+                )}
 
                 {showMarkerSheet && (
                     <MapBottomSheet

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Image, ImageProps, StyleSheet, View, ViewStyle } from "react-native";
-import { Divider, Icon } from "react-native-paper";
+import { Icon } from "react-native-paper";
 import { useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -13,16 +13,15 @@ import Text from "./Text";
 interface ToastProps {
     show: boolean;
     type: "success" | "error" | "warning" | "info";
-    title?: string;
+    title: string;
     subTitle?: string;
     image?: ImageProps;
-    children?: React.ReactNode;
     autoHide?: boolean;
     duration?: number;
     st?: ViewStyle;
 }
 
-const Toast = ({ show, type, title, subTitle, image, children, autoHide, duration = 3000, st }: ToastProps) => {
+const Toast = ({ show, type, title, subTitle, image, autoHide, duration = 3000, st }: ToastProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [isVisible, setIsVisible] = useState(show);
 
@@ -55,7 +54,7 @@ const Toast = ({ show, type, title, subTitle, image, children, autoHide, duratio
         }
     };
 
-    const getColor = () => {
+    const getIconColor = () => {
         switch (type) {
             case "success":
                 return COLORS.success;
@@ -74,25 +73,18 @@ const Toast = ({ show, type, title, subTitle, image, children, autoHide, duratio
 
     return (
         <View style={{ ...dynamicThemeStyles({ ...styles.container }, determineTheme(mapStyle)), ...st }}>
-            {title && (
-                <View style={styles.header}>
-                    {!image ? (
-                        <Icon source={getIcon()} color={getColor()} size={SIZES.iconSize.lg} />
-                    ) : (
-                        <Image
-                            resizeMode="contain"
-                            source={image}
-                            style={{ width: SIZES.iconSize.lg, height: SIZES.iconSize.lg }}
-                        />
-                    )}
+            <View style={styles.header}>
+                {!image ? (
+                    <Icon source={getIcon()} color={getIconColor()} size={SIZES.iconSize.xl} />
+                ) : (
+                    <Image resizeMode="contain" source={image} style={styles.image} />
+                )}
 
-                    <Text style={{ fontWeight: "bold", color: getColor(), textAlign: "center" }}>{title}</Text>
-                    {subTitle && <Text style={{ color: getColor(), textAlign: "center" }}>{subTitle}</Text>}
+                <View>
+                    <Text style={styles.title}>{title}</Text>
+                    {subTitle && <Text style={styles.subTitle}>{subTitle}</Text>}
                 </View>
-            )}
-
-            {title && children && <Divider style={styles.divider} />}
-            {children && <View>{children}</View>}
+            </View>
         </View>
     );
 };
@@ -100,15 +92,27 @@ const Toast = ({ show, type, title, subTitle, image, children, autoHide, duratio
 const styles = StyleSheet.create({
     container: {
         backgroundColor: COLORS.white_transparent,
-        padding: SIZES.spacing.sm,
+        padding: 20,
         borderRadius: SIZES.borderRadius.sm,
+        alignSelf: "flex-start",
+        minWidth: "30%",
     },
     header: {
         alignItems: "center",
-        gap: SIZES.spacing.xs,
+        gap: SIZES.spacing.sm,
+        flexDirection: "row",
+        flexWrap: "wrap",
     },
-    divider: {
-        marginVertical: SIZES.spacing.xs,
+    image: {
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
+    },
+    title: {
+        fontWeight: "bold",
+        color: COLORS.dark,
+    },
+    subTitle: {
+        color: COLORS.dark,
     },
 });
 
