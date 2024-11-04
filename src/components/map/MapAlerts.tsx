@@ -32,7 +32,7 @@ const MapAlerts = ({ directions, currentStep }: MapAlertsProps) => {
     const { speedLimits } = useSpeedLimits();
 
     const userSpeed = userLocation?.coords?.speed;
-    const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(1) : "0";
+    const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(0) : "0";
 
     const currentInstruction = directions?.legs[0].steps[currentStep].maneuver.instruction;
 
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     alertMsg: {
         fontWeight: "bold",
         textAlign: "center",
+        fontSize: SIZES.fontSize.lg,
     },
     speedLimitImage: {
         width: SIZES.iconSize.xxl,
