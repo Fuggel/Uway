@@ -45,7 +45,18 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
         }
     };
 
-    return <RNText style={{ ...getTextStyle(), ...getTypeStyle(), ...style }}>{children}</RNText>;
+    return (
+        <RNText
+            style={{
+                fontFamily: "Inter",
+                ...getTextStyle(),
+                ...getTypeStyle(),
+                ...style,
+            }}
+        >
+            {children}
+        </RNText>
+    );
 };
 
 export default Text;

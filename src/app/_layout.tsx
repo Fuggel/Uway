@@ -1,4 +1,5 @@
-import { Stack } from "expo-router";
+import { useFonts } from "expo-font";
+import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { PaperProvider } from "react-native-paper";
@@ -13,9 +14,19 @@ import { MarkerBottomSheetContextProvider } from "@/contexts/MarkerBottomSheetCo
 import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
 import store, { persistor } from "@/store";
 
+SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
+    const [fontsLoaded, error] = useFonts({
+        Inter: require("../assets/fonts/Inter-VariableFont.ttf"),
+    });
+
+    useEffect(() => {
+        if (error) throw error;
+        if (fontsLoaded) SplashScreen.hideAsync();
+    }, [fontsLoaded, error]);
+
     useEffect(() => {
         const configurePurchases = async () => {
             try {
@@ -30,6 +41,8 @@ export default function RootLayout() {
         };
         configurePurchases();
     }, []);
+
+    if (!fontsLoaded && !error) return null;
 
     return (
         <Provider store={store}>
