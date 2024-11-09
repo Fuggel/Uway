@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         // width: "55%",
     },
     instructionsContainer: {
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
         padding: SIZES.spacing.sm,
         backgroundColor: COLORS.secondary,
         gap: SIZES.spacing.xs,
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
         gap: SIZES.spacing.sm,
         backgroundColor: COLORS.primary,
         padding: SIZES.spacing.sm,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     alertMsg: {
         fontWeight: "bold",

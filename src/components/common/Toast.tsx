@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: COLORS.primary,
         padding: 20,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
         alignSelf: "flex-start",
         minWidth: "30%",
     },

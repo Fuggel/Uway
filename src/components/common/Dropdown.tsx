@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         width: 75,
         height: 75,
         marginLeft: SIZES.spacing.sm,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     itemLabel: {
         marginLeft: SIZES.spacing.sm,

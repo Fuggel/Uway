@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.primary,
         width: SIZES.iconSize.xl,
         height: SIZES.iconSize.xl,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     iconButtonLarge: {
         width: SIZES.iconSize.xxl,
