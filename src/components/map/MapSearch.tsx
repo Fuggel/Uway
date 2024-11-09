@@ -12,11 +12,9 @@ import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
-import { mapViewSelectors } from "@/store/mapView";
 import { OpenSheet } from "@/types/IMap";
 import { SearchLocation } from "@/types/ISearch";
 import { distanceToPointText } from "@/utils/map-utils";
-import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import BottomSheetComponent from "../common/BottomSheet";
 import Searchbar from "../common/Searchbar";
@@ -32,7 +30,6 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
-    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const { text, isListening, startListening, stopListening } = useSpeechToText();
     const { suggestions } = useSearch({ query: searchQuery });
@@ -76,7 +73,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                     speechToText={{ isListening, startListening, stopListening }}
                 >
                     {showSuggestions && searchQuery && (
-                        <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
+                        <ScrollView style={styles.suggestions}>
                             {suggestions && suggestions.length > 0 ? (
                                 suggestions.map((suggestion, i) => (
                                     <TouchableOpacity
@@ -102,7 +99,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                                         <View style={styles.suggestionItem}>
                                             <View style={styles.suggestionPlace}>
                                                 <MaterialCommunityIcons name="map-marker" size={24} color="black" />
-                                                <Text type="dark">{suggestion.formatted}</Text>
+                                                <Text>{suggestion.formatted}</Text>
                                             </View>
                                             <Text type="secondary" textStyle="caption">
                                                 {distanceToPointText({
@@ -121,7 +118,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                     )}
 
                     {!searchQuery && (
-                        <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
+                        <ScrollView style={styles.suggestions}>
                             {recentSearches.length > 0 ? (
                                 recentSearches.map((location, i) => (
                                     <TouchableOpacity
@@ -132,7 +129,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                                         <View style={styles.suggestionItem}>
                                             <View style={styles.suggestionPlace}>
                                                 <MaterialCommunityIcons name="history" size={24} color="black" />
-                                                <Text type="dark">{location?.formatted}</Text>
+                                                <Text>{location?.formatted}</Text>
                                             </View>
 
                                             <Text type="secondary" textStyle="caption">

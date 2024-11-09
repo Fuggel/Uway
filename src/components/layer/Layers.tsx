@@ -81,7 +81,7 @@ const Layers = ({ directions }: LayersProps) => {
                                     ${feature.properties?.free} / ${feature.properties?.total}
                                 `,
                             textSize: SIZES.fontSize.sm,
-                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
+                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.medium_gray,
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}
@@ -191,7 +191,7 @@ const Layers = ({ directions }: LayersProps) => {
                     styles={{
                         pulse: {
                             circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 15, 18, 18, 20, 21],
-                            circleColor: COLORS.primary,
+                            circleColor: COLORS.secondary,
                             circleOpacity: 0.2,
                         },
                         background: {
@@ -200,7 +200,7 @@ const Layers = ({ directions }: LayersProps) => {
                         },
                         foreground: {
                             circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 6, 18, 9, 20, 12],
-                            circleColor: COLORS.primary,
+                            circleColor: COLORS.secondary,
                         },
                     }}
                     headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 0, 18, 1.1, 20, 1.3]}

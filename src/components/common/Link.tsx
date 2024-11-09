@@ -19,7 +19,7 @@ const Link = ({ to }: LinkProps) => {
             type="white"
             size="md"
             style={styles.iconButton}
-            onPress={() => router.push(to)}
+            onPress={() => router.push(to as never)}
         />
     );
 };

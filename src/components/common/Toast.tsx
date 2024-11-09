@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { Image, ImageProps, StyleSheet, View, ViewStyle } from "react-native";
 import { Icon } from "react-native-paper";
-import { useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import { mapViewSelectors } from "@/store/mapView";
-import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
 
 import Text from "./Text";
 
@@ -22,7 +19,6 @@ interface ToastProps {
 }
 
 const Toast = ({ show, type, title, subTitle, image, autoHide, duration = 3000, st }: ToastProps) => {
-    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const [isVisible, setIsVisible] = useState(show);
 
     useEffect(() => {
@@ -72,7 +68,7 @@ const Toast = ({ show, type, title, subTitle, image, autoHide, duration = 3000, 
     if (!show || !isVisible) return null;
 
     return (
-        <View style={{ ...dynamicThemeStyles({ ...styles.container }, determineTheme(mapStyle)), ...st }}>
+        <View style={{ ...styles.container, ...st }}>
             <View style={styles.header}>
                 {!image ? (
                     <Icon source={getIcon()} color={getIconColor()} size={SIZES.iconSize.xl} />
@@ -91,7 +87,7 @@ const Toast = ({ show, type, title, subTitle, image, autoHide, duration = 3000, 
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: COLORS.white_transparent,
+        backgroundColor: COLORS.primary,
         padding: 20,
         borderRadius: SIZES.borderRadius.sm,
         alignSelf: "flex-start",
@@ -109,10 +105,10 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "bold",
-        color: COLORS.dark,
+        color: COLORS.white,
     },
     subTitle: {
-        color: COLORS.dark,
+        color: COLORS.white,
     },
 });
 

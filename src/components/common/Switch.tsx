@@ -13,7 +13,7 @@ const Switch = ({ checked, onChange, disabled }: SwitchProps) => {
         <RNPSwitch
             value={checked}
             thumbColor={checked ? COLORS.white : COLORS.white}
-            trackColor={{ false: disabled ? COLORS.ultra_light_gray : COLORS.gray, true: COLORS.primary }}
+            trackColor={{ false: disabled ? COLORS.light_gray : COLORS.medium_gray, true: COLORS.primary }}
             disabled={disabled}
             onValueChange={onChange}
         />

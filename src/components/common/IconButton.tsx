@@ -8,8 +8,8 @@ import { SIZES } from "@/constants/size-constants";
 interface IconButtonProps {
     icon: IconSource;
     onPress: () => void;
-    type?: "primary" | "success" | "error" | "white";
-    size?: "sm" | "md" | "lg" | "xl";
+    type?: "primary" | "secondary" | "success" | "error" | "white";
+    size?: "sm" | "md" | "lg" | "xl" | "xxl";
     style?: ViewStyle;
 }
 
@@ -24,6 +24,8 @@ const IconButton = ({ icon, onPress, type, size, style }: IconButtonProps) => {
                 return SIZES.iconSize.lg;
             case "xl":
                 return SIZES.iconSize.xl;
+            case "xxl":
+                return SIZES.iconSize.xxl;
             default:
                 return 24;
         }
@@ -33,6 +35,8 @@ const IconButton = ({ icon, onPress, type, size, style }: IconButtonProps) => {
         switch (type) {
             case "primary":
                 return COLORS.primary;
+            case "secondary":
+                return COLORS.secondary;
             case "success":
                 return COLORS.success;
             case "error":

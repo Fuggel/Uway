@@ -20,9 +20,7 @@ const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
     const renderItem = (item: DropdownItem) => (
         <View style={styles.itemContainer}>
             {item.img && <Image source={item.img} style={styles.img} />}
-            <Text type="dark" style={styles.itemLabel}>
-                {item.label}
-            </Text>
+            <Text style={styles.itemLabel}>{item.label}</Text>
         </View>
     );
 
@@ -45,7 +43,7 @@ const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
                 <MaterialCommunityIcons
                     name={icon as any}
                     style={styles.icon}
-                    color={COLORS.gray}
+                    color={COLORS.medium_gray}
                     size={SIZES.iconSize.sm}
                 />
             )}
@@ -57,7 +55,7 @@ const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
 const styles = StyleSheet.create({
     dropdown: {
         height: SIZES.spacing.xl,
-        borderColor: COLORS.gray,
+        borderColor: COLORS.medium_gray,
         borderWidth: 1.5,
         borderRadius: SIZES.borderRadius.sm,
         paddingHorizontal: SIZES.spacing.sm,
@@ -65,7 +63,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: SIZES.spacing.sm,
-        color: COLORS.gray,
+        color: COLORS.medium_gray,
     },
     placeholderStyle: {
         fontSize: SIZES.fontSize.md,

@@ -12,9 +12,7 @@ interface NoResultsProps {
 const NoResults = ({ text }: NoResultsProps) => {
     return (
         <View style={styles.noResultsContainer}>
-            <Text type="dark" style={styles.noResultsText}>
-                {text}
-            </Text>
+            <Text style={styles.noResultsText}>{text}</Text>
         </View>
     );
 };
@@ -27,6 +25,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     noResultsText: {
-        color: COLORS.gray,
+        color: COLORS.medium_gray,
     },
 });

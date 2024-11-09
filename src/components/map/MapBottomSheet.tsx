@@ -38,9 +38,7 @@ const MapBottomSheet = ({ title, data, onClose, gasStation }: MapBottomSheetProp
                 {data?.map((item, i) => (
                     <View key={i} style={styles.itemContainer}>
                         <Text type="secondary">{item.label}:</Text>
-                        <Text type="dark" style={styles.textValue}>
-                            {item.value}
-                        </Text>
+                        <Text style={styles.textValue}>{item.value}</Text>
                     </View>
                 ))}
             </View>

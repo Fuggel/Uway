@@ -69,9 +69,7 @@ const MapSpeedCameraReport = ({ refetchData, error, setOpen }: MapSpeedCameraRep
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text type="dark" textStyle="header">
-                        Blitzer melden
-                    </Text>
+                    <Text textStyle="header">Blitzer melden</Text>
                 </View>
 
                 <View style={styles.reportForm}>
@@ -92,7 +90,7 @@ const MapSpeedCameraReport = ({ refetchData, error, setOpen }: MapSpeedCameraRep
                     <View style={styles.buttonContainer}>
                         <Button
                             mode="contained"
-                            style={{ backgroundColor: COLORS.gray }}
+                            style={{ backgroundColor: COLORS.medium_gray }}
                             onPress={() => setOpen((prev) => ({ ...prev, speedCamera: false }))}
                         >
                             Abbrechen

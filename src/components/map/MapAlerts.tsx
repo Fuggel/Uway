@@ -60,7 +60,7 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
 
                                 return (
                                     <View key={index} style={styles.instructionsContainer}>
-                                        <Text type="dark" style={styles.stepInstruction}>
+                                        <Text type="white" style={styles.stepInstruction}>
                                             {step.maneuver.instruction}
                                         </Text>
 
@@ -69,10 +69,10 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
                                                 <MaterialCommunityIcons
                                                     name={arrowDir}
                                                     size={SIZES.iconSize.xl}
-                                                    color={COLORS.primary}
+                                                    color={COLORS.white}
                                                 />
                                             )}
-                                            <Text type="secondary" textStyle="caption">
+                                            <Text type="white" textStyle="caption">
                                                 {step.distance.toFixed(0)} m
                                             </Text>
                                         </View>
@@ -123,10 +123,10 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
                 <View style={styles.speedContainer}>
                     {userLocation?.coords && (
                         <View>
-                            <Text type="dark" style={styles.alertMsg}>
+                            <Text type="white" style={styles.alertMsg}>
                                 {currentSpeed}
                             </Text>
-                            <Text type="dark" style={{ textAlign: "center" }}>
+                            <Text type="white" style={{ textAlign: "center" }}>
                                 km/h
                             </Text>
                         </View>
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     instructionsContainer: {
         borderRadius: SIZES.borderRadius.sm,
         padding: SIZES.spacing.sm,
-        backgroundColor: COLORS.white_transparent,
+        backgroundColor: COLORS.secondary,
         gap: SIZES.spacing.xs,
     },
     absoluteBottom: {
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: SIZES.spacing.sm,
-        backgroundColor: COLORS.white_transparent,
+        backgroundColor: COLORS.primary,
         padding: SIZES.spacing.sm,
         borderRadius: SIZES.borderRadius.sm,
     },
