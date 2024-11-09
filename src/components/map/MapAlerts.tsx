@@ -46,6 +46,8 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
         }
     }, [isNavigationMode, currentInstruction, currentStep]);
 
+    if (!userLocation) return null;
+
     return (
         <>
             <View style={styles.absoluteTop}>
