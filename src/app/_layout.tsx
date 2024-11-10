@@ -66,6 +66,10 @@ export default function RootLayout() {
                                         <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
                                         <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
                                         <Stack.Screen
+                                            name="(modal)/search"
+                                            options={{ presentation: "modal", headerShown: false }}
+                                        />
+                                        <Stack.Screen
                                             name="settings/index"
                                             options={{ title: "Einstellungen", headerBackTitle: "Map" }}
                                         />

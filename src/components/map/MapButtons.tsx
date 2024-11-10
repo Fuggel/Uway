@@ -7,17 +7,12 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { OpenSheet, SheetType } from "@/types/ISheet";
 
 import IconButton from "../common/IconButton";
 
 const deviceHeight = Dimensions.get("window").height;
 
-interface MapButtonsProps {
-    openSheet: OpenSheet;
-}
-
-const MapButtons = ({ openSheet }: MapButtonsProps) => {
+const MapButtons = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const { userLocation } = useContext(UserLocationContext);
@@ -28,7 +23,7 @@ const MapButtons = ({ openSheet }: MapButtonsProps) => {
         <View style={styles.topRight}>
             {userLocation && !isNavigationMode && (
                 <View style={styles.iconButton}>
-                    <IconButton type="white" icon="magnify" onPress={() => openSheet({ type: SheetType.SEARCH })} />
+                    <IconButton type="white" icon="magnify" onPress={() => router.push("/(modal)/search")} />
                 </View>
             )}
 

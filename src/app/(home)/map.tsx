@@ -147,7 +147,7 @@ const Map = () => {
                     <Layers directions={directions} />
                 </MapView>
 
-                <MapButtons openSheet={openSheet} />
+                <MapButtons />
 
                 <MapAlerts
                     directions={directions}

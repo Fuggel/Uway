@@ -7,7 +7,6 @@ import { SheetType } from "@/types/ISheet";
 
 import BottomSheetComponent from "../common/BottomSheet";
 import MapMarkerInfo from "./MapMarkerInfo";
-import MapSearch from "./MapSearch";
 import MapSpeedCameraReport from "./MapSpeedCameraReport";
 
 interface MapBottomSheetProps {
@@ -38,7 +37,6 @@ const MapBottomSheet = ({ onClose, markerProps, reportProps }: MapBottomSheetPro
             {sheetData.type === SheetType.REPORT && (
                 <MapSpeedCameraReport refetchData={reportProps.refetchData} onClose={onClose} />
             )}
-            {sheetData.type === SheetType.SEARCH && <MapSearch onClose={onClose} />}
         </BottomSheetComponent>
     );
 };

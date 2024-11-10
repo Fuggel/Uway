@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -55,101 +54,92 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     }, [text]);
 
     return (
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
-            <TouchableOpacity activeOpacity={1} onPress={Keyboard.dismiss}>
-                <Searchbar
-                    placeholder="Suche nach Ort"
-                    onChangeText={handleSearch}
-                    value={location?.formatted || searchQuery}
-                    speechToText={{ isListening, startListening, stopListening }}
-                >
-                    {showSuggestions && searchQuery && (
-                        <ScrollView style={styles.suggestions}>
-                            {suggestions && suggestions.length > 0 ? (
-                                suggestions.map((suggestion, i) => (
-                                    <TouchableOpacity
-                                        key={i}
-                                        style={styles.scrollContainer}
-                                        onPress={() =>
-                                            handleSelectLocation({
-                                                formatted: suggestion.formatted,
-                                                lat: suggestion.lat,
-                                                lon: suggestion.lon,
-                                                country: suggestion.country,
-                                                country_code: suggestion.country_code,
-                                                city: suggestion.city,
-                                                district: suggestion.district,
-                                                address_line1: suggestion.address_line1,
-                                                address_line2: suggestion.address_line2,
-                                                category: suggestion.category,
-                                                place_id: suggestion.place_id,
-                                                suburb: suggestion.suburb,
-                                            })
-                                        }
-                                    >
-                                        <View style={styles.suggestionItem}>
-                                            <View style={styles.suggestionPlace}>
-                                                <MaterialCommunityIcons name="map-marker" size={24} color="black" />
-                                                <Text>{suggestion.formatted}</Text>
-                                            </View>
-                                            <Text type="secondary" textStyle="caption">
-                                                {distanceToPointText({
-                                                    pos1: [longitude, latitude],
-                                                    pos2: [suggestion.lon, suggestion.lat],
-                                                })}
-                                            </Text>
-                                        </View>
-                                        <Divider style={styles.divider} />
-                                    </TouchableOpacity>
-                                ))
-                            ) : (
-                                <NoResults text="Keine Ergebnisse gefunden." />
-                            )}
-                        </ScrollView>
+        <Searchbar
+            placeholder="Suche nach Ort"
+            onChangeText={handleSearch}
+            value={location?.formatted || searchQuery}
+            speechToText={{ isListening, startListening, stopListening }}
+        >
+            {showSuggestions && searchQuery && (
+                <View style={styles.suggestions}>
+                    {suggestions && suggestions.length > 0 ? (
+                        suggestions.map((suggestion, i) => (
+                            <TouchableOpacity
+                                key={i}
+                                style={styles.scrollContainer}
+                                onPress={() =>
+                                    handleSelectLocation({
+                                        formatted: suggestion.formatted,
+                                        lat: suggestion.lat,
+                                        lon: suggestion.lon,
+                                        country: suggestion.country,
+                                        country_code: suggestion.country_code,
+                                        city: suggestion.city,
+                                        district: suggestion.district,
+                                        address_line1: suggestion.address_line1,
+                                        address_line2: suggestion.address_line2,
+                                        category: suggestion.category,
+                                        place_id: suggestion.place_id,
+                                        suburb: suggestion.suburb,
+                                    })
+                                }
+                            >
+                                <View style={styles.suggestionItem}>
+                                    <View style={styles.suggestionPlace}>
+                                        <MaterialCommunityIcons name="map-marker" size={24} color="black" />
+                                        <Text>{suggestion.formatted}</Text>
+                                    </View>
+                                    <Text type="secondary" textStyle="caption">
+                                        {distanceToPointText({
+                                            pos1: [longitude, latitude],
+                                            pos2: [suggestion.lon, suggestion.lat],
+                                        })}
+                                    </Text>
+                                </View>
+                                <Divider style={styles.divider} />
+                            </TouchableOpacity>
+                        ))
+                    ) : (
+                        <NoResults text="Keine Ergebnisse gefunden." />
                     )}
+                </View>
+            )}
 
-                    {!searchQuery && (
-                        <ScrollView style={styles.suggestions}>
-                            {recentSearches.length > 0 ? (
-                                recentSearches.map((location, i) => (
-                                    <TouchableOpacity
-                                        key={i}
-                                        style={styles.scrollContainer}
-                                        onPress={() => handleSelectLocation(location as SearchLocation)}
-                                    >
-                                        <View style={styles.suggestionItem}>
-                                            <View style={styles.suggestionPlace}>
-                                                <MaterialCommunityIcons name="history" size={24} color="black" />
-                                                <Text>{location?.formatted}</Text>
-                                            </View>
+            {!searchQuery && (
+                <View style={styles.suggestions}>
+                    {recentSearches.length > 0 ? (
+                        recentSearches.map((location, i) => (
+                            <TouchableOpacity
+                                key={i}
+                                style={styles.scrollContainer}
+                                onPress={() => handleSelectLocation(location as SearchLocation)}
+                            >
+                                <View style={styles.suggestionItem}>
+                                    <View style={styles.suggestionPlace}>
+                                        <MaterialCommunityIcons name="history" size={24} color="black" />
+                                        <Text>{location?.formatted}</Text>
+                                    </View>
 
-                                            <Text type="secondary" textStyle="caption">
-                                                {distanceToPointText({
-                                                    pos1: [longitude, latitude],
-                                                    pos2: [location.lon, location.lat],
-                                                })}
-                                            </Text>
-                                        </View>
-                                        <Divider style={styles.divider} />
-                                    </TouchableOpacity>
-                                ))
-                            ) : (
-                                <NoResults text="Keine letzten Suchen." />
-                            )}
-                        </ScrollView>
+                                    <Text type="secondary" textStyle="caption">
+                                        {distanceToPointText({
+                                            pos1: [longitude, latitude],
+                                            pos2: [location.lon, location.lat],
+                                        })}
+                                    </Text>
+                                </View>
+                                <Divider style={styles.divider} />
+                            </TouchableOpacity>
+                        ))
+                    ) : (
+                        <NoResults text="Keine letzten Suchen." />
                     )}
-                </Searchbar>
-            </TouchableOpacity>
-        </KeyboardAvoidingView>
+                </View>
+            )}
+        </Searchbar>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        marginTop: SIZES.spacing.xl,
-        paddingHorizontal: SIZES.spacing.xs,
-        height: "100%",
-    },
     suggestions: {
         padding: SIZES.spacing.sm,
         marginTop: 2,
@@ -157,6 +147,7 @@ const styles = StyleSheet.create({
     },
     suggestionPlace: {
         flexDirection: "row",
+        maxWidth: "75%",
         alignItems: "center",
         gap: SIZES.spacing.xs,
     },
@@ -171,12 +162,6 @@ const styles = StyleSheet.create({
     },
     divider: {
         marginTop: SIZES.spacing.xs,
-    },
-    item: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: SIZES.spacing.sm,
-        flexWrap: "wrap",
     },
 });
 

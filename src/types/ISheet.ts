@@ -1,5 +1,4 @@
 export enum SheetType {
-    SEARCH = "search",
     REPORT = "report",
     MARKER = "marker",
 }
