@@ -146,11 +146,10 @@ const Layers = ({ directions }: LayersProps) => {
                             lineColor: "#FF0000",
                         }}
                         belowLayerId={
-                            showParkAvailability ? FirstLayerId.PARKING_AVAILABILITY : FirstLayerId.USER_LOCATION
+                            showParkAvailability ? FirstLayerId.PARKING_AVAILABILITY : FirstLayerId.INCIDENT_SYMBOL
                         }
                     />
                     <SymbolLayer
-                        key={i}
                         sourceId={`incident-symbol-source-${i}`}
                         layerId={`incident-symbol-layer-${i}`}
                         coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
