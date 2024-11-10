@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Keyboard, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +15,6 @@ import { mapSearchSelectors } from "@/store/mapSearch";
 import { SearchLocation } from "@/types/ISearch";
 import { distanceToPointText } from "@/utils/map-utils";
 
-import BottomSheetComponent from "../common/BottomSheet";
 import Searchbar from "../common/Searchbar";
 import Text from "../common/Text";
 import NoResults from "../ui/NoResults";
@@ -56,15 +55,8 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     }, [text]);
 
     return (
-        <BottomSheetComponent
-            height="100%"
-            snapPoints={["85%", "100%"]}
-            onClose={() => {
-                onClose();
-                dispatch(mapNavigationActions.setSearchQuery(""));
-            }}
-        >
-            <TouchableOpacity activeOpacity={1} style={styles.container} onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+            <TouchableOpacity activeOpacity={1} onPress={Keyboard.dismiss}>
                 <Searchbar
                     placeholder="Suche nach Ort"
                     onChangeText={handleSearch}
@@ -148,7 +140,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                     )}
                 </Searchbar>
             </TouchableOpacity>
-        </BottomSheetComponent>
+        </KeyboardAvoidingView>
     );
 };
 

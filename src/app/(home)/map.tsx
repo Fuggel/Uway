@@ -14,7 +14,7 @@ import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
-import { MarkerSheet, SheetType } from "@/types/ISheet";
+import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 
@@ -24,8 +24,6 @@ import MapAlerts from "@/components/map/MapAlerts";
 import MapBottomSheet from "@/components/map/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
-import MapSearch from "@/components/map/MapSearch";
-import MapSpeedCameraReport from "@/components/map/MapSpeedCameraReport";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
@@ -158,19 +156,19 @@ const Map = () => {
                     speedCameraError={mutatedSpeedCameraError}
                 />
 
-                {showSheet && sheetData?.type === SheetType.SEARCH && <MapSearch onClose={closeSheet} />}
-                {showSheet && sheetData?.type === SheetType.REPORT && (
-                    <MapSpeedCameraReport refetchData={refetchSpeedCamera} onClose={closeSheet} />
-                )}
-
-                {showSheet && sheetData?.type === SheetType.MARKER && (
+                {showSheet && (
                     <MapBottomSheet
-                        title={sheetTitle(sheetData?.markerType, sheetData?.markerProperties)}
-                        data={openSheetData(sheetData?.markerType, sheetData?.markerProperties)}
                         onClose={closeSheet}
-                        gasStation={{
-                            show: sheetData?.markerType === MarkerSheet.GAS_STATION,
-                            onPress: () => handleGasStationPress(),
+                        markerProps={{
+                            title: sheetTitle(sheetData?.markerType, sheetData?.markerProperties),
+                            data: openSheetData(sheetData?.markerType, sheetData?.markerProperties),
+                            gasStation: {
+                                show: sheetData?.markerType === MarkerSheet.GAS_STATION,
+                                onPress: () => handleGasStationPress(),
+                            },
+                        }}
+                        reportProps={{
+                            refetchData: refetchSpeedCamera,
                         }}
                     />
                 )}

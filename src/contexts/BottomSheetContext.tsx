@@ -1,5 +1,7 @@
 import { createContext, useState } from "react";
+import { useDispatch } from "react-redux";
 
+import { mapNavigationActions } from "@/store/mapNavigation";
 import { MarkerSheet, OpenSheet, SheetType } from "@/types/ISheet";
 
 interface SheetProperties {
@@ -27,6 +29,7 @@ export const BottomSheetContext = createContext<ContextProps>({
 });
 
 export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }) => {
+    const dispatch = useDispatch();
     const [showSheet, setShowSheet] = useState(false);
     const [sheetData, setSheetData] = useState<SheetProperties | null>(null);
 
@@ -38,6 +41,7 @@ export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }
     const closeSheet = () => {
         setShowSheet(false);
         setSheetData(null);
+        dispatch(mapNavigationActions.setSearchQuery(""));
     };
 
     return (
