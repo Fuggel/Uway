@@ -1,15 +1,12 @@
 import { useContext, useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
-import { SegmentedButtons } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-import { COLORS } from "@/constants/colors-constants";
-import { ROUTE_PROFILES } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { Direction, RouteProfileType } from "@/types/INavigation";
+import { Direction } from "@/types/INavigation";
 
 import Card from "../common/Card";
 import IconButton from "../common/IconButton";
@@ -29,7 +26,6 @@ const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep 
     const dispatch = useDispatch();
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const profileType = useSelector(mapNavigationSelectors.navigationProfile);
     const { remainingDistance, remainingTime } = useInstructions({
         currentStep,
         setCurrentStep,
@@ -77,22 +73,6 @@ const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep 
                         <Text type="success" textStyle="header" style={{ textAlign: "center" }}>
                             {duration} · {distance}
                         </Text>
-                        {!isNavigationMode && (
-                            <SegmentedButtons
-                                value={profileType}
-                                onValueChange={(value) =>
-                                    dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
-                                }
-                                buttons={ROUTE_PROFILES.map((p) => ({
-                                    value: p.value,
-                                    icon: p.icon,
-                                    checkedColor: COLORS.white,
-                                    style: {
-                                        backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
-                                    },
-                                }))}
-                            />
-                        )}
                     </View>
 
                     <View style={styles.navigationActionIconButtons}>
