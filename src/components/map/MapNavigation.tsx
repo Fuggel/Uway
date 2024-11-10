@@ -58,11 +58,17 @@ const MapNavigation = ({ setOpen, directions, setDirections, currentStep, setCur
         dispatch(mapNavigationActions.setSearchQuery(""));
     };
 
+    const determineArrivalTime = () => {
+        const now = new Date();
+        now.setSeconds(now.getSeconds() + remainingTime);
+        setArrivalTime(toGermanDate({ isoDate: now.toISOString(), showTimeOnly: true }));
+    };
+
     useEffect(() => {
+        determineArrivalTime();
+
         const intervalId = setInterval(() => {
-            const now = new Date();
-            now.setSeconds(now.getSeconds() + remainingTime);
-            setArrivalTime(toGermanDate({ isoDate: now.toISOString(), showTimeOnly: true }));
+            determineArrivalTime();
         }, ARRIVAL_TIME_REFETCH_INTERVAL);
 
         return () => clearInterval(intervalId);
