@@ -81,7 +81,7 @@ const Layers = ({ directions }: LayersProps) => {
                                     ${feature.properties?.free} / ${feature.properties?.total}
                                 `,
                             textSize: SIZES.fontSize.sm,
-                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.medium_gray,
+                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.primary,
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}

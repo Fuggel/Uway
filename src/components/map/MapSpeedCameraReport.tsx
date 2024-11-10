@@ -90,7 +90,7 @@ const MapSpeedCameraReport = ({ refetchData, error, setOpen }: MapSpeedCameraRep
                     <View style={styles.buttonContainer}>
                         <Button
                             mode="contained"
-                            style={{ backgroundColor: COLORS.medium_gray }}
+                            style={{ backgroundColor: COLORS.gray }}
                             onPress={() => setOpen((prev) => ({ ...prev, speedCamera: false }))}
                         >
                             Abbrechen

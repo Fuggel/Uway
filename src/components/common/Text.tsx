@@ -31,7 +31,7 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
             case "primary":
                 return { color: COLORS.primary };
             case "secondary":
-                return { color: COLORS.medium_gray };
+                return { color: COLORS.gray };
             case "white":
                 return { color: COLORS.white };
             case "success":
@@ -48,7 +48,8 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
     return (
         <RNText
             style={{
-                fontFamily: "Inter",
+                fontFamily: "Lato-Regular",
+                lineHeight: SIZES.spacing.md,
                 ...getTextStyle(),
                 ...getTypeStyle(),
                 ...style,

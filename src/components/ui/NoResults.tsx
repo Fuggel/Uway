@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     noResultsText: {
-        color: COLORS.medium_gray,
+        color: COLORS.gray,
     },
 });
