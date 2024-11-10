@@ -22,6 +22,7 @@ const MapButtons = ({ setOpen }: MapButtonsProps) => {
     const router = useRouter();
     const { userLocation } = useContext(UserLocationContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const tracking = useSelector(mapNavigationSelectors.tracking);
 
     return (
         <>
@@ -40,13 +41,15 @@ const MapButtons = ({ setOpen }: MapButtonsProps) => {
                     <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
                 </View>
 
-                <View style={styles.iconButton}>
-                    <IconButton
-                        type="white"
-                        icon="crosshairs-gps"
-                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                    />
-                </View>
+                {!tracking && (
+                    <View style={styles.iconButton}>
+                        <IconButton
+                            type="white"
+                            icon="crosshairs-gps"
+                            onPress={() => dispatch(mapNavigationActions.setTracking(true))}
+                        />
+                    </View>
+                )}
             </View>
 
             <View style={styles.bottomRight}>
