@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
         left: SIZES.spacing.sm,
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
+        pointerEvents: "none",
     },
     alertContainer: {
         gap: SIZES.spacing.sm,

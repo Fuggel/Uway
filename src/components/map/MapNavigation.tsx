@@ -159,10 +159,11 @@ const styles = StyleSheet.create({
         left: SIZES.spacing.sm,
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
+        pointerEvents: "box-none",
     },
     navigationCard: {
         backgroundColor: COLORS.primary,
-        paddingVertical: SIZES.spacing.md,
+        paddingVertical: SIZES.spacing.sm,
         paddingHorizontal: SIZES.spacing.md,
         borderRadius: SIZES.borderRadius.md,
         flexDirection: "row",
