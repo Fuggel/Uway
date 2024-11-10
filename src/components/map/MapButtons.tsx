@@ -25,46 +25,31 @@ const MapButtons = ({ setOpen }: MapButtonsProps) => {
     const tracking = useSelector(mapNavigationSelectors.tracking);
 
     return (
-        <>
-            <View style={styles.topRight}>
-                {userLocation && !isNavigationMode && (
-                    <View style={styles.iconButton}>
-                        <IconButton
-                            type="white"
-                            icon="magnify"
-                            onPress={() => setOpen((prev) => ({ ...prev, search: true }))}
-                        />
-                    </View>
-                )}
-
+        <View style={styles.topRight}>
+            {userLocation && !isNavigationMode && (
                 <View style={styles.iconButton}>
-                    <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
+                    <IconButton
+                        type="white"
+                        icon="magnify"
+                        onPress={() => setOpen((prev) => ({ ...prev, search: true }))}
+                    />
                 </View>
+            )}
 
-                {!tracking && (
-                    <View style={styles.iconButton}>
-                        <IconButton
-                            type="white"
-                            icon="crosshairs-gps"
-                            onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                        />
-                    </View>
-                )}
+            <View style={styles.iconButton}>
+                <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
             </View>
 
-            <View style={styles.bottomRight}>
-                {userLocation && (
-                    <View style={{ ...styles.iconButton, ...styles.iconButtonLarge }}>
-                        <IconButton
-                            size="xl"
-                            type="white"
-                            icon="plus-circle"
-                            onPress={() => setOpen((prev) => ({ ...prev, speedCamera: true }))}
-                        />
-                    </View>
-                )}
-            </View>
-        </>
+            {!tracking && (
+                <View style={styles.iconButton}>
+                    <IconButton
+                        type="white"
+                        icon="crosshairs-gps"
+                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
+                    />
+                </View>
+            )}
+        </View>
     );
 };
 
@@ -75,12 +60,6 @@ const styles = StyleSheet.create({
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },
-    bottomRight: {
-        position: "absolute",
-        bottom: deviceHeight > 1000 ? "2%" : "4%",
-        right: SIZES.spacing.sm,
-        gap: SIZES.spacing.sm,
-    },
     iconButton: {
         justifyContent: "center",
         alignItems: "center",
@@ -88,10 +67,6 @@ const styles = StyleSheet.create({
         width: SIZES.iconSize.xl,
         height: SIZES.iconSize.xl,
         borderRadius: SIZES.borderRadius.md,
-    },
-    iconButtonLarge: {
-        width: SIZES.iconSize.xxl,
-        height: SIZES.iconSize.xxl,
     },
 });
 

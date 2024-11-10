@@ -51,7 +51,7 @@ const IconButton = ({ icon, onPress, type, size, style }: IconButtonProps) => {
     return (
         <TouchableOpacity>
             <RNPIconButton
-                style={style}
+                style={{ margin: 0, ...style }}
                 icon={icon}
                 size={getIconButtonSize()}
                 iconColor={getIconButtonColor()}

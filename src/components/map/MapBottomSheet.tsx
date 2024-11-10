@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         paddingHorizontal: SIZES.spacing.md,
+        paddingBottom: SIZES.spacing.md,
     },
     titleContainer: {
         flexDirection: "row",

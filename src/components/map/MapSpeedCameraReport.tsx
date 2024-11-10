@@ -18,13 +18,12 @@ import Text from "../common/Text";
 
 interface MapSpeedCameraReportProps {
     refetchData: UseMutateFunction<any, unknown, any, unknown>;
-    error: any;
     setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapSpeedCameraReport = ({ refetchData, error, setOpen }: MapSpeedCameraReportProps) => {
+const MapSpeedCameraReport = ({ refetchData, setOpen }: MapSpeedCameraReportProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useContext(MapFeatureContext);
     const [deviceId, setDeviceId] = useState("");
@@ -108,7 +107,6 @@ const MapSpeedCameraReport = ({ refetchData, error, setOpen }: MapSpeedCameraRep
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         paddingHorizontal: SIZES.spacing.md,
         gap: SIZES.spacing.md,
     },

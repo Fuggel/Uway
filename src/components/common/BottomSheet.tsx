@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: "transparent",
+        zIndex: 999999,
     },
     contentContainer: {
         flex: 1,

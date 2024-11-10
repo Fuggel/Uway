@@ -164,11 +164,7 @@ const Map = () => {
 
                 {openSheet.search && <MapSearch setOpen={setOpenSheet} />}
                 {openSheet.speedCamera && (
-                    <MapSpeedCameraReport
-                        refetchData={refetchSpeedCamera}
-                        error={mutatedSpeedCameraError}
-                        setOpen={setOpenSheet}
-                    />
+                    <MapSpeedCameraReport refetchData={refetchSpeedCamera} setOpen={setOpenSheet} />
                 )}
 
                 {showMarkerSheet && (
@@ -184,8 +180,9 @@ const Map = () => {
                 )}
             </View>
 
-            {(location || directions) && !showMarkerSheet && (
+            {location && directions && (
                 <MapNavigation
+                    setOpen={setOpenSheet}
                     directions={directions}
                     setDirections={setDirections}
                     currentStep={currentStep}
