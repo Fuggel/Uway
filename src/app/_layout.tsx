@@ -9,8 +9,8 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { BottomSheetContextProvider } from "@/contexts/BottomSheetContext";
 import { MapFeatureContextProvider } from "@/contexts/MapFeatureContext";
-import { MarkerBottomSheetContextProvider } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
 import store, { persistor } from "@/store";
 
@@ -59,7 +59,7 @@ export default function RootLayout() {
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
                         <UserLocationContextProvider>
-                            <MarkerBottomSheetContextProvider>
+                            <BottomSheetContextProvider>
                                 <MapFeatureContextProvider>
                                     <Stack>
                                         <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
@@ -79,7 +79,7 @@ export default function RootLayout() {
                                         />
                                     </Stack>
                                 </MapFeatureContextProvider>
-                            </MarkerBottomSheetContextProvider>
+                            </BottomSheetContextProvider>
                         </UserLocationContextProvider>
                     </QueryClientProvider>
                 </PaperProvider>

@@ -12,7 +12,6 @@ import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
-import { OpenSheet } from "@/types/IMap";
 import { SearchLocation } from "@/types/ISearch";
 import { distanceToPointText } from "@/utils/map-utils";
 
@@ -22,10 +21,10 @@ import Text from "../common/Text";
 import NoResults from "../ui/NoResults";
 
 interface MapSearchProps {
-    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
+    onClose: () => void;
 }
 
-const MapSearch = ({ setOpen }: MapSearchProps) => {
+const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
@@ -46,7 +45,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
     const handleSelectLocation = (newLocation: SearchLocation) => {
         dispatch(mapNavigationActions.setLocation(newLocation));
         setShowSuggestions(false);
-        setOpen((prev) => ({ ...prev, search: false }));
+        onClose();
     };
 
     useEffect(() => {
@@ -61,7 +60,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
             height="100%"
             snapPoints={["85%", "100%"]}
             onClose={() => {
-                setOpen((prev) => ({ ...prev, search: false }));
+                onClose();
                 dispatch(mapNavigationActions.setSearchQuery(""));
             }}
         >

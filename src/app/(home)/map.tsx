@@ -7,17 +7,16 @@ import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
-import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useNavigation from "@/hooks/useNavigation";
 import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
-import { OpenSheet } from "@/types/IMap";
-import { MarkerSheet } from "@/types/ISheet";
+import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
-import { sheetData, sheetTitle } from "@/utils/sheet-utils";
+import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 
 import Loading from "@/components/common/Loading";
 import Layers from "@/components/layer/Layers";
@@ -32,7 +31,7 @@ Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 const Map = () => {
     const dispatch = useDispatch();
-    const { showMarkerSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
+    const { sheetData, showSheet, openSheet, closeSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -40,7 +39,6 @@ const Map = () => {
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const [openSheet, setOpenSheet] = useState<OpenSheet>({ search: false, speedCamera: false });
     const [currentStep, setCurrentStep] = useState(0);
     const { directions, setDirections, loadingDirections } = useNavigation({
         destinationLngLat: {
@@ -56,9 +54,7 @@ const Map = () => {
     } = useMutation({
         mutationFn: reportSpeedCamera,
         onSuccess: () => {
-            setTimeout(() => {
-                setOpenSheet((prev) => ({ ...prev, speedCamera: false }));
-            }, 3000);
+            setTimeout(() => closeSheet(), 3000);
         },
     });
 
@@ -77,22 +73,22 @@ const Map = () => {
     }, [tracking, navigationMode, navigationView]);
 
     const handleGasStationPress = () => {
-        const street = markerData?.properties.street;
-        const houseNumber = markerData?.properties.houseNumber || "";
-        const postcode = markerData?.properties.postCode || "";
-        const city = markerData?.properties.place || "";
+        const street = sheetData?.markerProperties.street;
+        const houseNumber = sheetData?.markerProperties.houseNumber || "";
+        const postcode = sheetData?.markerProperties.postCode || "";
+        const city = sheetData?.markerProperties.place || "";
         const country = "Deutschland";
 
         const newLocation = {
             country,
             city,
-            lon: markerData?.properties.lng,
-            lat: markerData?.properties.lat,
+            lon: sheetData?.markerProperties.lng,
+            lat: sheetData?.markerProperties.lat,
             formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
             address_line1: `${street} ${houseNumber}`,
             address_line2: `${postcode} ${city}, ${country}`,
             category: "commercial.gas",
-            place_id: markerData?.properties.id,
+            place_id: sheetData?.markerProperties.id,
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));
@@ -153,7 +149,7 @@ const Map = () => {
                     <Layers directions={directions} />
                 </MapView>
 
-                <MapButtons setOpen={setOpenSheet} />
+                <MapButtons openSheet={openSheet} />
 
                 <MapAlerts
                     directions={directions}
@@ -162,18 +158,18 @@ const Map = () => {
                     speedCameraError={mutatedSpeedCameraError}
                 />
 
-                {openSheet.search && <MapSearch setOpen={setOpenSheet} />}
-                {openSheet.speedCamera && (
-                    <MapSpeedCameraReport refetchData={refetchSpeedCamera} setOpen={setOpenSheet} />
+                {showSheet && sheetData?.type === SheetType.SEARCH && <MapSearch onClose={closeSheet} />}
+                {showSheet && sheetData?.type === SheetType.REPORT && (
+                    <MapSpeedCameraReport refetchData={refetchSpeedCamera} onClose={closeSheet} />
                 )}
 
-                {showMarkerSheet && (
+                {showSheet && sheetData?.type === SheetType.MARKER && (
                     <MapBottomSheet
-                        title={sheetTitle(markerData?.type, markerData?.properties)}
-                        data={sheetData(markerData?.type, markerData?.properties)}
+                        title={sheetTitle(sheetData?.markerType, sheetData?.markerProperties)}
+                        data={openSheetData(sheetData?.markerType, sheetData?.markerProperties)}
                         onClose={closeSheet}
                         gasStation={{
-                            show: markerData?.type === MarkerSheet.GAS_STATION,
+                            show: sheetData?.markerType === MarkerSheet.GAS_STATION,
                             onPress: () => handleGasStationPress(),
                         }}
                     />
@@ -182,7 +178,7 @@ const Map = () => {
 
             {location && directions && (
                 <MapNavigation
-                    setOpen={setOpenSheet}
+                    openSheet={openSheet}
                     directions={directions}
                     setDirections={setDirections}
                     currentStep={currentStep}

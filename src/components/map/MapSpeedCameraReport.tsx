@@ -10,7 +10,6 @@ import { SPEED_CAMERA_TYPE } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import { OpenSheet } from "@/types/IMap";
 import { SpeedCameraType } from "@/types/ISpeed";
 
 import BottomSheetComponent from "../common/BottomSheet";
@@ -18,12 +17,12 @@ import Text from "../common/Text";
 
 interface MapSpeedCameraReportProps {
     refetchData: UseMutateFunction<any, unknown, any, unknown>;
-    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
+    onClose: () => void;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapSpeedCameraReport = ({ refetchData, setOpen }: MapSpeedCameraReportProps) => {
+const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useContext(MapFeatureContext);
     const [deviceId, setDeviceId] = useState("");
@@ -59,13 +58,7 @@ const MapSpeedCameraReport = ({ refetchData, setOpen }: MapSpeedCameraReportProp
     };
 
     return (
-        <BottomSheetComponent
-            height={deviceHeight > 1000 ? "20%" : "30%"}
-            snapPoints={["100%"]}
-            onClose={() => {
-                setOpen((prev) => ({ ...prev, speedCamera: false }));
-            }}
-        >
+        <BottomSheetComponent height={deviceHeight > 1000 ? "20%" : "30%"} snapPoints={["100%"]} onClose={onClose}>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text textStyle="header">Blitzer melden</Text>
@@ -87,11 +80,7 @@ const MapSpeedCameraReport = ({ refetchData, setOpen }: MapSpeedCameraReportProp
                     />
 
                     <View style={styles.buttonContainer}>
-                        <Button
-                            mode="contained"
-                            style={{ backgroundColor: COLORS.gray }}
-                            onPress={() => setOpen((prev) => ({ ...prev, speedCamera: false }))}
-                        >
+                        <Button mode="contained" style={{ backgroundColor: COLORS.gray }} onPress={onClose}>
                             Abbrechen
                         </Button>
 

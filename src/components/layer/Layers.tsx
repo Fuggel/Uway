@@ -7,8 +7,8 @@ import { Point } from "@turf/helpers";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import useLocationPermission from "@/hooks/useLocationPermissions";
@@ -22,7 +22,7 @@ import { GasStation } from "@/types/IGasStation";
 import { FirstLayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { ParkAvailabilityProperties } from "@/types/IParking";
-import { MarkerSheet } from "@/types/ISheet";
+import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 import { getStationIcon } from "@/utils/map-utils";
@@ -41,7 +41,7 @@ const Layers = ({ directions }: LayersProps) => {
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
-    const { openSheet } = useContext(MarkerBottomSheetContext);
+    const { openSheet } = useContext(BottomSheetContext);
     const { setUserLocation } = useContext(UserLocationContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { hasLocationPermissions } = useLocationPermission();
@@ -68,10 +68,11 @@ const Layers = ({ directions }: LayersProps) => {
                         layerId={`parking-availability-layer-${i}`}
                         coordinates={(feature.geometry as Point).coordinates}
                         onPress={() => {
-                            openSheet<ParkAvailabilityProperties>(
-                                MarkerSheet.PARKING,
-                                feature.properties as ParkAvailabilityProperties
-                            );
+                            openSheet<ParkAvailabilityProperties>({
+                                type: SheetType.MARKER,
+                                markerType: MarkerSheet.PARKING,
+                                markerProperties: feature.properties as ParkAvailabilityProperties,
+                            });
                         }}
                         properties={feature.properties}
                         style={{
@@ -95,7 +96,13 @@ const Layers = ({ directions }: LayersProps) => {
                     sourceId={`gas-station-source-${i}`}
                     layerId={`gas-station-layer-${i}`}
                     coordinates={(feature.geometry as Point).coordinates}
-                    onPress={() => openSheet<GasStation>(MarkerSheet.GAS_STATION, feature.properties as GasStation)}
+                    onPress={() =>
+                        openSheet<GasStation>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.GAS_STATION,
+                            markerProperties: feature.properties as GasStation,
+                        })
+                    }
                     properties={feature.properties}
                     style={{
                         iconImage: getStationIcon(
@@ -114,10 +121,11 @@ const Layers = ({ directions }: LayersProps) => {
                     layerId={`speed-camera-layer-${i}`}
                     coordinates={(feature.geometry as Point).coordinates}
                     onPress={() =>
-                        openSheet<SpeedCameraProperties>(
-                            MarkerSheet.SPEED_CAMERA,
-                            feature.properties as SpeedCameraProperties
-                        )
+                        openSheet<SpeedCameraProperties>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.SPEED_CAMERA,
+                            markerProperties: feature.properties as SpeedCameraProperties,
+                        })
                     }
                     style={{
                         iconImage: "speed-camera",
@@ -147,10 +155,11 @@ const Layers = ({ directions }: LayersProps) => {
                         layerId={`incident-symbol-layer-${i}`}
                         coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
                         onPress={() =>
-                            openSheet<IncidentProperties>(
-                                MarkerSheet.INCIDENT,
-                                incident.properties as IncidentProperties
-                            )
+                            openSheet<IncidentProperties>({
+                                type: SheetType.MARKER,
+                                markerType: MarkerSheet.INCIDENT,
+                                markerProperties: incident.properties,
+                            })
                         }
                         properties={incident.properties}
                         style={{

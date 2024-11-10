@@ -9,8 +9,8 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { OpenSheet } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
+import { OpenSheet, SheetType } from "@/types/ISheet";
 import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
 import { determineSpeedLimitIcon } from "@/utils/map-utils";
@@ -20,7 +20,7 @@ import IconButton from "../common/IconButton";
 import Text from "../common/Text";
 
 interface MapNavigationProps {
-    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
+    openSheet: OpenSheet;
     directions: Direction | null;
     setDirections: (directions: Direction | null) => void;
     currentStep: number;
@@ -29,7 +29,7 @@ interface MapNavigationProps {
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapNavigation = ({ setOpen, directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
+const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const location = useSelector(mapNavigationSelectors.location);
@@ -95,7 +95,7 @@ const MapNavigation = ({ setOpen, directions, setDirections, currentStep, setCur
                     size="xl"
                     type="white"
                     icon="plus-circle"
-                    onPress={() => setOpen((prev) => ({ ...prev, speedCamera: true }))}
+                    onPress={() => openSheet({ type: SheetType.REPORT })}
                 />
             </View>
 

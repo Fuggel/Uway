@@ -51,11 +51,6 @@ export interface WarningAlert {
     subTitle?: string;
 }
 
-export interface OpenSheet {
-    search: boolean;
-    speedCamera: boolean;
-}
-
 export enum FirstLayerId {
     ROUTE = "route-layer",
     PARKING_AVAILABILITY = "parking-availability-layer-0",
