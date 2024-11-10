@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,6 +18,7 @@ import Switch from "@/components/common/Switch";
 import { SettingsItem, SettingsSection } from "@/components/settings/SettingsItem";
 
 const Settings = () => {
+    const router = useRouter();
     const dispatch = useDispatch();
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
@@ -48,10 +50,10 @@ const Settings = () => {
 
             <SettingsSection title="Map Daten">
                 <SettingsItem title="Blitzer">
-                    <Link to="/settings/speed-camera" />
+                    <Link to={() => router.push("/settings/speed-camera")} />
                 </SettingsItem>
                 <SettingsItem title="Verkehrsdaten">
-                    <Link to="/settings/incidents" />
+                    <Link to={() => router.push("/settings/incidents")} />
                 </SettingsItem>
                 <SettingsItem title="Geschwindigkeitsbegrenzungen">
                     <Switch

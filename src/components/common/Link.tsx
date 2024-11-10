@@ -1,27 +1,17 @@
-import { useRouter } from "expo-router";
-import React from "react";
 import { StyleSheet } from "react-native";
+import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
 
 import { COLORS } from "@/constants/colors-constants";
 
 import IconButton from "./IconButton";
 
 interface LinkProps {
-    to: string;
+    to: () => void;
+    icon?: IconSource;
 }
 
-const Link = ({ to }: LinkProps) => {
-    const router = useRouter();
-
-    return (
-        <IconButton
-            icon="chevron-right"
-            type="white"
-            size="md"
-            style={styles.iconButton}
-            onPress={() => router.push(to as never)}
-        />
-    );
+const Link = ({ to, icon }: LinkProps) => {
+    return <IconButton icon={icon || "chevron-right"} type="white" size="md" style={styles.iconButton} onPress={to} />;
 };
 
 export default Link;
