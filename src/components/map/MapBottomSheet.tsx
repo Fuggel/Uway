@@ -6,9 +6,9 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { SheetType } from "@/types/ISheet";
 
 import BottomSheetComponent from "../common/BottomSheet";
+import MapMarkerInfo from "./MapMarkerInfo";
 import MapSearch from "./MapSearch";
 import MapSpeedCameraReport from "./MapSpeedCameraReport";
-import MapMarkerInfo from "./mapMarkerInfo";
 
 interface MapBottomSheetProps {
     onClose: () => void;
