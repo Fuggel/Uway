@@ -1,21 +1,26 @@
-import { useContext, useEffect } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
-import { SegmentedButtons } from "react-native-paper";
+import { useContext, useEffect, useState } from "react";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
-import { ROUTE_PROFILES } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
+import { ARRIVAL_TIME_REFETCH_INTERVAL } from "@/constants/time-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
+import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { Direction, RouteProfileType } from "@/types/INavigation";
+import { Direction } from "@/types/INavigation";
+import { OpenSheet, SheetType } from "@/types/ISheet";
+import { SpeedLimitFeature } from "@/types/ISpeed";
+import { toGermanDate } from "@/utils/date-utils";
+import { determineSpeedLimitIcon } from "@/utils/map-utils";
 
-import Button from "../common/Button";
 import Card from "../common/Card";
+import IconButton from "../common/IconButton";
 import Text from "../common/Text";
 
 interface MapNavigationProps {
+    openSheet: OpenSheet;
     directions: Direction | null;
     setDirections: (directions: Direction | null) => void;
     currentStep: number;
@@ -24,23 +29,25 @@ interface MapNavigationProps {
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
+const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const profileType = useSelector(mapNavigationSelectors.navigationProfile);
+    const { speedLimits } = useSpeedLimits();
     const { remainingDistance, remainingTime } = useInstructions({
         currentStep,
         setCurrentStep,
         directions,
         userLocation,
     });
+    const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
 
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
     const duration = `${(remainingTime / 60).toFixed(0)} min`;
-    const address = location?.address_line1;
-    const place = location?.address_line2;
+
+    const userSpeed = userLocation?.coords?.speed;
+    const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(0) : "0";
 
     const handleCancelNavigation = () => {
         setDirections(null);
@@ -50,6 +57,22 @@ const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep 
         dispatch(mapNavigationActions.setIsNavigationMode(false));
         dispatch(mapNavigationActions.setSearchQuery(""));
     };
+
+    const determineArrivalTime = () => {
+        const now = new Date();
+        now.setSeconds(now.getSeconds() + remainingTime);
+        setArrivalTime(toGermanDate({ isoDate: now.toISOString(), showTimeOnly: true }));
+    };
+
+    useEffect(() => {
+        determineArrivalTime();
+
+        const intervalId = setInterval(() => {
+            determineArrivalTime();
+        }, ARRIVAL_TIME_REFETCH_INTERVAL);
+
+        return () => clearInterval(intervalId);
+    }, [remainingTime]);
 
     useEffect(() => {
         if (directions && isNavigationMode && location) {
@@ -66,82 +89,124 @@ const MapNavigation = ({ directions, setDirections, currentStep, setCurrentStep 
     }, [currentStep, directions]);
 
     return (
-        <View style={styles.flexBottom}>
-            {directions && location && (
-                <Card st={styles.card}>
-                    <View style={styles.profileActions}>
-                        <View style={styles.navigationInfo}>
-                            <Text type="secondary">{address}</Text>
-                            <Text type="secondary">{place}</Text>
-                        </View>
-                        <Text type="success" textStyle="header" style={{ textAlign: "center" }}>
-                            {duration} · {distance}
-                        </Text>
-                        {!isNavigationMode && (
-                            <SegmentedButtons
-                                value={profileType}
-                                onValueChange={(value) =>
-                                    dispatch(mapNavigationActions.setNavigationProfile(value as RouteProfileType))
-                                }
-                                buttons={ROUTE_PROFILES.map((p) => ({
-                                    value: p.value,
-                                    icon: p.icon,
-                                    checkedColor: COLORS.white,
-                                    style: {
-                                        backgroundColor: p.value === profileType ? COLORS.primary : COLORS.white,
-                                    },
-                                }))}
-                            />
-                        )}
-                    </View>
+        <View style={styles.container}>
+            <View style={styles.reportButton}>
+                <IconButton
+                    size="xl"
+                    type="white"
+                    icon="plus-circle"
+                    onPress={() => openSheet({ type: SheetType.REPORT })}
+                />
+            </View>
 
-                    <View style={styles.navigationActionButtons}>
-                        <Button icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
-                        {!isNavigationMode && (
-                            <Button
-                                icon="navigation"
-                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                                type="success"
-                                size="xl"
-                            />
-                        )}
-                    </View>
-                </Card>
-            )}
+            <Card st={styles.navigationCard}>
+                <View style={styles.navigationSpeed}>
+                    {userLocation?.coords && (
+                        <View>
+                            <Text type="white" style={styles.navigationSpeedText}>
+                                {currentSpeed}
+                            </Text>
+                            <Text type="white" style={{ textAlign: "center" }}>
+                                km/h
+                            </Text>
+                        </View>
+                    )}
+
+                    {speedLimits?.alert && (
+                        <Image
+                            source={determineSpeedLimitIcon(
+                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
+                            )}
+                            style={styles.speedLimitImage}
+                        />
+                    )}
+                </View>
+
+                <View style={styles.navigationInfo}>
+                    {isNavigationMode ? (
+                        <Text type="white" textStyle="header">
+                            {arrivalTime} Uhr
+                        </Text>
+                    ) : (
+                        <Text type="white" textStyle="header">
+                            {location?.formatted}
+                        </Text>
+                    )}
+
+                    <Text type="lightSecondary" style={{ fontWeight: "bold" }}>
+                        {duration} · {distance}
+                    </Text>
+                </View>
+
+                <View style={styles.navigationActions}>
+                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                    {!isNavigationMode && (
+                        <IconButton
+                            icon="navigation"
+                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                            type="success"
+                            size="xl"
+                        />
+                    )}
+                </View>
+            </Card>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    flexBottom: {
-        maxHeight: deviceHeight > 1000 ? "12%" : "18%",
+    container: {
+        position: "absolute",
+        bottom: deviceHeight > 1000 ? "2%" : "4%",
+        left: SIZES.spacing.sm,
+        right: SIZES.spacing.sm,
+        gap: SIZES.spacing.sm,
+    },
+    reportButton: {
         justifyContent: "center",
-    },
-    card: {
-        flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: SIZES.spacing.md,
+        alignSelf: "flex-end",
+        backgroundColor: COLORS.primary,
+        width: SIZES.iconSize.xxl,
+        height: SIZES.iconSize.xxl,
+        borderRadius: SIZES.borderRadius.md,
     },
-    navigationDuration: {
+    navigationCard: {
+        backgroundColor: COLORS.primary,
+        paddingVertical: SIZES.spacing.md,
+        borderRadius: SIZES.borderRadius.md,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    navigationSpeed: {
+        position: "absolute",
+        flexDirection: "row",
+        alignItems: "center",
+        left: SIZES.spacing.sm,
+        gap: SIZES.spacing.sm,
+        maxWidth: "20%",
+    },
+    navigationSpeedText: {
+        fontWeight: "bold",
         textAlign: "center",
+        fontSize: SIZES.fontSize.lg,
+    },
+    speedLimitImage: {
+        width: SIZES.iconSize.xxl,
+        height: SIZES.iconSize.xxl,
     },
     navigationInfo: {
         justifyContent: "center",
         alignItems: "center",
-        marginTop: SIZES.spacing.xs,
-        gap: 2,
+        maxWidth: "60%",
     },
-    profileActions: {
-        minWidth: "60%",
-        maxWidth: "65%",
-        gap: SIZES.spacing.xs,
-    },
-    navigationActionButtons: {
+    navigationActions: {
+        position: "absolute",
         flexDirection: "row",
-        justifyContent: "space-around",
-        maxWidth: "30%",
-        marginLeft: SIZES.spacing.md,
+        alignItems: "center",
+        right: SIZES.spacing.sm,
+        maxWidth: "20%",
     },
 });
 

@@ -1,4 +1,5 @@
-import { Stack } from "expo-router";
+import { useFonts } from "expo-font";
+import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { PaperProvider } from "react-native-paper";
@@ -8,14 +9,33 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { BottomSheetContextProvider } from "@/contexts/BottomSheetContext";
 import { MapFeatureContextProvider } from "@/contexts/MapFeatureContext";
-import { MarkerBottomSheetContextProvider } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
 import store, { persistor } from "@/store";
 
+SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
+    const [fontsLoaded, error] = useFonts({
+        "Lato-Black": require("../assets/fonts/Lato-Black.ttf"),
+        "Lato-BlackItalic": require("../assets/fonts/Lato-BlackItalic.ttf"),
+        "Lato-Bold": require("../assets/fonts/Lato-Bold.ttf"),
+        "Lato-BoldItalic": require("../assets/fonts/Lato-BoldItalic.ttf"),
+        "Lato-Italic": require("../assets/fonts/Lato-Italic.ttf"),
+        "Lato-Light": require("../assets/fonts/Lato-Light.ttf"),
+        "Lato-LightItalic": require("../assets/fonts/Lato-LightItalic.ttf"),
+        "Lato-Regular": require("../assets/fonts/Lato-Regular.ttf"),
+        "Lato-Thin": require("../assets/fonts/Lato-Thin.ttf"),
+        "Lato-ThinItalic": require("../assets/fonts/Lato-ThinItalic.ttf"),
+    });
+
+    useEffect(() => {
+        if (error) throw error;
+        if (fontsLoaded) SplashScreen.hideAsync();
+    }, [fontsLoaded, error]);
+
     useEffect(() => {
         const configurePurchases = async () => {
             try {
@@ -31,13 +51,15 @@ export default function RootLayout() {
         configurePurchases();
     }, []);
 
+    if (!fontsLoaded && !error) return null;
+
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
                         <UserLocationContextProvider>
-                            <MarkerBottomSheetContextProvider>
+                            <BottomSheetContextProvider>
                                 <MapFeatureContextProvider>
                                     <Stack>
                                         <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
@@ -57,7 +79,7 @@ export default function RootLayout() {
                                         />
                                     </Stack>
                                 </MapFeatureContextProvider>
-                            </MarkerBottomSheetContextProvider>
+                            </BottomSheetContextProvider>
                         </UserLocationContextProvider>
                     </QueryClientProvider>
                 </PaperProvider>

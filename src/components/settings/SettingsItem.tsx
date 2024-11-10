@@ -13,7 +13,7 @@ interface SettingsCommonProps {
 export const SettingsItem = ({ title, children }: SettingsCommonProps) => {
     return (
         <View style={styles.settingsItem}>
-            <Text type="dark">{title}</Text>
+            <Text>{title}</Text>
             {children}
         </View>
     );
@@ -22,9 +22,7 @@ export const SettingsItem = ({ title, children }: SettingsCommonProps) => {
 export const SettingsSection = ({ title, children }: SettingsCommonProps) => {
     return (
         <View style={styles.settingsSection}>
-            <Text type="dark" style={styles.heading}>
-                {title}
-            </Text>
+            <Text style={styles.heading}>{title}</Text>
             <Divider style={styles.divider} />
             {children}
         </View>

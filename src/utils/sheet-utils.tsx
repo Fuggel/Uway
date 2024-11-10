@@ -62,15 +62,15 @@ function incidentData(incidentProperties: IncidentProperties | undefined) {
         },
         {
             label: "Startzeit",
-            value: toGermanDate(incidentProperties?.startTime) ?? "Unbekannt",
+            value: toGermanDate({ isoDate: incidentProperties?.startTime }) ?? "Unbekannt",
         },
         {
             label: "Endzeit",
-            value: toGermanDate(incidentProperties?.endTime) ?? "Unbekannt",
+            value: toGermanDate({ isoDate: incidentProperties?.endTime }) ?? "Unbekannt",
         },
         {
             label: "Letzte Meldung",
-            value: toGermanDate(incidentProperties?.lastReportTime) ?? "Unbekannt",
+            value: toGermanDate({ isoDate: incidentProperties?.lastReportTime }) ?? "Unbekannt",
         },
     ];
 }

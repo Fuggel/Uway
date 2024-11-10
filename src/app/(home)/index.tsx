@@ -10,8 +10,8 @@ const Home = () => {
     const checkSubscriptionStatus = async () => {
         try {
             const customerInfo = await Purchases.getCustomerInfo();
-            console.log(`Customer info: ${JSON.stringify(customerInfo, null, 2)}`);
             const hasActiveSubscription = Object.keys(customerInfo.entitlements.active).length > 0;
+
             setSubscriptionActive(hasActiveSubscription);
         } catch (error) {
             console.log(`Failed to fetch customer info: ${error}`);

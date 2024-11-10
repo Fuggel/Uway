@@ -20,9 +20,7 @@ const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
     const renderItem = (item: DropdownItem) => (
         <View style={styles.itemContainer}>
             {item.img && <Image source={item.img} style={styles.img} />}
-            <Text type="dark" style={styles.itemLabel}>
-                {item.label}
-            </Text>
+            <Text style={styles.itemLabel}>{item.label}</Text>
         </View>
     );
 
@@ -45,10 +43,11 @@ const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
                 <MaterialCommunityIcons
                     name={icon as any}
                     style={styles.icon}
-                    color={COLORS.gray}
+                    color={COLORS.primary}
                     size={SIZES.iconSize.sm}
                 />
             )}
+            iconColor={COLORS.primary}
             renderItem={renderItem}
         />
     );
@@ -57,15 +56,15 @@ const Dropdown = <T,>({ data, value, icon, onChange }: DropdownProps<T>) => {
 const styles = StyleSheet.create({
     dropdown: {
         height: SIZES.spacing.xl,
-        borderColor: COLORS.gray,
-        borderWidth: 1.5,
+        borderColor: COLORS.primary,
+        borderWidth: 2,
         borderRadius: SIZES.borderRadius.sm,
         paddingHorizontal: SIZES.spacing.sm,
         flex: 1,
     },
     icon: {
         marginRight: SIZES.spacing.sm,
-        color: COLORS.gray,
+        color: COLORS.primary,
     },
     placeholderStyle: {
         fontSize: SIZES.fontSize.md,
@@ -90,7 +89,7 @@ const styles = StyleSheet.create({
         width: 75,
         height: 75,
         marginLeft: SIZES.spacing.sm,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     itemLabel: {
         marginLeft: SIZES.spacing.sm,

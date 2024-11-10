@@ -32,11 +32,6 @@ export interface Direction {
     legs: any;
 }
 
-export interface RouteProfile {
-    value: RouteProfileType;
-    icon: string;
-}
-
 export enum ModifierType {
     U_TURN = "uturn",
     SHARP_RIGHT = "sharp right",

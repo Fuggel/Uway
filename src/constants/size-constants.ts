@@ -26,5 +26,6 @@ export const SIZES: Size = {
         md: 28,
         lg: 36,
         xl: 50,
+        xxl: 70,
     },
 };

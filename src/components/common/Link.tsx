@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 
 import { COLORS } from "@/constants/colors-constants";
 
-import Button from "./Button";
+import IconButton from "./IconButton";
 
 interface LinkProps {
     to: string;
@@ -13,13 +13,21 @@ interface LinkProps {
 const Link = ({ to }: LinkProps) => {
     const router = useRouter();
 
-    return <Button icon="chevron-right" type="white" size="md" style={styles.button} onPress={() => router.push(to)} />;
+    return (
+        <IconButton
+            icon="chevron-right"
+            type="white"
+            size="md"
+            style={styles.iconButton}
+            onPress={() => router.push(to as never)}
+        />
+    );
 };
 
 export default Link;
 
 const styles = StyleSheet.create({
-    button: {
+    iconButton: {
         margin: 0,
         width: 30,
         height: 30,

@@ -22,8 +22,7 @@ const Card = ({ title, children, st }: CardProps) => {
 const styles = StyleSheet.create({
     card: {
         paddingHorizontal: SIZES.spacing.md,
-        borderTopRightRadius: SIZES.borderRadius.lg,
-        borderTopLeftRadius: SIZES.borderRadius.lg,
+        borderRadius: SIZES.borderRadius.md,
     },
 });
 

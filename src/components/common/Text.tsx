@@ -5,7 +5,7 @@ import { SIZES } from "@/constants/size-constants";
 
 interface TextProps {
     children: React.ReactNode;
-    type?: "dark" | "primary" | "secondary" | "success" | "error" | "warning";
+    type?: "primary" | "secondary" | "lightSecondary" | "white" | "success" | "error" | "warning";
     textStyle?: "header" | "body" | "caption" | "xs";
     style?: TextStyle;
 }
@@ -28,12 +28,14 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
 
     const getTypeStyle = (): TextStyle => {
         switch (type) {
-            case "dark":
-                return { color: COLORS.dark };
             case "primary":
                 return { color: COLORS.primary };
             case "secondary":
                 return { color: COLORS.gray };
+            case "lightSecondary":
+                return { color: COLORS.light_gray };
+            case "white":
+                return { color: COLORS.white };
             case "success":
                 return { color: COLORS.success };
             case "warning":
@@ -45,7 +47,19 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
         }
     };
 
-    return <RNText style={{ ...getTextStyle(), ...getTypeStyle(), ...style }}>{children}</RNText>;
+    return (
+        <RNText
+            style={{
+                fontFamily: "Lato-Regular",
+                lineHeight: SIZES.spacing.md,
+                ...getTextStyle(),
+                ...getTypeStyle(),
+                ...style,
+            }}
+        >
+            {children}
+        </RNText>
+    );
 };
 
 export default Text;

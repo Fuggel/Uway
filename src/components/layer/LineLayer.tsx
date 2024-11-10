@@ -36,7 +36,7 @@ const LineLayer = <T,>({
             <Layer
                 id={layerId}
                 style={{
-                    lineColor: COLORS.secondary,
+                    lineColor: COLORS.secondary_light,
                     lineWidth: 5,
                     lineOpacity: 0.8,
                     lineCap: "round",

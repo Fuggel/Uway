@@ -7,64 +7,62 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapViewSelectors } from "@/store/mapView";
-import { OpenSheet } from "@/types/IMap";
-import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+import { OpenSheet, SheetType } from "@/types/ISheet";
 
-import Button from "../common/Button";
+import IconButton from "../common/IconButton";
 
 const deviceHeight = Dimensions.get("window").height;
 
 interface MapButtonsProps {
-    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
+    openSheet: OpenSheet;
 }
 
-const MapButtons = ({ setOpen }: MapButtonsProps) => {
+const MapButtons = ({ openSheet }: MapButtonsProps) => {
     const dispatch = useDispatch();
     const router = useRouter();
     const { userLocation } = useContext(UserLocationContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const tracking = useSelector(mapNavigationSelectors.tracking);
 
     return (
-        <View style={styles.container}>
-            {userLocation && (
-                <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                    <Button icon="camera" onPress={() => setOpen((prev) => ({ ...prev, speedCamera: true }))} />
-                </View>
-            )}
-
+        <View style={styles.topRight}>
             {userLocation && !isNavigationMode && (
-                <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                    <Button icon="magnify" onPress={() => setOpen((prev) => ({ ...prev, search: true }))} />
+                <View style={styles.iconButton}>
+                    <IconButton type="white" icon="magnify" onPress={() => openSheet({ type: SheetType.SEARCH })} />
                 </View>
             )}
 
-            <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <Button icon="crosshairs-gps" onPress={() => dispatch(mapNavigationActions.setTracking(true))} />
+            <View style={styles.iconButton}>
+                <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
             </View>
 
-            <View style={dynamicThemeStyles(styles.button, determineTheme(mapStyle))}>
-                <Button icon="cog" onPress={() => router.push("/settings")} />
-            </View>
+            {!tracking && (
+                <View style={styles.iconButton}>
+                    <IconButton
+                        type="white"
+                        icon="crosshairs-gps"
+                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
+                    />
+                </View>
+            )}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    topRight: {
         position: "absolute",
-        bottom: deviceHeight > 1000 ? "2%" : "4%",
+        top: deviceHeight > 1000 ? "4%" : "7%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },
-    button: {
+    iconButton: {
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: COLORS.white_transparent,
+        backgroundColor: COLORS.primary,
         width: SIZES.iconSize.xl,
         height: SIZES.iconSize.xl,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
 });
 

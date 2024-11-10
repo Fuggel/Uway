@@ -13,16 +13,13 @@ const PriceDisplay = ({ price }: PriceDisplayProps) => {
 
     return (
         <View style={styles.priceContainer}>
-            <Text type="dark" style={styles.price}>
+            <Text style={styles.price}>
                 {euros},{mainCents}
             </Text>
-            <Text type="dark" textStyle="xs" style={styles.superscript}>
+            <Text textStyle="xs" style={styles.superscript}>
                 {smallCents}
             </Text>
-            <Text type="dark" style={styles.price}>
-                {" "}
-                €
-            </Text>
+            <Text style={styles.price}> €</Text>
         </View>
     );
 };

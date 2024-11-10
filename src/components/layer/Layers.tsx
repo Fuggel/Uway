@@ -7,17 +7,22 @@ import { Point } from "@turf/helpers";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
+import { mapGasStationSelectors } from "@/store/mapGasStation";
+import { mapIncidentSelectors } from "@/store/mapIncident";
+import { mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
+import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
+import { FirstLayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { ParkAvailabilityProperties } from "@/types/IParking";
-import { MarkerSheet } from "@/types/ISheet";
+import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 import { getStationIcon } from "@/utils/map-utils";
@@ -32,7 +37,11 @@ interface LayersProps {
 
 const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const { openSheet } = useContext(MarkerBottomSheetContext);
+    const showIncidents = useSelector(mapIncidentSelectors.showIncident);
+    const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
+    const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
+    const { openSheet } = useContext(BottomSheetContext);
     const { setUserLocation } = useContext(UserLocationContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { hasLocationPermissions } = useLocationPermission();
@@ -49,6 +58,7 @@ const Layers = ({ directions }: LayersProps) => {
                     style={{
                         lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                     }}
+                    belowLayerId={showIncidents ? FirstLayerId.INCIDENT_LINE : FirstLayerId.USER_LOCATION}
                 />
             )}
             {parkAvailability?.features?.map((feature, i) => (
@@ -58,10 +68,11 @@ const Layers = ({ directions }: LayersProps) => {
                         layerId={`parking-availability-layer-${i}`}
                         coordinates={(feature.geometry as Point).coordinates}
                         onPress={() => {
-                            openSheet<ParkAvailabilityProperties>(
-                                MarkerSheet.PARKING,
-                                feature.properties as ParkAvailabilityProperties
-                            );
+                            openSheet<ParkAvailabilityProperties>({
+                                type: SheetType.MARKER,
+                                markerType: MarkerSheet.PARKING,
+                                markerProperties: feature.properties as ParkAvailabilityProperties,
+                            });
                         }}
                         properties={feature.properties}
                         style={{
@@ -71,11 +82,11 @@ const Layers = ({ directions }: LayersProps) => {
                                     ${feature.properties?.free} / ${feature.properties?.total}
                                 `,
                             textSize: SIZES.fontSize.sm,
-                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.gray,
+                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.primary,
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}
-                        belowLayerId="mapboxUserLocationPulseCircle"
+                        belowLayerId={showGasStations ? FirstLayerId.GAS_STATION : FirstLayerId.USER_LOCATION}
                     />
                 </View>
             ))}
@@ -85,7 +96,13 @@ const Layers = ({ directions }: LayersProps) => {
                     sourceId={`gas-station-source-${i}`}
                     layerId={`gas-station-layer-${i}`}
                     coordinates={(feature.geometry as Point).coordinates}
-                    onPress={() => openSheet<GasStation>(MarkerSheet.GAS_STATION, feature.properties as GasStation)}
+                    onPress={() =>
+                        openSheet<GasStation>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.GAS_STATION,
+                            markerProperties: feature.properties as GasStation,
+                        })
+                    }
                     properties={feature.properties}
                     style={{
                         iconImage: getStationIcon(
@@ -94,7 +111,7 @@ const Layers = ({ directions }: LayersProps) => {
                         ),
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                     }}
-                    belowLayerId="mapboxUserLocationPulseCircle"
+                    belowLayerId={showSpeedCameras ? FirstLayerId.SPEED_CAMERA : FirstLayerId.USER_LOCATION}
                 />
             ))}
             {speedCameras?.speedCameras?.data?.features?.map((feature, i) => (
@@ -104,16 +121,17 @@ const Layers = ({ directions }: LayersProps) => {
                     layerId={`speed-camera-layer-${i}`}
                     coordinates={(feature.geometry as Point).coordinates}
                     onPress={() =>
-                        openSheet<SpeedCameraProperties>(
-                            MarkerSheet.SPEED_CAMERA,
-                            feature.properties as SpeedCameraProperties
-                        )
+                        openSheet<SpeedCameraProperties>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.SPEED_CAMERA,
+                            markerProperties: feature.properties as SpeedCameraProperties,
+                        })
                     }
                     style={{
                         iconImage: "speed-camera",
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.6, 20, 0.9],
                     }}
-                    belowLayerId="mapboxUserLocationPulseCircle"
+                    belowLayerId={showIncidents ? FirstLayerId.INCIDENT_SYMBOL : FirstLayerId.USER_LOCATION}
                 />
             ))}
             {incidents?.incidents?.data?.incidents?.map((incident, i) => (
@@ -127,7 +145,9 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                         }}
-                        belowLayerId="mapboxUserLocationPulseCircle"
+                        belowLayerId={
+                            showParkAvailability ? FirstLayerId.PARKING_AVAILABILITY : FirstLayerId.USER_LOCATION
+                        }
                     />
                     <SymbolLayer
                         key={i}
@@ -135,10 +155,11 @@ const Layers = ({ directions }: LayersProps) => {
                         layerId={`incident-symbol-layer-${i}`}
                         coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
                         onPress={() =>
-                            openSheet<IncidentProperties>(
-                                MarkerSheet.INCIDENT,
-                                incident.properties as IncidentProperties
-                            )
+                            openSheet<IncidentProperties>({
+                                type: SheetType.MARKER,
+                                markerType: MarkerSheet.INCIDENT,
+                                markerProperties: incident.properties,
+                            })
                         }
                         properties={incident.properties}
                         style={{
@@ -167,7 +188,7 @@ const Layers = ({ directions }: LayersProps) => {
                                 "incident-caution",
                             ],
                         }}
-                        belowLayerId="mapboxUserLocationPulseCircle"
+                        belowLayerId={FirstLayerId.USER_LOCATION}
                     />
                 </View>
             ))}
@@ -179,7 +200,7 @@ const Layers = ({ directions }: LayersProps) => {
                     styles={{
                         pulse: {
                             circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 15, 18, 18, 20, 21],
-                            circleColor: COLORS.primary,
+                            circleColor: COLORS.secondary,
                             circleOpacity: 0.2,
                         },
                         background: {
@@ -188,7 +209,7 @@ const Layers = ({ directions }: LayersProps) => {
                         },
                         foreground: {
                             circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 6, 18, 9, 20, 12],
-                            circleColor: COLORS.primary,
+                            circleColor: COLORS.secondary,
                         },
                     }}
                     headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 0, 18, 1.1, 20, 1.3]}

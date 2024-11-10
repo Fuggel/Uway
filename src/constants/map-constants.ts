@@ -2,7 +2,6 @@ import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 
 import { MapConfig, MapboxStyle } from "@/types/IMap";
-import { RouteProfile, RouteProfileType } from "@/types/INavigation";
 import { DropdownItem } from "@/types/ISettings";
 import { SpeedCameraProfile, SpeedCameraType } from "@/types/ISpeed";
 
@@ -88,21 +87,6 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "gas-station-average": require(`${MAP_ICONS_URL}/gas-station-average.png`),
     "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station-cheap.png`),
 };
-
-export const ROUTE_PROFILES: RouteProfile[] = [
-    {
-        value: RouteProfileType.DRIVING,
-        icon: "car",
-    },
-    {
-        value: RouteProfileType.WALKING,
-        icon: "walk",
-    },
-    {
-        value: RouteProfileType.CYCLING,
-        icon: "bike",
-    },
-];
 
 export const SPEED_CAMERA_TYPE: SpeedCameraProfile[] = [
     {

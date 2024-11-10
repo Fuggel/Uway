@@ -3,19 +3,20 @@ import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
+import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
-import { MarkerBottomSheetContext } from "@/contexts/MarkerBottomSheetContext";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useNavigation from "@/hooks/useNavigation";
+import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
-import { OpenSheet } from "@/types/IMap";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
-import { sheetData, sheetTitle } from "@/utils/sheet-utils";
+import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 
 import Loading from "@/components/common/Loading";
 import Layers from "@/components/layer/Layers";
@@ -23,14 +24,12 @@ import MapAlerts from "@/components/map/MapAlerts";
 import MapBottomSheet from "@/components/map/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
-import MapSearch from "@/components/map/MapSearch";
-import MapSpeedCameraReport from "@/components/map/MapSpeedCameraReport";
 
 Mapbox.setAccessToken(MAP_CONFIG.accessToken);
 
 const Map = () => {
     const dispatch = useDispatch();
-    const { showSheet, markerData, closeSheet } = useContext(MarkerBottomSheetContext);
+    const { sheetData, showSheet, openSheet, closeSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
@@ -38,7 +37,6 @@ const Map = () => {
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const [openSheet, setOpenSheet] = useState<OpenSheet>({ search: false, speedCamera: false });
     const [currentStep, setCurrentStep] = useState(0);
     const { directions, setDirections, loadingDirections } = useNavigation({
         destinationLngLat: {
@@ -46,6 +44,16 @@ const Map = () => {
             lat: location?.lat,
         },
         setCurrentStep,
+    });
+    const {
+        mutate: refetchSpeedCamera,
+        isSuccess: mutatedSpeedCameraSuccess,
+        error: mutatedSpeedCameraError,
+    } = useMutation({
+        mutationFn: reportSpeedCamera,
+        onSuccess: () => {
+            setTimeout(() => closeSheet(), 3000);
+        },
     });
 
     const defaultSettings = {
@@ -63,22 +71,22 @@ const Map = () => {
     }, [tracking, navigationMode, navigationView]);
 
     const handleGasStationPress = () => {
-        const street = markerData?.properties.street;
-        const houseNumber = markerData?.properties.houseNumber || "";
-        const postcode = markerData?.properties.postCode || "";
-        const city = markerData?.properties.place || "";
+        const street = sheetData?.markerProperties.street;
+        const houseNumber = sheetData?.markerProperties.houseNumber || "";
+        const postcode = sheetData?.markerProperties.postCode || "";
+        const city = sheetData?.markerProperties.place || "";
         const country = "Deutschland";
 
         const newLocation = {
             country,
             city,
-            lon: markerData?.properties.lng,
-            lat: markerData?.properties.lat,
+            lon: sheetData?.markerProperties.lng,
+            lat: sheetData?.markerProperties.lat,
             formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
             address_line1: `${street} ${houseNumber}`,
             address_line2: `${postcode} ${city}, ${country}`,
             category: "commercial.gas",
-            place_id: markerData?.properties.id,
+            place_id: sheetData?.markerProperties.id,
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));
@@ -118,7 +126,7 @@ const Map = () => {
                         animationDuration={500}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
+                        heading={tracking || navigationView ? userLocation?.coords.heading : 0}
                         zoomLevel={
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
@@ -139,28 +147,36 @@ const Map = () => {
                     <Layers directions={directions} />
                 </MapView>
 
-                <MapButtons setOpen={setOpenSheet} />
+                <MapButtons openSheet={openSheet} />
 
-                <MapAlerts directions={directions} currentStep={currentStep} />
-
-                {openSheet.search && <MapSearch setOpen={setOpenSheet} />}
-                {openSheet.speedCamera && <MapSpeedCameraReport setOpen={setOpenSheet} />}
+                <MapAlerts
+                    directions={directions}
+                    currentStep={currentStep}
+                    speedCameraSuccess={mutatedSpeedCameraSuccess}
+                    speedCameraError={mutatedSpeedCameraError}
+                />
 
                 {showSheet && (
                     <MapBottomSheet
-                        title={sheetTitle(markerData?.type, markerData?.properties)}
-                        data={sheetData(markerData?.type, markerData?.properties)}
                         onClose={closeSheet}
-                        gasStation={{
-                            show: markerData?.type === MarkerSheet.GAS_STATION,
-                            onPress: () => handleGasStationPress(),
+                        markerProps={{
+                            title: sheetTitle(sheetData?.markerType, sheetData?.markerProperties),
+                            data: openSheetData(sheetData?.markerType, sheetData?.markerProperties),
+                            gasStation: {
+                                show: sheetData?.markerType === MarkerSheet.GAS_STATION,
+                                onPress: () => handleGasStationPress(),
+                            },
+                        }}
+                        reportProps={{
+                            refetchData: refetchSpeedCamera,
                         }}
                     />
                 )}
             </View>
 
-            {(location || directions) && !showSheet && (
+            {location && directions && (
                 <MapNavigation
+                    openSheet={openSheet}
                     directions={directions}
                     setDirections={setDirections}
                     currentStep={currentStep}

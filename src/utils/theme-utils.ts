@@ -1,6 +1,3 @@
-import { ViewStyle } from "react-native";
-
-import { COLORS } from "@/constants/colors-constants";
 import { MapboxStyle } from "@/types/IMap";
 
 export function determineTheme(theme: MapboxStyle): "light" | "dark" {
@@ -26,12 +23,4 @@ export function determineTheme(theme: MapboxStyle): "light" | "dark" {
         default:
             return "dark";
     }
-}
-
-export function dynamicThemeStyles(style: ViewStyle, theme: "light" | "dark"): ViewStyle {
-    return {
-        ...style,
-        borderWidth: theme === "light" ? 2 : undefined,
-        borderColor: theme === "light" ? COLORS.gray : undefined,
-    };
 }

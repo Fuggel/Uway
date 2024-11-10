@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Keyboard, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { Keyboard, KeyboardAvoidingView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,33 +7,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { SIZES } from "@/constants/size-constants";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
-import { mapViewSelectors } from "@/store/mapView";
-import { OpenSheet } from "@/types/IMap";
 import { SearchLocation } from "@/types/ISearch";
-import { determineTheme, dynamicThemeStyles } from "@/utils/theme-utils";
+import { distanceToPointText } from "@/utils/map-utils";
 
-import BottomSheetComponent from "../common/BottomSheet";
 import Searchbar from "../common/Searchbar";
 import Text from "../common/Text";
 import NoResults from "../ui/NoResults";
 
 interface MapSearchProps {
-    setOpen: React.Dispatch<React.SetStateAction<OpenSheet>>;
+    onClose: () => void;
 }
 
-const MapSearch = ({ setOpen }: MapSearchProps) => {
+const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
+    const { userLocation } = useContext(UserLocationContext);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
-    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const { text, isListening, startListening, stopListening } = useSpeechToText();
     const { suggestions } = useSearch({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
+
+    const longitude = userLocation?.coords.longitude as number;
+    const latitude = userLocation?.coords.latitude as number;
 
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
@@ -43,7 +44,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
     const handleSelectLocation = (newLocation: SearchLocation) => {
         dispatch(mapNavigationActions.setLocation(newLocation));
         setShowSuggestions(false);
-        setOpen((prev) => ({ ...prev, search: false }));
+        onClose();
     };
 
     useEffect(() => {
@@ -54,15 +55,8 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
     }, [text]);
 
     return (
-        <BottomSheetComponent
-            height="100%"
-            snapPoints={["85%", "100%"]}
-            onClose={() => {
-                setOpen((prev) => ({ ...prev, search: false }));
-                dispatch(mapNavigationActions.setSearchQuery(""));
-            }}
-        >
-            <TouchableOpacity activeOpacity={1} style={styles.container} onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+            <TouchableOpacity activeOpacity={1} onPress={Keyboard.dismiss}>
                 <Searchbar
                     placeholder="Suche nach Ort"
                     onChangeText={handleSearch}
@@ -70,7 +64,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                     speechToText={{ isListening, startListening, stopListening }}
                 >
                     {showSuggestions && searchQuery && (
-                        <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
+                        <ScrollView style={styles.suggestions}>
                             {suggestions && suggestions.length > 0 ? (
                                 suggestions.map((suggestion, i) => (
                                     <TouchableOpacity
@@ -93,7 +87,18 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                                             })
                                         }
                                     >
-                                        <Text type="dark">{suggestion.formatted}</Text>
+                                        <View style={styles.suggestionItem}>
+                                            <View style={styles.suggestionPlace}>
+                                                <MaterialCommunityIcons name="map-marker" size={24} color="black" />
+                                                <Text>{suggestion.formatted}</Text>
+                                            </View>
+                                            <Text type="secondary" textStyle="caption">
+                                                {distanceToPointText({
+                                                    pos1: [longitude, latitude],
+                                                    pos2: [suggestion.lon, suggestion.lat],
+                                                })}
+                                            </Text>
+                                        </View>
                                         <Divider style={styles.divider} />
                                     </TouchableOpacity>
                                 ))
@@ -104,7 +109,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                     )}
 
                     {!searchQuery && (
-                        <ScrollView style={dynamicThemeStyles(styles.suggestions, determineTheme(mapStyle))}>
+                        <ScrollView style={styles.suggestions}>
                             {recentSearches.length > 0 ? (
                                 recentSearches.map((location, i) => (
                                     <TouchableOpacity
@@ -112,9 +117,18 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                                         style={styles.scrollContainer}
                                         onPress={() => handleSelectLocation(location as SearchLocation)}
                                     >
-                                        <View style={styles.item}>
-                                            <MaterialCommunityIcons name="history" size={24} color="black" />
-                                            <Text type="dark">{location?.formatted}</Text>
+                                        <View style={styles.suggestionItem}>
+                                            <View style={styles.suggestionPlace}>
+                                                <MaterialCommunityIcons name="history" size={24} color="black" />
+                                                <Text>{location?.formatted}</Text>
+                                            </View>
+
+                                            <Text type="secondary" textStyle="caption">
+                                                {distanceToPointText({
+                                                    pos1: [longitude, latitude],
+                                                    pos2: [location.lon, location.lat],
+                                                })}
+                                            </Text>
                                         </View>
                                         <Divider style={styles.divider} />
                                     </TouchableOpacity>
@@ -126,7 +140,7 @@ const MapSearch = ({ setOpen }: MapSearchProps) => {
                     )}
                 </Searchbar>
             </TouchableOpacity>
-        </BottomSheetComponent>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -140,6 +154,17 @@ const styles = StyleSheet.create({
         padding: SIZES.spacing.sm,
         marginTop: 2,
         borderRadius: SIZES.borderRadius.sm,
+    },
+    suggestionPlace: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SIZES.spacing.xs,
+    },
+    suggestionItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
     },
     scrollContainer: {
         marginVertical: 4,
