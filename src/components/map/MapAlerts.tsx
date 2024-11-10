@@ -31,7 +31,11 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const { startSpeech } = useTextToSpeech();
 
-    const currentInstruction = directions?.legs[0].steps[currentStep].maneuver.instruction;
+    const currentStepData = directions?.legs[0]?.steps[currentStep];
+    const nextStepData = directions?.legs[0]?.steps[currentStep + 1];
+
+    const currentInstruction = currentStepData?.maneuver?.instruction;
+    const nextInstruction = nextStepData?.maneuver?.instruction;
 
     useEffect(() => {
         if (isNavigationMode) {
@@ -48,26 +52,37 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
                     directions?.legs[0].steps
                         .slice(currentStep, currentStep + 1)
                         .map((step: Instruction, index: number) => {
-                            const arrowDir = arrowDirection(step.maneuver.modifier);
+                            const arrowDir = arrowDirection(step?.maneuver?.modifier);
+                            const arrowDirNext = arrowDirection(nextStepData?.maneuver?.modifier);
 
                             return (
-                                <View key={index} style={styles.instructionsContainer}>
-                                    <Text type="white" style={styles.stepInstruction}>
-                                        {step.maneuver.instruction}
-                                    </Text>
-
-                                    <View style={styles.directionRow}>
-                                        {arrowDir !== undefined && (
+                                <View key={index}>
+                                    <View style={styles.instructionsContainer}>
+                                        <View style={styles.directionRow}>
                                             <MaterialCommunityIcons
-                                                name={arrowDir}
+                                                name={arrowDir ?? "arrow-up"}
                                                 size={SIZES.iconSize.xl}
                                                 color={COLORS.white}
                                             />
-                                        )}
-                                        <Text type="white" textStyle="caption">
-                                            {step.distance.toFixed(0)} m
-                                        </Text>
+                                            <Text type="white" textStyle="header">
+                                                {step.distance.toFixed(0)} m
+                                            </Text>
+                                        </View>
+                                        <Text type="white">{step.maneuver.instruction}</Text>
                                     </View>
+
+                                    {nextInstruction && (
+                                        <View style={styles.nextInstructionContainer}>
+                                            <View style={styles.directionRow}>
+                                                <Text type="white">Dann</Text>
+                                                <MaterialCommunityIcons
+                                                    name={arrowDirNext ?? "arrow-up"}
+                                                    size={SIZES.iconSize.lg}
+                                                    color={COLORS.white}
+                                                />
+                                            </View>
+                                        </View>
+                                    )}
                                 </View>
                             );
                         })}
@@ -123,20 +138,27 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         gap: SIZES.spacing.sm,
-        // width: "55%",
+        maxWidth: "60%",
     },
     instructionsContainer: {
         borderRadius: SIZES.borderRadius.md,
+        borderBottomLeftRadius: 0,
         padding: SIZES.spacing.sm,
         backgroundColor: COLORS.secondary,
-        gap: SIZES.spacing.xs,
-    },
-    stepInstruction: {
-        fontWeight: "bold",
     },
     directionRow: {
         flexDirection: "row",
         alignItems: "center",
+        gap: SIZES.spacing.xs,
+    },
+    nextInstructionContainer: {
+        padding: SIZES.spacing.sm,
+        backgroundColor: COLORS.secondary_light,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: SIZES.borderRadius.sm,
+        borderBottomRightRadius: SIZES.borderRadius.sm,
+        alignSelf: "flex-start",
     },
 });
 
