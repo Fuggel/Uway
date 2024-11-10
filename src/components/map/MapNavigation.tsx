@@ -90,38 +90,29 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
 
     return (
         <View style={styles.container}>
-            <View style={styles.reportButton}>
-                <IconButton
-                    size="xl"
-                    type="white"
-                    icon="plus-circle"
-                    onPress={() => openSheet({ type: SheetType.REPORT })}
-                />
+            <View style={styles.navigationSpeed}>
+                {userLocation?.coords && (
+                    <View>
+                        <Text type="white" style={styles.navigationSpeedText}>
+                            {currentSpeed}
+                        </Text>
+                        <Text type="white" style={{ textAlign: "center" }}>
+                            km/h
+                        </Text>
+                    </View>
+                )}
+
+                {speedLimits?.alert && (
+                    <Image
+                        source={determineSpeedLimitIcon(
+                            (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
+                        )}
+                        style={styles.speedLimitImage}
+                    />
+                )}
             </View>
 
             <Card st={styles.navigationCard}>
-                <View style={styles.navigationSpeed}>
-                    {userLocation?.coords && (
-                        <View>
-                            <Text type="white" style={styles.navigationSpeedText}>
-                                {currentSpeed}
-                            </Text>
-                            <Text type="white" style={{ textAlign: "center" }}>
-                                km/h
-                            </Text>
-                        </View>
-                    )}
-
-                    {speedLimits?.alert && (
-                        <Image
-                            source={determineSpeedLimitIcon(
-                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
-                            )}
-                            style={styles.speedLimitImage}
-                        />
-                    )}
-                </View>
-
                 <View style={styles.navigationInfo}>
                     {isNavigationMode ? (
                         <Text type="white" textStyle="header">
@@ -129,7 +120,7 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
                         </Text>
                     ) : (
                         <Text type="white" textStyle="header">
-                            {location?.formatted}
+                            {location?.address_line1}
                         </Text>
                     )}
 
@@ -140,12 +131,19 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
 
                 <View style={styles.navigationActions}>
                     <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
-                    {!isNavigationMode && (
+                    {!isNavigationMode ? (
                         <IconButton
                             icon="navigation"
                             onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
                             type="success"
                             size="xl"
+                        />
+                    ) : (
+                        <IconButton
+                            size="xl"
+                            type="warning"
+                            icon="alert"
+                            onPress={() => openSheet({ type: SheetType.REPORT })}
                         />
                     )}
                 </View>
@@ -162,30 +160,24 @@ const styles = StyleSheet.create({
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.sm,
     },
-    reportButton: {
-        justifyContent: "center",
-        alignItems: "center",
-        alignSelf: "flex-end",
-        backgroundColor: COLORS.primary,
-        width: SIZES.iconSize.xxl,
-        height: SIZES.iconSize.xxl,
-        borderRadius: SIZES.borderRadius.md,
-    },
     navigationCard: {
         backgroundColor: COLORS.primary,
         paddingVertical: SIZES.spacing.md,
+        paddingHorizontal: SIZES.spacing.md,
         borderRadius: SIZES.borderRadius.md,
         flexDirection: "row",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
+        flexWrap: "wrap",
     },
     navigationSpeed: {
-        position: "absolute",
         flexDirection: "row",
         alignItems: "center",
-        left: SIZES.spacing.sm,
+        alignSelf: "flex-start",
         gap: SIZES.spacing.sm,
-        maxWidth: "20%",
+        backgroundColor: COLORS.primary,
+        padding: SIZES.spacing.sm,
+        borderRadius: SIZES.borderRadius.sm,
     },
     navigationSpeedText: {
         fontWeight: "bold",
@@ -197,16 +189,13 @@ const styles = StyleSheet.create({
         height: SIZES.iconSize.xxl,
     },
     navigationInfo: {
+        flex: 1,
         justifyContent: "center",
-        alignItems: "center",
-        maxWidth: "60%",
     },
     navigationActions: {
-        position: "absolute",
         flexDirection: "row",
         alignItems: "center",
-        right: SIZES.spacing.sm,
-        maxWidth: "20%",
+        alignSelf: "flex-end",
     },
 });
 
