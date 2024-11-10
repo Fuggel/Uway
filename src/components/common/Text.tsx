@@ -50,7 +50,7 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
     return (
         <RNText
             style={{
-                fontFamily: "Lato-Regular",
+                fontFamily: "Lato",
                 lineHeight: SIZES.spacing.md,
                 ...getTextStyle(),
                 ...getTypeStyle(),

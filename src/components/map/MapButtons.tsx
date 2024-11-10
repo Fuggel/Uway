@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: deviceHeight > 1000 ? "4%" : "7%",
         right: SIZES.spacing.sm,
-        gap: SIZES.spacing.sm,
+        gap: SIZES.spacing.xs,
     },
     iconButton: {
         justifyContent: "center",
