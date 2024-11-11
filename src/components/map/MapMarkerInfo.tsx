@@ -30,7 +30,7 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapBottomSheetProps) => {
 
             {data?.map((item, i) => (
                 <View key={i} style={styles.itemContainer}>
-                    <Text type="secondary">{item.label}:</Text>
+                    <Text type="gray">{item.label}:</Text>
                     <Text style={styles.textValue}>{item.value}</Text>
                 </View>
             ))}

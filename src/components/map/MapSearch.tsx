@@ -89,7 +89,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                         <MaterialCommunityIcons name="map-marker" size={24} color="black" />
                                         <Text>{suggestion.formatted}</Text>
                                     </View>
-                                    <Text type="secondary" textStyle="caption">
+                                    <Text type="gray" textStyle="caption">
                                         {distanceToPointText({
                                             pos1: [longitude, latitude],
                                             pos2: [suggestion.lon, suggestion.lat],
@@ -120,7 +120,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                         <Text>{location?.formatted}</Text>
                                     </View>
 
-                                    <Text type="secondary" textStyle="caption">
+                                    <Text type="gray" textStyle="caption">
                                         {distanceToPointText({
                                             pos1: [longitude, latitude],
                                             pos2: [location.lon, location.lat],

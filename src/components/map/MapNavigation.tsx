@@ -124,7 +124,7 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
                         </Text>
                     )}
 
-                    <Text type="lightSecondary" style={{ fontWeight: "bold" }}>
+                    <Text type="lightGray" style={{ fontWeight: "bold" }}>
                         {duration} · {distance}
                     </Text>
                 </View>

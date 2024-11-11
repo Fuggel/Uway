@@ -19,55 +19,30 @@ export const MAP_CONFIG: MapConfig = {
     pitch: 0,
     followPitch: 50,
     followZoom: 20,
-    style: MapboxStyle.NAVIGATION_DARK,
+    style: MapboxStyle.DARK,
     accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "",
 };
 
 export const MAP_STYLES: DropdownItem[] = [
     {
-        label: "Navigation Dark",
-        value: MapboxStyle.NAVIGATION_DARK,
-        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
-    },
-    {
-        label: "Streets",
-        value: MapboxStyle.STREETS,
-        img: require(`${MAP_STYLES_URL}/streets.png`),
-    },
-    {
-        label: "Outdoors",
-        value: MapboxStyle.OUTDOORS,
-        img: require(`${MAP_STYLES_URL}/outdoors.png`),
-    },
-    {
-        label: "Light",
-        value: MapboxStyle.LIGHT,
-        img: require(`${MAP_STYLES_URL}/light.png`),
-    },
-    {
-        label: "Dark",
+        label: "Dunkel",
         value: MapboxStyle.DARK,
         img: require(`${MAP_STYLES_URL}/dark.png`),
     },
     {
-        label: "Satellite",
-        value: MapboxStyle.SATELLITE,
-        img: require(`${MAP_STYLES_URL}/satellite.png`),
+        label: "Hell",
+        value: MapboxStyle.LIGHT,
+        img: require(`${MAP_STYLES_URL}/light.png`),
     },
     {
-        label: "Satellite Streets",
+        label: "Navigation",
+        value: MapboxStyle.NAVIGATION_DARK,
+        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
+    },
+    {
+        label: "Satellit",
         value: MapboxStyle.SATELLITE_STREETS,
         img: require(`${MAP_STYLES_URL}/satellite-streets.png`),
-    },
-    {
-        label: "Traffic Day",
-        value: MapboxStyle.TRAFFIC_DAY,
-        img: require(`${MAP_STYLES_URL}/traffic-day.png`),
-    },
-    {
-        label: "Traffic Night",
-        value: MapboxStyle.TRAFFIC_NIGHT,
-        img: require(`${MAP_STYLES_URL}/traffic-night.png`),
     },
 ];
 

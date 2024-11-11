@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -12,9 +12,9 @@ import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTex
 import { mapViewActions, mapViewSelectors } from "@/store/mapView";
 import { MapboxStyle } from "@/types/IMap";
 
-import Dropdown from "@/components/common/Dropdown";
 import Link from "@/components/common/Link";
 import Switch from "@/components/common/Switch";
+import Text from "@/components/common/Text";
 import { SettingsItem, SettingsSection } from "@/components/settings/SettingsItem";
 
 const Settings = () => {
@@ -28,18 +28,7 @@ const Settings = () => {
 
     return (
         <ScrollView style={styles.container}>
-            <SettingsSection title="Map Style">
-                <SettingsItem>
-                    <Dropdown
-                        value={mapStyle}
-                        data={MAP_STYLES}
-                        icon="map"
-                        onChange={(val) => dispatch(mapViewActions.mapboxTheme(val as MapboxStyle))}
-                    />
-                </SettingsItem>
-            </SettingsSection>
-
-            <SettingsSection title="Allgemein">
+            <SettingsSection icon="account-cog" title="Allgemein">
                 <SettingsItem title="Sprachausgabe">
                     <Switch
                         checked={allowTextToSpeech}
@@ -48,12 +37,12 @@ const Settings = () => {
                 </SettingsItem>
             </SettingsSection>
 
-            <SettingsSection title="Map Daten">
+            <SettingsSection icon="map-marker-multiple" title="Map Daten">
                 <SettingsItem title="Blitzer">
-                    <Link to={() => router.push("/settings/speed-camera")} />
+                    <Link type="secondary" to={() => router.push("/settings/speed-camera")} />
                 </SettingsItem>
                 <SettingsItem title="Verkehrsdaten">
-                    <Link to={() => router.push("/settings/incidents")} />
+                    <Link type="secondary" to={() => router.push("/settings/incidents")} />
                 </SettingsItem>
                 <SettingsItem title="Geschwindigkeitsbegrenzungen">
                     <Switch
@@ -76,6 +65,33 @@ const Settings = () => {
                     />
                 </SettingsItem>
             </SettingsSection>
+
+            <SettingsSection icon="map" title="Map Style">
+                <SettingsItem>
+                    <View style={styles.mapStylesContainer}>
+                        {MAP_STYLES.map((style) => (
+                            <TouchableOpacity
+                                key={style.value}
+                                style={styles.imgContainer}
+                                activeOpacity={1}
+                                onPress={() => {
+                                    if (mapStyle !== style.value) {
+                                        dispatch(mapViewActions.mapboxTheme(style.value as MapboxStyle));
+                                    }
+                                }}
+                            >
+                                <Image
+                                    source={style.img}
+                                    style={[styles.img, mapStyle === style.value && styles.selectedMapStyle]}
+                                />
+                                <Text type={mapStyle === style.value ? "secondary" : "lightGray"} textStyle="caption">
+                                    {style.label}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </SettingsItem>
+            </SettingsSection>
         </ScrollView>
     );
 };
@@ -87,6 +103,28 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         padding: SIZES.spacing.md,
         zIndex: 999999,
+    },
+    mapStylesContainer: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: SIZES.spacing.lg,
+    },
+    imgContainer: {
+        alignItems: "center",
+        gap: SIZES.spacing.xs,
+    },
+    img: {
+        width: 75,
+        height: 75,
+        borderRadius: SIZES.borderRadius.md,
+    },
+    selectedMapStyle: {
+        borderWidth: 4,
+        borderColor: COLORS.secondary,
+        borderRadius: SIZES.borderRadius.md,
     },
 });
 
