@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from "react-native";
 
-export interface DropdownItem {
+export interface MapStyle {
     label: string;
     value: string;
     img?: ImageSourcePropType;

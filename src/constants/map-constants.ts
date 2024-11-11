@@ -2,7 +2,7 @@ import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 
 import { MapConfig, MapboxStyle } from "@/types/IMap";
-import { DropdownItem } from "@/types/ISettings";
+import { MapStyle } from "@/types/ISettings";
 import { SpeedCameraProfile, SpeedCameraType } from "@/types/ISpeed";
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
@@ -23,7 +23,7 @@ export const MAP_CONFIG: MapConfig = {
     accessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN || "",
 };
 
-export const MAP_STYLES: DropdownItem[] = [
+export const MAP_STYLES: MapStyle[] = [
     {
         label: "Dunkel",
         value: MapboxStyle.DARK,
