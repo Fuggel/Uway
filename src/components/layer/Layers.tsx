@@ -2,21 +2,15 @@ import { useContext } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 
-import { UserLocation } from "@rnmapbox/maps";
 import { Point } from "@turf/helpers";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
-import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
-import { mapGasStationSelectors } from "@/store/mapGasStation";
-import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
-import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
 import { FirstLayerId } from "@/types/IMap";
@@ -37,14 +31,9 @@ interface LayersProps {
 
 const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const showIncidents = useSelector(mapIncidentSelectors.showIncident);
-    const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
-    const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const { openSheet } = useContext(BottomSheetContext);
-    const { setUserLocation } = useContext(UserLocationContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
-    const { hasLocationPermissions } = useLocationPermission();
     const { gasStations } = useGasStations();
     const { parkAvailability } = useParkAvailability();
 
@@ -58,7 +47,6 @@ const Layers = ({ directions }: LayersProps) => {
                     style={{
                         lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                     }}
-                    belowLayerId={showIncidents ? FirstLayerId.INCIDENT_LINE : FirstLayerId.USER_LOCATION}
                 />
             )}
             {parkAvailability?.features?.map((feature, i) => (
@@ -86,7 +74,6 @@ const Layers = ({ directions }: LayersProps) => {
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
                         }}
-                        belowLayerId={showGasStations ? FirstLayerId.GAS_STATION : FirstLayerId.USER_LOCATION}
                     />
                 </View>
             ))}
@@ -111,7 +98,6 @@ const Layers = ({ directions }: LayersProps) => {
                         ),
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
                     }}
-                    belowLayerId={showSpeedCameras ? FirstLayerId.SPEED_CAMERA : FirstLayerId.USER_LOCATION}
                 />
             ))}
             {speedCameras?.speedCameras?.data?.features?.map((feature, i) => (
@@ -131,7 +117,6 @@ const Layers = ({ directions }: LayersProps) => {
                         iconImage: "speed-camera",
                         iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.6, 20, 0.9],
                     }}
-                    belowLayerId={showIncidents ? FirstLayerId.INCIDENT_SYMBOL : FirstLayerId.USER_LOCATION}
                 />
             ))}
             {incidents?.incidents?.data?.incidents?.map((incident, i) => (
@@ -187,34 +172,9 @@ const Layers = ({ directions }: LayersProps) => {
                                 "incident-caution",
                             ],
                         }}
-                        belowLayerId={FirstLayerId.USER_LOCATION}
                     />
                 </View>
             ))}
-
-            {hasLocationPermissions && (
-                <UserLocation
-                    animated
-                    showsUserHeadingIndicator
-                    styles={{
-                        pulse: {
-                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 15, 18, 18, 20, 21],
-                            circleColor: COLORS.secondary,
-                            circleOpacity: 0.2,
-                        },
-                        background: {
-                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 9, 18, 12, 20, 15],
-                            circleColor: COLORS.white,
-                        },
-                        foreground: {
-                            circleRadius: ["interpolate", ["exponential", 1.5], ["zoom"], 0, 6, 18, 9, 20, 12],
-                            circleColor: COLORS.secondary,
-                        },
-                    }}
-                    headingIconSize={["interpolate", ["exponential", 1.5], ["zoom"], 0, 0, 18, 1.1, 20, 1.3]}
-                    onUpdate={(location) => setUserLocation(location)}
-                />
-            )}
         </>
     );
 };
