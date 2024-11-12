@@ -60,11 +60,10 @@ const Map = () => {
     });
 
     const defaultSettings = {
-        centerCoordinate: !userLocation
-            ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-            : ([userLocation.coords.longitude, userLocation.coords.latitude] as Position),
-        zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
+        centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
+        zoomLevel: MAP_CONFIG.noLocationZoom,
         pitch: MAP_CONFIG.pitch,
+        heading: undefined,
     };
 
     useEffect(() => {
@@ -126,7 +125,7 @@ const Map = () => {
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={500}
+                        animationDuration={250}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                         heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
