@@ -9,18 +9,9 @@ interface LineLayerProps<T> {
     properties?: T;
     style?: any;
     belowLayerId?: string;
-    aboveLayerId?: string;
 }
 
-const LineLayer = <T,>({
-    sourceId,
-    layerId,
-    coordinates,
-    properties,
-    style,
-    belowLayerId,
-    aboveLayerId,
-}: LineLayerProps<T>) => {
+const LineLayer = <T,>({ sourceId, layerId, coordinates, properties, style, belowLayerId }: LineLayerProps<T>) => {
     return (
         <ShapeSource
             id={sourceId}
@@ -43,8 +34,7 @@ const LineLayer = <T,>({
                     lineJoin: "round",
                     ...style,
                 }}
-                belowLayerID={belowLayerId ?? "mapboxUserLocationPulseCircle"}
-                aboveLayerID={aboveLayerId ?? undefined}
+                belowLayerID={belowLayerId}
             />
         </ShapeSource>
     );

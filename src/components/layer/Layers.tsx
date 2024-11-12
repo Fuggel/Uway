@@ -130,9 +130,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                         }}
-                        belowLayerId={
-                            showParkAvailability ? FirstLayerId.PARKING_AVAILABILITY : FirstLayerId.INCIDENT_SYMBOL
-                        }
+                        belowLayerId={FirstLayerId.INCIDENT_SYMBOL}
                     />
                     <SymbolLayer
                         sourceId={`incident-symbol-source-${i}`}

@@ -130,17 +130,17 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
                 </View>
 
                 <View style={styles.navigationActions}>
-                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
                     {!isNavigationMode ? (
                         <IconButton
                             icon="navigation"
                             onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
                             type="success"
-                            size="xl"
+                            size="lg"
                         />
                     ) : (
                         <IconButton
-                            size="xl"
+                            size="lg"
                             type="warning"
                             icon="alert"
                             onPress={() => openSheet({ type: SheetType.REPORT })}
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
         gap: SIZES.spacing.sm,
         backgroundColor: COLORS.primary,
         padding: SIZES.spacing.sm,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     navigationSpeedText: {
         fontWeight: "bold",
@@ -186,8 +186,8 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.lg,
     },
     speedLimitImage: {
-        width: SIZES.iconSize.xxl,
-        height: SIZES.iconSize.xxl,
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
     },
     navigationInfo: {
         flex: 1,

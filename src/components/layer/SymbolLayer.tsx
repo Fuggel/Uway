@@ -11,16 +11,7 @@ interface SymbolLayerProps<T> {
     aboveLayerId?: string;
 }
 
-const SymbolLayer = <T,>({
-    sourceId,
-    layerId,
-    coordinates,
-    onPress,
-    properties,
-    style,
-    belowLayerId,
-    aboveLayerId,
-}: SymbolLayerProps<T>) => {
+const SymbolLayer = <T,>({ sourceId, layerId, coordinates, onPress, properties, style }: SymbolLayerProps<T>) => {
     return (
         <ShapeSource
             id={sourceId}
@@ -43,8 +34,6 @@ const SymbolLayer = <T,>({
                     iconRotate: 0,
                     ...style,
                 }}
-                belowLayerID={belowLayerId ?? undefined}
-                aboveLayerID={aboveLayerId ?? undefined}
             />
         </ShapeSource>
     );

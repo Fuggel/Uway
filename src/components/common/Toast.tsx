@@ -71,7 +71,7 @@ const Toast = ({ show, type, title, subTitle, image, autoHide, duration = 3000, 
         <View style={{ ...styles.container, ...st }}>
             <View style={styles.header}>
                 {!image ? (
-                    <Icon source={getIcon()} color={getIconColor()} size={SIZES.iconSize.xl} />
+                    <Icon source={getIcon()} color={getIconColor()} size={SIZES.iconSize.lg} />
                 ) : (
                     <Image resizeMode="contain" source={image} style={styles.image} />
                 )}
@@ -91,13 +91,12 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: SIZES.borderRadius.md,
         alignSelf: "flex-start",
-        minWidth: "30%",
     },
     header: {
         alignItems: "center",
         gap: SIZES.spacing.sm,
         flexDirection: "row",
-        flexWrap: "wrap",
+        width: "100%",
     },
     image: {
         width: SIZES.iconSize.xl,
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
         color: COLORS.white,
     },
     subTitle: {
-        color: COLORS.white,
+        color: COLORS.light_gray,
     },
 });
 
