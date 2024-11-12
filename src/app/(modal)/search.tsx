@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Keyboard, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Keyboard, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 import { SIZES } from "@/constants/size-constants";
@@ -13,9 +13,11 @@ const Modal = () => {
     return (
         <Animated.View entering={FadeIn} exiting={FadeOut}>
             <TouchableOpacity style={styles.container} activeOpacity={1} onPress={Keyboard.dismiss}>
-                <View style={styles.closeButton}>
-                    <Link icon="close" to={() => router.back()} />
-                </View>
+                {Platform.OS === "android" && (
+                    <View style={styles.closeButton}>
+                        <Link icon="close" to={() => router.back()} />
+                    </View>
+                )}
                 <MapSearch onClose={() => router.back()} />
             </TouchableOpacity>
         </Animated.View>

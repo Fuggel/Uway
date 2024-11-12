@@ -129,7 +129,7 @@ const Map = () => {
                         animationDuration={500}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        heading={tracking || navigationView ? userLocation?.coords.heading : 0}
+                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
                         zoomLevel={
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
@@ -152,7 +152,9 @@ const Map = () => {
                             puckBearing="heading"
                             puckBearingEnabled
                             topImage="user-location"
-                            scale={1}
+                            bearingImage="user-location"
+                            shadowImage="user-location"
+                            scale={["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.6, 20, 0.8]}
                             visible
                             pulsing={{
                                 isEnabled: true,
