@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { ARRIVAL_TIME_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
@@ -30,6 +31,7 @@ interface MapNavigationProps {
 const deviceHeight = Dimensions.get("window").height;
 
 const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
+    const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const location = useSelector(mapNavigationSelectors.location);
@@ -89,7 +91,7 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
     }, [currentStep, directions]);
 
     return (
-        <View style={styles.container}>
+        <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>
             <View style={styles.navigationSpeed}>
                 {userLocation?.coords && (
                     <View>
