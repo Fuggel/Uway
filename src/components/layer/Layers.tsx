@@ -10,10 +10,8 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import useGasStations from "@/hooks/useGasStations";
 import useParkAvailability from "@/hooks/useParkAvailability";
-import { mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
-import { FirstLayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { ParkAvailabilityProperties } from "@/types/IParking";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
@@ -31,7 +29,6 @@ interface LayersProps {
 
 const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const { openSheet } = useContext(BottomSheetContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { gasStations } = useGasStations();
@@ -130,7 +127,6 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                         }}
-                        belowLayerId={FirstLayerId.INCIDENT_SYMBOL}
                     />
                     <SymbolLayer
                         sourceId={`incident-symbol-source-${i}`}

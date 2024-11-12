@@ -8,10 +8,9 @@ interface LineLayerProps<T> {
     coordinates: number[][];
     properties?: T;
     style?: any;
-    belowLayerId?: string;
 }
 
-const LineLayer = <T,>({ sourceId, layerId, coordinates, properties, style, belowLayerId }: LineLayerProps<T>) => {
+const LineLayer = <T,>({ sourceId, layerId, coordinates, properties, style }: LineLayerProps<T>) => {
     return (
         <ShapeSource
             id={sourceId}
@@ -34,7 +33,6 @@ const LineLayer = <T,>({ sourceId, layerId, coordinates, properties, style, belo
                     lineJoin: "round",
                     ...style,
                 }}
-                belowLayerID={belowLayerId}
             />
         </ShapeSource>
     );
