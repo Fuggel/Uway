@@ -153,12 +153,12 @@ const Map = () => {
                             topImage="user-location"
                             bearingImage="user-location"
                             shadowImage="user-location"
-                            scale={["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.6, 20, 0.8]}
+                            scale={["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6]}
                             visible
                             pulsing={{
                                 isEnabled: true,
                                 color: COLORS.secondary,
-                                radius: 50,
+                                radius: 30,
                             }}
                         />
                     )}

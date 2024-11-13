@@ -67,9 +67,10 @@ const Layers = ({ directions }: LayersProps) => {
                                     ${feature.properties?.free} / ${feature.properties?.total}
                                 `,
                             textSize: SIZES.fontSize.sm,
+                            textOpacity: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0, 16, 1],
                             textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.primary,
                             textOffset: [0, 2.5],
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 20, 0.6],
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
                         }}
                     />
                 </View>
@@ -93,7 +94,7 @@ const Layers = ({ directions }: LayersProps) => {
                             gasStations.features.map((f) => f.properties as GasStation),
                             feature.properties?.diesel
                         ),
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
+                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                     }}
                 />
             ))}
@@ -112,7 +113,7 @@ const Layers = ({ directions }: LayersProps) => {
                     }
                     style={{
                         iconImage: "speed-camera",
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.6, 20, 0.9],
+                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                     }}
                 />
             ))}
@@ -126,6 +127,7 @@ const Layers = ({ directions }: LayersProps) => {
                         style={{
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
+                            lineOpacity: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0, 18, 1, 20, 1],
                         }}
                     />
                     <SymbolLayer
@@ -141,7 +143,7 @@ const Layers = ({ directions }: LayersProps) => {
                         }
                         properties={incident.properties}
                         style={{
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 20, 0.7],
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
                             iconImage: [
                                 "match",
                                 ["get", "iconCategory"],
