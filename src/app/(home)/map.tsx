@@ -2,13 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
+import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
 import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
+import { COLORS } from "@/constants/colors-constants";
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useLocationPermission from "@/hooks/useLocationPermissions";
 import useNavigation from "@/hooks/useNavigation";
 import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
@@ -31,6 +33,7 @@ const Map = () => {
     const dispatch = useDispatch();
     const { sheetData, showSheet, openSheet, closeSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
+    const { hasLocationPermissions } = useLocationPermission();
     const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
@@ -57,11 +60,10 @@ const Map = () => {
     });
 
     const defaultSettings = {
-        centerCoordinate: !userLocation
-            ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-            : ([userLocation.coords.longitude, userLocation.coords.latitude] as Position),
-        zoomLevel: !userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom,
+        centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
+        zoomLevel: MAP_CONFIG.noLocationZoom,
         pitch: MAP_CONFIG.pitch,
+        heading: undefined,
     };
 
     useEffect(() => {
@@ -123,10 +125,10 @@ const Map = () => {
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={500}
+                        animationDuration={250}
                         animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        heading={tracking || navigationView ? userLocation?.coords.heading : 0}
+                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
                         zoomLevel={
                             !userLocation
                                 ? MAP_CONFIG.noLocationZoom
@@ -143,6 +145,18 @@ const Map = () => {
                         }
                         defaultSettings={defaultSettings}
                     />
+
+                    {hasLocationPermissions && (
+                        <LocationPuck
+                            puckBearing="heading"
+                            puckBearingEnabled
+                            topImage="user-location"
+                            bearingImage="user-location"
+                            shadowImage="user-location"
+                            scale={["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6]}
+                            visible
+                        />
+                    )}
 
                     <Layers directions={directions} />
                 </MapView>

@@ -1,6 +1,9 @@
 import { StyleSheet, View } from "react-native";
 import { Divider } from "react-native-paper";
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 
 import Text from "../common/Text";
@@ -8,6 +11,10 @@ import Text from "../common/Text";
 interface SettingsCommonProps {
     title?: string;
     children: React.ReactNode;
+}
+
+interface SettingsSectionProps extends SettingsCommonProps {
+    icon: string;
 }
 
 export const SettingsItem = ({ title, children }: SettingsCommonProps) => {
@@ -19,10 +26,13 @@ export const SettingsItem = ({ title, children }: SettingsCommonProps) => {
     );
 };
 
-export const SettingsSection = ({ title, children }: SettingsCommonProps) => {
+export const SettingsSection = ({ title, icon, children }: SettingsSectionProps) => {
     return (
         <View style={styles.settingsSection}>
-            <Text style={styles.heading}>{title}</Text>
+            <View style={styles.headingContainer}>
+                <MaterialCommunityIcons name={icon as any} size={24} color={COLORS.primary} />
+                <Text style={styles.heading}>{title}</Text>
+            </View>
             <Divider style={styles.divider} />
             {children}
         </View>
@@ -32,6 +42,11 @@ export const SettingsSection = ({ title, children }: SettingsCommonProps) => {
 const styles = StyleSheet.create({
     settingsSection: {
         marginVertical: SIZES.spacing.sm,
+    },
+    headingContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SIZES.spacing.xs,
     },
     heading: {
         fontWeight: "bold",

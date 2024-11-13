@@ -24,13 +24,15 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapBottomSheetProps) => {
                     {title}
                 </Text>
                 {gasStation?.show && (
-                    <IconButton icon="directions" size="lg" onPress={gasStation.onPress} style={styles.iconButton} />
+                    <View style={styles.iconButtonRight}>
+                        <IconButton icon="directions" size="lg" type="secondary" onPress={gasStation.onPress} />
+                    </View>
                 )}
             </View>
 
             {data?.map((item, i) => (
                 <View key={i} style={styles.itemContainer}>
-                    <Text type="secondary">{item.label}:</Text>
+                    <Text type="gray">{item.label}:</Text>
                     <Text style={styles.textValue}>{item.value}</Text>
                 </View>
             ))}
@@ -46,6 +48,9 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        flexWrap: "wrap",
     },
     title: {
         textAlign: "center",
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         flex: 1,
     },
-    iconButton: {
+    iconButtonRight: {
         position: "absolute",
         right: 0,
     },

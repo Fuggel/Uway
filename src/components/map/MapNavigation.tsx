@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { ARRIVAL_TIME_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
@@ -30,6 +31,7 @@ interface MapNavigationProps {
 const deviceHeight = Dimensions.get("window").height;
 
 const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
+    const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const location = useSelector(mapNavigationSelectors.location);
@@ -89,7 +91,7 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
     }, [currentStep, directions]);
 
     return (
-        <View style={styles.container}>
+        <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>
             <View style={styles.navigationSpeed}>
                 {userLocation?.coords && (
                     <View>
@@ -124,23 +126,23 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
                         </Text>
                     )}
 
-                    <Text type="lightSecondary" style={{ fontWeight: "bold" }}>
+                    <Text type="lightGray" style={{ fontWeight: "bold" }}>
                         {duration} · {distance}
                     </Text>
                 </View>
 
                 <View style={styles.navigationActions}>
-                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="xl" />
+                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
                     {!isNavigationMode ? (
                         <IconButton
                             icon="navigation"
                             onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
                             type="success"
-                            size="xl"
+                            size="lg"
                         />
                     ) : (
                         <IconButton
-                            size="xl"
+                            size="lg"
                             type="warning"
                             icon="alert"
                             onPress={() => openSheet({ type: SheetType.REPORT })}
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
         gap: SIZES.spacing.sm,
         backgroundColor: COLORS.primary,
         padding: SIZES.spacing.sm,
-        borderRadius: SIZES.borderRadius.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     navigationSpeedText: {
         fontWeight: "bold",
@@ -186,8 +188,8 @@ const styles = StyleSheet.create({
         fontSize: SIZES.fontSize.lg,
     },
     speedLimitImage: {
-        width: SIZES.iconSize.xxl,
-        height: SIZES.iconSize.xxl,
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
     },
     navigationInfo: {
         flex: 1,

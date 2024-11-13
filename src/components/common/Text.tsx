@@ -5,7 +5,7 @@ import { SIZES } from "@/constants/size-constants";
 
 interface TextProps {
     children: React.ReactNode;
-    type?: "primary" | "secondary" | "lightSecondary" | "white" | "success" | "error" | "warning";
+    type?: "primary" | "secondary" | "gray" | "lightGray" | "white" | "success" | "error" | "warning";
     textStyle?: "header" | "body" | "caption" | "xs";
     style?: TextStyle;
 }
@@ -31,8 +31,10 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
             case "primary":
                 return { color: COLORS.primary };
             case "secondary":
+                return { color: COLORS.secondary };
+            case "gray":
                 return { color: COLORS.gray };
-            case "lightSecondary":
+            case "lightGray":
                 return { color: COLORS.light_gray };
             case "white":
                 return { color: COLORS.white };

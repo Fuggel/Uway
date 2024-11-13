@@ -18,7 +18,7 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
         case MarkerSheet.PARKING:
             return parkingTitle(properties as ParkAvailabilityProperties);
         case MarkerSheet.SPEED_CAMERA:
-            return speedCameraTitle(properties as SpeedCameraProperties);
+            return speedCameraTitle();
         default:
             return "Unbekannt";
     }
@@ -177,6 +177,6 @@ function parkingTitle(parkingProperties: ParkAvailabilityProperties | undefined)
     return fullTitle;
 }
 
-function speedCameraTitle(speedCameraProperties: SpeedCameraProperties | undefined) {
-    return `Blitzer: ${speedCameraProperties?.type === SpeedCameraType.MOBILE ? "Mobil" : "Stationär"}`;
+function speedCameraTitle() {
+    return "Blitzer";
 }

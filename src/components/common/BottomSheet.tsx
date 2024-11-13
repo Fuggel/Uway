@@ -15,7 +15,7 @@ const BottomSheetComponent = ({ onClose, children, snapPoints, height, st }: Bot
     const ContentContainer = height && snapPoints ? BottomSheetView : BottomSheetScrollView;
 
     return (
-        <GestureHandlerRootView style={{ ...styles.container, height: height ?? "40%" }}>
+        <GestureHandlerRootView style={{ ...styles.container, height: height ?? "30%" }}>
             <BottomSheet snapPoints={snapPoints ?? ["100%"]} enablePanDownToClose onClose={onClose} enableDynamicSizing>
                 <ContentContainer style={{ ...styles.contentContainer, ...st }}>{children}</ContentContainer>
             </BottomSheet>

@@ -1,10 +1,9 @@
-import { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
-import { Location } from "@rnmapbox/maps";
+import Mapbox, { Location } from "@rnmapbox/maps";
 
 interface ContextProps {
     userLocation: Location | null;
-    setUserLocation: React.Dispatch<React.SetStateAction<Location | null>>;
 }
 
 interface ProviderProps {
@@ -13,15 +12,22 @@ interface ProviderProps {
 
 export const UserLocationContext = createContext<ContextProps>({
     userLocation: null,
-    setUserLocation: () => {},
 });
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const [userLocation, setUserLocation] = useState<Location | null>(null);
 
-    return (
-        <UserLocationContext.Provider value={{ userLocation, setUserLocation }}>
-            {children}
-        </UserLocationContext.Provider>
-    );
+    useEffect(() => {
+        Mapbox.locationManager.start();
+
+        Mapbox.locationManager.addListener((location: Location) => {
+            setUserLocation(location);
+        });
+
+        return () => {
+            Mapbox.locationManager.stop();
+        };
+    }, []);
+
+    return <UserLocationContext.Provider value={{ userLocation }}>{children}</UserLocationContext.Provider>;
 };
