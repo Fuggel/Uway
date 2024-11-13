@@ -155,11 +155,6 @@ const Map = () => {
                             shadowImage="user-location"
                             scale={["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6]}
                             visible
-                            pulsing={{
-                                isEnabled: true,
-                                color: COLORS.secondary,
-                                radius: 30,
-                            }}
                         />
                     )}
 

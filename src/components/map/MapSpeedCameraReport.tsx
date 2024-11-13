@@ -92,6 +92,7 @@ const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProp
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: SIZES.spacing.md,
+        paddingBottom: SIZES.spacing.md,
         gap: SIZES.spacing.md,
     },
     header: {
