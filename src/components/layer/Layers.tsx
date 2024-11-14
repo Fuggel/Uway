@@ -1,8 +1,7 @@
 import { useContext } from "react";
-import { View } from "react-native";
 import { useSelector } from "react-redux";
 
-import { Point } from "@turf/helpers";
+import { LineLayer, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
@@ -12,16 +11,13 @@ import useGasStations from "@/hooks/useGasStations";
 import useParkAvailability from "@/hooks/useParkAvailability";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
+import { LayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { ParkAvailabilityProperties } from "@/types/IParking";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
-import { getStationIcon } from "@/utils/map-utils";
 import { determineTheme } from "@/utils/theme-utils";
-
-import LineLayer from "./LineLayer";
-import SymbolLayer from "./SymbolLayer";
 
 interface LayersProps {
     directions: Direction | null;
@@ -29,119 +25,136 @@ interface LayersProps {
 
 const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const { openSheet } = useContext(BottomSheetContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
-    const { gasStations } = useGasStations();
+    const { openSheet } = useContext(BottomSheetContext);
     const { parkAvailability } = useParkAvailability();
+    const { gasStations } = useGasStations();
 
     return (
         <>
-            {directions?.geometry?.coordinates && (
-                <LineLayer
-                    sourceId="route-source"
-                    layerId="route-layer"
-                    coordinates={directions.geometry.coordinates}
-                    style={{
-                        lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
-                    }}
-                />
-            )}
-            {parkAvailability?.features?.map((feature, i) => (
-                <View key={i}>
-                    <SymbolLayer
-                        sourceId={`parking-availability-source-${i}`}
-                        layerId={`parking-availability-layer-${i}`}
-                        coordinates={(feature.geometry as Point).coordinates}
-                        onPress={() => {
-                            openSheet<ParkAvailabilityProperties>({
-                                type: SheetType.MARKER,
-                                markerType: MarkerSheet.PARKING,
-                                markerProperties: feature.properties as ParkAvailabilityProperties,
-                            });
+            {directions?.geometry && (
+                <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
+                    <LineLayer
+                        id="route-layer"
+                        style={{
+                            lineColor: COLORS.secondary_light,
+                            lineOpacity: 0.8,
+                            lineCap: "round",
+                            lineJoin: "round",
+                            lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                         }}
-                        properties={feature.properties}
+                        belowLayerID={LayerId.INCIDENT_LINE}
+                    />
+                </ShapeSource>
+            )}
+
+            {parkAvailability?.features && (
+                <ShapeSource
+                    id="parking-availability-source"
+                    shape={parkAvailability as GeoJSON.FeatureCollection}
+                    onPress={(e) => {
+                        openSheet<ParkAvailabilityProperties>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.PARKING,
+                            markerProperties: e.features[0].properties as ParkAvailabilityProperties,
+                        });
+                    }}
+                >
+                    <SymbolLayer
+                        id="parking-availability-layer"
                         style={{
                             iconImage: "parking-availability",
-                            textField: `
-                                    ${feature.properties?.name}
-                                    ${feature.properties?.free} / ${feature.properties?.total}
-                                `,
+                            textField: ["format", ["get", "name"], "\n", ["get", "free"], " / ", ["get", "total"]],
                             textSize: SIZES.fontSize.sm,
                             textOpacity: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0, 16, 1],
                             textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.primary,
                             textOffset: [0, 2.5],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
+                            iconAllowOverlap: true,
+                            iconRotate: 0,
                         }}
+                        belowLayerID={LayerId.GAS_STATION}
                     />
-                </View>
-            ))}
-            {gasStations?.features?.map((feature, i) => (
-                <SymbolLayer
-                    key={i}
-                    sourceId={`gas-station-source-${i}`}
-                    layerId={`gas-station-layer-${i}`}
-                    coordinates={(feature.geometry as Point).coordinates}
-                    onPress={() =>
+                </ShapeSource>
+            )}
+
+            {gasStations && (
+                <ShapeSource
+                    id="gas-station-source"
+                    shape={gasStations as GeoJSON.FeatureCollection}
+                    onPress={(e) => {
                         openSheet<GasStation>({
                             type: SheetType.MARKER,
                             markerType: MarkerSheet.GAS_STATION,
-                            markerProperties: feature.properties as GasStation,
-                        })
-                    }
-                    properties={feature.properties}
-                    style={{
-                        iconImage: getStationIcon(
-                            gasStations.features.map((f) => f.properties as GasStation),
-                            feature.properties?.diesel
-                        ),
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            markerProperties: e.features[0].properties as GasStation,
+                        });
                     }}
-                />
-            ))}
-            {speedCameras?.speedCameras?.data?.features?.map((feature, i) => (
-                <SymbolLayer
-                    key={i}
-                    sourceId={`speed-camera-source-${i}`}
-                    layerId={`speed-camera-layer-${i}`}
-                    coordinates={(feature.geometry as Point).coordinates}
-                    onPress={() =>
+                >
+                    <SymbolLayer
+                        id="gas-station-layer"
+                        style={{
+                            iconImage: ["get", "iconType"],
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconAllowOverlap: true,
+                            iconRotate: 0,
+                        }}
+                        belowLayerID={LayerId.SPEED_CAMERA}
+                    />
+                </ShapeSource>
+            )}
+
+            {speedCameras.speedCameras?.data && (
+                <ShapeSource
+                    id="speed-camera-source"
+                    shape={speedCameras.speedCameras?.data as GeoJSON.FeatureCollection}
+                    onPress={(e) => {
                         openSheet<SpeedCameraProperties>({
                             type: SheetType.MARKER,
                             markerType: MarkerSheet.SPEED_CAMERA,
-                            markerProperties: feature.properties as SpeedCameraProperties,
-                        })
-                    }
-                    style={{
-                        iconImage: "speed-camera",
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            markerProperties: e.features[0].properties as SpeedCameraProperties,
+                        });
                     }}
-                />
-            ))}
-            {incidents?.incidents?.data?.incidents?.map((incident, i) => (
-                <View key={i}>
+                >
+                    <SymbolLayer
+                        id="speed-camera-layer"
+                        style={{
+                            iconImage: "speed-camera",
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconAllowOverlap: true,
+                            iconRotate: 0,
+                            visibility: "visible",
+                        }}
+                        belowLayerID={LayerId.INCIDENT_SYMBOL}
+                    />
+                </ShapeSource>
+            )}
+
+            {incidents?.incidents?.data && (
+                <ShapeSource
+                    id="incident-source"
+                    shape={incidents?.incidents?.data as GeoJSON.FeatureCollection}
+                    onPress={(e) => {
+                        openSheet<IncidentProperties>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.INCIDENT,
+                            markerProperties: e.features[0].properties as IncidentProperties,
+                        });
+                    }}
+                >
                     <LineLayer
-                        sourceId={`incident-line-source-${i}`}
-                        layerId={`incident-line-layer-${i}`}
-                        coordinates={incident.geometry.coordinates}
-                        properties={incident.properties}
+                        id="incident-line-layer"
                         style={{
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
                             lineOpacity: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0, 18, 1, 20, 1],
+                            lineCap: "round",
+                            lineJoin: "round",
+                            visibility: "visible",
                         }}
+                        belowLayerID={LayerId.PARKING_AVAILABILITY}
                     />
                     <SymbolLayer
-                        sourceId={`incident-symbol-source-${i}`}
-                        layerId={`incident-symbol-layer-${i}`}
-                        coordinates={incident.geometry.coordinates[incident.geometry.coordinates.length - 1]}
-                        onPress={() =>
-                            openSheet<IncidentProperties>({
-                                type: SheetType.MARKER,
-                                markerType: MarkerSheet.INCIDENT,
-                                markerProperties: incident.properties,
-                            })
-                        }
-                        properties={incident.properties}
+                        id="incident-symbol-layer"
                         style={{
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
                             iconImage: [
@@ -167,10 +180,12 @@ const Layers = ({ directions }: LayersProps) => {
                                 "incident-broken-down-vehicle",
                                 "incident-caution",
                             ],
+                            iconAllowOverlap: true,
+                            iconRotate: 0,
                         }}
                     />
-                </View>
-            ))}
+                </ShapeSource>
+            )}
         </>
     );
 };

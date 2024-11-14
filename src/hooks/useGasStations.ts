@@ -9,6 +9,8 @@ import { GAS_STATIONS_REFETCH_INTERVAL } from "@/constants/time-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchGasStations } from "@/services/gas-stations";
 import { mapGasStationSelectors } from "@/store/mapGasStation";
+import { GasStation } from "@/types/IGasStation";
+import { getStationIcon } from "@/utils/map-utils";
 
 const useGasStations = () => {
     const { userLocation } = useContext(UserLocationContext);
@@ -36,7 +38,23 @@ const useGasStations = () => {
 
     useEffect(() => {
         if (data && showGasStations && longitude && latitude) {
-            setGasStations(data);
+            setGasStations({
+                ...data,
+                features: data.features.map((feature) => {
+                    const properties = feature.properties;
+                    const iconType = getStationIcon(
+                        data.features.map((f) => f.properties as unknown as GasStation),
+                        (properties as unknown as GasStation).diesel
+                    );
+                    return {
+                        ...feature,
+                        properties: {
+                            ...properties,
+                            iconType,
+                        },
+                    };
+                }),
+            });
         } else {
             setGasStations(DEFAULT_FC);
         }

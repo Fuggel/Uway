@@ -6,7 +6,7 @@ import useIncidents from "@/hooks/useIncidents";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import { WarningAlert } from "@/types/IMap";
 import { SpeedCameraAlert } from "@/types/ISpeed";
-import { IncidentAlert, IncidentFc, WarningAlertIncident } from "@/types/ITraffic";
+import { IncidentAlert, WarningAlertIncident } from "@/types/ITraffic";
 
 type SpeedCamera = {
     speedCameras: { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined;
@@ -17,7 +17,7 @@ type SpeedCamera = {
 };
 
 type Incident = {
-    incidents: { data: IncidentFc; alert: IncidentAlert | null } | undefined;
+    incidents: { data: FeatureCollection; alert: IncidentAlert | null } | undefined;
     incidentWarningText: WarningAlertIncident | null;
     loadingIncidents: boolean;
     errorIncidents: Error | null;

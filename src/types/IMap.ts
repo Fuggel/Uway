@@ -51,12 +51,11 @@ export interface WarningAlert {
     subTitle?: string;
 }
 
-export enum FirstLayerId {
+export enum LayerId {
     ROUTE = "route-layer",
-    PARKING_AVAILABILITY = "parking-availability-layer-0",
-    GAS_STATION = "gas-station-layer-0",
-    SPEED_CAMERA = "speed-camera-layer-0",
-    INCIDENT_LINE = "incident-line-layer-0",
-    INCIDENT_SYMBOL = "incident-symbol-layer-0",
-    USER_LOCATION = "mapboxUserLocationPulseCircle",
+    PARKING_AVAILABILITY = "parking-availability-layer",
+    GAS_STATION = "gas-station-layer",
+    SPEED_CAMERA = "speed-camera-layer",
+    INCIDENT_LINE = "incident-line-layer",
+    INCIDENT_SYMBOL = "incident-symbol-layer",
 }

@@ -6,7 +6,6 @@ import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
 import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
-import { COLORS } from "@/constants/colors-constants";
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";

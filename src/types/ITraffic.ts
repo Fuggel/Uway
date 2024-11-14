@@ -1,10 +1,5 @@
 import { WarningAlert } from "./IMap";
 
-export interface IncidentFc {
-    type: string;
-    incidents: IncidentFeature[];
-}
-
 export interface IncidentFeature {
     type: string;
     geometry: {

@@ -2,9 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
+import { FeatureCollection } from "@turf/helpers";
 import { bearing, distance, point } from "@turf/turf";
 
 import {
+    DEFAULT_FC,
     IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES,
     PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
     SHOW_INCIDENTS_THRESHOLD_IN_METERS,
@@ -14,7 +16,7 @@ import { INCIDENTS_REFETCH_INTERVAL } from "@/constants/time-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
-import { IncidentAlert, IncidentFc, WarningAlertIncident } from "@/types/ITraffic";
+import { IncidentAlert, IncidentProperties, WarningAlertIncident } from "@/types/ITraffic";
 import { incidentTitle } from "@/utils/sheet-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
@@ -29,7 +31,7 @@ const useIncidents = () => {
         useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
         PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS;
     const { startSpeech } = useTextToSpeech();
-    const [incidents, setIncidents] = useState<{ data: IncidentFc; alert: IncidentAlert | null }>();
+    const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
     const [incidentWarningText, setIncidentWarningText] = useState<WarningAlertIncident | null>(null);
 
@@ -58,12 +60,13 @@ const useIncidents = () => {
             let closestIncident: IncidentAlert | null = null;
             let isWithinAnyWarningZone = false;
 
-            const filteredIncidents = data.incidents.filter(
-                (incident) => incident.properties.probabilityOfOccurrence === "certain"
+            const filteredIncidents = data.features.filter(
+                (incident) =>
+                    (incident.properties as unknown as IncidentProperties).probabilityOfOccurrence === "certain"
             );
 
             filteredIncidents?.forEach((incident) => {
-                const incidentPoint = point(incident.geometry.coordinates[0]);
+                const incidentPoint = point(incident.geometry.coordinates[0] as [number, number]);
                 const userPoint = point([longitude, latitude]);
                 const distanceToIncident = distance(userPoint, incidentPoint, { units: "meters" });
 
@@ -80,12 +83,12 @@ const useIncidents = () => {
                     isWithinAnyWarningZone = true;
                     closestIncident = {
                         distance: distanceToIncident,
-                        events: incident.properties.events,
+                        events: (incident.properties as unknown as IncidentProperties).events,
                     };
 
                     setIncidentWarningText({
                         ...incidentWarningText,
-                        properties: incident.properties,
+                        properties: incident.properties as unknown as IncidentProperties,
                     });
                 }
 
@@ -106,12 +109,12 @@ const useIncidents = () => {
             }
 
             setIncidents({
-                data: { ...data, incidents: filteredIncidents },
+                data: { ...data, features: filteredIncidents },
                 alert: closestIncident,
             });
         } else {
             setIncidents({
-                data: { type: "FeatureCollection", incidents: [] },
+                data: DEFAULT_FC,
                 alert: null,
             });
             setHasPlayedWarning(false);

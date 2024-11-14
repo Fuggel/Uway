@@ -1,14 +1,20 @@
 import axios from "axios";
 
+import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
+
 import { TOMTOM_INCIDENTS_API } from "@/constants/api-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
 import { BoundingBox, LonLat } from "@/types/IMap";
-import { IncidentFc } from "@/types/ITraffic";
+import { IncidentFeature } from "@/types/ITraffic";
 import { boundingBox } from "@/utils/map-utils";
 
-export async function fetchIncidents(params: { userLonLat: LonLat; distance: number }): Promise<IncidentFc> {
+export async function fetchIncidents(params: {
+    userLonLat: LonLat;
+    distance: number;
+}): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
         if (!params.userLonLat.lon || !params.userLonLat.lat) {
-            return { type: "FeatureCollection", incidents: [] };
+            return DEFAULT_FC;
         }
 
         const { minLat, minLon, maxLat, maxLon } = boundingBox(params.userLonLat, params.distance) as BoundingBox;
@@ -27,9 +33,18 @@ export async function fetchIncidents(params: { userLonLat: LonLat; distance: num
         const url = `${TOMTOM_INCIDENTS_API}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
-        return response.data;
+        const features = response.data.incidents || [];
+
+        return {
+            type: "FeatureCollection",
+            features: features.map((incident: IncidentFeature) => ({
+                type: "Feature",
+                geometry: incident.geometry,
+                properties: incident.properties,
+            })),
+        };
     } catch (error) {
         console.log(`Error fetching incidents: ${error}`);
-        return { type: "FeatureCollection", incidents: [] };
+        return DEFAULT_FC;
     }
 }
