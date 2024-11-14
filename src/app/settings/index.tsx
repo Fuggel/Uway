@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -27,72 +28,79 @@ const Settings = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
-        <ScrollView style={styles.container}>
-            <SettingsSection icon="account-cog" title="Allgemein">
-                <SettingsItem title="Sprachausgabe">
-                    <Switch
-                        checked={allowTextToSpeech}
-                        onChange={() => dispatch(mapTextToSpeechActions.setAllowTextToSpeech(!allowTextToSpeech))}
-                    />
-                </SettingsItem>
-            </SettingsSection>
+        <>
+            <StatusBar style="dark" />
 
-            <SettingsSection icon="map-marker-multiple" title="Map Daten">
-                <SettingsItem title="Blitzer">
-                    <Link type="secondary" to={() => router.push("/settings/speed-camera")} />
-                </SettingsItem>
-                <SettingsItem title="Verkehrsdaten">
-                    <Link type="secondary" to={() => router.push("/settings/incidents")} />
-                </SettingsItem>
-                <SettingsItem title="Geschwindigkeitsbegrenzungen">
-                    <Switch
-                        checked={showSpeedLimits}
-                        onChange={() => dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits))}
-                    />
-                </SettingsItem>
-                <SettingsItem title="Parkplätze & Parkhäuser">
-                    <Switch
-                        checked={showParkAvailability}
-                        onChange={() =>
-                            dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability))
-                        }
-                    />
-                </SettingsItem>
-                <SettingsItem title="Tankstellen">
-                    <Switch
-                        checked={showGasStations}
-                        onChange={() => dispatch(mapGasStationActions.setShowGasStation(!showGasStations))}
-                    />
-                </SettingsItem>
-            </SettingsSection>
+            <ScrollView style={styles.container}>
+                <SettingsSection icon="account-cog" title="Allgemein">
+                    <SettingsItem title="Sprachausgabe">
+                        <Switch
+                            checked={allowTextToSpeech}
+                            onChange={() => dispatch(mapTextToSpeechActions.setAllowTextToSpeech(!allowTextToSpeech))}
+                        />
+                    </SettingsItem>
+                </SettingsSection>
 
-            <SettingsSection icon="map" title="Map Style">
-                <SettingsItem>
-                    <View style={styles.mapStylesContainer}>
-                        {MAP_STYLES.map((style) => (
-                            <TouchableOpacity
-                                key={style.value}
-                                style={styles.imgContainer}
-                                activeOpacity={1}
-                                onPress={() => {
-                                    if (mapStyle !== style.value) {
-                                        dispatch(mapViewActions.mapboxTheme(style.value as MapboxStyle));
-                                    }
-                                }}
-                            >
-                                <Image
-                                    source={style.img}
-                                    style={[styles.img, mapStyle === style.value && styles.selectedMapStyle]}
-                                />
-                                <Text type={mapStyle === style.value ? "secondary" : "lightGray"} textStyle="caption">
-                                    {style.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </SettingsItem>
-            </SettingsSection>
-        </ScrollView>
+                <SettingsSection icon="map-marker-multiple" title="Map Daten">
+                    <SettingsItem title="Blitzer">
+                        <Link type="secondary" to={() => router.push("/settings/speed-camera")} />
+                    </SettingsItem>
+                    <SettingsItem title="Verkehrsdaten">
+                        <Link type="secondary" to={() => router.push("/settings/incidents")} />
+                    </SettingsItem>
+                    <SettingsItem title="Geschwindigkeitsbegrenzungen">
+                        <Switch
+                            checked={showSpeedLimits}
+                            onChange={() => dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits))}
+                        />
+                    </SettingsItem>
+                    <SettingsItem title="Parkplätze & Parkhäuser">
+                        <Switch
+                            checked={showParkAvailability}
+                            onChange={() =>
+                                dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability))
+                            }
+                        />
+                    </SettingsItem>
+                    <SettingsItem title="Tankstellen">
+                        <Switch
+                            checked={showGasStations}
+                            onChange={() => dispatch(mapGasStationActions.setShowGasStation(!showGasStations))}
+                        />
+                    </SettingsItem>
+                </SettingsSection>
+
+                <SettingsSection icon="map" title="Map Style">
+                    <SettingsItem>
+                        <View style={styles.mapStylesContainer}>
+                            {MAP_STYLES.map((style) => (
+                                <TouchableOpacity
+                                    key={style.value}
+                                    style={styles.imgContainer}
+                                    activeOpacity={1}
+                                    onPress={() => {
+                                        if (mapStyle !== style.value) {
+                                            dispatch(mapViewActions.mapboxTheme(style.value as MapboxStyle));
+                                        }
+                                    }}
+                                >
+                                    <Image
+                                        source={style.img}
+                                        style={[styles.img, mapStyle === style.value && styles.selectedMapStyle]}
+                                    />
+                                    <Text
+                                        type={mapStyle === style.value ? "secondary" : "lightGray"}
+                                        textStyle="caption"
+                                    >
+                                        {style.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </SettingsItem>
+                </SettingsSection>
+            </ScrollView>
+        </>
     );
 };
 

@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +18,7 @@ import { mapViewSelectors } from "@/store/mapView";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
+import { determineTheme, invertTheme } from "@/utils/theme-utils";
 
 import Loading from "@/components/common/Loading";
 import Layers from "@/components/layer/Layers";
@@ -104,6 +106,8 @@ const Map = () => {
 
     return (
         <>
+            <StatusBar style={invertTheme(determineTheme(mapStyle))} />
+
             <View style={styles.container}>
                 {loadingDirections && <Loading />}
 
