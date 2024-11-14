@@ -52,15 +52,20 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
                     directions?.legs[0].steps
                         .slice(currentStep, currentStep + 1)
                         .map((step: Instruction, index: number) => {
+                            const defaultArrow = "arrow-up-bold";
+
                             const arrowDir = arrowDirection(step?.maneuver?.modifier);
                             const arrowDirNext = arrowDirection(nextStepData?.maneuver?.modifier);
+
+                            const arrowName = arrowDir ?? defaultArrow;
+                            const arrowNameNext = arrowDirNext ?? defaultArrow;
 
                             return (
                                 <View key={index}>
                                     <View style={styles.instructionsContainer}>
                                         <View style={styles.directionRow}>
                                             <MaterialCommunityIcons
-                                                name={arrowDir ?? "arrow-up"}
+                                                name={arrowName}
                                                 size={SIZES.iconSize.xl}
                                                 color={COLORS.white}
                                             />
@@ -76,7 +81,7 @@ const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraErr
                                             <View style={styles.directionRow}>
                                                 <Text type="white">Dann</Text>
                                                 <MaterialCommunityIcons
-                                                    name={arrowDirNext ?? "arrow-up"}
+                                                    name={arrowNameNext}
                                                     size={SIZES.iconSize.lg}
                                                     color={COLORS.white}
                                                 />

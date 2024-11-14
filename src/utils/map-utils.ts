@@ -45,7 +45,7 @@ export function arrowDirection(modifier: ModifierType) {
         case ModifierType.SLIGHT_RIGHT:
             return "arrow-right-top-bold";
         case ModifierType.STRAIGHT:
-            return "arrow-up-thick";
+            return "arrow-up-bold";
         case ModifierType.SHARP_LEFT:
         case ModifierType.LEFT:
         case ModifierType.SLIGHT_LEFT:
