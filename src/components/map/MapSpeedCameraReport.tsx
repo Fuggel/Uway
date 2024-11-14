@@ -80,7 +80,7 @@ const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProp
                         Abbrechen
                     </Button>
 
-                    <Button mode="contained" style={{ backgroundColor: COLORS.primary }} onPress={handleReport}>
+                    <Button mode="contained" style={{ backgroundColor: COLORS.secondary }} onPress={handleReport}>
                         Melden
                     </Button>
                 </View>
@@ -92,7 +92,7 @@ const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProp
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: SIZES.spacing.md,
-        paddingBottom: SIZES.spacing.md,
+        paddingBottom: SIZES.spacing.lg,
         gap: SIZES.spacing.md,
     },
     header: {
