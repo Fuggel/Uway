@@ -2,14 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import Mapbox, { Camera, Images, LocationPuck, MapView } from "@rnmapbox/maps";
+import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useLocationPermission from "@/hooks/useLocationPermissions";
 import useNavigation from "@/hooks/useNavigation";
 import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
@@ -32,7 +31,6 @@ const Map = () => {
     const dispatch = useDispatch();
     const { sheetData, showSheet, openSheet, closeSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const { hasLocationPermissions } = useLocationPermission();
     const location = useSelector(mapNavigationSelectors.location);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
@@ -144,18 +142,6 @@ const Map = () => {
                         }
                         defaultSettings={defaultSettings}
                     />
-
-                    {hasLocationPermissions && (
-                        <LocationPuck
-                            puckBearing="heading"
-                            puckBearingEnabled
-                            topImage="user-location"
-                            bearingImage="user-location"
-                            shadowImage="user-location"
-                            scale={["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6]}
-                            visible
-                        />
-                    )}
 
                     <Layers directions={directions} />
                 </MapView>

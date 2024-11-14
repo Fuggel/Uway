@@ -1,13 +1,15 @@
 import { useContext } from "react";
 import { useSelector } from "react-redux";
 
-import { LineLayer, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
+import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
+import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
 import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapViewSelectors } from "@/store/mapView";
@@ -25,6 +27,8 @@ interface LayersProps {
 }
 
 const Layers = ({ directions }: LayersProps) => {
+    const { hasLocationPermissions } = useLocationPermission();
+    const { userLocation } = useContext(UserLocationContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
@@ -188,6 +192,21 @@ const Layers = ({ directions }: LayersProps) => {
                         aboveLayerID={LayerId.INCIDENT_LINE}
                     />
                 </ShapeSource>
+            )}
+
+            {hasLocationPermissions && (
+                <UserLocation animated>
+                    <SymbolLayer
+                        id="user-location-layer"
+                        style={{
+                            iconImage: "user-location",
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
+                            iconAllowOverlap: true,
+                            iconRotate: userLocation?.coords.heading || 0,
+                            iconRotationAlignment: "map",
+                        }}
+                    />
+                </UserLocation>
             )}
         </>
     );
