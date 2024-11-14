@@ -11,7 +11,6 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
-import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
@@ -34,14 +33,15 @@ const Layers = ({ directions }: LayersProps) => {
     const { openSheet } = useContext(BottomSheetContext);
     const { parkAvailability } = useParkAvailability();
     const { gasStations } = useGasStations();
-    const showIncidents = useSelector(mapIncidentSelectors.showIncident);
 
     return (
         <>
+            <LineLayer id={LayerId.INVISIBLE} style={{ lineWidth: 0 }} />
+
             {directions?.geometry && (
                 <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
                     <LineLayer
-                        id="route-layer"
+                        id={LayerId.ROUTE}
                         style={{
                             lineColor: COLORS.secondary_light,
                             lineOpacity: 0.8,
@@ -49,7 +49,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineJoin: "round",
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                         }}
-                        belowLayerID={showIncidents ? LayerId.INCIDENT_SYMBOL : undefined}
+                        belowLayerID={LayerId.INVISIBLE}
                     />
                 </ShapeSource>
             )}
@@ -67,7 +67,7 @@ const Layers = ({ directions }: LayersProps) => {
                     }}
                 >
                     <SymbolLayer
-                        id="parking-availability-layer"
+                        id={LayerId.PARKING_AVAILABILITY}
                         style={{
                             iconImage: "parking-availability",
                             textField: ["format", ["get", "name"], "\n", ["get", "free"], " / ", ["get", "total"]],
@@ -79,7 +79,7 @@ const Layers = ({ directions }: LayersProps) => {
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
-                        aboveLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
+                        aboveLayerID={LayerId.INVISIBLE}
                     />
                 </ShapeSource>
             )}
@@ -97,14 +97,14 @@ const Layers = ({ directions }: LayersProps) => {
                     }}
                 >
                     <SymbolLayer
-                        id="gas-station-layer"
+                        id={LayerId.GAS_STATION}
                         style={{
                             iconImage: ["get", "iconType"],
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
-                        aboveLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
+                        aboveLayerID={LayerId.INVISIBLE}
                     />
                 </ShapeSource>
             )}
@@ -122,7 +122,7 @@ const Layers = ({ directions }: LayersProps) => {
                     }}
                 >
                     <SymbolLayer
-                        id="speed-camera-layer"
+                        id={LayerId.SPEED_CAMERA}
                         style={{
                             iconImage: "speed-camera",
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
@@ -130,7 +130,7 @@ const Layers = ({ directions }: LayersProps) => {
                             iconRotate: 0,
                             visibility: "visible",
                         }}
-                        aboveLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
+                        aboveLayerID={LayerId.INVISIBLE}
                     />
                 </ShapeSource>
             )}
@@ -148,7 +148,7 @@ const Layers = ({ directions }: LayersProps) => {
                     }}
                 >
                     <LineLayer
-                        id="incident-line-layer"
+                        id={LayerId.INCIDENT_LINE}
                         style={{
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             lineColor: "#FF0000",
@@ -157,10 +157,10 @@ const Layers = ({ directions }: LayersProps) => {
                             lineJoin: "round",
                             visibility: "visible",
                         }}
-                        belowLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
+                        aboveLayerID={LayerId.INVISIBLE}
                     />
                     <SymbolLayer
-                        id="incident-symbol-layer"
+                        id={LayerId.INCIDENT_SYMBOL}
                         style={{
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
                             iconImage: [
@@ -197,7 +197,7 @@ const Layers = ({ directions }: LayersProps) => {
             {hasLocationPermissions && (
                 <UserLocation animated>
                     <SymbolLayer
-                        id="user-location-layer"
+                        id={LayerId.USER_LOCATION}
                         style={{
                             iconImage: "user-location",
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
