@@ -9,6 +9,7 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import useGasStations from "@/hooks/useGasStations";
 import useParkAvailability from "@/hooks/useParkAvailability";
+import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
@@ -29,6 +30,7 @@ const Layers = ({ directions }: LayersProps) => {
     const { openSheet } = useContext(BottomSheetContext);
     const { parkAvailability } = useParkAvailability();
     const { gasStations } = useGasStations();
+    const showIncidents = useSelector(mapIncidentSelectors.showIncident);
 
     return (
         <>
@@ -43,7 +45,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineJoin: "round",
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                         }}
-                        belowLayerID={LayerId.INCIDENT_LINE}
+                        belowLayerID={showIncidents ? LayerId.INCIDENT_SYMBOL : undefined}
                     />
                 </ShapeSource>
             )}
@@ -73,7 +75,7 @@ const Layers = ({ directions }: LayersProps) => {
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
-                        belowLayerID={LayerId.GAS_STATION}
+                        aboveLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
                     />
                 </ShapeSource>
             )}
@@ -98,7 +100,7 @@ const Layers = ({ directions }: LayersProps) => {
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
-                        belowLayerID={LayerId.SPEED_CAMERA}
+                        aboveLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
                     />
                 </ShapeSource>
             )}
@@ -106,7 +108,7 @@ const Layers = ({ directions }: LayersProps) => {
             {speedCameras.speedCameras?.data && (
                 <ShapeSource
                     id="speed-camera-source"
-                    shape={speedCameras.speedCameras?.data as GeoJSON.FeatureCollection}
+                    shape={speedCameras.speedCameras.data as GeoJSON.FeatureCollection}
                     onPress={(e) => {
                         openSheet<SpeedCameraProperties>({
                             type: SheetType.MARKER,
@@ -124,7 +126,7 @@ const Layers = ({ directions }: LayersProps) => {
                             iconRotate: 0,
                             visibility: "visible",
                         }}
-                        belowLayerID={LayerId.INCIDENT_SYMBOL}
+                        aboveLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
                     />
                 </ShapeSource>
             )}
@@ -132,7 +134,7 @@ const Layers = ({ directions }: LayersProps) => {
             {incidents?.incidents?.data && (
                 <ShapeSource
                     id="incident-source"
-                    shape={incidents?.incidents?.data as GeoJSON.FeatureCollection}
+                    shape={incidents.incidents.data as GeoJSON.FeatureCollection}
                     onPress={(e) => {
                         openSheet<IncidentProperties>({
                             type: SheetType.MARKER,
@@ -151,7 +153,7 @@ const Layers = ({ directions }: LayersProps) => {
                             lineJoin: "round",
                             visibility: "visible",
                         }}
-                        belowLayerID={LayerId.PARKING_AVAILABILITY}
+                        belowLayerID={directions?.geometry ? LayerId.ROUTE : undefined}
                     />
                     <SymbolLayer
                         id="incident-symbol-layer"
@@ -183,6 +185,7 @@ const Layers = ({ directions }: LayersProps) => {
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
+                        aboveLayerID={LayerId.INCIDENT_LINE}
                     />
                 </ShapeSource>
             )}
