@@ -1,29 +1,31 @@
-# NavSync
+# Uway
 
-A mobile application designed to enhance driving experience by providing real-time traffic data, speed camera information, parking availability, and more.
+A mobile application designed to enhance driving experience by providing speed camera warnings, real-time traffic data, gas station information, parking availability, and more.
+
+<img src="screenshot.jpeg" alt="Screenshot" style="border-radius: 8px;" />
 
 ## Features
 
-### 🚦 Real-Time Traffic data
+### 🎥 Speed Camera Warnings
+
+Information on speed camera locations with speed limits near the located device position
+
+### 🚦 Real-Time Traffic Data
 
 Real-time data on Traffic jams and potential hazards
+
+### ⛽ Gas Station Information
+
+Information on gas stations with real-time fuel prices and available fuel types
 
 ### 🅿️ Parking Availability
 
 Information on parking availability
 
-### 🎥 Speed Camera Information
-
-Information on speed camera locations with speed limits near the located device position
-
 ### 🧭 Directions and Navigation
 
 Calculating optimal routes with turn-by-turn instructions
 
-### 📍 Device Position
+### 🗺️ Customizable Map Style and Data
 
-Track your device location for navigation experiences based on your real-time position
-
-### 🗺️ Customizable Map and Sidebar
-
-Toggle between different features in the sidebar and customize the map view with various styles
+Toggle between different features in the settings and customize the map view with various styles
