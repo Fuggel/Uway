@@ -2,8 +2,6 @@
 
 A mobile application designed to enhance driving experience by providing speed camera warnings, real-time traffic data, gas station information, parking availability, and more.
 
-<img src="screenshot.jpeg" alt="Screenshot" style="border-radius: 8px;" />
-
 ## Features
 
 ### 🎥 Speed Camera Warnings
