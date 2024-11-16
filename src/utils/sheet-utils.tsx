@@ -134,6 +134,10 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
             label: "Typ",
             value: speedCameraProperties?.type === SpeedCameraType.MOBILE ? "Mobil" : "Stationär",
         },
+        {
+            label: "Richtung",
+            value: speedCameraProperties?.direction ?? "Unbekannt",
+        },
     ];
 }
 
