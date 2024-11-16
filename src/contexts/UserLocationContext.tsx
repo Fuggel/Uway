@@ -2,6 +2,8 @@ import React, { createContext, useEffect, useState } from "react";
 
 import Mapbox, { Location } from "@rnmapbox/maps";
 
+import useLocationPermission from "@/hooks/useLocationPermissions";
+
 interface ContextProps {
     userLocation: Location | null;
 }
@@ -15,9 +17,14 @@ export const UserLocationContext = createContext<ContextProps>({
 });
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
+    const { hasLocationPermissions } = useLocationPermission();
     const [userLocation, setUserLocation] = useState<Location | null>(null);
 
     useEffect(() => {
+        if (!hasLocationPermissions) {
+            return;
+        }
+
         Mapbox.locationManager.start();
 
         Mapbox.locationManager.addListener((location: Location) => {
@@ -27,7 +34,7 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         return () => {
             Mapbox.locationManager.stop();
         };
-    }, []);
+    }, [hasLocationPermissions]);
 
     return <UserLocationContext.Provider value={{ userLocation }}>{children}</UserLocationContext.Provider>;
 };

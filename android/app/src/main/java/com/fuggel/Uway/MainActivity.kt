@@ -1,4 +1,4 @@
-package com.fuggel.NavSync
+package com.fuggel.Uway
 
 import android.os.Build
 import android.os.Bundle

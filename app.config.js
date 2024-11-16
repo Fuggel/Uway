@@ -2,16 +2,17 @@ export default ({ config }) => {
     const MAPBOX_TOKEN = process.env.EXPO_SECRET_MAPBOX_ACCESS_TOKEN;
     return {
         ...config,
-        name: "NavSync",
-        slug: "NavSync",
-        version: "1.7.0",
+        owner: "fuggel",
+        name: "Uway",
+        slug: "uway",
+        version: "0.1.0",
         orientation: "portrait",
         icon: "./src/assets/images/build/icon.png",
-        scheme: "myapp",
+        scheme: "Uway",
         userInterfaceStyle: "automatic",
         extra: {
             eas: {
-                projectId: "db71619c-6270-4e2f-b360-8d388fba3d85",
+                projectId: "f9f3d280-e3c2-49cc-afdc-09c23e152383",
             },
         },
         splash: {
@@ -20,9 +21,9 @@ export default ({ config }) => {
             backgroundColor: "#ffffff",
         },
         ios: {
-            buildNumber: "1.7.0",
+            buildNumber: "0.1.0",
             supportsTablet: true,
-            bundleIdentifier: "com.fuggel.NavSync",
+            bundleIdentifier: "com.fuggel.Uway",
         },
         android: {
             versionCode: 1,
@@ -30,7 +31,7 @@ export default ({ config }) => {
                 foregroundImage: "./src/assets/images/build/adaptive-icon.png",
                 backgroundColor: "#ffffff",
             },
-            package: "com.fuggel.NavSync",
+            package: "com.fuggel.Uway",
             permissions: ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"],
         },
         web: {

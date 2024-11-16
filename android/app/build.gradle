@@ -117,13 +117,13 @@ packagingOptions {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.fuggel.NavSync'
+    namespace 'com.fuggel.Uway'
     defaultConfig {
-        applicationId 'com.fuggel.NavSync'
+        applicationId 'com.fuggel.Uway'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.7.0"
+        versionName "0.1.0"
     }
     signingConfigs {
         debug {

@@ -9,7 +9,6 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
-import useLocationPermission from "@/hooks/useLocationPermissions";
 import useParkAvailability from "@/hooks/useParkAvailability";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
@@ -26,7 +25,6 @@ interface LayersProps {
 }
 
 const Layers = ({ directions }: LayersProps) => {
-    const { hasLocationPermissions } = useLocationPermission();
     const { userLocation } = useContext(UserLocationContext);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
@@ -195,20 +193,18 @@ const Layers = ({ directions }: LayersProps) => {
                 </ShapeSource>
             )}
 
-            {hasLocationPermissions && (
-                <UserLocation animated>
-                    <SymbolLayer
-                        id={LayerId.USER_LOCATION}
-                        style={{
-                            iconImage: "user-location",
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
-                            iconAllowOverlap: true,
-                            iconRotate: userLocation?.coords.heading || 0,
-                            iconRotationAlignment: "map",
-                        }}
-                    />
-                </UserLocation>
-            )}
+            <UserLocation animated>
+                <SymbolLayer
+                    id={LayerId.USER_LOCATION}
+                    style={{
+                        iconImage: "user-location",
+                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
+                        iconAllowOverlap: true,
+                        iconRotate: userLocation?.coords.heading || 0,
+                        iconRotationAlignment: "map",
+                    }}
+                />
+            </UserLocation>
         </>
     );
 };

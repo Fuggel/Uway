@@ -38,7 +38,7 @@ prepare_react_native_project!
 $RNMapboxMapsDownloadToken = ENV['EXPO_SECRET_MAPBOX_ACCESS_TOKEN']
 $RNMapboxMapsVersion = '10.16.0'
 # @generated end @rnmapbox/maps-rnmapboxmapsimpl
-target 'NavSync' do
+target 'Uway' do
   use_expo_modules!
   config = use_native_modules!
 

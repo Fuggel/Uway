@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 
-import { NAVSYNC_API } from "@/constants/api-constants";
+import { UWAY_API } from "@/constants/api-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { LonLat } from "@/types/IMap";
 import { SpeedCameraReport } from "@/types/ISpeed";
@@ -15,7 +15,7 @@ export async function fetchSpeedCameras(params: {
         const queryParams = new URLSearchParams();
         queryParams.append("coordinates", `${params.userLonLat.lon},${params.userLonLat.lat}`);
 
-        const url = `${NAVSYNC_API}/speed-cameras?${queryParams.toString()}`;
+        const url = `${UWAY_API}/speed-cameras?${queryParams.toString()}`;
         const response = await axios.get(url);
 
         return response.data.data as Promise<FeatureCollection<Geometry, GeometryCollection>>;
@@ -26,6 +26,6 @@ export async function fetchSpeedCameras(params: {
 }
 
 export async function reportSpeedCamera(data: SpeedCameraReport) {
-    const response = await axios.post(`${NAVSYNC_API}/report-speed-camera`, data);
+    const response = await axios.post(`${UWAY_API}/report-speed-camera`, data);
     return response.data;
 }
