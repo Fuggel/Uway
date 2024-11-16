@@ -2,8 +2,9 @@ export default ({ config }) => {
     const MAPBOX_TOKEN = process.env.EXPO_SECRET_MAPBOX_ACCESS_TOKEN;
     return {
         ...config,
+        owner: "fuggel",
         name: "Uway",
-        slug: "Uway",
+        slug: "uway",
         version: "0.1.0",
         orientation: "portrait",
         icon: "./src/assets/images/build/icon.png",
@@ -11,7 +12,7 @@ export default ({ config }) => {
         userInterfaceStyle: "automatic",
         extra: {
             eas: {
-                projectId: "db71619c-6270-4e2f-b360-8d388fba3d85",
+                projectId: "f9f3d280-e3c2-49cc-afdc-09c23e152383",
             },
         },
         splash: {
