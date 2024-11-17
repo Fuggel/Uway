@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { useSelector } from "react-redux";
 
 import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
 
@@ -8,7 +7,6 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
-import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
@@ -22,7 +20,6 @@ interface LayersProps {
 
 const Layers = ({ directions }: LayersProps) => {
     const { userLocation } = useContext(UserLocationContext);
-    const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
     const { gasStations } = useGasStations();
@@ -157,18 +154,20 @@ const Layers = ({ directions }: LayersProps) => {
                 </ShapeSource>
             )}
 
-            <UserLocation animated>
-                <SymbolLayer
-                    id={LayerId.USER_LOCATION}
-                    style={{
-                        iconImage: "user-location",
-                        iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
-                        iconAllowOverlap: true,
-                        iconRotate: userLocation?.coords.heading || 0,
-                        iconRotationAlignment: "map",
-                    }}
-                />
-            </UserLocation>
+            {userLocation && (
+                <UserLocation animated>
+                    <SymbolLayer
+                        id={LayerId.USER_LOCATION}
+                        style={{
+                            iconImage: "user-location",
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
+                            iconAllowOverlap: true,
+                            iconRotate: userLocation?.coords.heading || 0,
+                            iconRotationAlignment: "map",
+                        }}
+                    />
+                </UserLocation>
+            )}
         </>
     );
 };
