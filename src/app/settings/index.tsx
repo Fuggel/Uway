@@ -7,7 +7,6 @@ import { COLORS } from "@/constants/colors-constants";
 import { MAP_STYLES } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
-import { mapParkAvailabilityActions, mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
 import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/store/mapSpeedLimit";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { mapViewActions, mapViewSelectors } from "@/store/mapView";
@@ -23,7 +22,6 @@ const Settings = () => {
     const dispatch = useDispatch();
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
-    const showParkAvailability = useSelector(mapParkAvailabilitySelectors.showParkAvailability);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
@@ -52,14 +50,6 @@ const Settings = () => {
                         <Switch
                             checked={showSpeedLimits}
                             onChange={() => dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits))}
-                        />
-                    </SettingsItem>
-                    <SettingsItem title="Parkplätze & Parkhäuser">
-                        <Switch
-                            checked={showParkAvailability}
-                            onChange={() =>
-                                dispatch(mapParkAvailabilityActions.setShowParkAvailability(!showParkAvailability))
-                            }
                         />
                     </SettingsItem>
                     <SettingsItem title="Tankstellen">

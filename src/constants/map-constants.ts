@@ -48,7 +48,6 @@ export const MAP_STYLES: MapStyle[] = [
 export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
-    "parking-availability": require(`${MAP_ICONS_URL}/parking.png`),
     "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
     "incident-accident": require(`${MAP_ICONS_URL}/incident-accident.png`),
     "incident-jam": require(`${MAP_ICONS_URL}/incident-jam.png`),

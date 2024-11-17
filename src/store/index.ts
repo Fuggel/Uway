@@ -6,7 +6,6 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import mapGasStationReduce from "./mapGasStation";
 import mapIncidentReduce from "./mapIncident";
 import mapNavigationReduce from "./mapNavigation";
-import mapParkAvailabilityReduce from "./mapParkAvailability";
 import mapSearchReduce from "./mapSearch";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
 import mapSpeedLimitReduce from "./mapSpeedLimit";
@@ -20,7 +19,6 @@ const persistConfig = {
         "mapView",
         "mapSpeedCamera",
         "mapSpeedLimit",
-        "mapParkAvailability",
         "mapGasStation",
         "mapIncident",
         "mapTextToSpeech",
@@ -33,7 +31,6 @@ const reducer = combineReducers({
     mapNavigation: mapNavigationReduce,
     mapSpeedCamera: mapSpeedCameraReduce,
     mapSpeedLimit: mapSpeedLimitReduce,
-    mapParkAvailability: mapParkAvailabilityReduce,
     mapGasStation: mapGasStationReduce,
     mapIncident: mapIncidentReduce,
     mapTextToSpeech: mapTextToSpeechReduce,

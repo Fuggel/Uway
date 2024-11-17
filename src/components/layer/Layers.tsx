@@ -4,21 +4,17 @@ import { useSelector } from "react-redux";
 import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
 
 import { COLORS } from "@/constants/colors-constants";
-import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
-import useParkAvailability from "@/hooks/useParkAvailability";
 import { mapViewSelectors } from "@/store/mapView";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
-import { ParkAvailabilityProperties } from "@/types/IParking";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
-import { determineTheme } from "@/utils/theme-utils";
 
 interface LayersProps {
     directions: Direction | null;
@@ -29,7 +25,6 @@ const Layers = ({ directions }: LayersProps) => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
-    const { parkAvailability } = useParkAvailability();
     const { gasStations } = useGasStations();
 
     return (
@@ -48,37 +43,6 @@ const Layers = ({ directions }: LayersProps) => {
                             lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                         }}
                         belowLayerID={LayerId.INVISIBLE}
-                    />
-                </ShapeSource>
-            )}
-
-            {parkAvailability?.features && (
-                <ShapeSource
-                    id="parking-availability-source"
-                    shape={parkAvailability as GeoJSON.FeatureCollection}
-                    onPress={(e) => {
-                        openSheet<ParkAvailabilityProperties>({
-                            type: SheetType.MARKER,
-                            markerType: MarkerSheet.PARKING,
-                            markerProperties: e.features[0].properties as ParkAvailabilityProperties,
-                        });
-                    }}
-                >
-                    <SymbolLayer
-                        id={LayerId.PARKING_AVAILABILITY}
-                        style={{
-                            iconImage: "parking-availability",
-                            textField: ["format", ["get", "name"], "\n", ["get", "free"], " / ", ["get", "total"]],
-                            textSize: SIZES.fontSize.sm,
-                            textOpacity: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0, 16, 1],
-                            textColor: determineTheme(mapStyle) === "dark" ? COLORS.white : COLORS.primary,
-                            textAnchor: "top",
-                            textOffset: [0, 1.5],
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
-                            iconAllowOverlap: true,
-                            iconRotate: 0,
-                        }}
-                        aboveLayerID={LayerId.INVISIBLE}
                     />
                 </ShapeSource>
             )}
