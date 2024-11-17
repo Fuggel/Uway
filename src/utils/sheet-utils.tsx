@@ -1,5 +1,4 @@
 import { GasStation } from "@/types/IGasStation";
-import { ParkAvailabilityProperties } from "@/types/IParking";
 import { MarkerSheet } from "@/types/ISheet";
 import { SpeedCameraProperties, SpeedCameraType } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
@@ -15,8 +14,6 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
             return incidentTitle(properties as IncidentProperties);
         case MarkerSheet.GAS_STATION:
             return gasStationTitle(properties as GasStation);
-        case MarkerSheet.PARKING:
-            return parkingTitle(properties as ParkAvailabilityProperties);
         case MarkerSheet.SPEED_CAMERA:
             return speedCameraTitle();
         default:
@@ -33,8 +30,6 @@ export function sheetData<T>(
             return incidentData(properties as IncidentProperties);
         case MarkerSheet.GAS_STATION:
             return gasStationData(properties as GasStation);
-        case MarkerSheet.PARKING:
-            return parkingData(properties as ParkAvailabilityProperties);
         case MarkerSheet.SPEED_CAMERA:
             return speedCameraData(properties as SpeedCameraProperties);
         default:
@@ -109,21 +104,6 @@ function gasStationData(gasStationProperties: GasStation | undefined) {
     ];
 }
 
-function parkingData(parkingProperties: ParkAvailabilityProperties | undefined) {
-    return [
-        {
-            label: "Adresse",
-            value: parkingProperties?.address ?? "Unbekannt",
-        },
-        {
-            label: "Freie Plätze",
-            value: parkingProperties
-                ? `${parkingProperties.free ?? "Unbekannt"} von ${parkingProperties.total ?? "Unbekannt"}`
-                : "Unbekannt",
-        },
-    ];
-}
-
 function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefined) {
     return [
         {
@@ -170,15 +150,6 @@ export function incidentTitle(incidentProperties: IncidentProperties | undefined
 
 function gasStationTitle(gasStationProperties: GasStation | undefined) {
     return gasStationProperties?.brand ?? "Unbekannt";
-}
-
-function parkingTitle(parkingProperties: ParkAvailabilityProperties | undefined) {
-    const title = parkingProperties?.name ?? "Unbekannt";
-    const fullTitle = `${
-        !title.includes(parkingProperties?.lot_type as string) ? `${parkingProperties?.lot_type} ${title}` : title
-    }`;
-
-    return fullTitle;
 }
 
 function speedCameraTitle() {

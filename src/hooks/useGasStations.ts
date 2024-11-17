@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 
-import { DEFAULT_FC, SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS } from "@/constants/map-constants";
-import { GAS_STATIONS_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchGasStations } from "@/services/gas-stations";
 import { mapGasStationSelectors } from "@/store/mapGasStation";
@@ -29,11 +29,11 @@ const useGasStations = () => {
         queryFn: () =>
             fetchGasStations({
                 userLonLat: { lon: longitude, lat: latitude },
-                radius: SHOW_GAS_STATIONS_THRESHOLD_IN_KILOMETERS,
+                radius: THRESHOLD.GAS_STATION.SHOW_IN_KILOMETERS,
             }),
         enabled: showGasStations && !!longitude && !!latitude,
         staleTime: Infinity,
-        refetchInterval: GAS_STATIONS_REFETCH_INTERVAL,
+        refetchInterval: REFETCH_INTERVAL.GAS_STATIONS_IN_MINUTES,
     });
 
     useEffect(() => {

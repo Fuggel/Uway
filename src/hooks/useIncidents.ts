@@ -5,14 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 import { bearing, distance, point } from "@turf/turf";
 
-import {
-    DEFAULT_FC,
-    IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES,
-    PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
-    SHOW_INCIDENTS_THRESHOLD_IN_METERS,
-    SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
-} from "@/constants/map-constants";
-import { INCIDENTS_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
@@ -26,10 +20,10 @@ const useIncidents = () => {
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
     const showWarningThresholdInMeters =
-        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS;
+        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.SHOW_WARNING_IN_METERS;
     const playAcousticWarningThresholdInMeters =
         useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
-        PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS;
+        THRESHOLD.INCIDENT.PLAY_ACOUSTIC_WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
     const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
@@ -48,11 +42,11 @@ const useIncidents = () => {
         queryFn: () =>
             fetchIncidents({
                 userLonLat: { lon: longitude, lat: latitude },
-                distance: SHOW_INCIDENTS_THRESHOLD_IN_METERS,
+                distance: THRESHOLD.INCIDENT.SHOW_IN_METERS,
             }),
         enabled: showIncidents && !!longitude && !!latitude,
         staleTime: Infinity,
-        refetchInterval: INCIDENTS_REFETCH_INTERVAL,
+        refetchInterval: REFETCH_INTERVAL.INCIDENTS_IN_MINUTES,
     });
 
     useEffect(() => {
@@ -72,8 +66,8 @@ const useIncidents = () => {
 
                 const bearingToIncident = bearing(userPoint, incidentPoint);
                 const isSameLane =
-                    Math.abs(heading - bearingToIncident) < IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES ||
-                    Math.abs(heading - bearingToIncident) > 360 - IS_ON_SAME_LANE_INCIDENTS_THRESHOLD_IN_DEGREES;
+                    Math.abs(heading - bearingToIncident) < THRESHOLD.INCIDENT.IS_ON_SAME_LANE_IN_DEGREES ||
+                    Math.abs(heading - bearingToIncident) > 360 - THRESHOLD.INCIDENT.IS_ON_SAME_LANE_IN_DEGREES;
 
                 const isWithinWarningDistance = distanceToIncident <= showWarningThresholdInMeters;
                 const isWithinAcousticWarningDistance = distanceToIncident <= playAcousticWarningThresholdInMeters;

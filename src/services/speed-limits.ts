@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { Feature, FeatureCollection, Geometry, GeometryCollection, LineString } from "@turf/helpers";
 
-import { OPENSTREETMAP_API } from "@/constants/api-constants";
+import { API_URL } from "@/constants/api-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { BoundingBox, LonLat } from "@/types/IMap";
 import { Overpass } from "@/types/IOverpass";
@@ -31,7 +31,7 @@ export async function fetchSpeedLimits(params: {
             out skel qt;
         `;
 
-        const url = `${OPENSTREETMAP_API}?data=${encodeURIComponent(overpassQuery)}`;
+        const url = `${API_URL.OPENSTREETMAP}?data=${encodeURIComponent(overpassQuery)}`;
         const response = await axios.get(url);
 
         return convertToGeoJSON(response.data) as FeatureCollection<Geometry, GeometryCollection>;

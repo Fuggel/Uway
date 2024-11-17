@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
 
-import { DEFAULT_FC, SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS } from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedLimits } from "@/services/speed-limits";
 import { mapSpeedLimitSelectors } from "@/store/mapSpeedLimit";
@@ -28,7 +29,7 @@ const useSpeedLimits = () => {
         queryFn: () =>
             fetchSpeedLimits({
                 userLonLat: { lon: longitude, lat: latitude },
-                distance: SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS,
+                distance: THRESHOLD.SPEED_LIMIT.SHOW_IN_METERS,
             }),
         enabled: showSpeedLimits && !!longitude && !!latitude,
         staleTime: Infinity,
@@ -47,7 +48,7 @@ const useSpeedLimits = () => {
                         units: "meters",
                     });
 
-                    const isWithinWarningDistance = distanceToLine <= SHOW_SPEED_LIMIT_THRESHOLD_IN_METERS;
+                    const isWithinWarningDistance = distanceToLine <= THRESHOLD.SPEED_LIMIT.SHOW_IN_METERS;
                     const isCloserThanPrevious = !closestSpeedLimit || distanceToLine < closestSpeedLimit.distance;
 
                     if (isWithinWarningDistance && isCloserThanPrevious) {

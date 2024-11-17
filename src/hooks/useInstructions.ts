@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Location } from "@rnmapbox/maps";
 import { point, distance as turfDistance } from "@turf/turf";
 
-import { NEXT_STEP_THRESHOLD_IN_METERS } from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 import { Direction, Instruction } from "@/types/INavigation";
 
 const useInstructions = (params: {
@@ -41,7 +41,7 @@ const useInstructions = (params: {
                     units: "meters",
                 });
 
-                if (distanceToNextStep < NEXT_STEP_THRESHOLD_IN_METERS) {
+                if (distanceToNextStep < THRESHOLD.NAVIGATION.NEXT_STEP_IN_METERS) {
                     params.setCurrentStep(params.currentStep + 1);
                 }
             }

@@ -1,9 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import {
-    PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
-    SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
-} from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 
 import { RootState } from ".";
 
@@ -17,8 +14,8 @@ interface IMapIncidentState {
 const initialMapIncidentState: IMapIncidentState = {
     showIncident: true,
     playAcousticWarning: false,
-    showWarningThresholdInMeters: SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
-    playAcousticWarningThresholdInMeters: PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
+    showWarningThresholdInMeters: THRESHOLD.INCIDENT.SHOW_WARNING_IN_METERS,
+    playAcousticWarningThresholdInMeters: THRESHOLD.INCIDENT.PLAY_ACOUSTIC_WARNING_IN_METERS,
 };
 
 const mapIncidentSlice = createSlice({

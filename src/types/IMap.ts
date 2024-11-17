@@ -20,7 +20,6 @@ export interface MapConfig {
     followPitch: number;
     followZoom: number;
     style: MapboxStyle;
-    accessToken: string;
 }
 
 export enum MapboxStyle {
@@ -54,7 +53,6 @@ export interface WarningAlert {
 export enum LayerId {
     USER_LOCATION = "user-location-layer",
     ROUTE = "route-layer",
-    PARKING_AVAILABILITY = "parking-availability-layer",
     GAS_STATION = "gas-station-layer",
     SPEED_CAMERA = "speed-camera-layer",
     INCIDENT_LINE = "incident-line-layer",

@@ -2,7 +2,8 @@ import axios from "axios";
 
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 
-import { TANKERKOENIG_API } from "@/constants/api-constants";
+import { API_URL } from "@/constants/api-constants";
+import { API_KEY } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
@@ -22,9 +23,9 @@ export async function fetchGasStations(params: {
         queryParams.append("rad", params.radius.toString());
         queryParams.append("sort", "dist");
         queryParams.append("type", "all");
-        queryParams.append("apikey", process.env.EXPO_PUBLIC_TANKERKOENIG_API_KEY || "");
+        queryParams.append("apikey", API_KEY.TANKERKOENIG);
 
-        const url = `${TANKERKOENIG_API}?${queryParams.toString()}`;
+        const url = `${API_URL.TANKERKOENIG}?${queryParams.toString()}`;
 
         const response = await axios.get(url);
 

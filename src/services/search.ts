@@ -1,19 +1,20 @@
 import axios from "axios";
 
-import { GEOAPIFY_AUTOCOMPLETE_API } from "@/constants/api-constants";
+import { API_URL } from "@/constants/api-constants";
+import { API_KEY } from "@/constants/env-constants";
 import { SearchLocation } from "@/types/ISearch";
 
 export async function fetchSearch(params: { query: string }): Promise<SearchLocation[]> {
     try {
         const queryParams = new URLSearchParams();
         queryParams.append("text", params.query);
-        queryParams.append("apiKey", process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY || "");
+        queryParams.append("apiKey", API_KEY.GEOAPIFY);
         queryParams.append("limit", "10");
         queryParams.append("lang", "de");
         queryParams.append("format", "json");
         queryParams.append("filter", `countrycode:de`);
 
-        const url = `${GEOAPIFY_AUTOCOMPLETE_API}?${queryParams.toString()}`;
+        const url = `${API_URL.GEOAPIFY_AUTOCOMPLETE}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
         return response.data.results.map(
