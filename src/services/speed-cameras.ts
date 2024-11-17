@@ -9,7 +9,6 @@ import { SpeedCameraReport } from "@/types/ISpeed";
 
 export async function fetchSpeedCameras(params: {
     userLonLat: LonLat;
-    distance: number;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
         const queryParams = new URLSearchParams();
