@@ -5,14 +5,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 import { distance, point } from "@turf/turf";
 
-import {
-    DEFAULT_FC,
-    IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES,
-    PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
-    SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
-    SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
-} from "@/constants/map-constants";
-import { SPEED_CAMERAS_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
+import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
@@ -27,10 +21,10 @@ const useSpeedCameras = () => {
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const showWarningThresholdInMeters =
         useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
-        SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
+        THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS;
     const playAcousticWarningThresholdInMeters =
         useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
-        PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS;
+        THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
     const [speedCameras, setSpeedCameras] = useState<
         | {
@@ -56,18 +50,18 @@ const useSpeedCameras = () => {
         queryFn: () =>
             fetchSpeedCameras({
                 userLonLat: { lon: longitude, lat: latitude },
-                distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
+                distance: THRESHOLD.SPEED_CAMERA.SHOW_IN_METERS,
             }),
         enabled: showSpeedCameras && !!longitude && !!latitude,
         staleTime: Infinity,
-        refetchInterval: SPEED_CAMERAS_REFETCH_INTERVAL,
+        refetchInterval: REFETCH_INTERVAL.SPEED_CAMERAS_IN_MINUTES,
     });
 
     const { mutate: refetchSpeedCameras } = useMutation({
         mutationFn: () => {
             return fetchSpeedCameras({
                 userLonLat: { lon: longitude, lat: latitude },
-                distance: SHOW_SPEED_CAMERA_THRESHOLD_IN_METERS,
+                distance: THRESHOLD.SPEED_CAMERA.SHOW_IN_METERS,
             });
         },
         onSuccess: (data) => {
@@ -96,8 +90,8 @@ const useSpeedCameras = () => {
 
                 const isSameLane = directions.some(
                     (dir) =>
-                        Math.abs(heading - dir) < IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES ||
-                        Math.abs(heading - dir) > 360 - IS_ON_SAME_LANE_SPEED_CAMERA_THRESHOLD_IN_DEGREES
+                        Math.abs(heading - dir) < THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES ||
+                        Math.abs(heading - dir) > 360 - THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES
                 );
 
                 const isWithinWarningDistance = distanceToCamera <= showWarningThresholdInMeters;

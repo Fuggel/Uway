@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 
-import { PARK_AVAILABILITY_REFETCH_INTERVAL } from "@/constants/time-constants";
+import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { fetchParkAvailability } from "@/services/park-availability";
 import { mapParkAvailabilitySelectors } from "@/store/mapParkAvailability";
 import { isValidLonLat } from "@/utils/map-utils";
@@ -22,7 +22,7 @@ const useParkAvailability = () => {
         queryFn: () => fetchParkAvailability(),
         enabled: showParkAvailability,
         staleTime: Infinity,
-        refetchInterval: PARK_AVAILABILITY_REFETCH_INTERVAL,
+        refetchInterval: REFETCH_INTERVAL.PARK_AVAILABILITY_IN_MINUTES,
     });
 
     useEffect(() => {

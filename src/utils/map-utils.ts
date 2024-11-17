@@ -3,7 +3,7 @@ import axios from "axios";
 import { Position, point } from "@turf/helpers";
 import { distance } from "@turf/turf";
 
-import { MAPBOX_REVERSE_GEOCODING_API } from "@/constants/api-constants";
+import { API_URL } from "@/constants/api-constants";
 import { MAP_CONFIG } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
@@ -159,7 +159,7 @@ export async function reverseGeocode(lon: number, lat: number): Promise<ReverseG
     }
 
     const response = await axios.get(
-        `${MAPBOX_REVERSE_GEOCODING_API}?longitude=${lon}&latitude=${lat}&limit=1&language=de&access_token=${MAP_CONFIG.accessToken}`
+        `${API_URL.MAPBOX_REVERSE_GEOCODING}?longitude=${lon}&latitude=${lat}&limit=1&language=de&access_token=${MAP_CONFIG.accessToken}`
     );
 
     const fullAddress = response.data?.features[0]?.properties.full_address ?? "Adresse nicht gefunden";

@@ -1,9 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import {
-    PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
-    SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
-} from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 
 import { RootState } from ".";
 
@@ -17,8 +14,8 @@ interface IMapSpeedCameraState {
 const initialMapSpeedCameraState: IMapSpeedCameraState = {
     showSpeedCameras: false,
     playAcousticWarning: false,
-    showWarningThresholdInMeters: SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
-    playAcousticWarningThresholdInMeters: PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
+    showWarningThresholdInMeters: THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS,
+    playAcousticWarningThresholdInMeters: THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS,
 };
 
 const mapSpeedCameraSlice = createSlice({

@@ -2,7 +2,8 @@ import axios from "axios";
 
 import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
 
-import { TOMTOM_INCIDENTS_API } from "@/constants/api-constants";
+import { API_URL } from "@/constants/api-constants";
+import { API_KEY } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { BoundingBox, LonLat } from "@/types/IMap";
 import { IncidentFeature } from "@/types/ITraffic";
@@ -28,9 +29,9 @@ export async function fetchIncidents(params: {
         queryParams.append("language", "de-DE");
         queryParams.append("categoryFilter", "0,1,3,4,5,6,9,14");
         queryParams.append("timeValidityFilter", "present");
-        queryParams.append("key", process.env.EXPO_PUBLIC_TOMTOM_API_KEY || "");
+        queryParams.append("key", API_KEY.TOMTOM);
 
-        const url = `${TOMTOM_INCIDENTS_API}?${queryParams.toString()}`;
+        const url = `${API_URL.TOMTOM_INCIDENTS}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
         const features = response.data.incidents || [];

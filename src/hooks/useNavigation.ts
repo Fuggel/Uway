@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { lineString, point } from "@turf/helpers";
 import { distance, nearestPointOnLine } from "@turf/turf";
 
-import { ROUTE_DEVIATION_THRESHOLD_IN_METERS } from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchDirections } from "@/services/navigation";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
@@ -77,7 +77,7 @@ const useNavigation = (params: {
                 units: "meters",
             });
 
-            if (distanceToRoute > ROUTE_DEVIATION_THRESHOLD_IN_METERS) {
+            if (distanceToRoute > THRESHOLD.NAVIGATION.ROUTE_DEVIATION_METERS) {
                 recalculateRoute();
             }
         }

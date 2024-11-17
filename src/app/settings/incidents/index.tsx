@@ -2,10 +2,7 @@ import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback } from "reac
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
-import {
-    PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS,
-    SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS,
-} from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapIncidentActions, mapIncidentSelectors } from "@/store/mapIncident";
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
@@ -19,10 +16,10 @@ const IncidentsSettings = () => {
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
     const showWarningThresholdInMeters =
-        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || SHOW_INCIDENT_WARNING_THRESHOLD_IN_METERS;
+        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.SHOW_WARNING_IN_METERS;
     const playAcousticWarningThresholdInMeters =
         useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
-        PLAY_ACOUSTIC_WARNING_INCIDENT_THRESHOLD_IN_METERS;
+        THRESHOLD.INCIDENT.PLAY_ACOUSTIC_WARNING_IN_METERS;
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (

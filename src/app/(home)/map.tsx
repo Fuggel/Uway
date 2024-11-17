@@ -7,6 +7,7 @@ import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
+import { API_KEY } from "@/constants/env-constants";
 import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
@@ -27,7 +28,7 @@ import MapBottomSheet from "@/components/map/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
 
-Mapbox.setAccessToken(MAP_CONFIG.accessToken);
+Mapbox.setAccessToken(API_KEY.MAPBOX_ACCESS_TOKEN);
 
 const Map = () => {
     const dispatch = useDispatch();

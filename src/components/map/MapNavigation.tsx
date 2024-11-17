@@ -3,8 +3,8 @@ import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
+import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
-import { ARRIVAL_TIME_REFETCH_INTERVAL } from "@/constants/time-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
@@ -71,7 +71,7 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
 
         const intervalId = setInterval(() => {
             determineArrivalTime();
-        }, ARRIVAL_TIME_REFETCH_INTERVAL);
+        }, REFETCH_INTERVAL.ARRIVAL_TIME_IN_SECONDS);
 
         return () => clearInterval(intervalId);
     }, [remainingTime]);

@@ -1,4 +1,6 @@
-export const COLORS = {
+import { Color } from "@/types/IColor";
+
+export const COLORS: Color = {
     primary: "#121618",
     secondary: "#007AFC",
     secondary_light: "#2B92FF",
@@ -8,5 +10,4 @@ export const COLORS = {
     gray: "#787C80",
     light_gray: "#B0B0B0",
     white: "#FFFFFF",
-    black: "#000000",
 };

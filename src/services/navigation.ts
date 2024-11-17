@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { MAPBOX_DIRECTIONS_API } from "@/constants/api-constants";
+import { API_URL } from "@/constants/api-constants";
 import { MAP_CONFIG } from "@/constants/map-constants";
 import { LonLat } from "@/types/IMap";
 
@@ -20,7 +20,7 @@ export async function fetchDirections(params: { profile: string; startLngLat: Lo
         queryParams.append("overview", "full");
         queryParams.append("access_token", MAP_CONFIG.accessToken);
 
-        const url = `${MAPBOX_DIRECTIONS_API}/${
+        const url = `${API_URL.MAPBOX_DIRECTIONS}/${
             params.profile
         }/${startLon},${startLat};${destLon},${destLat}?${queryParams.toString()}`;
         const response = await axios.get(url);

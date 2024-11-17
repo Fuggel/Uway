@@ -2,10 +2,7 @@ import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback } from "reac
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
-import {
-    PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS,
-    SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS,
-} from "@/constants/map-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
@@ -20,10 +17,10 @@ const SpeedCameraSettings = () => {
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const showWarningThresholdInMeters =
         useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
-        SHOW_SPEED_CAMERA_WARNING_THRESHOLD_IN_METERS;
+        THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS;
     const playAcousticWarningThresholdInMeters =
         useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
-        PLAY_ACOUSTIC_WARNING_SPEED_CAMERA_THRESHOLD_IN_METERS;
+        THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS;
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (

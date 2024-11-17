@@ -20,7 +20,6 @@ export interface MapConfig {
     followPitch: number;
     followZoom: number;
     style: MapboxStyle;
-    accessToken: string;
 }
 
 export enum MapboxStyle {
