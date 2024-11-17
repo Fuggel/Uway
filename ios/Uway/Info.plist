@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1.0</string>
+    <string>0.1.1</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -33,7 +33,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>0.1.0</string>
+    <string>0.1.1</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -51,6 +51,8 @@
     <string>Show current location on map.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Allow to access the microphone to search for locations.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app does not require photo library access.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>Allow to securely recognize user speech.</string>
     <key>NSUserActivityTypes</key>

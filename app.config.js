@@ -5,7 +5,7 @@ export default ({ config }) => {
         owner: "fuggel",
         name: "Uway",
         slug: "uway",
-        version: "0.1.0",
+        version: "0.1.1",
         orientation: "portrait",
         icon: "./src/assets/images/build/icon.png",
         scheme: "Uway",
@@ -21,9 +21,12 @@ export default ({ config }) => {
             backgroundColor: "#ffffff",
         },
         ios: {
-            buildNumber: "0.1.0",
+            buildNumber: "0.1.1",
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.Uway",
+            infoPlist: {
+                NSPhotoLibraryUsageDescription: "This app does not require photo library access.",
+            }
         },
         android: {
             versionCode: 1,
