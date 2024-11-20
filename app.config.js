@@ -31,9 +31,10 @@ export default ({ config }) => {
         android: {
             versionCode: 1,
             adaptiveIcon: {
-                foregroundImage: "./src/assets/images/build/adaptive-icon.png",
+                foregroundImage: "./src/assets/images/build/android-adaptive-icon.png",
                 backgroundColor: "#ffffff",
             },
+            icon: "./src/assets/images/build/android-icon.png",
             package: "com.fuggel.Uway",
             permissions: ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"],
         },
