@@ -16,7 +16,7 @@ export default ({ config }) => {
             },
         },
         splash: {
-            image: "./src/assets/images/build/splash.png",
+            image: "./src/assets/images/build/splash-screen.png",
             resizeMode: "contain",
             backgroundColor: "#ffffff",
         },
