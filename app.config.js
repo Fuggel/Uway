@@ -26,7 +26,7 @@ export default ({ config }) => {
             bundleIdentifier: "com.fuggel.Uway",
             infoPlist: {
                 NSPhotoLibraryUsageDescription: "This app does not require photo library access.",
-            }
+            },
         },
         android: {
             versionCode: 1,
