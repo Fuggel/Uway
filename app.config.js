@@ -25,7 +25,7 @@ export default ({ config }) => {
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.Uway",
             infoPlist: {
-                NSPhotoLibraryUsageDescription: "This app does not require photo library access.",
+                NSPhotoLibraryUsageDescription: "Uway benötigt keinen Zugriff auf deine Galerie.",
             },
         },
         android: {
@@ -57,14 +57,14 @@ export default ({ config }) => {
             [
                 "expo-location",
                 {
-                    locationWhenInUsePermission: "Show current location on map.",
+                    locationWhenInUsePermission: "Erlaube Uway deinen Standort zu verwenden.",
                 },
             ],
             [
                 "@react-native-voice/voice",
                 {
-                    microphonePermission: "Allow to access the microphone to search for locations.",
-                    speechRecognitionPermission: "Allow to securely recognize user speech.",
+                    microphonePermission: "Erlaube Uway auf dein Mikrofon zuzugreifen, um nach Orten zu suchen.",
+                    speechRecognitionPermission: "Erlaube Uway sicher deine Sprache zu erkennen.",
                 },
             ],
         ],
