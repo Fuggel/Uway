@@ -41,7 +41,10 @@ export async function fetchIncidents(params: {
             features: features.map((incident: IncidentFeature) => ({
                 type: "Feature",
                 geometry: incident.geometry,
-                properties: incident.properties,
+                properties: {
+                    ...incident.properties,
+                    lastPoint: incident.geometry.coordinates[incident.geometry.coordinates.length - 1],
+                },
             })),
         };
     } catch (error) {
