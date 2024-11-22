@@ -10,6 +10,7 @@ import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { IncidentAlert, IncidentProperties, WarningAlertIncident } from "@/types/ITraffic";
 import { incidentTitle } from "@/utils/sheet-utils";
 
@@ -19,6 +20,7 @@ const useIncidents = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const showWarningThresholdInMeters =
         useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.SHOW_WARNING_IN_METERS;
     const playAcousticWarningThresholdInMeters =
@@ -87,6 +89,7 @@ const useIncidents = () => {
                 }
 
                 if (
+                    isNavigationMode &&
                     playAcousticWarning &&
                     isWithinAcousticWarningDistance &&
                     !hasPlayedWarning &&
@@ -123,7 +126,7 @@ const useIncidents = () => {
     ]);
 
     useEffect(() => {
-        if (incidents?.alert) {
+        if (incidents?.alert && isNavigationMode) {
             const distance = incidents.alert.distance.toFixed(0);
 
             setIncidentWarningText({
@@ -131,7 +134,7 @@ const useIncidents = () => {
                 title: `${incidentTitle(incidentWarningText?.properties)} in ${distance} m.`,
             });
         }
-    }, [incidents?.alert]);
+    }, [incidents?.alert, isNavigationMode]);
 
     return { incidents, incidentWarningText, loadingIncidents, errorIncidents };
 };

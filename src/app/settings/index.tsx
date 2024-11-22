@@ -7,7 +7,6 @@ import { COLORS } from "@/constants/colors-constants";
 import { MAP_STYLES } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
-import { mapSpeedLimitActions, mapSpeedLimitSelectors } from "@/store/mapSpeedLimit";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { mapViewActions, mapViewSelectors } from "@/store/mapView";
 import { MapboxStyle } from "@/types/IMap";
@@ -21,7 +20,6 @@ const Settings = () => {
     const router = useRouter();
     const dispatch = useDispatch();
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const showSpeedLimits = useSelector(mapSpeedLimitSelectors.showSpeedLimit);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
@@ -45,12 +43,6 @@ const Settings = () => {
                     </SettingsItem>
                     <SettingsItem title="Verkehrsdaten">
                         <Link type="secondary" to={() => router.push("/settings/incidents")} />
-                    </SettingsItem>
-                    <SettingsItem title="Geschwindigkeitsbegrenzungen">
-                        <Switch
-                            checked={showSpeedLimits}
-                            onChange={() => dispatch(mapSpeedLimitActions.setShowSpeedLimit(!showSpeedLimits))}
-                        />
                     </SettingsItem>
                     <SettingsItem title="Tankstellen">
                         <Switch

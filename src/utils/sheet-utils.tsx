@@ -52,20 +52,12 @@ function incidentData(incidentProperties: IncidentProperties | undefined) {
             value: incidentProperties?.length ? formatLength(incidentProperties.length) : "Unbekannt",
         },
         {
-            label: "Verzögerung",
-            value: incidentProperties?.delay ? `${incidentProperties.delay.toFixed(0)} min` : "Unbekannt",
-        },
-        {
             label: "Startzeit",
             value: toGermanDate({ isoDate: incidentProperties?.startTime }) ?? "Unbekannt",
         },
         {
             label: "Endzeit",
             value: toGermanDate({ isoDate: incidentProperties?.endTime }) ?? "Unbekannt",
-        },
-        {
-            label: "Letzte Meldung",
-            value: toGermanDate({ isoDate: incidentProperties?.lastReportTime }) ?? "Unbekannt",
         },
     ];
 }

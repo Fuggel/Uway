@@ -9,6 +9,7 @@ import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { WarningAlert } from "@/types/IMap";
 import { SpeedCameraAlert, SpeedCameraProperties } from "@/types/ISpeed";
@@ -19,6 +20,7 @@ const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const showWarningThresholdInMeters =
         useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
         THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS;
@@ -102,6 +104,7 @@ const useSpeedCameras = () => {
                 }
 
                 if (
+                    isNavigationMode &&
                     playAcousticWarning &&
                     isWithinAcousticWarningDistance &&
                     !hasPlayedWarning &&
@@ -132,7 +135,7 @@ const useSpeedCameras = () => {
     ]);
 
     useEffect(() => {
-        if (speedCameras?.alert) {
+        if (speedCameras?.alert && isNavigationMode) {
             const distance = speedCameras.alert.distance.toFixed(0);
 
             setSpeedCameraWarningText({
@@ -141,7 +144,7 @@ const useSpeedCameras = () => {
                 title: `Blitzer in ${distance} m.`,
             });
         }
-    }, [speedCameras?.alert]);
+    }, [speedCameras?.alert, isNavigationMode]);
 
     return { speedCameras, speedCameraWarningText, refetchSpeedCameras, loadingSpeedCameras, errorSpeedCameras };
 };
