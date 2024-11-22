@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import RevenueCatUI from "react-native-purchases-ui";
 
 interface PaywallProps {
@@ -9,17 +10,21 @@ const Paywall = ({ onSubscriptionChange }: PaywallProps) => {
     const router = useRouter();
 
     return (
-        <RevenueCatUI.Paywall
-            onPurchaseCompleted={() => {
-                onSubscriptionChange();
-                console.log("Purchase completed");
-                router.push("/map");
-            }}
-            onRestoreCompleted={() => {
-                onSubscriptionChange();
-                console.log("Restore completed");
-            }}
-        />
+        <>
+            <StatusBar style="light" />
+
+            <RevenueCatUI.Paywall
+                onPurchaseCompleted={() => {
+                    onSubscriptionChange();
+                    console.log("Purchase completed");
+                    router.push("/map");
+                }}
+                onRestoreCompleted={() => {
+                    onSubscriptionChange();
+                    console.log("Restore completed");
+                }}
+            />
+        </>
     );
 };
 

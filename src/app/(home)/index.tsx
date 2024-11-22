@@ -22,7 +22,7 @@ const Home = () => {
         checkSubscriptionStatus();
     }, []);
 
-    return <Map />;
+    return isSubscriptionActive ? <Map /> : <Paywall onSubscriptionChange={checkSubscriptionStatus} />;
 };
 
 export default Home;
