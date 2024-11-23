@@ -44,11 +44,13 @@ const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProp
     }, []);
 
     const handleReport = () => {
+        const mirroredDirection = ((heading as number) + 180) % 360;
+
         refetchData({
             deviceId,
             type: selectedType,
             coordinates: [longitude as number, latitude as number],
-            direction: heading ? heading.toString() : "0",
+            direction: mirroredDirection.toString(),
         });
 
         speedCameras.refetchSpeedCameras();

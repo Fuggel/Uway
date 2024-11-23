@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
-import { distance, point } from "@turf/turf";
+import { bearing, distance, point } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
@@ -29,11 +29,7 @@ const useSpeedCameras = () => {
         THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
     const [speedCameras, setSpeedCameras] = useState<
-        | {
-              data: FeatureCollection;
-              alert: SpeedCameraAlert | null;
-          }
-        | undefined
+        { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined
     >(undefined);
     const [newSpeedCameras, setNewSpeedCameras] = useState<FeatureCollection | null>(null);
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
@@ -88,17 +84,25 @@ const useSpeedCameras = () => {
                 const directionsString = (feature.properties as unknown as SpeedCameraProperties).direction;
                 const directions = directionsString ? directionsString.split(";").map(Number) : [];
 
-                const isSameLane = directions.some(
-                    (dir) =>
-                        Math.abs(heading - dir) < THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES ||
-                        Math.abs(heading - dir) > 360 - THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES
-                );
+                const bearingToCamera = bearing(userPoint, cameraPoint);
+
+                const angleDifference = Math.abs(heading - bearingToCamera);
+                const isCameraAhead = angleDifference <= 90 || angleDifference >= 270;
+
+                const isSameLane = directions.some((dir) => {
+                    const oppositeDir = (dir + 180) % 360;
+
+                    return (
+                        Math.abs(heading - oppositeDir) < THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES ||
+                        Math.abs(heading - oppositeDir) > 360 - THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES
+                    );
+                });
 
                 const isWithinWarningDistance = distanceToCamera <= showWarningThresholdInMeters;
                 const isWithinAcousticWarningDistance = distanceToCamera <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
 
-                if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
+                if (isSameLane && isCameraAhead && isWithinWarningDistance && isCloserThanPrevious) {
                     isWithinAnyWarningZone = true;
                     closestCamera = { distance: distanceToCamera };
                 }
@@ -132,6 +136,7 @@ const useSpeedCameras = () => {
         hasPlayedWarning,
         playAcousticWarningThresholdInMeters,
         showWarningThresholdInMeters,
+        newSpeedCameras,
     ]);
 
     useEffect(() => {

@@ -27,7 +27,7 @@ const useIncidents = () => {
         useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
         THRESHOLD.INCIDENT.PLAY_ACOUSTIC_WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
-    const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null; }>();
+    const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
     const [incidentWarningText, setIncidentWarningText] = useState<WarningAlertIncident | null>(null);
 
