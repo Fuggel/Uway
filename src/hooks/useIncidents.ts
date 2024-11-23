@@ -75,7 +75,7 @@ const useIncidents = () => {
                 const isWithinAcousticWarningDistance = distanceToIncident <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestIncident || distanceToIncident < closestIncident.distance;
 
-                if (isSameLane && isWithinWarningDistance && isCloserThanPrevious) {
+                if (isSameLane && isWithinWarningDistance && isCloserThanPrevious && isNavigationMode) {
                     isWithinAnyWarningZone = true;
                     closestIncident = {
                         distance: distanceToIncident,
@@ -123,10 +123,11 @@ const useIncidents = () => {
         hasPlayedWarning,
         playAcousticWarningThresholdInMeters,
         showWarningThresholdInMeters,
+        isNavigationMode,
     ]);
 
     useEffect(() => {
-        if (incidents?.alert && isNavigationMode) {
+        if (incidents?.alert) {
             const distance = incidents.alert.distance.toFixed(0);
 
             setIncidentWarningText({
@@ -134,7 +135,7 @@ const useIncidents = () => {
                 title: `${incidentTitle(incidentWarningText?.properties)} in ${distance} m.`,
             });
         }
-    }, [incidents?.alert, isNavigationMode]);
+    }, [incidents?.alert]);
 
     return { incidents, incidentWarningText, loadingIncidents, errorIncidents };
 };

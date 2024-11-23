@@ -9,15 +9,13 @@ import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchDirections } from "@/services/navigation";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { LonLat } from "@/types/IMap";
 import { Direction } from "@/types/INavigation";
 import { isValidLonLat } from "@/utils/map-utils";
 
-const useNavigation = (params: {
-    destinationLngLat: LonLat;
-    setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-}) => {
+const useNavigation = () => {
     const { userLocation } = useContext(UserLocationContext);
+    const location = useSelector(mapNavigationSelectors.location);
+    const [currentStep, setCurrentStep] = useState(0);
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [directions, setDirections] = useState<Direction | null>(null);
@@ -25,6 +23,11 @@ const useNavigation = (params: {
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
+
+    const destinationLngLat = {
+        lon: location?.lon,
+        lat: location?.lat,
+    };
 
     const {
         data,
@@ -36,11 +39,9 @@ const useNavigation = (params: {
             fetchDirections({
                 profile: navigationProfile,
                 startLngLat: { lon: longitude, lat: latitude },
-                destinationLngLat: params.destinationLngLat,
+                destinationLngLat,
             }),
-        enabled:
-            isValidLonLat(longitude, latitude) &&
-            isValidLonLat(params.destinationLngLat.lon, params.destinationLngLat.lat),
+        enabled: isValidLonLat(longitude, latitude) && isValidLonLat(destinationLngLat.lon, destinationLngLat.lat),
         staleTime: Infinity,
     });
 
@@ -49,12 +50,12 @@ const useNavigation = (params: {
             fetchDirections({
                 profile: navigationProfile,
                 startLngLat: { lon: longitude, lat: latitude },
-                destinationLngLat: params.destinationLngLat,
+                destinationLngLat: destinationLngLat,
             }),
         onSuccess: (data) => {
             if (data?.routes?.length > 0) {
                 setDirections(null);
-                params.setCurrentStep(0);
+                setCurrentStep(0);
                 setDirections(data.routes[0]);
             }
         },
@@ -89,7 +90,7 @@ const useNavigation = (params: {
         }
     }, [data]);
 
-    return { directions, setDirections, loadingDirections, errorDirections };
+    return { directions, setDirections, currentStep, setCurrentStep, loadingDirections, errorDirections };
 };
 
 export default useNavigation;

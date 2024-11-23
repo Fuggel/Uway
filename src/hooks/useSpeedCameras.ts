@@ -102,7 +102,13 @@ const useSpeedCameras = () => {
                 const isWithinAcousticWarningDistance = distanceToCamera <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
 
-                if (isSameLane && isCameraAhead && isWithinWarningDistance && isCloserThanPrevious) {
+                if (
+                    isSameLane &&
+                    isCameraAhead &&
+                    isWithinWarningDistance &&
+                    isCloserThanPrevious &&
+                    isNavigationMode
+                ) {
                     isWithinAnyWarningZone = true;
                     closestCamera = { distance: distanceToCamera };
                 }
@@ -137,10 +143,11 @@ const useSpeedCameras = () => {
         playAcousticWarningThresholdInMeters,
         showWarningThresholdInMeters,
         newSpeedCameras,
+        isNavigationMode,
     ]);
 
     useEffect(() => {
-        if (speedCameras?.alert && isNavigationMode) {
+        if (speedCameras?.alert) {
             const distance = speedCameras.alert.distance.toFixed(0);
 
             setSpeedCameraWarningText({
@@ -149,7 +156,7 @@ const useSpeedCameras = () => {
                 title: `Blitzer in ${distance} m.`,
             });
         }
-    }, [speedCameras?.alert, isNavigationMode]);
+    }, [speedCameras?.alert]);
 
     return { speedCameras, speedCameraWarningText, refetchSpeedCameras, loadingSpeedCameras, errorSpeedCameras };
 };

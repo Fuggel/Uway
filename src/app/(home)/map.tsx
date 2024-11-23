@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,10 +8,10 @@ import { useMutation } from "@tanstack/react-query";
 import { Position } from "@turf/helpers";
 
 import { API_KEY } from "@/constants/env-constants";
-import { MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
+import { DEFAULT_CAMERA_SETTINGS, MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useNavigation from "@/hooks/useNavigation";
 import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
@@ -32,22 +32,16 @@ Mapbox.setAccessToken(API_KEY.MAPBOX_ACCESS_TOKEN);
 
 const Map = () => {
     const dispatch = useDispatch();
-    const { sheetData, showSheet, openSheet, closeSheet } = useContext(BottomSheetContext);
+    const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const location = useSelector(mapNavigationSelectors.location);
+    const { loadingDirections } = useContext(MapNavigationContext);
     const tracking = useSelector(mapNavigationSelectors.tracking);
+    const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-    const [currentStep, setCurrentStep] = useState(0);
-    const { directions, setDirections, loadingDirections } = useNavigation({
-        destinationLngLat: {
-            lon: location?.lon,
-            lat: location?.lat,
-        },
-        setCurrentStep,
-    });
+
     const {
         mutate: refetchSpeedCamera,
         isSuccess: mutatedSpeedCameraSuccess,
@@ -59,41 +53,11 @@ const Map = () => {
         },
     });
 
-    const defaultSettings = {
-        centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
-        zoomLevel: MAP_CONFIG.noLocationZoom,
-        pitch: MAP_CONFIG.pitch,
-        heading: undefined,
-    };
-
     useEffect(() => {
         if (tracking && navigationMode && !navigationView) {
             dispatch(mapNavigationActions.setNavigationView(true));
         }
     }, [tracking, navigationMode, navigationView]);
-
-    const handleGasStationPress = () => {
-        const street = sheetData?.markerProperties.street;
-        const houseNumber = sheetData?.markerProperties.houseNumber || "";
-        const postcode = sheetData?.markerProperties.postCode || "";
-        const city = sheetData?.markerProperties.place || "";
-        const country = "Deutschland";
-
-        const newLocation = {
-            country,
-            city,
-            lon: sheetData?.markerProperties.lng,
-            lat: sheetData?.markerProperties.lat,
-            formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
-            address_line1: `${street} ${houseNumber}`,
-            address_line2: `${postcode} ${city}, ${country}`,
-            category: "commercial.gas",
-            place_id: sheetData?.markerProperties.id,
-        };
-
-        dispatch(mapNavigationActions.setLocation(newLocation));
-        closeSheet();
-    };
 
     useEffect(() => {
         if (location) {
@@ -145,20 +109,15 @@ const Map = () => {
                                   ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
                                   : undefined
                         }
-                        defaultSettings={defaultSettings}
+                        defaultSettings={DEFAULT_CAMERA_SETTINGS}
                     />
 
-                    <Layers directions={directions} />
+                    <Layers />
                 </MapView>
 
                 <MapButtons />
 
-                <MapAlerts
-                    directions={directions}
-                    currentStep={currentStep}
-                    speedCameraSuccess={mutatedSpeedCameraSuccess}
-                    speedCameraError={mutatedSpeedCameraError}
-                />
+                <MapAlerts speedCameraSuccess={mutatedSpeedCameraSuccess} speedCameraError={mutatedSpeedCameraError} />
 
                 {showSheet && (
                     <MapBottomSheet
@@ -168,7 +127,6 @@ const Map = () => {
                             data: openSheetData(sheetData?.markerType, sheetData?.markerProperties),
                             gasStation: {
                                 show: sheetData?.markerType === MarkerSheet.GAS_STATION,
-                                onPress: () => handleGasStationPress(),
                             },
                         }}
                         reportProps={{
@@ -178,15 +136,7 @@ const Map = () => {
                 )}
             </View>
 
-            {location && directions && (
-                <MapNavigation
-                    openSheet={openSheet}
-                    directions={directions}
-                    setDirections={setDirections}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                />
-            )}
+            <MapNavigation />
         </>
     );
 };

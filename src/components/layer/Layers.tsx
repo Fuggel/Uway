@@ -5,21 +5,18 @@ import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/map
 import { COLORS } from "@/constants/colors-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
+import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
-import { Direction } from "@/types/INavigation";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 
-interface LayersProps {
-    directions: Direction | null;
-}
-
-const Layers = ({ directions }: LayersProps) => {
+const Layers = () => {
     const { userLocation } = useContext(UserLocationContext);
+    const { directions } = useContext(MapNavigationContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
     const { gasStations } = useGasStations();
