@@ -15,10 +15,21 @@ export const MAP_CONFIG: MapConfig = {
         lat: 51.14220917694149,
     },
     noLocationZoom: 8,
-    zoom: 18,
+    zoom: 17,
     pitch: 0,
-    followPitch: 50,
-    followZoom: 20,
+    followPitch: 35,
+    padding: {
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+    },
+    followPadding: {
+        paddingTop: 900,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+    },
     style: MapboxStyle.DARK,
 };
 

@@ -91,17 +91,10 @@ const Map = () => {
                     <Images images={MAP_ICONS} />
 
                     <Camera
-                        animationDuration={250}
-                        animationMode="linearTo"
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
+                        padding={navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding}
                         heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
-                        zoomLevel={
-                            !userLocation
-                                ? MAP_CONFIG.noLocationZoom
-                                : navigationView
-                                  ? MAP_CONFIG.followZoom
-                                  : MAP_CONFIG.zoom
-                        }
+                        zoomLevel={!userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom}
                         centerCoordinate={
                             userLocation && (tracking || navigationView)
                                 ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
