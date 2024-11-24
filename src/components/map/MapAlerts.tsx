@@ -7,26 +7,26 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
+import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { Direction, Instruction } from "@/types/INavigation";
+import { Instruction } from "@/types/INavigation";
 import { arrowDirection, determineIncidentIcon } from "@/utils/map-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
 
 interface MapAlertsProps {
-    directions: Direction | null;
-    currentStep: number;
     speedCameraSuccess: boolean;
     speedCameraError: any;
 }
 
 const deviceHeight = Dimensions.get("window").height;
 
-const MapAlerts = ({ directions, currentStep, speedCameraSuccess, speedCameraError }: MapAlertsProps) => {
+const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => {
     const { userLocation } = useContext(UserLocationContext);
+    const { directions, currentStep } = useContext(MapNavigationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const { startSpeech } = useTextToSpeech();

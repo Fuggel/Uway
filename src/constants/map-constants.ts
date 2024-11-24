@@ -1,5 +1,5 @@
 import Mapbox from "@rnmapbox/maps";
-import { FeatureCollection, Geometry, GeometryCollection } from "@turf/helpers";
+import { FeatureCollection, Geometry, GeometryCollection, Position } from "@turf/helpers";
 
 import { MapConfig, MapboxStyle } from "@/types/IMap";
 import { MapStyle } from "@/types/ISettings";
@@ -20,6 +20,13 @@ export const MAP_CONFIG: MapConfig = {
     followPitch: 50,
     followZoom: 20,
     style: MapboxStyle.DARK,
+};
+
+export const DEFAULT_CAMERA_SETTINGS = {
+    centerCoordinate: [MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position,
+    zoomLevel: MAP_CONFIG.noLocationZoom,
+    pitch: MAP_CONFIG.pitch,
+    heading: undefined,
 };
 
 export const MAP_STYLES: MapStyle[] = [

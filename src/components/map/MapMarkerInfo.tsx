@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
+import { useDispatch } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { mapNavigationActions } from "@/store/mapNavigation";
 
 import IconButton from "../common/IconButton";
 import Text from "../common/Text";
@@ -12,11 +15,36 @@ interface MapBottomSheetProps {
     data: { label: string; value: string | number | React.ReactNode }[] | null;
     gasStation?: {
         show: boolean;
-        onPress: () => void;
     };
 }
 
 const MapMarkerInfo = ({ title, data, gasStation }: MapBottomSheetProps) => {
+    const dispatch = useDispatch();
+    const { sheetData, closeSheet } = useContext(BottomSheetContext);
+
+    const handleGasStationPress = () => {
+        const street = sheetData?.markerProperties.street;
+        const houseNumber = sheetData?.markerProperties.houseNumber || "";
+        const postcode = sheetData?.markerProperties.postCode || "";
+        const city = sheetData?.markerProperties.place || "";
+        const country = "Deutschland";
+
+        const newLocation = {
+            country,
+            city,
+            lon: sheetData?.markerProperties.lng,
+            lat: sheetData?.markerProperties.lat,
+            formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
+            address_line1: `${street} ${houseNumber}`,
+            address_line2: `${postcode} ${city}, ${country}`,
+            category: "commercial.gas",
+            place_id: sheetData?.markerProperties.id,
+        };
+
+        dispatch(mapNavigationActions.setLocation(newLocation));
+        closeSheet();
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -25,7 +53,7 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapBottomSheetProps) => {
                 </Text>
                 {gasStation?.show && (
                     <View style={styles.iconButtonRight}>
-                        <IconButton icon="directions" size="lg" type="secondary" onPress={gasStation.onPress} />
+                        <IconButton icon="directions" size="lg" type="secondary" onPress={handleGasStationPress} />
                     </View>
                 )}
             </View>

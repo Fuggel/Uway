@@ -16,7 +16,6 @@ interface MapBottomSheetProps {
         data: { label: string; value: string | number | React.ReactNode }[] | null;
         gasStation?: {
             show: boolean;
-            onPress: () => void;
         };
     };
     reportProps: {

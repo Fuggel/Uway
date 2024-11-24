@@ -6,12 +6,12 @@ import { COLORS } from "@/constants/colors-constants";
 import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { Direction } from "@/types/INavigation";
-import { OpenSheet, SheetType } from "@/types/ISheet";
+import { SheetType } from "@/types/ISheet";
 import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
 import { determineSpeedLimitIcon } from "@/utils/map-utils";
@@ -20,29 +20,18 @@ import Card from "../common/Card";
 import IconButton from "../common/IconButton";
 import Text from "../common/Text";
 
-interface MapNavigationProps {
-    openSheet: OpenSheet;
-    directions: Direction | null;
-    setDirections: (directions: Direction | null) => void;
-    currentStep: number;
-    setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
-}
-
 const deviceHeight = Dimensions.get("window").height;
 
-const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setCurrentStep }: MapNavigationProps) => {
+const MapNavigation = () => {
+    const dispatch = useDispatch();
     const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const dispatch = useDispatch();
+    const { openSheet } = useContext(BottomSheetContext);
+    const { directions, setDirections, currentStep, setCurrentStep } = useContext(MapNavigationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const { speedLimits } = useSpeedLimits();
-    const { remainingDistance, remainingTime } = useInstructions({
-        currentStep,
-        setCurrentStep,
-        directions,
-        userLocation,
-    });
+    const { remainingDistance, remainingTime } = useInstructions();
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
 
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
@@ -89,6 +78,8 @@ const MapNavigation = ({ openSheet, directions, setDirections, currentStep, setC
             handleCancelNavigation();
         }
     }, [currentStep, directions]);
+
+    if (!directions && !location) return null;
 
     return (
         <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>

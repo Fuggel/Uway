@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { API_KEY } from "@/constants/env-constants";
 import { BottomSheetContextProvider } from "@/contexts/BottomSheetContext";
 import { MapFeatureContextProvider } from "@/contexts/MapFeatureContext";
+import { MapNavigationContextProvider } from "@/contexts/MapNavigationContext";
 import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
 import store, { persistor } from "@/store";
 
@@ -65,29 +66,31 @@ export default function RootLayout() {
                     <QueryClientProvider client={queryClient}>
                         <UserLocationContextProvider>
                             <BottomSheetContextProvider>
-                                <MapFeatureContextProvider>
-                                    <Stack>
-                                        <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
-                                        <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
-                                        <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
-                                        <Stack.Screen
-                                            name="(modal)/search"
-                                            options={{ presentation: "modal", headerShown: false }}
-                                        />
-                                        <Stack.Screen
-                                            name="settings/index"
-                                            options={{ title: "Einstellungen", headerBackTitle: "Map" }}
-                                        />
-                                        <Stack.Screen
-                                            name="settings/speed-camera/index"
-                                            options={{ title: "Blitzer" }}
-                                        />
-                                        <Stack.Screen
-                                            name="settings/incidents/index"
-                                            options={{ title: "Verkehrsdaten" }}
-                                        />
-                                    </Stack>
-                                </MapFeatureContextProvider>
+                                <MapNavigationContextProvider>
+                                    <MapFeatureContextProvider>
+                                        <Stack>
+                                            <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
+                                            <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
+                                            <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
+                                            <Stack.Screen
+                                                name="(modal)/search"
+                                                options={{ presentation: "modal", headerShown: false }}
+                                            />
+                                            <Stack.Screen
+                                                name="settings/index"
+                                                options={{ title: "Einstellungen", headerBackTitle: "Map" }}
+                                            />
+                                            <Stack.Screen
+                                                name="settings/speed-camera/index"
+                                                options={{ title: "Blitzer" }}
+                                            />
+                                            <Stack.Screen
+                                                name="settings/incidents/index"
+                                                options={{ title: "Verkehrsdaten" }}
+                                            />
+                                        </Stack>
+                                    </MapFeatureContextProvider>
+                                </MapNavigationContextProvider>
                             </BottomSheetContextProvider>
                         </UserLocationContextProvider>
                     </QueryClientProvider>
