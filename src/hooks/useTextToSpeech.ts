@@ -1,27 +1,40 @@
 import { Audio } from "expo-av";
 import * as Speech from "expo-speech";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
 const useTextToSpeech = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
-    const soundObject = new Audio.Sound();
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [soundObject] = useState(new Audio.Sound());
 
     const startSpeech = async (speakText: string) => {
-        if (!allowTextToSpeech || !speakText) return;
+        if (!allowTextToSpeech || !speakText || isSpeaking) return;
 
         try {
+            setIsSpeaking(true);
+
             await Audio.setAudioModeAsync({
                 playsInSilentModeIOS: true,
             });
-            await soundObject.loadAsync(require("../assets/sounds/empty-sound.mp3"));
+
+            if (!soundObject._loaded) {
+                await soundObject.loadAsync(require("../assets/sounds/empty-sound.mp3"));
+            }
+
             await soundObject.playAsync();
 
-            Speech.speak(speakText, { language: "de" });
+            Speech.speak(speakText, {
+                language: "de",
+                onDone: () => setIsSpeaking(false),
+                onStopped: () => setIsSpeaking(false),
+                onError: () => setIsSpeaking(false),
+            });
         } catch (error) {
-            console.log(`Error setting audio mode: ${error}`);
+            console.error(`Error during text-to-speech: ${error}`);
+            setIsSpeaking(false);
         }
     };
 

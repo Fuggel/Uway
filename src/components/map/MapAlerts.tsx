@@ -3,8 +3,10 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
+import { THRESHOLD } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { MapNavigationContext } from "@/contexts/MapNavigationContext";
@@ -37,13 +39,29 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
     const currentInstruction = currentStepData?.maneuver?.instruction;
     const nextInstruction = nextStepData?.maneuver?.instruction;
 
-    useEffect(() => {
-        if (isNavigationMode) {
-            startSpeech(currentInstruction);
-        }
-    }, [isNavigationMode, currentInstruction, currentStep]);
-
     if (!userLocation) return null;
+
+    useEffect(() => {
+        if (!nextStepData) return;
+
+        const nextStepCoords = nextStepData.maneuver.location;
+
+        const distanceToNextStep = distance(
+            [userLocation.coords.longitude, userLocation.coords.latitude],
+            nextStepCoords,
+            { units: "meters" }
+        );
+
+        if (distanceToNextStep <= THRESHOLD.NAVIGATION.NEXT_INSTRUCTION_IN_METERS) {
+            startSpeech(nextInstruction);
+        }
+    }, [nextStepData]);
+
+    useEffect(() => {
+        if (currentInstruction) {
+            startSpeech(`${currentInstruction}. Dann ${nextInstruction}`);
+        }
+    }, [currentInstruction]);
 
     return (
         <View style={styles.absoluteTop}>
