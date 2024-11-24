@@ -91,6 +91,8 @@ const Map = () => {
                     <Images images={MAP_ICONS} />
 
                     <Camera
+                        animationMode="linearTo"
+                        animationDuration={MAP_CONFIG.animationDuration}
                         pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
                         padding={navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding}
                         heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
