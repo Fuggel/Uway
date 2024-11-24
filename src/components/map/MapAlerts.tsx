@@ -39,10 +39,14 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
     const currentInstruction = currentStepData?.maneuver?.instruction;
     const nextInstruction = nextStepData?.maneuver?.instruction;
 
-    if (!userLocation) return null;
+    useEffect(() => {
+        if (currentInstruction && isNavigationMode) {
+            startSpeech(`${currentInstruction}. Dann ${nextInstruction}`);
+        }
+    }, [currentInstruction, isNavigationMode]);
 
     useEffect(() => {
-        if (!nextStepData) return;
+        if (!userLocation || !nextStepData || !isNavigationMode) return;
 
         const nextStepCoords = nextStepData.maneuver.location;
 
@@ -52,16 +56,12 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
             { units: "meters" }
         );
 
-        if (distanceToNextStep <= THRESHOLD.NAVIGATION.NEXT_INSTRUCTION_IN_METERS) {
+        if (distanceToNextStep <= THRESHOLD.NAVIGATION.NEXT_INSTRUCTION_IN_METERS && currentStep > 0) {
             startSpeech(nextInstruction);
         }
-    }, [nextStepData]);
+    }, [nextStepData, isNavigationMode]);
 
-    useEffect(() => {
-        if (currentInstruction) {
-            startSpeech(`${currentInstruction}. Dann ${nextInstruction}`);
-        }
-    }, [currentInstruction]);
+    if (!userLocation) return null;
 
     return (
         <View style={styles.absoluteTop}>
