@@ -79,8 +79,6 @@ const MapNavigation = () => {
         }
     }, [currentStep, directions]);
 
-    if (!directions && !location) return null;
-
     return (
         <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>
             <View style={styles.navigationSpeed}>

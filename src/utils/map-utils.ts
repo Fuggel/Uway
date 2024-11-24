@@ -193,7 +193,6 @@ export function isFeatureRelevant(params: RelevantFeatureParams) {
     const userPointGeo = point(userPoint);
     const featurePointGeo = point(featurePoint);
 
-    const distanceToFeature = distance(userPointGeo, featurePointGeo, { units: "meters" });
     const bearingToFeature = bearing(userPointGeo, featurePointGeo);
     const angleDifference = calculateAngleDifference(heading, bearingToFeature);
 
@@ -210,7 +209,7 @@ export function isFeatureRelevant(params: RelevantFeatureParams) {
 
     const isRelevant = isAhead && isSameLane && isOnRoute;
 
-    return { isRelevant, distanceToFeature };
+    return { isRelevant };
 }
 
 function calculateAngleDifference(angle1: number, angle2: number) {

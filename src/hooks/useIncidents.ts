@@ -2,7 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
-import { FeatureCollection } from "@turf/helpers";
+import { FeatureCollection, point } from "@turf/helpers";
+import { distance } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
@@ -64,11 +65,20 @@ const useIncidents = () => {
             );
 
             filteredIncidents?.forEach((incident) => {
-                const featurePoint = incident.geometry.coordinates[0] as [number, number];
+                const userPoint: [number, number] = [longitude, latitude];
+                const incidentPoint = incident.geometry.coordinates[0] as [number, number];
 
-                const { isRelevant, distanceToFeature } = isFeatureRelevant({
+                const distanceToFeature = distance(point(userPoint), point(incidentPoint), {
+                    units: "meters",
+                });
+
+                if (distanceToFeature > showWarningThresholdInMeters) {
+                    return;
+                }
+
+                const { isRelevant } = isFeatureRelevant({
                     userPoint: [longitude, latitude],
-                    featurePoint,
+                    featurePoint: incidentPoint,
                     heading,
                     tolerance: THRESHOLD.INCIDENT.IS_AHEAD_IN_DEGREES,
                     laneThreshold: THRESHOLD.INCIDENT.IS_ON_SAME_LANE_IN_DEGREES,

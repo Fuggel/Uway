@@ -2,7 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { FeatureCollection } from "@turf/helpers";
+import { FeatureCollection, point } from "@turf/helpers";
+import { distance } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
@@ -76,16 +77,25 @@ const useSpeedCameras = () => {
             let isWithinAnyWarningZone = false;
 
             data?.features?.forEach((feature) => {
+                const userPoint: [number, number] = [longitude, latitude];
                 const cameraPoint: [number, number] = [
                     feature.geometry.coordinates[0] as number,
                     feature.geometry.coordinates[1] as number,
                 ];
 
+                const distanceToFeature = distance(point(userPoint), point(cameraPoint), {
+                    units: "meters",
+                });
+
+                if (distanceToFeature > showWarningThresholdInMeters) {
+                    return;
+                }
+
                 const directionsString = (feature.properties as unknown as SpeedCameraProperties).direction;
                 const directions = directionsString ? directionsString.split(";").map(Number) : [];
 
-                const { isRelevant, distanceToFeature } = isFeatureRelevant({
-                    userPoint: [longitude, latitude],
+                const { isRelevant } = isFeatureRelevant({
+                    userPoint: userPoint,
                     featurePoint: cameraPoint,
                     heading,
                     directions,

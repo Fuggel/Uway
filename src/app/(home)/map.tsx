@@ -34,7 +34,7 @@ const Map = () => {
     const dispatch = useDispatch();
     const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const { loadingDirections } = useContext(MapNavigationContext);
+    const { directions, loadingDirections } = useContext(MapNavigationContext);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
@@ -136,7 +136,7 @@ const Map = () => {
                 )}
             </View>
 
-            <MapNavigation />
+            {location && directions && <MapNavigation />}
         </>
     );
 };
