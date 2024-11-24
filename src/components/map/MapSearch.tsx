@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -61,7 +61,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             speechToText={{ isListening, startListening, stopListening }}
         >
             {showSuggestions && searchQuery && (
-                <View style={styles.suggestions}>
+                <ScrollView style={styles.suggestions}>
                     {suggestions && suggestions.length > 0 ? (
                         suggestions.map((suggestion, i) => (
                             <TouchableOpacity
@@ -102,7 +102,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                     ) : (
                         <NoResults text="Keine Ergebnisse gefunden." />
                     )}
-                </View>
+                </ScrollView>
             )}
 
             {!searchQuery && (
