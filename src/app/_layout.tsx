@@ -66,8 +66,8 @@ export default function RootLayout() {
                     <QueryClientProvider client={queryClient}>
                         <UserLocationContextProvider>
                             <BottomSheetContextProvider>
-                                <MapFeatureContextProvider>
-                                    <MapNavigationContextProvider>
+                                <MapNavigationContextProvider>
+                                    <MapFeatureContextProvider>
                                         <Stack>
                                             <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
                                             <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
@@ -89,8 +89,8 @@ export default function RootLayout() {
                                                 options={{ title: "Verkehrsdaten" }}
                                             />
                                         </Stack>
-                                    </MapNavigationContextProvider>
-                                </MapFeatureContextProvider>
+                                    </MapFeatureContextProvider>
+                                </MapNavigationContextProvider>
                             </BottomSheetContextProvider>
                         </UserLocationContextProvider>
                     </QueryClientProvider>

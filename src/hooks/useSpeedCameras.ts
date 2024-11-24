@@ -3,21 +3,23 @@ import { useSelector } from "react-redux";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
-import { bearing, distance, point } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
+import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { WarningAlert } from "@/types/IMap";
 import { SpeedCameraAlert, SpeedCameraProperties } from "@/types/ISpeed";
+import { isFeatureRelevant } from "@/utils/map-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
 
 const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
+    const { directions: navigationDirections } = useContext(MapNavigationContext);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -74,43 +76,32 @@ const useSpeedCameras = () => {
             let isWithinAnyWarningZone = false;
 
             data?.features?.forEach((feature) => {
-                const cameraPoint = point([
+                const cameraPoint: [number, number] = [
                     feature.geometry.coordinates[0] as number,
                     feature.geometry.coordinates[1] as number,
-                ]);
-                const userPoint = point([longitude, latitude]);
-                const distanceToCamera = distance(userPoint, cameraPoint, { units: "meters" });
+                ];
 
                 const directionsString = (feature.properties as unknown as SpeedCameraProperties).direction;
                 const directions = directionsString ? directionsString.split(";").map(Number) : [];
 
-                const bearingToCamera = bearing(userPoint, cameraPoint);
-
-                const angleDifference = Math.abs(heading - bearingToCamera);
-                const isCameraAhead = angleDifference <= 90 || angleDifference >= 270;
-
-                const isSameLane = directions.some((dir) => {
-                    const oppositeDir = (dir + 180) % 360;
-
-                    return (
-                        Math.abs(heading - oppositeDir) < THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES ||
-                        Math.abs(heading - oppositeDir) > 360 - THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES
-                    );
+                const { isRelevant, distanceToFeature } = isFeatureRelevant({
+                    userPoint: [longitude, latitude],
+                    featurePoint: cameraPoint,
+                    heading,
+                    directions,
+                    tolerance: THRESHOLD.SPEED_CAMERA.IS_AHEAD_IN_DEGREES,
+                    laneThreshold: THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES,
+                    route: navigationDirections?.geometry.coordinates,
+                    routeBufferTolerance: THRESHOLD.SPEED_CAMERA.ROUTE_BUFFER_TOLERANCE,
                 });
 
-                const isWithinWarningDistance = distanceToCamera <= showWarningThresholdInMeters;
-                const isWithinAcousticWarningDistance = distanceToCamera <= playAcousticWarningThresholdInMeters;
-                const isCloserThanPrevious = !closestCamera || distanceToCamera < closestCamera.distance;
+                const isWithinWarningDistance = distanceToFeature <= showWarningThresholdInMeters;
+                const isWithinAcousticWarningDistance = distanceToFeature <= playAcousticWarningThresholdInMeters;
+                const isCloserThanPrevious = !closestCamera || distanceToFeature < closestCamera.distance;
 
-                if (
-                    isSameLane &&
-                    isCameraAhead &&
-                    isWithinWarningDistance &&
-                    isCloserThanPrevious &&
-                    isNavigationMode
-                ) {
+                if (isNavigationMode && isRelevant && isWithinWarningDistance && isCloserThanPrevious) {
                     isWithinAnyWarningZone = true;
-                    closestCamera = { distance: distanceToCamera };
+                    closestCamera = { distance: distanceToFeature };
                 }
 
                 if (
@@ -119,7 +110,7 @@ const useSpeedCameras = () => {
                     isWithinAcousticWarningDistance &&
                     !hasPlayedWarning &&
                     speedCameraWarningText?.textToSpeech &&
-                    isSameLane
+                    isRelevant
                 ) {
                     startSpeech(speedCameraWarningText.textToSpeech);
                     setHasPlayedWarning(true);

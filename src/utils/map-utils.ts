@@ -1,7 +1,7 @@
 import axios from "axios";
 
-import { Position, point } from "@turf/helpers";
-import { distance } from "@turf/turf";
+import { Position, lineString, point } from "@turf/helpers";
+import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 
 import { API_URL } from "@/constants/api-constants";
 import { API_KEY } from "@/constants/env-constants";
@@ -9,6 +9,7 @@ import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
 import { ModifierType } from "@/types/INavigation";
 import { ReverseGeocodeProperties } from "@/types/ISearch";
+import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
@@ -183,4 +184,48 @@ export function distanceToPointText(params: { pos1: Position; pos2: Position }) 
         const distanceInMeters = distanceInKm * 1000;
         return `${Math.round(distanceInMeters)} m`;
     }
+}
+
+export function isFeatureRelevant(params: RelevantFeatureParams) {
+    const { tolerance, laneThreshold, userPoint, featurePoint, heading, directions, route, routeBufferTolerance } =
+        params;
+
+    const userPointGeo = point(userPoint);
+    const featurePointGeo = point(featurePoint);
+
+    const distanceToFeature = distance(userPointGeo, featurePointGeo, { units: "meters" });
+    const bearingToFeature = bearing(userPointGeo, featurePointGeo);
+    const angleDifference = calculateAngleDifference(heading, bearingToFeature);
+
+    const isAhead = angleDifference <= tolerance;
+
+    const isSameLane = directions
+        ? directions.some((dir) => {
+              const oppositeDir = (dir + 180) % 360;
+              return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
+          })
+        : calculateAngleDifference(heading, bearingToFeature) < laneThreshold;
+
+    const isOnRoute = route ? isFeatureOnRoute(featurePoint, route, routeBufferTolerance) : false;
+
+    const isRelevant = isAhead && isSameLane && isOnRoute;
+
+    return { isRelevant, distanceToFeature };
+}
+
+function calculateAngleDifference(angle1: number, angle2: number) {
+    const diff = Math.abs(angle1 - angle2);
+    return diff > 180 ? 360 - diff : diff;
+}
+
+function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBufferTolerance: number) {
+    const featurePointGeo = point(featurePoint);
+    const routeGeo = lineString(route);
+    const bufferedRoute = buffer(routeGeo, routeBufferTolerance, { units: "meters" });
+
+    if (!bufferedRoute) {
+        return false;
+    }
+
+    return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
