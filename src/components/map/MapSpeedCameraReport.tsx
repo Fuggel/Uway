@@ -16,10 +16,11 @@ import Text from "../common/Text";
 
 interface MapSpeedCameraReportProps {
     refetchData: UseMutateFunction<any, unknown, any, unknown>;
+    isLoading: boolean;
     onClose: () => void;
 }
 
-const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProps) => {
+const MapSpeedCameraReport = ({ refetchData, isLoading, onClose }: MapSpeedCameraReportProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras } = useContext(MapFeatureContext);
     const [deviceId, setDeviceId] = useState("");
@@ -82,7 +83,12 @@ const MapSpeedCameraReport = ({ refetchData, onClose }: MapSpeedCameraReportProp
                         Abbrechen
                     </Button>
 
-                    <Button mode="contained" style={{ backgroundColor: COLORS.secondary }} onPress={handleReport}>
+                    <Button
+                        mode="contained"
+                        style={{ backgroundColor: COLORS.secondary }}
+                        loading={isLoading}
+                        onPress={handleReport}
+                    >
                         Melden
                     </Button>
                 </View>

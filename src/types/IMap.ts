@@ -1,3 +1,4 @@
+import { CameraPadding } from "@rnmapbox/maps";
 import { Geometry } from "@turf/helpers";
 
 export interface LonLat {
@@ -14,11 +15,15 @@ export interface BoundingBox {
 
 export interface MapConfig {
     position: LonLat;
+    animationDuration: number;
+    boundsAnimationDuration: number;
+    boundsOffset: number;
     noLocationZoom: number;
     zoom: number;
     pitch: number;
     followPitch: number;
-    followZoom: number;
+    padding: CameraPadding;
+    followPadding: CameraPadding;
     style: MapboxStyle;
 }
 

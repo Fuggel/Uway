@@ -1,9 +1,13 @@
+import { Dimensions } from "react-native";
+
 import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection, Position } from "@turf/helpers";
 
 import { MapConfig, MapboxStyle } from "@/types/IMap";
 import { MapStyle } from "@/types/ISettings";
 import { SpeedCameraProfile, SpeedCameraType } from "@/types/ISpeed";
+
+const deviceHeight = Dimensions.get("window").height;
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 const MAP_ICONS_URL = "../assets/images/map-icons";
@@ -14,11 +18,25 @@ export const MAP_CONFIG: MapConfig = {
         lon: 9.987431941065552,
         lat: 51.14220917694149,
     },
+    animationDuration: 200,
+    boundsAnimationDuration: 1000,
+    boundsOffset: 0.25,
     noLocationZoom: 8,
-    zoom: 18,
+    zoom: 17,
     pitch: 0,
-    followPitch: 50,
-    followZoom: 20,
+    followPitch: 35,
+    padding: {
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+    },
+    followPadding: {
+        paddingTop: deviceHeight / 2,
+        paddingRight: 0,
+        paddingBottom: 0,
+        paddingLeft: 0,
+    },
     style: MapboxStyle.DARK,
 };
 

@@ -20,6 +20,7 @@ interface MapBottomSheetProps {
     };
     reportProps: {
         refetchData: UseMutateFunction<any, unknown, any, unknown>;
+        isLoading: boolean;
     };
 }
 
@@ -34,7 +35,11 @@ const MapBottomSheet = ({ onClose, markerProps, reportProps }: MapBottomSheetPro
                 <MapMarkerInfo title={markerProps.title} data={markerProps.data} gasStation={markerProps.gasStation} />
             )}
             {sheetData.type === SheetType.REPORT && (
-                <MapSpeedCameraReport refetchData={reportProps.refetchData} onClose={onClose} />
+                <MapSpeedCameraReport
+                    refetchData={reportProps.refetchData}
+                    isLoading={reportProps.isLoading}
+                    onClose={onClose}
+                />
             )}
         </BottomSheetComponent>
     );
