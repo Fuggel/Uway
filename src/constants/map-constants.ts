@@ -20,6 +20,7 @@ export const MAP_CONFIG: MapConfig = {
     },
     animationDuration: 200,
     boundsAnimationDuration: 1000,
+    boundsOffset: 0.25,
     noLocationZoom: 8,
     zoom: 17,
     pitch: 0,

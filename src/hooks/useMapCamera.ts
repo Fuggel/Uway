@@ -33,9 +33,17 @@ const useMapCamera = () => {
         const ne: Position = [Math.max(...lons), Math.max(...lats)];
         const sw: Position = [Math.min(...lons), Math.min(...lats)];
 
-        const padding = [height * 0.25, width * 0.25, height * 0.25, width * 0.25];
-
-        cameraRef.current!.fitBounds(ne, sw, padding, MAP_CONFIG.boundsAnimationDuration);
+        cameraRef.current!.fitBounds(
+            ne,
+            sw,
+            [
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+            ],
+            MAP_CONFIG.boundsAnimationDuration
+        );
     };
 
     useEffect(() => {
