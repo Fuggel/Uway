@@ -7,7 +7,7 @@ import { API_URL } from "@/constants/api-constants";
 import { API_KEY } from "@/constants/env-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { ModifierType } from "@/types/INavigation";
+import { InstructionWarningThreshold, ModifierType } from "@/types/INavigation";
 import { ReverseGeocodeProperties } from "@/types/ISearch";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
@@ -238,4 +238,11 @@ export function instructionsWarningThreshold(speed: number) {
     if (speed <= 60) return 200;
     if (speed <= 90) return 300;
     return 500;
+}
+
+export function instructionsWarningThresholds(speed: number): InstructionWarningThreshold {
+    if (speed <= 30) return { early: 300, late: 150 };
+    if (speed <= 50) return { early: 500, late: 150 };
+    if (speed > 90) return { early: 2500, late: 500 };
+    return { early: 750, late: 250 };
 }

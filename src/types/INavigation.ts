@@ -42,3 +42,8 @@ export enum ModifierType {
     LEFT = "left",
     SHARP_LEFT = "sharp left",
 }
+
+export interface InstructionWarningThreshold {
+    early: number;
+    late: number;
+}

@@ -17,7 +17,7 @@ import {
     arrowDirection,
     convertSpeedToKmh,
     determineIncidentIcon,
-    instructionsWarningThreshold,
+    instructionsWarningThresholds,
 } from "@/utils/map-utils";
 
 import Text from "../common/Text";
@@ -54,8 +54,10 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
 
         const userSpeed = userLocation?.coords?.speed;
         const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
-        const nextInstructionThreshold = instructionsWarningThreshold(currentSpeed);
+
         const nextStepCoords = nextStepData.maneuver.location;
+
+        const { early: earlyThreshold, late: lateThreshold } = instructionsWarningThresholds(currentSpeed);
 
         const distanceToNextStep = distance(
             [userLocation.coords.longitude, userLocation.coords.latitude],
@@ -63,7 +65,11 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
             { units: "meters" }
         );
 
-        if (distanceToNextStep <= nextInstructionThreshold && currentStep > 0) {
+        if (distanceToNextStep <= earlyThreshold && distanceToNextStep > lateThreshold && currentStep > 0) {
+            startSpeech(`In ${Math.round(earlyThreshold)} Metern, ${nextInstruction}`);
+        }
+
+        if (distanceToNextStep <= lateThreshold && currentStep > 0) {
             startSpeech(nextInstruction);
         }
     }, [nextStepData, isNavigationMode]);
