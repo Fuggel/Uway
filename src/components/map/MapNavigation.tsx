@@ -15,7 +15,7 @@ import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigat
 import { SheetType } from "@/types/ISheet";
 import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
-import { determineSpeedLimitIcon } from "@/utils/map-utils";
+import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
 
 import Card from "../common/Card";
 import IconButton from "../common/IconButton";
@@ -40,7 +40,7 @@ const MapNavigation = () => {
     const duration = `${(remainingTime / 60).toFixed(0)} min`;
 
     const userSpeed = userLocation?.coords?.speed;
-    const currentSpeed = userSpeed && userSpeed > 0 ? (userSpeed * 3.6).toFixed(0) : "0";
+    const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
 
     const handleCancelNavigation = () => {
         setDirections(null);

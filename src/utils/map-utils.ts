@@ -186,6 +186,10 @@ export function distanceToPointText(params: { pos1: Position; pos2: Position }) 
     }
 }
 
+export function convertSpeedToKmh(speed: number) {
+    return speed * 3.6;
+}
+
 export function isFeatureRelevant(params: RelevantFeatureParams) {
     const { tolerance, laneThreshold, userPoint, featurePoint, heading, directions, route, routeBufferTolerance } =
         params;
@@ -227,4 +231,11 @@ function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBuffer
     }
 
     return booleanPointInPolygon(featurePointGeo, bufferedRoute);
+}
+
+export function instructionsWarningThreshold(speed: number) {
+    if (speed <= 30) return 100;
+    if (speed <= 60) return 200;
+    if (speed <= 90) return 300;
+    return 500;
 }

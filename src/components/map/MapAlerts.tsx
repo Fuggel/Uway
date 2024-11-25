@@ -6,7 +6,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
-import { THRESHOLD } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { MapNavigationContext } from "@/contexts/MapNavigationContext";
@@ -14,7 +13,12 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { Instruction } from "@/types/INavigation";
-import { arrowDirection, determineIncidentIcon } from "@/utils/map-utils";
+import {
+    arrowDirection,
+    convertSpeedToKmh,
+    determineIncidentIcon,
+    instructionsWarningThreshold,
+} from "@/utils/map-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
@@ -48,6 +52,9 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
     useEffect(() => {
         if (!userLocation || !nextStepData || !isNavigationMode) return;
 
+        const userSpeed = userLocation?.coords?.speed;
+        const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
+        const nextInstructionThreshold = instructionsWarningThreshold(currentSpeed);
         const nextStepCoords = nextStepData.maneuver.location;
 
         const distanceToNextStep = distance(
@@ -56,7 +63,7 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
             { units: "meters" }
         );
 
-        if (distanceToNextStep <= THRESHOLD.NAVIGATION.NEXT_INSTRUCTION_IN_METERS && currentStep > 0) {
+        if (distanceToNextStep <= nextInstructionThreshold && currentStep > 0) {
             startSpeech(nextInstruction);
         }
     }, [nextStepData, isNavigationMode]);
