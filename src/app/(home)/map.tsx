@@ -5,13 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { useMutation } from "@tanstack/react-query";
-import { Position } from "@turf/helpers";
 
 import { API_KEY } from "@/constants/env-constants";
-import { DEFAULT_CAMERA_SETTINGS, MAP_CONFIG, MAP_ICONS } from "@/constants/map-constants";
+import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapNavigationContext } from "@/contexts/MapNavigationContext";
-import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useMapCamera from "@/hooks/useMapCamera";
 import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
@@ -32,14 +31,11 @@ Mapbox.setAccessToken(API_KEY.MAPBOX_ACCESS_TOKEN);
 
 const Map = () => {
     const dispatch = useDispatch();
+    const { cameraRef } = useMapCamera();
     const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
-    const { userLocation } = useContext(UserLocationContext);
     const { directions, loadingDirections } = useContext(MapNavigationContext);
-    const tracking = useSelector(mapNavigationSelectors.tracking);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
-    const navigationView = useSelector(mapNavigationSelectors.navigationView);
-    const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
     const {
@@ -52,12 +48,6 @@ const Map = () => {
             setTimeout(() => closeSheet(), 3000);
         },
     });
-
-    useEffect(() => {
-        if (tracking && navigationMode && !navigationView) {
-            dispatch(mapNavigationActions.setNavigationView(true));
-        }
-    }, [tracking, navigationMode, navigationView]);
 
     useEffect(() => {
         if (location) {
@@ -90,22 +80,7 @@ const Map = () => {
                 >
                     <Images images={MAP_ICONS} />
 
-                    <Camera
-                        animationMode="linearTo"
-                        animationDuration={MAP_CONFIG.animationDuration}
-                        pitch={navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch}
-                        padding={navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding}
-                        heading={tracking || navigationView ? userLocation?.coords.heading : undefined}
-                        zoomLevel={!userLocation ? MAP_CONFIG.noLocationZoom : MAP_CONFIG.zoom}
-                        centerCoordinate={
-                            userLocation && (tracking || navigationView)
-                                ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
-                                : tracking && !userLocation
-                                  ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                                  : undefined
-                        }
-                        defaultSettings={DEFAULT_CAMERA_SETTINGS}
-                    />
+                    <Camera ref={cameraRef} defaultSettings={DEFAULT_CAMERA_SETTINGS} />
 
                     <Layers />
                 </MapView>

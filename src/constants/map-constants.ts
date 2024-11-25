@@ -1,6 +1,8 @@
+import { Dimensions } from "react-native";
+
 import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection, Position } from "@turf/helpers";
-import { Dimensions } from "react-native";
+
 import { MapConfig, MapboxStyle } from "@/types/IMap";
 import { MapStyle } from "@/types/ISettings";
 import { SpeedCameraProfile, SpeedCameraType } from "@/types/ISpeed";
@@ -17,6 +19,7 @@ export const MAP_CONFIG: MapConfig = {
         lat: 51.14220917694149,
     },
     animationDuration: 200,
+    boundsAnimationDuration: 1000,
     noLocationZoom: 8,
     zoom: 17,
     pitch: 0,
@@ -66,7 +69,7 @@ export const MAP_STYLES: MapStyle[] = [
     },
 ];
 
-export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
+export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
