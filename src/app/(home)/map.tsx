@@ -41,6 +41,7 @@ const Map = () => {
     const {
         mutate: refetchSpeedCamera,
         isSuccess: mutatedSpeedCameraSuccess,
+        isPending: loadingSpeedCamera,
         error: mutatedSpeedCameraError,
     } = useMutation({
         mutationFn: reportSpeedCamera,
@@ -101,6 +102,7 @@ const Map = () => {
                         }}
                         reportProps={{
                             refetchData: refetchSpeedCamera,
+                            isLoading: loadingSpeedCamera,
                         }}
                     />
                 )}
