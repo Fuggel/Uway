@@ -45,7 +45,7 @@ const useTextToSpeech = () => {
         };
     }, []);
 
-    return { startSpeech };
+    return { startSpeech, stopSpeech: Speech.stop };
 };
 
 export default useTextToSpeech;

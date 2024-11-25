@@ -10,6 +10,7 @@ import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
+import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { SheetType } from "@/types/ISheet";
 import { SpeedLimitFeature } from "@/types/ISpeed";
@@ -27,6 +28,7 @@ const MapNavigation = () => {
     const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const { openSheet } = useContext(BottomSheetContext);
+    const { stopSpeech } = useTextToSpeech();
     const { directions, setDirections, currentStep, setCurrentStep } = useContext(MapNavigationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -47,6 +49,7 @@ const MapNavigation = () => {
         dispatch(mapNavigationActions.setNavigationView(false));
         dispatch(mapNavigationActions.setIsNavigationMode(false));
         dispatch(mapNavigationActions.setSearchQuery(""));
+        stopSpeech();
     };
 
     const determineArrivalTime = () => {
