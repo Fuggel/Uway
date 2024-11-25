@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef } from "react";
+import { Dimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
@@ -8,6 +9,8 @@ import { MAP_CONFIG } from "@/constants/map-constants";
 import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+
+const { width, height } = Dimensions.get("window");
 
 const useMapCamera = () => {
     const cameraRef = useRef<CameraRef | null>(null);
@@ -30,7 +33,9 @@ const useMapCamera = () => {
         const ne: Position = [Math.max(...lons), Math.max(...lats)];
         const sw: Position = [Math.min(...lons), Math.min(...lats)];
 
-        cameraRef.current!.fitBounds(ne, sw, [100, 50, 100, 50], MAP_CONFIG.boundsAnimationDuration);
+        const padding = [height * 0.25, width * 0.25, height * 0.25, width * 0.25];
+
+        cameraRef.current!.fitBounds(ne, sw, padding, MAP_CONFIG.boundsAnimationDuration);
     };
 
     useEffect(() => {
