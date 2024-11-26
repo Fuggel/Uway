@@ -63,7 +63,7 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
             [InstructionThreshold.EARLY]: false,
             [InstructionThreshold.LATE]: false,
         });
-    }, [currentStep]);
+    }, [currentStep, isNavigationMode]);
 
     useEffect(() => {
         if (!isNavigationMode || !currentInstruction || spokenInstructions.current) return;
