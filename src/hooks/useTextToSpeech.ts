@@ -8,23 +8,34 @@ import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 const useTextToSpeech = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const [isSpeaking, setIsSpeaking] = useState(false);
-    const [soundObject] = useState(new Audio.Sound());
+    const [soundObject, setSoundObject] = useState<Audio.Sound | null>(null);
 
     const startSpeech = async (speakText: string) => {
-        if (!allowTextToSpeech || !speakText || isSpeaking) return;
+        if (!allowTextToSpeech || !speakText) return;
 
         try {
+            if (isSpeaking) {
+                Speech.stop();
+                setIsSpeaking(false);
+            }
+
             setIsSpeaking(true);
 
             await Audio.setAudioModeAsync({
                 playsInSilentModeIOS: true,
             });
 
-            if (!soundObject._loaded) {
+            if (!soundObject) {
+                const sound = new Audio.Sound();
+                await sound.loadAsync(require("../assets/sounds/empty-sound.mp3"));
+                setSoundObject(sound);
+            }
+
+            if (soundObject && !soundObject._loaded) {
                 await soundObject.loadAsync(require("../assets/sounds/empty-sound.mp3"));
             }
 
-            await soundObject.playAsync();
+            await soundObject?.playAsync();
 
             Speech.speak(speakText, {
                 language: "de",
@@ -38,14 +49,19 @@ const useTextToSpeech = () => {
         }
     };
 
+    const stopSpeech = () => {
+        Speech.stop();
+        setIsSpeaking(false);
+    };
+
     useEffect(() => {
         return () => {
-            soundObject.unloadAsync();
+            soundObject?.unloadAsync();
             Speech.stop();
         };
-    }, []);
+    }, [soundObject]);
 
-    return { startSpeech, stopSpeech: Speech.stop };
+    return { startSpeech, stopSpeech };
 };
 
 export default useTextToSpeech;

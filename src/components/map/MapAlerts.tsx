@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -12,7 +12,7 @@ import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { Instruction } from "@/types/INavigation";
+import { Instruction, InstructionThreshold, SpokenInstructions } from "@/types/INavigation";
 import {
     arrowDirection,
     convertSpeedToKmh,
@@ -34,6 +34,11 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
     const { userLocation } = useContext(UserLocationContext);
     const { directions, currentStep } = useContext(MapNavigationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
+    const [spokenInstructions, setSpokenInstructions] = useState<SpokenInstructions>({
+        [InstructionThreshold.CURRENT]: false,
+        [InstructionThreshold.EARLY]: false,
+        [InstructionThreshold.LATE]: false,
+    });
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const { startSpeech } = useTextToSpeech();
 
@@ -43,38 +48,50 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
     const currentInstruction = currentStepData?.maneuver?.instruction;
     const nextInstruction = nextStepData?.maneuver?.instruction;
 
-    useEffect(() => {
-        if (currentInstruction && isNavigationMode) {
-            startSpeech(`${currentInstruction}. Dann ${nextInstruction}`);
-        }
-    }, [currentInstruction, isNavigationMode]);
+    const userSpeed = userLocation!.coords.speed;
+    const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
+
+    const distanceToNextStep = nextStepData?.maneuver?.location
+        ? distance([userLocation!.coords.longitude, userLocation!.coords.latitude], nextStepData.maneuver.location, {
+              units: "meters",
+          })
+        : null;
 
     useEffect(() => {
-        if (!userLocation || !nextStepData || !isNavigationMode) return;
+        setSpokenInstructions({
+            [InstructionThreshold.CURRENT]: false,
+            [InstructionThreshold.EARLY]: false,
+            [InstructionThreshold.LATE]: false,
+        });
+    }, [currentStep]);
 
-        const userSpeed = userLocation?.coords?.speed;
-        const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
+    useEffect(() => {
+        if (!isNavigationMode || !currentInstruction || spokenInstructions.current) return;
 
-        const nextStepCoords = nextStepData.maneuver.location;
+        startSpeech(currentInstruction);
+        setSpokenInstructions((prev) => ({ ...prev, [InstructionThreshold.CURRENT]: true }));
+    }, [isNavigationMode, currentInstruction, spokenInstructions]);
+
+    useEffect(() => {
+        if (!isNavigationMode || !distanceToNextStep || !nextInstruction) return;
 
         const { early: earlyThreshold, late: lateThreshold } = instructionsWarningThresholds(currentSpeed);
 
-        const distanceToNextStep = distance(
-            [userLocation.coords.longitude, userLocation.coords.latitude],
-            nextStepCoords,
-            { units: "meters" }
-        );
+        const thresholds = [
+            {
+                key: InstructionThreshold.EARLY,
+                condition: distanceToNextStep <= earlyThreshold && distanceToNextStep > lateThreshold,
+            },
+            { key: InstructionThreshold.LATE, condition: distanceToNextStep <= lateThreshold },
+        ];
 
-        if (distanceToNextStep <= earlyThreshold && distanceToNextStep > lateThreshold && currentStep > 0) {
-            startSpeech(`In ${Math.round(earlyThreshold)} Metern, ${nextInstruction}`);
-        }
-
-        if (distanceToNextStep <= lateThreshold && currentStep > 0) {
-            startSpeech(nextInstruction);
-        }
-    }, [nextStepData, isNavigationMode]);
-
-    if (!userLocation) return null;
+        thresholds.forEach(({ key, condition }) => {
+            if (!spokenInstructions[key] && condition) {
+                startSpeech(`In ${Math.round(distanceToNextStep)} Metern, ${nextInstruction}`);
+                setSpokenInstructions((prev) => ({ ...prev, [key]: true }));
+            }
+        });
+    }, [isNavigationMode, distanceToNextStep, nextInstruction, spokenInstructions]);
 
     return (
         <View style={styles.absoluteTop}>

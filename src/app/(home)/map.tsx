@@ -10,6 +10,7 @@ import { API_KEY } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapNavigationContext } from "@/contexts/MapNavigationContext";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
 import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
@@ -32,6 +33,7 @@ Mapbox.setAccessToken(API_KEY.MAPBOX_ACCESS_TOKEN);
 const Map = () => {
     const dispatch = useDispatch();
     const { cameraRef } = useMapCamera();
+    const { userLocation } = useContext(UserLocationContext);
     const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const { directions, loadingDirections } = useContext(MapNavigationContext);
     const location = useSelector(mapNavigationSelectors.location);
@@ -88,7 +90,12 @@ const Map = () => {
 
                 <MapButtons />
 
-                <MapAlerts speedCameraSuccess={mutatedSpeedCameraSuccess} speedCameraError={mutatedSpeedCameraError} />
+                {userLocation && (
+                    <MapAlerts
+                        speedCameraSuccess={mutatedSpeedCameraSuccess}
+                        speedCameraError={mutatedSpeedCameraError}
+                    />
+                )}
 
                 {showSheet && (
                     <MapBottomSheet
