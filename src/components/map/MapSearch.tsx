@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { SIZES } from "@/constants/size-constants";
+import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
@@ -25,6 +26,7 @@ interface MapSearchProps {
 const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
+    const { handleCancelNavigation } = useContext(MapNavigationContext);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
@@ -59,6 +61,9 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             onChangeText={handleSearch}
             value={location?.formatted || searchQuery}
             speechToText={{ isListening, startListening, stopListening }}
+            onClear={() => {
+                location ? handleCancelNavigation() : dispatch(mapNavigationActions.setSearchQuery(""));
+            }}
         >
             {showSuggestions && searchQuery && (
                 <ScrollView style={styles.suggestions}>
