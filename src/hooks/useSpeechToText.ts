@@ -12,6 +12,7 @@ const SOUND_FILES = {
 };
 
 const useSpeechToText = () => {
+    const isStopping = useRef(false);
     const [text, setText] = useState<string | null>(null);
     const [isListening, setIsListening] = useState(false);
     const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -38,14 +39,18 @@ const useSpeechToText = () => {
             await playSound("mic_on");
             await Voice.start("de-DE");
             setIsListening(true);
+            isStopping.current = false;
         } catch (error) {
             console.log(`Failed to start voice recognition: ${error}`);
         }
     };
 
     const stopListening = async () => {
+        if (isStopping.current) return;
+        isStopping.current = true;
+
         try {
-            await playSound("mic_off");
+            playSound("mic_off");
             await Voice.stop();
             setIsListening(false);
             clearTimeout(silenceTimeout.current!);
