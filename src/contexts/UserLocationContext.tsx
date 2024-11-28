@@ -27,6 +27,7 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
 
         Mapbox.locationManager.start();
 
+        Mapbox.locationManager.setMinDisplacement(3);
         Mapbox.locationManager.addListener((location: Location) => {
             setUserLocation(location);
         });

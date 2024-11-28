@@ -36,7 +36,7 @@ const useIncidents = () => {
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
-    const heading = userLocation?.coords?.heading || 0;
+    const heading = userLocation?.coords?.course || 0;
 
     const {
         data,

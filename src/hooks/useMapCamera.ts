@@ -23,6 +23,8 @@ const useMapCamera = () => {
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
 
     const fitBounds = () => {
+        if (!cameraRef.current || !userLocation) return;
+
         const userCoords: Position = [userLocation!.coords.longitude, userLocation!.coords.latitude];
         const routeCoords = directions!.geometry.coordinates;
         const allCoords: Position[] = [userCoords, ...routeCoords];
@@ -33,7 +35,7 @@ const useMapCamera = () => {
         const ne: Position = [Math.max(...lons), Math.max(...lats)];
         const sw: Position = [Math.min(...lons), Math.min(...lats)];
 
-        cameraRef.current!.fitBounds(
+        cameraRef.current.fitBounds(
             ne,
             sw,
             [
@@ -42,36 +44,40 @@ const useMapCamera = () => {
                 height * MAP_CONFIG.boundsOffset,
                 width * MAP_CONFIG.boundsOffset,
             ],
-            MAP_CONFIG.boundsAnimationDuration
+            MAP_CONFIG.animationDuration
         );
     };
 
     useEffect(() => {
-        if (!cameraRef.current || !userLocation) return;
-
         if (tracking && location && !navigationMode && directions) {
             fitBounds();
             return;
         }
 
-        cameraRef.current.setCamera({
-            animationMode: "linearTo",
-            animationDuration: MAP_CONFIG.animationDuration,
-            centerCoordinate:
-                userLocation && (tracking || navigationView)
-                    ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
-                    : tracking && !userLocation
-                      ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+        const updateCamera = () => {
+            if (!cameraRef.current) return;
+
+            cameraRef.current.setCamera({
+                animationMode: "easeTo",
+                animationDuration: MAP_CONFIG.animationDuration,
+                centerCoordinate:
+                    userLocation && (tracking || navigationView)
+                        ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
+                        : tracking && !userLocation
+                          ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                          : undefined,
+                zoomLevel: !userLocation
+                    ? MAP_CONFIG.noLocationZoom
+                    : tracking || navigationView
+                      ? MAP_CONFIG.zoom
                       : undefined,
-            zoomLevel: !userLocation
-                ? MAP_CONFIG.noLocationZoom
-                : tracking || navigationView
-                  ? MAP_CONFIG.zoom
-                  : undefined,
-            pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
-            heading: tracking || navigationView ? userLocation?.coords.heading : undefined,
-            padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
-        });
+                pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
+                heading: tracking || navigationView ? userLocation?.coords.course : undefined,
+                padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
+            });
+        };
+
+        updateCamera();
     }, [location, directions, navigationMode, navigationView, tracking, userLocation]);
 
     useEffect(() => {
