@@ -25,10 +25,7 @@ const useIncidents = () => {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const { directions } = useContext(MapNavigationContext);
     const showWarningThresholdInMeters =
-        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.SHOW_WARNING_IN_METERS;
-    const playAcousticWarningThresholdInMeters =
-        useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
-        THRESHOLD.INCIDENT.PLAY_ACOUSTIC_WARNING_IN_METERS;
+        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
     const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
@@ -36,7 +33,7 @@ const useIncidents = () => {
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
-    const heading = userLocation?.coords?.heading || 0;
+    const heading = userLocation?.coords?.course || 0;
 
     const {
         data,
@@ -80,14 +77,13 @@ const useIncidents = () => {
                     userPoint: [longitude, latitude],
                     featurePoint: incidentPoint,
                     heading,
-                    tolerance: THRESHOLD.INCIDENT.IS_AHEAD_IN_DEGREES,
-                    laneThreshold: THRESHOLD.INCIDENT.IS_ON_SAME_LANE_IN_DEGREES,
+                    tolerance: THRESHOLD.NAVIGATION.IS_AHEAD_IN_DEGREES,
+                    laneThreshold: THRESHOLD.NAVIGATION.IS_ON_SAME_LANE_IN_DEGREES,
                     route: directions?.geometry?.coordinates,
-                    routeBufferTolerance: THRESHOLD.INCIDENT.ROUTE_BUFFER_TOLERANCE,
+                    routeBufferTolerance: THRESHOLD.NAVIGATION.ROUTE_BUFFER_TOLERANCE,
                 });
 
                 const isWithinWarningDistance = distanceToFeature <= showWarningThresholdInMeters;
-                const isWithinAcousticWarningDistance = distanceToFeature <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestIncident || distanceToFeature < closestIncident.distance;
 
                 if (isNavigationMode && isRelevant && isWithinWarningDistance && isCloserThanPrevious) {
@@ -106,7 +102,7 @@ const useIncidents = () => {
                 if (
                     isNavigationMode &&
                     playAcousticWarning &&
-                    isWithinAcousticWarningDistance &&
+                    isWithinWarningDistance &&
                     !hasPlayedWarning &&
                     incidentWarningText?.textToSpeech &&
                     isRelevant
@@ -131,15 +127,7 @@ const useIncidents = () => {
             });
             setHasPlayedWarning(false);
         }
-    }, [
-        data,
-        longitude,
-        latitude,
-        hasPlayedWarning,
-        playAcousticWarningThresholdInMeters,
-        showWarningThresholdInMeters,
-        isNavigationMode,
-    ]);
+    }, [data, longitude, latitude, hasPlayedWarning, showWarningThresholdInMeters, isNavigationMode]);
 
     useEffect(() => {
         if (incidents?.alert) {

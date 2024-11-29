@@ -15,9 +15,10 @@ interface SearchbarProps {
         startListening: () => void;
         stopListening: () => void;
     };
+    onClear: () => void;
 }
 
-const Searchbar = ({ placeholder, onChangeText, value, children, speechToText }: SearchbarProps) => {
+const Searchbar = ({ placeholder, onChangeText, value, children, speechToText, onClear }: SearchbarProps) => {
     return (
         <>
             <View style={styles.searchContainer}>
@@ -26,7 +27,7 @@ const Searchbar = ({ placeholder, onChangeText, value, children, speechToText }:
                     cancelText={""}
                     placeholder={placeholder}
                     onChangeText={onChangeText}
-                    onClear={() => onChangeText("")}
+                    onClear={onClear}
                     value={value}
                 />
                 {speechToText && (

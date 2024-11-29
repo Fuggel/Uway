@@ -44,6 +44,18 @@ export enum ModifierType {
 }
 
 export interface InstructionWarningThreshold {
-    early: number;
-    late: number;
+    [InstructionThreshold.EARLY]: number;
+    [InstructionThreshold.LATE]: number;
+}
+
+export interface SpokenInstructions {
+    [InstructionThreshold.CURRENT]: boolean;
+    [InstructionThreshold.EARLY]: boolean;
+    [InstructionThreshold.LATE]: boolean;
+}
+
+export enum InstructionThreshold {
+    CURRENT = "current",
+    EARLY = "early",
+    LATE = "late",
 }

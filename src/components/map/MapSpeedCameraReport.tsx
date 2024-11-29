@@ -28,7 +28,7 @@ const MapSpeedCameraReport = ({ refetchData, isLoading, onClose }: MapSpeedCamer
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
-    const heading = userLocation?.coords?.heading;
+    const heading = userLocation?.coords?.course;
 
     useEffect(() => {
         const fetchDeviceId = async () => {

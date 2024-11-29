@@ -233,13 +233,6 @@ function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBuffer
     return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
 
-export function instructionsWarningThreshold(speed: number) {
-    if (speed <= 30) return 100;
-    if (speed <= 60) return 200;
-    if (speed <= 90) return 300;
-    return 500;
-}
-
 export function instructionsWarningThresholds(speed: number): InstructionWarningThreshold {
     if (speed <= 30) return { early: 300, late: 150 };
     if (speed <= 50) return { early: 500, late: 150 };

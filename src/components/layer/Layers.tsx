@@ -184,7 +184,7 @@ const Layers = () => {
                             iconImage: "user-location",
                             iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.3, 15, 0.4, 20, 0.6],
                             iconAllowOverlap: true,
-                            iconRotate: userLocation?.coords.heading || 0,
+                            iconRotate: userLocation?.coords.course || 0,
                             iconRotationAlignment: "map",
                         }}
                     />

@@ -16,7 +16,6 @@ export interface BoundingBox {
 export interface MapConfig {
     position: LonLat;
     animationDuration: number;
-    boundsAnimationDuration: number;
     boundsOffset: number;
     noLocationZoom: number;
     zoom: number;

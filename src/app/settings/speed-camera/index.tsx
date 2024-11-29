@@ -16,11 +16,7 @@ const SpeedCameraSettings = () => {
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const showWarningThresholdInMeters =
-        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
-        THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS;
-    const playAcousticWarningThresholdInMeters =
-        useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
-        THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS;
+        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) || THRESHOLD.SPEED_CAMERA.WARNING_IN_METERS;
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
@@ -43,15 +39,6 @@ const SpeedCameraSettings = () => {
                     <Input
                         value={String(showWarningThresholdInMeters)}
                         onBlur={(val) => dispatch(mapSpeedCameraActions.setShowWarningThresholdInMeters(Number(val)))}
-                        type="numeric"
-                    />
-                </SettingsItem>
-                <SettingsItem title="Akustische Warnung in Metern">
-                    <Input
-                        value={String(playAcousticWarningThresholdInMeters)}
-                        onBlur={(val) =>
-                            dispatch(mapSpeedCameraActions.setPlayAcousticWarningThresholdInMeters(Number(val)))
-                        }
                         type="numeric"
                     />
                 </SettingsItem>
