@@ -8,14 +8,12 @@ interface IMapSpeedCameraState {
     showSpeedCameras: boolean;
     playAcousticWarning: boolean;
     showWarningThresholdInMeters: number;
-    playAcousticWarningThresholdInMeters: number;
 }
 
 const initialMapSpeedCameraState: IMapSpeedCameraState = {
     showSpeedCameras: false,
     playAcousticWarning: false,
-    showWarningThresholdInMeters: THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS,
-    playAcousticWarningThresholdInMeters: THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS,
+    showWarningThresholdInMeters: THRESHOLD.SPEED_CAMERA.WARNING_IN_METERS,
 };
 
 const mapSpeedCameraSlice = createSlice({
@@ -31,9 +29,6 @@ const mapSpeedCameraSlice = createSlice({
         setShowWarningThresholdInMeters(state, action: PayloadAction<number>) {
             state.showWarningThresholdInMeters = action.payload;
         },
-        setPlayAcousticWarningThresholdInMeters(state, action: PayloadAction<number>) {
-            state.playAcousticWarningThresholdInMeters = action.payload;
-        },
     },
 });
 
@@ -41,8 +36,6 @@ export const mapSpeedCameraSelectors = {
     showSpeedCameras: (state: RootState) => state.mapSpeedCamera.showSpeedCameras,
     playAcousticWarning: (state: RootState) => state.mapSpeedCamera.playAcousticWarning,
     showWarningThresholdInMeters: (state: RootState) => state.mapSpeedCamera.showWarningThresholdInMeters,
-    playAcousticWarningThresholdInMeters: (state: RootState) =>
-        state.mapSpeedCamera.playAcousticWarningThresholdInMeters,
 };
 
 export const mapSpeedCameraActions = mapSpeedCameraSlice.actions;

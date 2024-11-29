@@ -16,10 +16,7 @@ const IncidentsSettings = () => {
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
     const showWarningThresholdInMeters =
-        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.SHOW_WARNING_IN_METERS;
-    const playAcousticWarningThresholdInMeters =
-        useSelector(mapIncidentSelectors.playAcousticWarningThresholdInMeters) ||
-        THRESHOLD.INCIDENT.PLAY_ACOUSTIC_WARNING_IN_METERS;
+        useSelector(mapIncidentSelectors.showWarningThresholdInMeters) || THRESHOLD.INCIDENT.WARNING_IN_METERS;
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
@@ -42,15 +39,6 @@ const IncidentsSettings = () => {
                     <Input
                         value={String(showWarningThresholdInMeters)}
                         onBlur={(val) => dispatch(mapIncidentActions.setShowWarningThresholdInMeters(Number(val)))}
-                        type="numeric"
-                    />
-                </SettingsItem>
-                <SettingsItem title="Akustische Warnung in Metern">
-                    <Input
-                        value={String(playAcousticWarningThresholdInMeters)}
-                        onBlur={(val) =>
-                            dispatch(mapIncidentActions.setPlayAcousticWarningThresholdInMeters(Number(val)))
-                        }
                         type="numeric"
                     />
                 </SettingsItem>

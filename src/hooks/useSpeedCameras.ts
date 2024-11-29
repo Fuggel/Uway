@@ -25,11 +25,7 @@ const useSpeedCameras = () => {
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const showWarningThresholdInMeters =
-        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) ||
-        THRESHOLD.SPEED_CAMERA.SHOW_WARNING_IN_METERS;
-    const playAcousticWarningThresholdInMeters =
-        useSelector(mapSpeedCameraSelectors.playAcousticWarningThresholdInMeters) ||
-        THRESHOLD.SPEED_CAMERA.PLAY_ACOUSTIC_WARNING_IN_METERS;
+        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) || THRESHOLD.SPEED_CAMERA.WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
     const [speedCameras, setSpeedCameras] = useState<
         { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined
@@ -99,14 +95,13 @@ const useSpeedCameras = () => {
                     featurePoint: cameraPoint,
                     heading,
                     directions,
-                    tolerance: THRESHOLD.SPEED_CAMERA.IS_AHEAD_IN_DEGREES,
-                    laneThreshold: THRESHOLD.SPEED_CAMERA.IS_ON_SAME_LANE_IN_DEGREES,
+                    tolerance: THRESHOLD.NAVIGATION.IS_AHEAD_IN_DEGREES,
+                    laneThreshold: THRESHOLD.NAVIGATION.IS_ON_SAME_LANE_IN_DEGREES,
                     route: navigationDirections?.geometry.coordinates,
-                    routeBufferTolerance: THRESHOLD.SPEED_CAMERA.ROUTE_BUFFER_TOLERANCE,
+                    routeBufferTolerance: THRESHOLD.NAVIGATION.ROUTE_BUFFER_TOLERANCE,
                 });
 
                 const isWithinWarningDistance = distanceToFeature <= showWarningThresholdInMeters;
-                const isWithinAcousticWarningDistance = distanceToFeature <= playAcousticWarningThresholdInMeters;
                 const isCloserThanPrevious = !closestCamera || distanceToFeature < closestCamera.distance;
 
                 if (isNavigationMode && isRelevant && isWithinWarningDistance && isCloserThanPrevious) {
@@ -117,7 +112,7 @@ const useSpeedCameras = () => {
                 if (
                     isNavigationMode &&
                     playAcousticWarning &&
-                    isWithinAcousticWarningDistance &&
+                    isWithinWarningDistance &&
                     !hasPlayedWarning &&
                     speedCameraWarningText?.textToSpeech &&
                     isRelevant
@@ -136,16 +131,7 @@ const useSpeedCameras = () => {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
             setHasPlayedWarning(false);
         }
-    }, [
-        data,
-        longitude,
-        latitude,
-        hasPlayedWarning,
-        playAcousticWarningThresholdInMeters,
-        showWarningThresholdInMeters,
-        newSpeedCameras,
-        isNavigationMode,
-    ]);
+    }, [data, longitude, latitude, hasPlayedWarning, showWarningThresholdInMeters, newSpeedCameras, isNavigationMode]);
 
     useEffect(() => {
         if (speedCameras?.alert) {
