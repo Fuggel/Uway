@@ -5,33 +5,23 @@ import { useSelector } from "react-redux";
 
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
+const soundObject = new Audio.Sound();
+
 const useTextToSpeech = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const [isSpeaking, setIsSpeaking] = useState(false);
-    const [soundObject, setSoundObject] = useState<Audio.Sound | null>(null);
 
     const startSpeech = async (speakText: string) => {
-        if (!allowTextToSpeech || !speakText) return;
+        if (!allowTextToSpeech || !speakText || isSpeaking) return;
 
         try {
-            if (isSpeaking) {
-                Speech.stop();
-                setIsSpeaking(false);
-            }
-
             setIsSpeaking(true);
 
             await Audio.setAudioModeAsync({
                 playsInSilentModeIOS: true,
             });
 
-            if (!soundObject) {
-                const sound = new Audio.Sound();
-                await sound.loadAsync(require("../assets/sounds/empty-sound.mp3"));
-                setSoundObject(sound);
-            }
-
-            if (soundObject && !soundObject._loaded) {
+            if (!soundObject._loaded) {
                 await soundObject.loadAsync(require("../assets/sounds/empty-sound.mp3"));
             }
 
@@ -59,7 +49,7 @@ const useTextToSpeech = () => {
             soundObject?.unloadAsync();
             Speech.stop();
         };
-    }, [soundObject]);
+    }, []);
 
     return { startSpeech, stopSpeech };
 };
