@@ -65,6 +65,10 @@ const useIncidents = () => {
                 const userPoint: [number, number] = [longitude, latitude];
                 const incidentPoint = incident.geometry.coordinates[0] as [number, number];
 
+                if (!incidentPoint || incidentPoint.length !== 2) {
+                    return;
+                }
+
                 const distanceToFeature = distance(point(userPoint), point(incidentPoint), {
                     units: "meters",
                 });

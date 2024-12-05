@@ -70,8 +70,6 @@ const Map = () => {
                 {loadingDirections && <Loading />}
 
                 <MapView
-                    logoEnabled={false}
-                    attributionEnabled={false}
                     style={styles.map}
                     styleURL={determineMapStyle(mapStyle)}
                     scaleBarEnabled={false}

@@ -123,14 +123,20 @@ const Layers = () => {
                         id="incident-symbol-source"
                         shape={{
                             type: "FeatureCollection",
-                            features: incidents.incidents.data.features.map((incident) => ({
-                                type: "Feature",
-                                geometry: {
-                                    type: "Point",
-                                    coordinates: (incident.properties as IncidentProperties).lastPoint,
-                                },
-                                properties: incident.properties,
-                            })),
+                            features: incidents.incidents.data.features
+                                .filter(
+                                    (incident) =>
+                                        (incident.properties as IncidentProperties).lastPoint &&
+                                        (incident.properties as IncidentProperties).lastPoint.length === 2
+                                )
+                                .map((incident) => ({
+                                    type: "Feature",
+                                    geometry: {
+                                        type: "Point",
+                                        coordinates: (incident.properties as IncidentProperties).lastPoint,
+                                    },
+                                    properties: incident.properties,
+                                })),
                         }}
                         onPress={(e) => {
                             openSheet<IncidentProperties>({
