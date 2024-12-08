@@ -58,7 +58,6 @@ const MapNavigation = () => {
         if (directions && isNavigationMode && location) {
             dispatch(mapNavigationActions.setNavigationView(true));
             dispatch(mapNavigationActions.setSearchQuery(""));
-            setCurrentStep(0);
         }
     }, [isNavigationMode, directions]);
 
