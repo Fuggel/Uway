@@ -2,8 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { lineString, point } from "@turf/helpers";
-import { distance, nearestPointOnLine } from "@turf/turf";
+import { distance, lineSlice, lineString, nearestPointOnLine, point } from "@turf/turf";
 
 import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
@@ -19,7 +18,6 @@ const useNavigation = () => {
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [directions, setDirections] = useState<Direction | null>(null);
-    const locations = useSelector(mapNavigationSelectors.location);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -34,7 +32,7 @@ const useNavigation = () => {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", navigationProfile, locations],
+        queryKey: ["directions", navigationProfile, location],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
@@ -64,6 +62,46 @@ const useNavigation = () => {
         },
     });
 
+    const updateRemainingRoute = () => {
+        if (directions && longitude && latitude) {
+            const routeCoordinates = directions.geometry.coordinates;
+            const userPoint = point([longitude, latitude]);
+            const routeLine = lineString(routeCoordinates);
+
+            const nearestPointFeature = nearestPointOnLine(routeLine, userPoint);
+
+            if (nearestPointFeature && nearestPointFeature.geometry) {
+                const nearestCoordinates = nearestPointFeature.geometry.coordinates;
+
+                const remainingRoute = lineSlice(
+                    point(nearestCoordinates),
+                    point(routeCoordinates[routeCoordinates.length - 1]),
+                    routeLine
+                );
+
+                setDirections((prev) => {
+                    if (!prev) return null;
+                    return {
+                        ...prev,
+                        geometry: remainingRoute.geometry,
+                    };
+                });
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (data?.routes?.length > 0) {
+            setDirections(data.routes[0]);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (isNavigationMode) {
+            updateRemainingRoute();
+        }
+    }, [longitude, latitude, isNavigationMode]);
+
     useEffect(() => {
         if (directions && longitude && latitude && isNavigationMode) {
             const routeCoordinates = directions.geometry.coordinates;
@@ -73,22 +111,13 @@ const useNavigation = () => {
             const nearestPointFeature = nearestPointOnLine(routeLine, userPoint);
 
             const nearestPoint = point(nearestPointFeature.geometry.coordinates);
-
-            const distanceToRoute = distance(userPoint, nearestPoint, {
-                units: "meters",
-            });
+            const distanceToRoute = distance(userPoint, nearestPoint, { units: "meters" });
 
             if (distanceToRoute > THRESHOLD.NAVIGATION.ROUTE_DEVIATION_METERS) {
                 recalculateRoute();
             }
         }
     }, [directions, longitude, latitude, isNavigationMode]);
-
-    useEffect(() => {
-        if (data?.routes?.length > 0) {
-            setDirections(data.routes[0]);
-        }
-    }, [data]);
 
     return { directions, setDirections, currentStep, setCurrentStep, loadingDirections, errorDirections };
 };
