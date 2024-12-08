@@ -11,7 +11,6 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { SheetType } from "@/types/ISheet";
 import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
@@ -26,7 +25,6 @@ const MapNavigation = () => {
     const dispatch = useDispatch();
     const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const { openSheet } = useContext(BottomSheetContext);
     const { directions, currentStep, setCurrentStep, handleCancelNavigation } = useContext(MapNavigationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -72,62 +70,57 @@ const MapNavigation = () => {
 
     return (
         <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>
-            <View style={styles.navigationSpeed}>
-                {userLocation?.coords && (
-                    <View>
-                        <Text type="white" style={styles.navigationSpeedText}>
-                            {currentSpeed}
-                        </Text>
-                        <Text type="white" style={{ textAlign: "center" }}>
-                            km/h
+            <Card st={{ paddingHorizontal: 0 }}>
+                <View style={styles.navigationCard}>
+                    {userLocation?.coords && isNavigationMode && (
+                        <View style={styles.navigationSpeed}>
+                            <View>
+                                <Text type="white" style={styles.navigationSpeedText}>
+                                    {currentSpeed}
+                                </Text>
+                                <Text type="white" style={{ textAlign: "center" }}>
+                                    km/h
+                                </Text>
+                            </View>
+
+                            {speedLimits?.alert && (
+                                <Image
+                                    source={determineSpeedLimitIcon(
+                                        (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
+                                    )}
+                                    style={styles.speedLimitImage}
+                                />
+                            )}
+                        </View>
+                    )}
+
+                    <View style={styles.navigationInfo}>
+                        {isNavigationMode ? (
+                            <Text type="white" textStyle="header">
+                                {arrivalTime} Uhr
+                            </Text>
+                        ) : (
+                            <Text type="white" textStyle="header">
+                                {location?.address_line1}
+                            </Text>
+                        )}
+
+                        <Text type="lightGray" style={{ fontWeight: "bold" }}>
+                            {duration} · {distance}
                         </Text>
                     </View>
-                )}
 
-                {speedLimits?.alert && (
-                    <Image
-                        source={determineSpeedLimitIcon(
-                            (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
+                    <View style={styles.navigationActions}>
+                        <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
+                        {!isNavigationMode && (
+                            <IconButton
+                                icon="navigation"
+                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                                type="success"
+                                size="lg"
+                            />
                         )}
-                        style={styles.speedLimitImage}
-                    />
-                )}
-            </View>
-
-            <Card st={styles.navigationCard}>
-                <View style={styles.navigationInfo}>
-                    {isNavigationMode ? (
-                        <Text type="white" textStyle="header">
-                            {arrivalTime} Uhr
-                        </Text>
-                    ) : (
-                        <Text type="white" textStyle="header">
-                            {location?.address_line1}
-                        </Text>
-                    )}
-
-                    <Text type="lightGray" style={{ fontWeight: "bold" }}>
-                        {duration} · {distance}
-                    </Text>
-                </View>
-
-                <View style={styles.navigationActions}>
-                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
-                    {!isNavigationMode ? (
-                        <IconButton
-                            icon="navigation"
-                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                            type="success"
-                            size="lg"
-                        />
-                    ) : (
-                        <IconButton
-                            size="lg"
-                            type="warning"
-                            icon="alert"
-                            onPress={() => openSheet({ type: SheetType.REPORT })}
-                        />
-                    )}
+                    </View>
                 </View>
             </Card>
         </View>
@@ -156,11 +149,7 @@ const styles = StyleSheet.create({
     navigationSpeed: {
         flexDirection: "row",
         alignItems: "center",
-        alignSelf: "flex-start",
         gap: SIZES.spacing.sm,
-        backgroundColor: COLORS.primary,
-        padding: SIZES.spacing.sm,
-        borderRadius: SIZES.borderRadius.md,
     },
     navigationSpeedText: {
         fontWeight: "bold",
@@ -172,7 +161,7 @@ const styles = StyleSheet.create({
         height: SIZES.iconSize.xl,
     },
     navigationInfo: {
-        flex: 1,
+        alignSelf: "center",
         justifyContent: "center",
     },
     navigationActions: {

@@ -1,13 +1,10 @@
 import { useContext } from "react";
 
-import { UseMutateFunction } from "@tanstack/react-query";
-
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { SheetType } from "@/types/ISheet";
 
 import BottomSheetComponent from "../common/BottomSheet";
 import MapMarkerInfo from "./MapMarkerInfo";
-import MapSpeedCameraReport from "./MapSpeedCameraReport";
 
 interface MapBottomSheetProps {
     onClose: () => void;
@@ -18,13 +15,9 @@ interface MapBottomSheetProps {
             show: boolean;
         };
     };
-    reportProps: {
-        refetchData: UseMutateFunction<any, unknown, any, unknown>;
-        isLoading: boolean;
-    };
 }
 
-const MapBottomSheet = ({ onClose, markerProps, reportProps }: MapBottomSheetProps) => {
+const MapBottomSheet = ({ onClose, markerProps }: MapBottomSheetProps) => {
     const { sheetData } = useContext(BottomSheetContext);
 
     if (!sheetData) return null;
@@ -33,13 +26,6 @@ const MapBottomSheet = ({ onClose, markerProps, reportProps }: MapBottomSheetPro
         <BottomSheetComponent onClose={onClose}>
             {sheetData.type === SheetType.MARKER && (
                 <MapMarkerInfo title={markerProps.title} data={markerProps.data} gasStation={markerProps.gasStation} />
-            )}
-            {sheetData.type === SheetType.REPORT && (
-                <MapSpeedCameraReport
-                    refetchData={reportProps.refetchData}
-                    isLoading={reportProps.isLoading}
-                    onClose={onClose}
-                />
             )}
         </BottomSheetComponent>
     );

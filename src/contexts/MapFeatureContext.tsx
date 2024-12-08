@@ -11,7 +11,6 @@ import { IncidentAlert, WarningAlertIncident } from "@/types/ITraffic";
 type SpeedCamera = {
     speedCameras: { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined;
     speedCameraWarningText: WarningAlert | null;
-    refetchSpeedCameras: () => void;
     loadingSpeedCameras: boolean;
     errorSpeedCameras: Error | null;
 };
@@ -36,7 +35,6 @@ export const MapFeatureContext = createContext<ContextProps>({
     speedCameras: {
         speedCameras: undefined,
         speedCameraWarningText: null,
-        refetchSpeedCameras: () => {},
         loadingSpeedCameras: false,
         errorSpeedCameras: null,
     },

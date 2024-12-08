@@ -41,13 +41,6 @@ export interface SpeedCameraProfile {
     label: string;
 }
 
-export interface SpeedCameraReport {
-    deviceId: string;
-    type: SpeedCameraType;
-    direction: string;
-    coordinates: number[];
-}
-
 export interface RelevantFeatureParams {
     userPoint: [number, number];
     featurePoint: [number, number];

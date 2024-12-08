@@ -23,14 +23,9 @@ import {
 import Text from "../common/Text";
 import Toast from "../common/Toast";
 
-interface MapAlertsProps {
-    speedCameraSuccess: boolean;
-    speedCameraError: any;
-}
-
 const deviceHeight = Dimensions.get("window").height;
 
-const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => {
+const MapAlerts = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { directions, currentStep } = useContext(MapNavigationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
@@ -156,26 +151,6 @@ const MapAlerts = ({ speedCameraSuccess, speedCameraError }: MapAlertsProps) => 
                         title={incidents.incidentWarningText.title}
                     />
                 )}
-
-                <Toast
-                    show={!!speedCameraError}
-                    autoHide
-                    type="error"
-                    title="Fehler beim Melden"
-                    subTitle={
-                        speedCameraError?.response?.status === 403
-                            ? "Du kannst nur alle 30 Minuten einen Blitzer melden."
-                            : "Bitte versuche es erneut."
-                    }
-                />
-
-                <Toast
-                    show={speedCameraSuccess}
-                    autoHide
-                    type="success"
-                    title="Blitzer gemeldet"
-                    subTitle="Danke für deine Meldung."
-                />
             </View>
         </View>
     );

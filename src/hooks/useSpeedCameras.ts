@@ -47,24 +47,11 @@ const useSpeedCameras = () => {
         queryFn: () =>
             fetchSpeedCameras({
                 userLonLat: { lon: longitude, lat: latitude },
+                distance: THRESHOLD.SPEED_CAMERA.SHOW_IN_METERS,
             }),
         enabled: showSpeedCameras && !!longitude && !!latitude,
         staleTime: Infinity,
         refetchInterval: REFETCH_INTERVAL.SPEED_CAMERAS_IN_MINUTES,
-    });
-
-    const { mutate: refetchSpeedCameras } = useMutation({
-        mutationFn: () => {
-            return fetchSpeedCameras({
-                userLonLat: { lon: longitude, lat: latitude },
-            });
-        },
-        onSuccess: (data) => {
-            setNewSpeedCameras(data);
-        },
-        onError: (error) => {
-            console.log(`Failed to refetch speed cameras: ${error}`);
-        },
     });
 
     useEffect(() => {
@@ -145,7 +132,7 @@ const useSpeedCameras = () => {
         }
     }, [speedCameras?.alert]);
 
-    return { speedCameras, speedCameraWarningText, refetchSpeedCameras, loadingSpeedCameras, errorSpeedCameras };
+    return { speedCameras, speedCameraWarningText, loadingSpeedCameras, errorSpeedCameras };
 };
 
 export default useSpeedCameras;

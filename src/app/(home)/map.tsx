@@ -4,7 +4,6 @@ import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
-import { useMutation } from "@tanstack/react-query";
 
 import { API_KEY } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
@@ -12,7 +11,6 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
-import { reportSpeedCamera } from "@/services/speed-cameras";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
@@ -39,18 +37,6 @@ const Map = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
-
-    const {
-        mutate: refetchSpeedCamera,
-        isSuccess: mutatedSpeedCameraSuccess,
-        isPending: loadingSpeedCamera,
-        error: mutatedSpeedCameraError,
-    } = useMutation({
-        mutationFn: reportSpeedCamera,
-        onSuccess: () => {
-            setTimeout(() => closeSheet(), 3000);
-        },
-    });
 
     useEffect(() => {
         if (location) {
@@ -88,12 +74,7 @@ const Map = () => {
 
                 <MapButtons />
 
-                {userLocation && (
-                    <MapAlerts
-                        speedCameraSuccess={mutatedSpeedCameraSuccess}
-                        speedCameraError={mutatedSpeedCameraError}
-                    />
-                )}
+                {userLocation && <MapAlerts />}
 
                 {showSheet && (
                     <MapBottomSheet
@@ -104,10 +85,6 @@ const Map = () => {
                             gasStation: {
                                 show: sheetData?.markerType === MarkerSheet.GAS_STATION,
                             },
-                        }}
-                        reportProps={{
-                            refetchData: refetchSpeedCamera,
-                            isLoading: loadingSpeedCamera,
                         }}
                     />
                 )}
