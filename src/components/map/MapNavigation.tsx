@@ -11,6 +11,7 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
@@ -25,9 +26,10 @@ const MapNavigation = () => {
     const dispatch = useDispatch();
     const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const { directions, currentStep, setCurrentStep, handleCancelNavigation } = useContext(MapNavigationContext);
+    const { directions, currentStep, handleCancelNavigation } = useContext(MapNavigationContext);
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const { speedLimits } = useSpeedLimits();
     const { remainingDistance, remainingTime } = useInstructions();
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
@@ -95,7 +97,7 @@ const MapNavigation = () => {
 
                     <View style={styles.navigationInfo}>
                         {isNavigationMode ? (
-                            <Text type="white" textStyle="header">
+                            <Text type="white" textStyle="header" style={{ textAlign: "center" }}>
                                 {arrivalTime} Uhr
                             </Text>
                         ) : (
@@ -104,7 +106,10 @@ const MapNavigation = () => {
                             </Text>
                         )}
 
-                        <Text type="lightGray" style={{ fontWeight: "bold" }}>
+                        <Text
+                            type="lightGray"
+                            style={{ fontWeight: "bold", textAlign: isNavigationMode ? "center" : "left" }}
+                        >
                             {duration} · {distance}
                         </Text>
                     </View>
@@ -116,6 +121,19 @@ const MapNavigation = () => {
                                 icon="navigation"
                                 onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
                                 type="success"
+                                size="lg"
+                            />
+                        )}
+
+                        {isNavigationMode && (
+                            <IconButton
+                                icon={allowTextToSpeech ? "volume-high" : "volume-off"}
+                                onPress={() =>
+                                    allowTextToSpeech
+                                        ? dispatch(mapTextToSpeechActions.setAllowTextToSpeech(false))
+                                        : dispatch(mapTextToSpeechActions.setAllowTextToSpeech(true))
+                                }
+                                type="white"
                                 size="lg"
                             />
                         )}
@@ -146,6 +164,8 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
     },
     navigationSpeed: {
+        position: "absolute",
+        left: SIZES.spacing.md,
         flexDirection: "row",
         alignItems: "center",
         gap: SIZES.spacing.sm,
@@ -160,13 +180,14 @@ const styles = StyleSheet.create({
         height: SIZES.iconSize.xl,
     },
     navigationInfo: {
-        alignSelf: "center",
+        width: "100%",
         justifyContent: "center",
     },
     navigationActions: {
+        position: "absolute",
+        right: SIZES.spacing.md,
         flexDirection: "row",
         alignItems: "center",
-        alignSelf: "flex-end",
     },
 });
 
