@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,9 +8,9 @@ import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 import { API_KEY } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
+import useNavigation from "@/hooks/useNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
@@ -33,7 +33,8 @@ const Map = () => {
     const { cameraRef } = useMapCamera();
     const { userLocation } = useContext(UserLocationContext);
     const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
-    const { directions, loadingDirections } = useContext(MapNavigationContext);
+    const { loadingDirections } = useNavigation();
+    const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);

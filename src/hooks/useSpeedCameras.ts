@@ -7,7 +7,6 @@ import { distance } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
@@ -20,7 +19,7 @@ import useTextToSpeech from "./useTextToSpeech";
 
 const useSpeedCameras = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { directions: navigationDirections } = useContext(MapNavigationContext);
+    const navigationDirections = useSelector(mapNavigationSelectors.directions);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);

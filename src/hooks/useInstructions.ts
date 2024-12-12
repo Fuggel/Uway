@@ -1,15 +1,18 @@
 import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { point, distance as turfDistance } from "@turf/turf";
 
 import { THRESHOLD } from "@/constants/env-constants";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { Instruction } from "@/types/INavigation";
 
 const useInstructions = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { currentStep, setCurrentStep, directions } = useContext(MapNavigationContext);
+    const dispatch = useDispatch();
+    const directions = useSelector(mapNavigationSelectors.directions);
+    const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const [remainingTime, setRemainingTime] = useState(0);
     const [remainingDistance, setRemainingDistance] = useState(0);
 
@@ -40,7 +43,7 @@ const useInstructions = () => {
                 });
 
                 if (distanceToNextStep < THRESHOLD.NAVIGATION.NEXT_STEP_IN_METERS) {
-                    setCurrentStep(currentStep + 1);
+                    dispatch(mapNavigationActions.setCurrentStep(currentStep + 1));
                 }
             }
 

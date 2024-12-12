@@ -6,10 +6,10 @@ import { COLORS } from "@/constants/colors-constants";
 import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
+import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { SpeedLimitFeature } from "@/types/ISpeed";
@@ -24,9 +24,11 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapNavigation = () => {
     const dispatch = useDispatch();
+    const { stopSpeech } = useTextToSpeech();
     const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const { directions, currentStep, handleCancelNavigation } = useContext(MapNavigationContext);
+    const directions = useSelector(mapNavigationSelectors.directions);
+    const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
@@ -44,6 +46,11 @@ const MapNavigation = () => {
         const now = new Date();
         now.setSeconds(now.getSeconds() + remainingTime);
         setArrivalTime(toGermanDate({ isoDate: now.toISOString(), showTimeOnly: true }));
+    };
+
+    const cancelNavigation = () => {
+        dispatch(mapNavigationActions.handleCancelNavigation());
+        stopSpeech();
     };
 
     useEffect(() => {
@@ -65,7 +72,7 @@ const MapNavigation = () => {
 
     useEffect(() => {
         if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
-            handleCancelNavigation();
+            cancelNavigation();
         }
     }, [currentStep, directions]);
 
@@ -124,7 +131,7 @@ const MapNavigation = () => {
                         />
                     )}
 
-                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
+                    <IconButton icon="close-circle" onPress={cancelNavigation} type="error" size="lg" />
 
                     {!isNavigationMode && (
                         <IconButton

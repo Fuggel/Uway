@@ -1,13 +1,14 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 
 import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
 
 import { COLORS } from "@/constants/colors-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useGasStations from "@/hooks/useGasStations";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
@@ -16,9 +17,9 @@ import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 
 const Layers = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { directions } = useContext(MapNavigationContext);
     const { incidents, speedCameras } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
+    const directions = useSelector(mapNavigationSelectors.directions);
     const { gasStations } = useGasStations();
 
     return (

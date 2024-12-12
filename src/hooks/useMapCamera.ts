@@ -6,7 +6,6 @@ import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import { Position } from "@turf/helpers";
 
 import { MAP_CONFIG } from "@/constants/map-constants";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 
@@ -16,7 +15,7 @@ const useMapCamera = () => {
     const cameraRef = useRef<CameraRef | null>(null);
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
-    const { directions } = useContext(MapNavigationContext);
+    const directions = useSelector(mapNavigationSelectors.directions);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const location = useSelector(mapNavigationSelectors.location);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
@@ -64,13 +63,13 @@ const useMapCamera = () => {
                     userLocation && (tracking || navigationView)
                         ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
                         : tracking && !userLocation
-                            ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                            : undefined,
+                          ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
+                          : undefined,
                 zoomLevel: !userLocation
                     ? MAP_CONFIG.noLocationZoom
                     : tracking || navigationView
-                        ? MAP_CONFIG.zoom
-                        : undefined,
+                      ? MAP_CONFIG.zoom
+                      : undefined,
                 pitch: navigationView ? MAP_CONFIG.followPitch : tracking ? MAP_CONFIG.pitch : undefined,
                 heading: tracking || navigationView ? userLocation?.coords.course : undefined,
                 padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,

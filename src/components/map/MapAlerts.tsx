@@ -8,7 +8,6 @@ import { distance } from "@turf/turf";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
@@ -28,8 +27,9 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { directions, currentStep } = useContext(MapNavigationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
+    const directions = useSelector(mapNavigationSelectors.directions);
+    const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const [spokenInstructions, setSpokenInstructions] = useState<SpokenInstructions>({
         [InstructionThreshold.CURRENT]: false,
         [InstructionThreshold.EARLY]: false,

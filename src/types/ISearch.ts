@@ -1,4 +1,5 @@
 export interface SearchLocation {
+    id?: string;
     country: string;
     country_code?: string;
     city: string;

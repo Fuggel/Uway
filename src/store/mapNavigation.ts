@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { RouteProfileType } from "@/types/INavigation";
+import { Direction, RouteProfileType } from "@/types/INavigation";
 import { SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
@@ -12,6 +12,8 @@ interface IMapNavigationState {
     navigationView: boolean;
     isNavigationMode: boolean;
     navigationProfile: RouteProfileType;
+    currentStep: number;
+    directions: Direction | null;
 }
 
 const initialMapNavigationState: IMapNavigationState = {
@@ -21,6 +23,8 @@ const initialMapNavigationState: IMapNavigationState = {
     navigationView: false,
     isNavigationMode: false,
     navigationProfile: RouteProfileType.DRIVING,
+    currentStep: 0,
+    directions: null,
 };
 
 const mapNavigationSlice = createSlice({
@@ -45,6 +49,20 @@ const mapNavigationSlice = createSlice({
         setNavigationProfile(state, action: PayloadAction<RouteProfileType>) {
             state.navigationProfile = action.payload;
         },
+        setCurrentStep(state, action: PayloadAction<number>) {
+            state.currentStep = action.payload;
+        },
+        setDirections(state, action: PayloadAction<Direction | null>) {
+            state.directions = action.payload;
+        },
+        handleCancelNavigation(state) {
+            state.directions = null;
+            state.currentStep = 0;
+            state.location = null;
+            state.navigationView = false;
+            state.isNavigationMode = false;
+            state.searchQuery = "";
+        },
     },
 });
 
@@ -55,6 +73,8 @@ export const mapNavigationSelectors = {
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,
     navigationProfile: (state: RootState): RouteProfileType => state.mapNavigation.navigationProfile,
+    currentStep: (state: RootState): number => state.mapNavigation.currentStep,
+    directions: (state: RootState): Direction | null => state.mapNavigation.directions,
 };
 
 export const mapNavigationActions = mapNavigationSlice.actions;

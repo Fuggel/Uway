@@ -6,13 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { SIZES } from "@/constants/size-constants";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
+import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
 import { SearchLocation } from "@/types/ISearch";
+import { generateRandomNumber } from "@/utils/auth-utils";
 import { distanceToPointText } from "@/utils/map-utils";
 
 import Searchbar from "../common/Searchbar";
@@ -26,7 +27,7 @@ interface MapSearchProps {
 const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
-    const { handleCancelNavigation } = useContext(MapNavigationContext);
+    const { stopSpeech } = useTextToSpeech();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
@@ -48,6 +49,11 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         onClose();
     };
 
+    const cancelNavigation = () => {
+        dispatch(mapNavigationActions.handleCancelNavigation());
+        stopSpeech();
+    };
+
     useEffect(() => {
         if (text) {
             dispatch(mapNavigationActions.setSearchQuery(text));
@@ -62,7 +68,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             value={location?.formatted || searchQuery}
             speechToText={{ isListening, startListening, stopListening }}
             onClear={() => {
-                location ? handleCancelNavigation() : dispatch(mapNavigationActions.setSearchQuery(""));
+                location ? cancelNavigation() : dispatch(mapNavigationActions.setSearchQuery(""));
             }}
         >
             {showSuggestions && searchQuery && (
@@ -74,6 +80,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                 style={styles.scrollContainer}
                                 onPress={() =>
                                     handleSelectLocation({
+                                        id: generateRandomNumber(),
                                         formatted: suggestion.formatted,
                                         lat: suggestion.lat,
                                         lon: suggestion.lon,
@@ -117,7 +124,12 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                             <TouchableOpacity
                                 key={i}
                                 style={styles.scrollContainer}
-                                onPress={() => handleSelectLocation(location as SearchLocation)}
+                                onPress={() =>
+                                    handleSelectLocation({
+                                        ...location,
+                                        id: generateRandomNumber(),
+                                    })
+                                }
                             >
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
