@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection, point } from "@turf/helpers";
 import { distance } from "@turf/turf";
 
@@ -14,7 +14,7 @@ import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { WarningAlert } from "@/types/IMap";
 import { SpeedCameraAlert, SpeedCameraProperties } from "@/types/ISpeed";
-import { isFeatureRelevant } from "@/utils/map-utils";
+import { convertSpeedToKmh, instructionsWarningThresholds, isFeatureRelevant } from "@/utils/map-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
 
@@ -24,19 +24,18 @@ const useSpeedCameras = () => {
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const showWarningThresholdInMeters =
-        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) || THRESHOLD.SPEED_CAMERA.WARNING_IN_METERS;
     const { startSpeech } = useTextToSpeech();
     const [speedCameras, setSpeedCameras] = useState<
         { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined
     >(undefined);
-    const [newSpeedCameras, setNewSpeedCameras] = useState<FeatureCollection | null>(null);
-    const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
+    const [hasPlayedWarning, setHasPlayedWarning] = useState({ early: false, late: false });
     const [speedCameraWarningText, setSpeedCameraWarningText] = useState<WarningAlert | null>(null);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
     const heading = userLocation?.coords?.course || 0;
+    const userSpeed = userLocation?.coords.speed || 0;
+    const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
 
     const {
         data,
@@ -56,6 +55,7 @@ const useSpeedCameras = () => {
 
     useEffect(() => {
         if (data && showSpeedCameras && longitude && latitude) {
+            const { early, late } = instructionsWarningThresholds(currentSpeed);
             let closestCamera: SpeedCameraAlert | null = null;
             let isWithinAnyWarningZone = false;
 
@@ -70,7 +70,7 @@ const useSpeedCameras = () => {
                     units: "meters",
                 });
 
-                if (distanceToFeature > showWarningThresholdInMeters) {
+                if (distanceToFeature > early) {
                     return;
                 }
 
@@ -88,37 +88,41 @@ const useSpeedCameras = () => {
                     routeBufferTolerance: THRESHOLD.NAVIGATION.ROUTE_BUFFER_TOLERANCE,
                 });
 
-                const isWithinWarningDistance = distanceToFeature <= showWarningThresholdInMeters;
+                const isWithinEarlyWarningDistance = distanceToFeature <= early;
+                const isWithinLateWarningDistance = distanceToFeature <= late;
                 const isCloserThanPrevious = !closestCamera || distanceToFeature < closestCamera.distance;
 
-                if (isNavigationMode && isRelevant && isWithinWarningDistance && isCloserThanPrevious) {
+                if (
+                    isNavigationMode &&
+                    isRelevant &&
+                    (isWithinEarlyWarningDistance || isWithinLateWarningDistance) &&
+                    isCloserThanPrevious
+                ) {
                     isWithinAnyWarningZone = true;
                     closestCamera = { distance: distanceToFeature };
                 }
 
-                if (
-                    isNavigationMode &&
-                    playAcousticWarning &&
-                    isWithinWarningDistance &&
-                    !hasPlayedWarning &&
-                    speedCameraWarningText?.textToSpeech &&
-                    isRelevant
-                ) {
-                    startSpeech(speedCameraWarningText.textToSpeech);
-                    setHasPlayedWarning(true);
+                if (isNavigationMode && playAcousticWarning && isRelevant && speedCameraWarningText?.textToSpeech) {
+                    if (!hasPlayedWarning.early && isWithinEarlyWarningDistance) {
+                        startSpeech(speedCameraWarningText.textToSpeech);
+                        setHasPlayedWarning((prev) => ({ ...prev, early: true }));
+                    } else if (!hasPlayedWarning.late && isWithinLateWarningDistance) {
+                        startSpeech(speedCameraWarningText.textToSpeech);
+                        setHasPlayedWarning((prev) => ({ ...prev, late: true }));
+                    }
                 }
             });
 
             if (!isWithinAnyWarningZone) {
-                setHasPlayedWarning(false);
+                setHasPlayedWarning({ early: false, late: false });
             }
 
-            setSpeedCameras({ data: { ...data, ...newSpeedCameras }, alert: closestCamera });
+            setSpeedCameras({ data, alert: closestCamera });
         } else {
             setSpeedCameras({ data: DEFAULT_FC, alert: null });
-            setHasPlayedWarning(false);
+            setHasPlayedWarning({ early: false, late: false });
         }
-    }, [data, longitude, latitude, hasPlayedWarning, showWarningThresholdInMeters, newSpeedCameras, isNavigationMode]);
+    }, [data, longitude, latitude, isNavigationMode]);
 
     useEffect(() => {
         if (speedCameras?.alert) {
