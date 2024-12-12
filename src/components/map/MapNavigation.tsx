@@ -71,73 +71,69 @@ const MapNavigation = () => {
 
     return (
         <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>
-            <Card st={{ paddingHorizontal: 0 }}>
-                <View style={styles.navigationCard}>
-                    {userLocation?.coords && isNavigationMode && (
-                        <View style={styles.navigationSpeed}>
-                            <View>
-                                <Text type="white" style={styles.navigationSpeedText}>
-                                    {currentSpeed}
-                                </Text>
-                                <Text type="white" style={{ textAlign: "center" }}>
-                                    km/h
-                                </Text>
-                            </View>
-
-                            {speedLimits?.alert && (
-                                <Image
-                                    source={determineSpeedLimitIcon(
-                                        (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
-                                    )}
-                                    style={styles.speedLimitImage}
-                                />
-                            )}
-                        </View>
-                    )}
-
-                    <View style={styles.navigationInfo}>
-                        {isNavigationMode ? (
-                            <Text type="white" textStyle="header" style={{ textAlign: "center" }}>
-                                {arrivalTime} Uhr
-                            </Text>
-                        ) : (
-                            <Text type="white" textStyle="header">
-                                {location?.address_line1}
-                            </Text>
-                        )}
-
-                        <Text
-                            type="lightGray"
-                            style={{ fontWeight: "bold", textAlign: isNavigationMode ? "center" : "left" }}
-                        >
-                            {duration} · {distance}
+            {userLocation?.coords && isNavigationMode && (
+                <View style={styles.navigationSpeed}>
+                    <View>
+                        <Text type="white" style={styles.navigationSpeedText}>
+                            {currentSpeed}
+                        </Text>
+                        <Text type="white" style={{ textAlign: "center" }}>
+                            km/h
                         </Text>
                     </View>
 
-                    <View style={styles.navigationActions}>
-                        <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
-                        {!isNavigationMode && (
-                            <IconButton
-                                icon="navigation"
-                                onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
-                                type="success"
-                                size="lg"
-                            />
-                        )}
+                    {speedLimits?.alert && (
+                        <Image
+                            source={determineSpeedLimitIcon(
+                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
+                            )}
+                            style={styles.speedLimitImage}
+                        />
+                    )}
+                </View>
+            )}
 
-                        {isNavigationMode && (
-                            <IconButton
-                                icon={allowTextToSpeech ? "volume-high" : "volume-off"}
-                                onPress={() =>
-                                    allowTextToSpeech
-                                        ? dispatch(mapTextToSpeechActions.setAllowTextToSpeech(false))
-                                        : dispatch(mapTextToSpeechActions.setAllowTextToSpeech(true))
-                                }
-                                type="white"
-                                size="lg"
-                            />
-                        )}
-                    </View>
+            <Card st={styles.navigationCard}>
+                <View style={styles.navigationInfo}>
+                    {isNavigationMode ? (
+                        <Text type="white" textStyle="header">
+                            {arrivalTime} Uhr
+                        </Text>
+                    ) : (
+                        <Text type="white" textStyle="header">
+                            {location?.address_line1}
+                        </Text>
+                    )}
+
+                    <Text type="lightGray" style={{ fontWeight: "bold" }}>
+                        {duration} · {distance}
+                    </Text>
+                </View>
+
+                <View style={styles.navigationActions}>
+                    {isNavigationMode && (
+                        <IconButton
+                            icon={allowTextToSpeech ? "volume-high" : "volume-off"}
+                            onPress={() =>
+                                allowTextToSpeech
+                                    ? dispatch(mapTextToSpeechActions.setAllowTextToSpeech(false))
+                                    : dispatch(mapTextToSpeechActions.setAllowTextToSpeech(true))
+                            }
+                            type="white"
+                            size="lg"
+                        />
+                    )}
+
+                    <IconButton icon="close-circle" onPress={handleCancelNavigation} type="error" size="lg" />
+
+                    {!isNavigationMode && (
+                        <IconButton
+                            icon="navigation"
+                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                            type="success"
+                            size="lg"
+                        />
+                    )}
                 </View>
             </Card>
         </View>
@@ -164,11 +160,13 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
     },
     navigationSpeed: {
-        position: "absolute",
-        left: SIZES.spacing.md,
         flexDirection: "row",
         alignItems: "center",
+        alignSelf: "flex-start",
         gap: SIZES.spacing.sm,
+        backgroundColor: COLORS.primary,
+        padding: SIZES.spacing.sm,
+        borderRadius: SIZES.borderRadius.md,
     },
     navigationSpeedText: {
         fontWeight: "bold",
@@ -180,14 +178,13 @@ const styles = StyleSheet.create({
         height: SIZES.iconSize.xl,
     },
     navigationInfo: {
-        width: "100%",
+        flex: 1,
         justifyContent: "center",
     },
     navigationActions: {
-        position: "absolute",
-        right: SIZES.spacing.md,
         flexDirection: "row",
         alignItems: "center",
+        alignSelf: "flex-end",
     },
 });
 

@@ -66,11 +66,13 @@ const useTextToSpeech = () => {
         if (!isSpeaking && speechQueue.length > 0) {
             processSpeechQueue();
         }
+    }, [speechQueue]);
 
+    useEffect(() => {
         if (!allowTextToSpeech) {
             stopSpeech();
         }
-    }, [speechQueue, allowTextToSpeech]);
+    }, [allowTextToSpeech]);
 
     useEffect(() => {
         return () => {
