@@ -19,6 +19,7 @@ import {
     determineIncidentIcon,
     instructionsWarningThresholds,
 } from "@/utils/map-utils";
+import { formatLength } from "@/utils/unit-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
@@ -113,7 +114,7 @@ const MapAlerts = () => {
                                                 color={COLORS.white}
                                             />
                                             <Text type="white" textStyle="header">
-                                                {step.distance.toFixed(0)} m
+                                                {formatLength(step.distance)}
                                             </Text>
                                         </View>
                                         <Text type="white">{step.maneuver.instruction}</Text>
