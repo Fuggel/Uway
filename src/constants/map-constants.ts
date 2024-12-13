@@ -18,10 +18,10 @@ export const MAP_CONFIG: MapConfig = {
         lon: 9.987431941065552,
         lat: 51.14220917694149,
     },
-    animationDuration: 1000,
+    animationDuration: 2500,
     boundsOffset: 0.25,
     noLocationZoom: 8,
-    zoom: 17,
+    zoom: 18,
     pitch: 0,
     followPitch: 35,
     padding: {
