@@ -6,7 +6,7 @@ import { API_URL } from "@/constants/api-constants";
 import { BoundingBox, LonLat } from "@/types/IMap";
 import { Overpass } from "@/types/IOverpass";
 import { SpeedCameraProperties } from "@/types/ISpeed";
-import { boundingBox, reverseGeocode } from "@/utils/map-utils";
+import { boundingBox } from "@/utils/map-utils";
 
 import { DEFAULT_FC } from "../constants/map-constants";
 
@@ -40,14 +40,12 @@ export async function fetchSpeedCameras(params: {
 async function convertToGeoJSON(overpassData: Overpass<SpeedCameraProperties>): Promise<FeatureCollection> {
     const features = await Promise.all(
         overpassData.elements.map(async (element) => {
-            const { name, full_address } = await reverseGeocode(element.lon, element.lat);
-
             return {
                 type: "Feature",
                 properties: {
                     ...element.tags,
-                    name,
-                    address: full_address,
+                    name: "Blitzer",
+                    address: element.tags.address,
                 },
                 geometry: {
                     type: "Point",

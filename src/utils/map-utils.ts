@@ -1,14 +1,9 @@
-import axios from "axios";
-
 import { Position, lineString, point } from "@turf/helpers";
 import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 
-import { API_URL } from "@/constants/api-constants";
-import { API_KEY } from "@/constants/env-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
 import { InstructionWarningThreshold, ModifierType } from "@/types/INavigation";
-import { ReverseGeocodeProperties } from "@/types/ISearch";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -152,24 +147,6 @@ export function getStationIcon(stations: GasStation[], price: number) {
     } else {
         return `${iconName}-average`;
     }
-}
-
-export async function reverseGeocode(lon: number, lat: number): Promise<ReverseGeocodeProperties> {
-    if (!isValidLonLat(lon, lat)) {
-        return { name: "Unbekannt", full_address: "Adresse nicht gefunden" };
-    }
-
-    const response = await axios.get(
-        `${API_URL.MAPBOX_REVERSE_GEOCODING}?longitude=${lon}&latitude=${lat}&limit=1&language=de&access_token=${API_KEY.MAPBOX_ACCESS_TOKEN}`
-    );
-
-    const fullAddress = response.data?.features[0]?.properties.full_address ?? "Adresse nicht gefunden";
-    const name = response.data?.features[0]?.properties.name ?? "Unbekannt";
-
-    return {
-        name: name,
-        full_address: fullAddress,
-    };
 }
 
 export function distanceToPointText(params: { pos1: Position; pos2: Position }) {
