@@ -6,9 +6,9 @@ import { CameraRef } from "@rnmapbox/maps/lib/typescript/src/components/Camera";
 import { Position } from "@turf/helpers";
 
 import { MAP_CONFIG } from "@/constants/map-constants";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { convertSpeedToKmh } from "@/utils/map-utils";
 
 const { width, height } = Dimensions.get("window");
 
@@ -16,11 +16,14 @@ const useMapCamera = () => {
     const cameraRef = useRef<CameraRef | null>(null);
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
-    const { directions } = useContext(MapNavigationContext);
+    const directions = useSelector(mapNavigationSelectors.directions);
     const tracking = useSelector(mapNavigationSelectors.tracking);
-    const location = useSelector(mapNavigationSelectors.location);
+    const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+
+    const userSpeed = userLocation?.coords.speed || 0;
+    const currentSpeed = convertSpeedToKmh(userSpeed);
 
     const fitBounds = () => {
         if (!cameraRef.current || !userLocation) return;
@@ -49,36 +52,31 @@ const useMapCamera = () => {
     };
 
     useEffect(() => {
-        if (tracking && location && !navigationMode && directions) {
+        if (isNavigationSelecting && directions) {
             fitBounds();
-            return;
         }
+    }, [isNavigationSelecting, directions]);
 
+    useEffect(() => {
         const updateCamera = () => {
             if (!cameraRef.current) return;
 
             cameraRef.current.setCamera({
-                animationMode: "easeTo",
+                animationMode: "flyTo",
                 animationDuration: MAP_CONFIG.animationDuration,
                 centerCoordinate:
-                    userLocation && (tracking || navigationView)
-                        ? ([userLocation.coords.longitude, userLocation.coords.latitude] as Position)
-                        : tracking && !userLocation
-                            ? ([MAP_CONFIG.position.lon, MAP_CONFIG.position.lat] as Position)
-                            : undefined,
-                zoomLevel: !userLocation
-                    ? MAP_CONFIG.noLocationZoom
-                    : tracking || navigationView
-                        ? MAP_CONFIG.zoom
-                        : undefined,
-                pitch: navigationView ? MAP_CONFIG.followPitch : tracking ? MAP_CONFIG.pitch : undefined,
-                heading: tracking || navigationView ? userLocation?.coords.course : undefined,
+                    tracking && userLocation ? [userLocation.coords.longitude, userLocation.coords.latitude] : undefined,
+                zoomLevel: currentSpeed && tracking ? MAP_CONFIG.zoom - 0.01 * currentSpeed : tracking ? MAP_CONFIG.zoom : undefined,
+                pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
+                heading: tracking ? userLocation?.coords.course : undefined,
                 padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
             });
         };
 
-        updateCamera();
-    }, [location, directions, navigationMode, navigationView, tracking, userLocation]);
+        if (!isNavigationSelecting && tracking) {
+            updateCamera();
+        }
+    }, [tracking, isNavigationSelecting, userLocation?.coords.longitude, userLocation?.coords.latitude, navigationView]);
 
     useEffect(() => {
         if (tracking && navigationMode && !navigationView) {

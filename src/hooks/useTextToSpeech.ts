@@ -4,19 +4,23 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 
 const soundObject = new Audio.Sound();
 
 const useTextToSpeech = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [speechQueue, setSpeechQueue] = useState<string[]>([]);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
 
-    const startSpeech = async (speakText: string) => {
-        if (!allowTextToSpeech || !speakText || isSpeaking) return;
+    const processSpeechQueue = async () => {
+        if (!allowTextToSpeech || isSpeaking || speechQueue.length === 0) return;
+
+        const speakText = speechQueue[0];
+        setIsSpeaking(true);
 
         try {
-            setIsSpeaking(true);
-
             await Audio.setAudioModeAsync({
                 playsInSilentModeIOS: true,
             });
@@ -29,20 +33,48 @@ const useTextToSpeech = () => {
 
             Speech.speak(speakText, {
                 language: "de",
-                onDone: () => setIsSpeaking(false),
-                onStopped: () => setIsSpeaking(false),
-                onError: () => setIsSpeaking(false),
+                onDone: () => {
+                    setIsSpeaking(false);
+                    setSpeechQueue((queue) => queue.slice(1));
+                },
+                onStopped: () => {
+                    setIsSpeaking(false);
+                    setSpeechQueue([]);
+                },
+                onError: () => {
+                    setIsSpeaking(false);
+                    setSpeechQueue((queue) => queue.slice(1));
+                },
             });
         } catch (error) {
-            console.error(`Error during text-to-speech: ${error}`);
+            console.log(`Error during text-to-speech: ${error}`);
             setIsSpeaking(false);
+            setSpeechQueue((queue) => queue.slice(1));
         }
+    };
+
+    const startSpeech = (speakText: string) => {
+        if (!allowTextToSpeech || !speakText) return;
+        setSpeechQueue((queue) => [...queue, speakText]);
     };
 
     const stopSpeech = () => {
         Speech.stop();
         setIsSpeaking(false);
+        setSpeechQueue([]);
     };
+
+    useEffect(() => {
+        if (!isSpeaking && speechQueue.length > 0) {
+            processSpeechQueue();
+        }
+    }, [speechQueue]);
+
+    useEffect(() => {
+        if (!allowTextToSpeech || !isNavigationMode) {
+            stopSpeech();
+        }
+    }, [allowTextToSpeech, isNavigationMode]);
 
     useEffect(() => {
         return () => {

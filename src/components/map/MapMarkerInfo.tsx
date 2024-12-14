@@ -6,6 +6,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { mapNavigationActions } from "@/store/mapNavigation";
+import { generateRandomNumber } from "@/utils/auth-utils";
 
 import IconButton from "../common/IconButton";
 import Text from "../common/Text";
@@ -30,6 +31,7 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapBottomSheetProps) => {
         const country = "Deutschland";
 
         const newLocation = {
+            id: generateRandomNumber(),
             country,
             city,
             lon: sheetData?.markerProperties.lng,

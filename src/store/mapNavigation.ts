@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { RouteProfileType } from "@/types/INavigation";
+import { Direction, RouteProfileType } from "@/types/INavigation";
 import { SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
@@ -10,8 +10,11 @@ interface IMapNavigationState {
     location: SearchLocation | null;
     tracking: boolean;
     navigationView: boolean;
+    isNavigationSelecting: boolean;
     isNavigationMode: boolean;
     navigationProfile: RouteProfileType;
+    currentStep: number;
+    directions: Direction | null;
 }
 
 const initialMapNavigationState: IMapNavigationState = {
@@ -19,8 +22,11 @@ const initialMapNavigationState: IMapNavigationState = {
     location: null,
     tracking: true,
     navigationView: false,
+    isNavigationSelecting: false,
     isNavigationMode: false,
     navigationProfile: RouteProfileType.DRIVING,
+    currentStep: 0,
+    directions: null,
 };
 
 const mapNavigationSlice = createSlice({
@@ -39,11 +45,29 @@ const mapNavigationSlice = createSlice({
         setNavigationView(state, action: PayloadAction<boolean>) {
             state.navigationView = action.payload;
         },
+        setIsNavigationSelecting(state, action: PayloadAction<boolean>) {
+            state.isNavigationSelecting = action.payload;
+        },
         setIsNavigationMode(state, action: PayloadAction<boolean>) {
             state.isNavigationMode = action.payload;
         },
         setNavigationProfile(state, action: PayloadAction<RouteProfileType>) {
             state.navigationProfile = action.payload;
+        },
+        setCurrentStep(state, action: PayloadAction<number>) {
+            state.currentStep = action.payload;
+        },
+        setDirections(state, action: PayloadAction<Direction | null>) {
+            state.directions = action.payload;
+        },
+        handleCancelNavigation(state) {
+            state.directions = null;
+            state.currentStep = 0;
+            state.location = null;
+            state.navigationView = false;
+            state.isNavigationSelecting = false;
+            state.isNavigationMode = false;
+            state.searchQuery = "";
         },
     },
 });
@@ -53,8 +77,11 @@ export const mapNavigationSelectors = {
     location: (state: RootState): SearchLocation | null => state.mapNavigation.location,
     tracking: (state: RootState): boolean => state.mapNavigation.tracking,
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,
+    isNavigationSelecting: (state: RootState): boolean => state.mapNavigation.isNavigationSelecting,
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,
     navigationProfile: (state: RootState): RouteProfileType => state.mapNavigation.navigationProfile,
+    currentStep: (state: RootState): number => state.mapNavigation.currentStep,
+    directions: (state: RootState): Direction | null => state.mapNavigation.directions,
 };
 
 export const mapNavigationActions = mapNavigationSlice.actions;

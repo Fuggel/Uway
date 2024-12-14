@@ -2,12 +2,10 @@ import { Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback } from "reac
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
-import { THRESHOLD } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { mapSpeedCameraActions, mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
-import Input from "@/components/common/Input";
 import Switch from "@/components/common/Switch";
 import { SettingsItem } from "@/components/settings/SettingsItem";
 
@@ -15,8 +13,6 @@ const SpeedCameraSettings = () => {
     const dispatch = useDispatch();
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
     const playAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
-    const showWarningThresholdInMeters =
-        useSelector(mapSpeedCameraSelectors.showWarningThresholdInMeters) || THRESHOLD.SPEED_CAMERA.WARNING_IN_METERS;
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
 
     return (
@@ -33,13 +29,6 @@ const SpeedCameraSettings = () => {
                         checked={allowTextToSpeech && playAcousticWarning}
                         disabled={!allowTextToSpeech}
                         onChange={() => dispatch(mapSpeedCameraActions.setPlayAcousticWarning(!playAcousticWarning))}
-                    />
-                </SettingsItem>
-                <SettingsItem title="Warnung anzeigen in Metern">
-                    <Input
-                        value={String(showWarningThresholdInMeters)}
-                        onBlur={(val) => dispatch(mapSpeedCameraActions.setShowWarningThresholdInMeters(Number(val)))}
-                        type="numeric"
                     />
                 </SettingsItem>
             </ScrollView>

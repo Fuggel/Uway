@@ -8,7 +8,6 @@ import { distance } from "@turf/turf";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { MapNavigationContext } from "@/contexts/MapNavigationContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
@@ -19,6 +18,7 @@ import {
     determineIncidentIcon,
     instructionsWarningThresholds,
 } from "@/utils/map-utils";
+import { formatLength } from "@/utils/unit-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
@@ -27,8 +27,9 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { directions, currentStep } = useContext(MapNavigationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
+    const directions = useSelector(mapNavigationSelectors.directions);
+    const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const [spokenInstructions, setSpokenInstructions] = useState<SpokenInstructions>({
         [InstructionThreshold.CURRENT]: false,
         [InstructionThreshold.EARLY]: false,
@@ -113,7 +114,7 @@ const MapAlerts = () => {
                                                 color={COLORS.white}
                                             />
                                             <Text type="white" textStyle="header">
-                                                {step.distance.toFixed(0)} m
+                                                {formatLength(step.distance)}
                                             </Text>
                                         </View>
                                         <Text type="white">{step.maneuver.instruction}</Text>

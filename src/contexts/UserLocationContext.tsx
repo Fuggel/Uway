@@ -19,6 +19,22 @@ export const UserLocationContext = createContext<ContextProps>({
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const { hasLocationPermissions } = useLocationPermission();
     const [userLocation, setUserLocation] = useState<Location | null>(null);
+    const [lastLocations, setLastLocations] = useState<Location[]>([]);
+
+    const smoothLocation = (newLocation: Location) => {
+        const maxHistory = 5;
+        const updatedLocations = [...lastLocations, newLocation].slice(-maxHistory);
+
+        const avgLat = updatedLocations.reduce((sum, loc) => sum + loc.coords.latitude, 0) / updatedLocations.length;
+        const avgLng = updatedLocations.reduce((sum, loc) => sum + loc.coords.longitude, 0) / updatedLocations.length;
+
+        setLastLocations(updatedLocations);
+
+        return {
+            ...newLocation,
+            coords: { ...newLocation.coords, latitude: avgLat, longitude: avgLng },
+        };
+    };
 
     useEffect(() => {
         if (!hasLocationPermissions) {
@@ -29,7 +45,8 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
 
         Mapbox.locationManager.setMinDisplacement(3);
         Mapbox.locationManager.addListener((location: Location) => {
-            setUserLocation(location);
+            const smoothedLocation = smoothLocation(location);
+            setUserLocation(smoothedLocation);
         });
 
         return () => {

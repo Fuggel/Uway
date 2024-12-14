@@ -18,10 +18,10 @@ export const MAP_CONFIG: MapConfig = {
         lon: 9.987431941065552,
         lat: 51.14220917694149,
     },
-    animationDuration: 1000,
+    animationDuration: 1500,
     boundsOffset: 0.25,
     noLocationZoom: 8,
-    zoom: 17,
+    zoom: 18,
     pitch: 0,
     followPitch: 35,
     padding: {
@@ -69,7 +69,7 @@ export const MAP_STYLES: MapStyle[] = [
     },
 ];
 
-export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
+export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
