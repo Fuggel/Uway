@@ -136,7 +136,11 @@ const MapNavigation = () => {
                     {!isNavigationMode && (
                         <IconButton
                             icon="navigation"
-                            onPress={() => dispatch(mapNavigationActions.setIsNavigationMode(true))}
+                            onPress={() => {
+                                dispatch(mapNavigationActions.setIsNavigationMode(true));
+                                dispatch(mapNavigationActions.setTracking(true));
+                                dispatch(mapNavigationActions.setIsNavigationSelecting(false));
+                            }}
                             type="success"
                             size="lg"
                         />

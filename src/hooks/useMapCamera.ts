@@ -18,7 +18,7 @@ const useMapCamera = () => {
     const { userLocation } = useContext(UserLocationContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const tracking = useSelector(mapNavigationSelectors.tracking);
-    const location = useSelector(mapNavigationSelectors.location);
+    const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
 
@@ -52,26 +52,31 @@ const useMapCamera = () => {
     };
 
     useEffect(() => {
-        if (tracking && location && !navigationMode && directions) {
+        if (isNavigationSelecting && directions) {
             fitBounds();
-            return;
         }
-    }, [location, directions, navigationMode, tracking]);
+    }, [isNavigationSelecting, directions]);
 
     useEffect(() => {
-        if (!cameraRef.current) return;
+        const updateCamera = () => {
+            if (!cameraRef.current) return;
 
-        cameraRef.current.setCamera({
-            animationMode: "flyTo",
-            animationDuration: MAP_CONFIG.animationDuration,
-            centerCoordinate:
-                tracking && userLocation ? [userLocation.coords.longitude, userLocation.coords.latitude] : undefined,
-            zoomLevel: currentSpeed && tracking ? MAP_CONFIG.zoom - 0.01 * currentSpeed : undefined,
-            pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
-            heading: tracking ? userLocation?.coords.course : undefined,
-            padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
-        });
-    }, [tracking, userLocation?.coords.longitude, userLocation?.coords.latitude, navigationView]);
+            cameraRef.current.setCamera({
+                animationMode: "flyTo",
+                animationDuration: MAP_CONFIG.animationDuration,
+                centerCoordinate:
+                    tracking && userLocation ? [userLocation.coords.longitude, userLocation.coords.latitude] : undefined,
+                zoomLevel: currentSpeed && tracking ? MAP_CONFIG.zoom - 0.01 * currentSpeed : tracking ? MAP_CONFIG.zoom : undefined,
+                pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
+                heading: tracking ? userLocation?.coords.course : undefined,
+                padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
+            });
+        };
+
+        if (!isNavigationSelecting && tracking) {
+            updateCamera();
+        }
+    }, [tracking, isNavigationSelecting, userLocation?.coords.longitude, userLocation?.coords.latitude, navigationView]);
 
     useEffect(() => {
         if (tracking && navigationMode && !navigationView) {

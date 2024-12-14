@@ -10,6 +10,7 @@ interface IMapNavigationState {
     location: SearchLocation | null;
     tracking: boolean;
     navigationView: boolean;
+    isNavigationSelecting: boolean;
     isNavigationMode: boolean;
     navigationProfile: RouteProfileType;
     currentStep: number;
@@ -21,6 +22,7 @@ const initialMapNavigationState: IMapNavigationState = {
     location: null,
     tracking: true,
     navigationView: false,
+    isNavigationSelecting: false,
     isNavigationMode: false,
     navigationProfile: RouteProfileType.DRIVING,
     currentStep: 0,
@@ -43,6 +45,9 @@ const mapNavigationSlice = createSlice({
         setNavigationView(state, action: PayloadAction<boolean>) {
             state.navigationView = action.payload;
         },
+        setIsNavigationSelecting(state, action: PayloadAction<boolean>) {
+            state.isNavigationSelecting = action.payload;
+        },
         setIsNavigationMode(state, action: PayloadAction<boolean>) {
             state.isNavigationMode = action.payload;
         },
@@ -60,6 +65,7 @@ const mapNavigationSlice = createSlice({
             state.currentStep = 0;
             state.location = null;
             state.navigationView = false;
+            state.isNavigationSelecting = false;
             state.isNavigationMode = false;
             state.searchQuery = "";
         },
@@ -71,6 +77,7 @@ export const mapNavigationSelectors = {
     location: (state: RootState): SearchLocation | null => state.mapNavigation.location,
     tracking: (state: RootState): boolean => state.mapNavigation.tracking,
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,
+    isNavigationSelecting: (state: RootState): boolean => state.mapNavigation.isNavigationSelecting,
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,
     navigationProfile: (state: RootState): RouteProfileType => state.mapNavigation.navigationProfile,
     currentStep: (state: RootState): number => state.mapNavigation.currentStep,

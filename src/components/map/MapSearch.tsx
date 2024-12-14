@@ -45,6 +45,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
 
     const handleSelectLocation = (newLocation: SearchLocation) => {
         dispatch(mapNavigationActions.setLocation(newLocation));
+        dispatch(mapNavigationActions.setIsNavigationSelecting(true));
         setShowSuggestions(false);
         onClose();
     };

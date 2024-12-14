@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 
 const soundObject = new Audio.Sound();
 
@@ -11,6 +12,7 @@ const useTextToSpeech = () => {
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [speechQueue, setSpeechQueue] = useState<string[]>([]);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
 
     const processSpeechQueue = async () => {
         if (!allowTextToSpeech || isSpeaking || speechQueue.length === 0) return;
@@ -69,10 +71,10 @@ const useTextToSpeech = () => {
     }, [speechQueue]);
 
     useEffect(() => {
-        if (!allowTextToSpeech) {
+        if (!allowTextToSpeech || !isNavigationMode) {
             stopSpeech();
         }
-    }, [allowTextToSpeech]);
+    }, [allowTextToSpeech, isNavigationMode]);
 
     useEffect(() => {
         return () => {
