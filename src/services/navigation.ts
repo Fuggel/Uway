@@ -18,12 +18,16 @@ export async function fetchDirections(params: { profile: string; startLngLat: Lo
         queryParams.append("steps", "true");
         queryParams.append("language", "de");
         queryParams.append("overview", "full");
+        queryParams.append("annotations", "maxspeed");
+        queryParams.append("banner_instructions", "true");
         queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
 
         const url = `${API_URL.MAPBOX_DIRECTIONS}/${
             params.profile
         }/${startLon},${startLat};${destLon},${destLat}?${queryParams.toString()}`;
         const response = await axios.get(url);
+
+        console.log(url);
 
         return response.data;
     } catch (error) {
