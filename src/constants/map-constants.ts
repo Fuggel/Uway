@@ -36,7 +36,7 @@ export const MAP_CONFIG: MapConfig = {
         paddingBottom: 0,
         paddingLeft: 0,
     },
-    style: MapboxStyle.DARK,
+    style: MapboxStyle.NAVIGATION_DARK,
 };
 
 export const DEFAULT_CAMERA_SETTINGS = {
@@ -49,18 +49,13 @@ export const DEFAULT_CAMERA_SETTINGS = {
 export const MAP_STYLES: MapStyle[] = [
     {
         label: "Dunkel",
-        value: MapboxStyle.DARK,
-        img: require(`${MAP_STYLES_URL}/dark.png`),
+        value: MapboxStyle.NAVIGATION_DARK,
+        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
     },
     {
         label: "Hell",
-        value: MapboxStyle.LIGHT,
-        img: require(`${MAP_STYLES_URL}/light.png`),
-    },
-    {
-        label: "Navigation",
-        value: MapboxStyle.NAVIGATION_DARK,
-        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
+        value: MapboxStyle.NAVIGATION_LIGHT,
+        img: require(`${MAP_STYLES_URL}/navigation-light.png`),
     },
     {
         label: "Satellit",
@@ -69,7 +64,7 @@ export const MAP_STYLES: MapStyle[] = [
     },
 ];
 
-export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
+export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
     "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
     "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
