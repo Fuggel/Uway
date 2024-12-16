@@ -15,11 +15,22 @@ const useInstructions = () => {
     const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const [remainingTime, setRemainingTime] = useState(0);
     const [remainingDistance, setRemainingDistance] = useState(0);
+    const [currentSpeedLimit, setCurrentSpeedLimit] = useState<number | null>(null);
 
     useEffect(() => {
         if (directions && userLocation) {
             const steps = directions.legs[0].steps;
-            const nextStep = steps[currentStep + 1] as Instruction;
+            const annotations = directions.legs[0].annotation;
+
+            const calculateSpeedLimit = (stepIndex: number) => {
+                const geometryIndex = steps[stepIndex].intersections[0]?.geometry_index;
+
+                if (geometryIndex !== undefined && annotations?.maxspeed[geometryIndex]) {
+                    const speedLimit = annotations.maxspeed[geometryIndex]?.speed;
+                    setCurrentSpeedLimit(speedLimit || null);
+                    console.log("Speed limit for step:", stepIndex, speedLimit);
+                }
+            };
 
             const calculateRemainingTimeAndDistance = () => {
                 let totalRemainingTime = 0;
@@ -34,24 +45,30 @@ const useInstructions = () => {
                 setRemainingDistance(totalRemainingDistance);
             };
 
-            if (nextStep) {
-                const userPoint = point([userLocation.coords.longitude, userLocation.coords.latitude]);
-                const stepPoint = point(nextStep.maneuver.location);
+            const handleStepTransition = () => {
+                const nextStep = steps[currentStep + 1] as Instruction;
 
-                const distanceToNextStep = turfDistance(userPoint, stepPoint, {
-                    units: "meters",
-                });
+                if (nextStep) {
+                    const userPoint = point([userLocation.coords.longitude, userLocation.coords.latitude]);
+                    const stepPoint = point(nextStep.maneuver.location);
 
-                if (distanceToNextStep < THRESHOLD.NAVIGATION.NEXT_STEP_IN_METERS) {
-                    dispatch(mapNavigationActions.setCurrentStep(currentStep + 1));
+                    const distanceToNextStep = turfDistance(userPoint, stepPoint, {
+                        units: "meters",
+                    });
+
+                    if (distanceToNextStep < THRESHOLD.NAVIGATION.NEXT_STEP_IN_METERS) {
+                        dispatch(mapNavigationActions.setCurrentStep(currentStep + 1));
+                    }
                 }
-            }
+            };
 
+            calculateSpeedLimit(currentStep);
             calculateRemainingTimeAndDistance();
+            handleStepTransition();
         }
     }, [userLocation, currentStep, directions]);
 
-    return { remainingTime, remainingDistance };
+    return { remainingTime, remainingDistance, currentSpeedLimit };
 };
 
 export default useInstructions;

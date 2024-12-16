@@ -8,11 +8,9 @@ import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
-import useSpeedLimits from "@/hooks/useSpeedLimits";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
-import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
 
@@ -32,8 +30,7 @@ const MapNavigation = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
-    const { speedLimits } = useSpeedLimits();
-    const { remainingDistance, remainingTime } = useInstructions();
+    const { remainingDistance, remainingTime, currentSpeedLimit } = useInstructions();
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
 
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
@@ -89,13 +86,8 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    {speedLimits?.alert && (
-                        <Image
-                            source={determineSpeedLimitIcon(
-                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
-                            )}
-                            style={styles.speedLimitImage}
-                        />
+                    {currentSpeedLimit && (
+                        <Image source={determineSpeedLimitIcon(currentSpeedLimit)} style={styles.speedLimitImage} />
                     )}
                 </View>
             )}

@@ -63,37 +63,37 @@ export function boundingBox(lonLat: LonLat, distance: number) {
     };
 }
 
-export function determineSpeedLimitIcon(speedLimit: string) {
+export function determineSpeedLimitIcon(speedLimit: number) {
     const assetsUrl = "../assets/images/map-icons";
 
     switch (speedLimit) {
-        case "5":
+        case 5:
             return require(`${assetsUrl}/speed-limit-5.png`);
-        case "10":
+        case 10:
             return require(`${assetsUrl}/speed-limit-10.png`);
-        case "15":
+        case 15:
             return require(`${assetsUrl}/speed-limit-15.png`);
-        case "20":
+        case 20:
             return require(`${assetsUrl}/speed-limit-20.png`);
-        case "25":
+        case 25:
             return require(`${assetsUrl}/speed-limit-25.png`);
-        case "30":
+        case 30:
             return require(`${assetsUrl}/speed-limit-30.png`);
-        case "40":
+        case 40:
             return require(`${assetsUrl}/speed-limit-40.png`);
-        case "45":
+        case 45:
             return require(`${assetsUrl}/speed-limit-45.png`);
-        case "50":
+        case 50:
             return require(`${assetsUrl}/speed-limit-50.png`);
-        case "60":
+        case 60:
             return require(`${assetsUrl}/speed-limit-60.png`);
-        case "70":
+        case 70:
             return require(`${assetsUrl}/speed-limit-70.png`);
-        case "80":
+        case 80:
             return require(`${assetsUrl}/speed-limit-80.png`);
-        case "100":
+        case 100:
             return require(`${assetsUrl}/speed-limit-100.png`);
-        case "120":
+        case 120:
             return require(`${assetsUrl}/speed-limit-120.png`);
         default:
             return require(`${assetsUrl}/speed-limit-unknown.png`);

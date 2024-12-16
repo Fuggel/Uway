@@ -8,29 +8,19 @@ import mapIncidentReduce from "./mapIncident";
 import mapNavigationReduce from "./mapNavigation";
 import mapSearchReduce from "./mapSearch";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
-import mapSpeedLimitReduce from "./mapSpeedLimit";
 import mapTextToSpeechReduce from "./mapTextToSpeech";
 import mapViewReduce from "./mapView";
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: [
-        "mapView",
-        "mapSpeedCamera",
-        "mapSpeedLimit",
-        "mapGasStation",
-        "mapIncident",
-        "mapTextToSpeech",
-        "mapSearch",
-    ],
+    whitelist: ["mapView", "mapSpeedCamera", "mapGasStation", "mapIncident", "mapTextToSpeech", "mapSearch"],
 };
 
 const reducer = combineReducers({
     mapView: mapViewReduce,
     mapNavigation: mapNavigationReduce,
     mapSpeedCamera: mapSpeedCameraReduce,
-    mapSpeedLimit: mapSpeedLimitReduce,
     mapGasStation: mapGasStationReduce,
     mapIncident: mapIncidentReduce,
     mapTextToSpeech: mapTextToSpeechReduce,

@@ -27,8 +27,6 @@ export async function fetchDirections(params: { profile: string; startLngLat: Lo
         }/${startLon},${startLat};${destLon},${destLat}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
-        console.log(url);
-
         return response.data;
     } catch (error) {
         console.log(`Error fetching directions: ${error}`);
