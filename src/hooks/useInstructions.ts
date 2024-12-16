@@ -27,8 +27,7 @@ const useInstructions = () => {
 
                 if (geometryIndex !== undefined && annotations?.maxspeed[geometryIndex]) {
                     const speedLimit = annotations.maxspeed[geometryIndex]?.speed;
-                    setCurrentSpeedLimit(speedLimit || null);
-                    console.log("Speed limit for step:", stepIndex, speedLimit);
+                    setCurrentSpeedLimit(speedLimit);
                 }
             };
 

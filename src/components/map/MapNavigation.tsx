@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
+import * as turf from "@turf/turf";
+
 import { COLORS } from "@/constants/colors-constants";
 import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
@@ -36,6 +38,8 @@ const MapNavigation = () => {
     const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
     const duration = `${(remainingTime / 60).toFixed(0)} min`;
 
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
 
@@ -68,8 +72,20 @@ const MapNavigation = () => {
     }, [isNavigationMode, directions]);
 
     useEffect(() => {
-        if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
-            cancelNavigation();
+        const steps = directions?.legs[0].steps;
+        const lastStep = steps?.slice(-1)[0];
+        const targetCoordinates = lastStep.geometry?.coordinates?.slice(-1)[0] || null;
+        const userCoordinates = [longitude, latitude] as [number, number];
+
+        if (targetCoordinates) {
+            const from = turf.point(userCoordinates);
+            const to = turf.point(targetCoordinates);
+
+            const distance = turf.distance(from, to, { units: "meters" });
+
+            if (steps[currentStep]?.maneuver?.type === "arrive" && distance <= 3) {
+                cancelNavigation();
+            }
         }
     }, [currentStep, directions]);
 
