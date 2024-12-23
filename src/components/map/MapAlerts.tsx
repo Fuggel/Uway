@@ -49,8 +49,8 @@ const MapAlerts = () => {
 
     const distanceToNextStep = nextStepData?.maneuver?.location
         ? distance([userLocation!.coords.longitude, userLocation!.coords.latitude], nextStepData.maneuver.location, {
-              units: "meters",
-          })
+            units: "meters",
+        })
         : null;
 
     useEffect(() => {
