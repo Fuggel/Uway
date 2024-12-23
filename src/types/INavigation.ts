@@ -1,20 +1,59 @@
 export interface Instruction {
-    driving_side: string;
     distance: number;
+    bannerInstructions: any[];
     maneuver: {
         type: ManeuverType;
         instruction: string;
         location: number[];
         modifier: ModifierType;
     };
-    name: string;
+}
+
+export interface BannerInstruction {
+    distanceAlongGeometry: number;
+    primary: BannerProperties;
+    secondary: BannerProperties;
+    sub: BannerProperties;
+}
+
+export interface BannerProperties {
+    text: string;
+    type: ManeuverType;
+    modifier: ModifierType;
+    degrees: number;
+    driving_side: "left" | "right";
+    components: BannerComponent[];
+}
+
+export interface BannerComponent {
+    text: string;
+    abbr: string;
+    abbr_priority: number;
+    imageBaseURL: string;
+    directions: ["left", "right", "straight"];
+    active: boolean;
+    active_direction: string;
 }
 
 export enum ManeuverType {
-    LEFT = "left",
+    TURN = "turn",
+    DEPART = "depart",
+    ARRIVE = "arrive",
+    MERGE = "merge",
+    OFF_RAMP = "off ramp",
+    FORK = "fork",
+    ROUNDABOUT = "roundabout",
+}
+
+export enum ModifierType {
+    U_TURN = "uturn",
+    SHARP_RIGHT = "sharp right",
     RIGHT = "right",
+    SLIGHT_RIGHT = "slight right",
     STRAIGHT = "straight",
-    CONTINUE = "continue",
+    SLIGHT_LEFT = "slight left",
+    LEFT = "left",
+    SHARP_LEFT = "sharp left",
 }
 
 export enum RouteProfileType {
@@ -30,17 +69,6 @@ export interface Direction {
     distance: number;
     duration: number;
     legs: any;
-}
-
-export enum ModifierType {
-    U_TURN = "uturn",
-    SHARP_RIGHT = "sharp right",
-    RIGHT = "right",
-    SLIGHT_RIGHT = "slight right",
-    STRAIGHT = "straight",
-    SLIGHT_LEFT = "slight left",
-    LEFT = "left",
-    SHARP_LEFT = "sharp left",
 }
 
 export interface InstructionWarningThreshold {

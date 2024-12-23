@@ -3,7 +3,7 @@ import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { InstructionWarningThreshold, ModifierType } from "@/types/INavigation";
+import { InstructionWarningThreshold, ManeuverType, ModifierType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -39,6 +39,77 @@ export function arrowDirection(modifier: ModifierType) {
     }
 }
 
+export function getManeuverImage(maneuver?: ManeuverType, modifier?: ModifierType, degrees?: number) {
+    const directionalUrl = "../assets/images/map-icons/directions/directional";
+    const roundaboutUrl = "../assets/images/map-icons/directions/roundabout";
+
+    if (!maneuver) {
+        return undefined;
+    }
+
+    switch (maneuver) {
+        case ManeuverType.TURN:
+            if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/turn-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/sharp-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/turn-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/sharp-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/slight-left.png`);
+            else return undefined;
+        case ManeuverType.DEPART:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/depart-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/depart-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/depart-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/depart-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/depart-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/depart-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/depart-left.png`);
+            else return require(`${directionalUrl}/depart-straight.png`);
+        case ManeuverType.ARRIVE:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/arrive-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/arrive-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/arrive-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/arrive-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/arrive-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/arrive-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/arrive-left.png`);
+            else return require(`${directionalUrl}/arrive-straight.png`);
+        case ManeuverType.MERGE:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/merge-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/merge-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/merge-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/merge-slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/merge-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/merge-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/merge-slight-left.png`);
+            else return require(`${directionalUrl}/merge.png`);
+        case ManeuverType.OFF_RAMP:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/continue-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/turn-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/sharp-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/turn-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/sharp-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/slight-left.png`);
+            else return require(`${directionalUrl}/continue-straight.png`);
+        case ManeuverType.FORK:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/fork-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/fork-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/fork-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/fork-slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/fork-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/fork-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/fork-slight-left.png`);
+            else return require(`${directionalUrl}/fork.png`);
+        case ManeuverType.ROUNDABOUT:
+            if (!degrees) return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
+            else if (degrees === 180) return require(`${roundaboutUrl}/roundabout-anticlockwise-straight.png`);
+            else if (degrees < 180) return require(`${roundaboutUrl}/roundabout-anticlockwise-left.png`);
+            else if (degrees > 180) return require(`${roundaboutUrl}/roundabout-anticlockwise-right.png`);
+            else return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
+    }
+}
+
 export function isValidLonLat(lon: number | undefined, lat: number | undefined) {
     if (lon === undefined || lat === undefined) {
         return false;
@@ -64,7 +135,7 @@ export function boundingBox(lonLat: LonLat, distance: number) {
 }
 
 export function determineSpeedLimitIcon(speedLimit: number) {
-    const assetsUrl = "../assets/images/map-icons";
+    const assetsUrl = "../assets/images/map-icons/speed-limits";
 
     switch (speedLimit) {
         case 5:
@@ -101,7 +172,7 @@ export function determineSpeedLimitIcon(speedLimit: number) {
 }
 
 export function determineIncidentIcon(iconCategory: IncidentType) {
-    const assetsUrl = "../assets/images/map-icons";
+    const assetsUrl = "../assets/images/map-icons/incidents";
 
     switch (iconCategory) {
         case IncidentType.Accident:
