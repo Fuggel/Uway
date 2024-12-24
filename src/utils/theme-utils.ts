@@ -4,9 +4,7 @@ export function determineTheme(theme: MapboxStyle): "light" | "dark" {
     switch (theme) {
         case MapboxStyle.NAVIGATION_DARK:
             return "dark";
-        case MapboxStyle.DARK:
-            return "dark";
-        case MapboxStyle.LIGHT:
+        case MapboxStyle.NAVIGATION_LIGHT:
             return "light";
         case MapboxStyle.SATELLITE_STREETS:
             return "dark";
