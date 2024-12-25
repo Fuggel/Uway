@@ -10,6 +10,7 @@ import mapSearchReduce from "./mapSearch";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
 import mapTextToSpeechReduce from "./mapTextToSpeech";
 import mapViewReduce from "./mapView";
+import mapWaypointReduce from "./mapWaypoint";
 
 const persistConfig = {
     key: "root",
@@ -25,6 +26,7 @@ const reducer = combineReducers({
     mapIncident: mapIncidentReduce,
     mapTextToSpeech: mapTextToSpeechReduce,
     mapSearch: mapSearchReduce,
+    mapWaypoint: mapWaypointReduce,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

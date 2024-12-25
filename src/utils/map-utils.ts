@@ -208,6 +208,24 @@ export function getStationIcon(stations: GasStation[], price: number) {
     }
 }
 
+export function getOrderedGasStations(gasStations: GasStation[] | undefined): GasStation[] {
+    if (!gasStations || gasStations.length === 0) return [];
+
+    return gasStations
+        .map((station) => {
+            const distance = station.dist;
+            const dieselPrice = station.diesel;
+
+            const score = distance > 0 ? dieselPrice / distance : Number.MAX_VALUE;
+
+            return {
+                ...station,
+                score,
+            };
+        })
+        .sort((a, b) => b.score - a.score);
+}
+
 export function distanceToPointText(params: { pos1: Position; pos2: Position }) {
     const point1 = point(params.pos1);
     const point2 = point(params.pos2);

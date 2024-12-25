@@ -11,7 +11,7 @@ import { generateRandomNumber } from "@/utils/auth-utils";
 import IconButton from "../common/IconButton";
 import Text from "../common/Text";
 
-interface MapBottomSheetProps {
+interface MapMarkerInfoProps {
     title: string;
     data: { label: string; value: string | number | React.ReactNode }[] | null;
     gasStation?: {
@@ -19,7 +19,7 @@ interface MapBottomSheetProps {
     };
 }
 
-const MapMarkerInfo = ({ title, data, gasStation }: MapBottomSheetProps) => {
+const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
     const dispatch = useDispatch();
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
 

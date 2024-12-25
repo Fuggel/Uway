@@ -13,6 +13,8 @@ import useInstructions from "@/hooks/useInstructions";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
+import { mapWaypointActions, mapWaypointSelectors } from "@/store/mapWaypoint";
+import { SheetType } from "@/types/ISheet";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
 
@@ -25,11 +27,12 @@ const deviceHeight = Dimensions.get("window").height;
 const MapNavigation = () => {
     const dispatch = useDispatch();
     const { stopSpeech } = useTextToSpeech();
-    const { showSheet } = useContext(BottomSheetContext);
+    const { showSheet, openSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const location = useSelector(mapNavigationSelectors.location);
+    const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const { remainingDistance, remainingTime, currentSpeedLimit } = useInstructions();
@@ -52,6 +55,11 @@ const MapNavigation = () => {
     const cancelNavigation = () => {
         dispatch(mapNavigationActions.handleCancelNavigation());
         stopSpeech();
+    };
+
+    const selectWaypoint = () => {
+        dispatch(mapWaypointActions.setSelectGasStationWaypoint(true));
+        openSheet({ type: SheetType.WAYPOINT });
     };
 
     useEffect(() => {
@@ -126,6 +134,17 @@ const MapNavigation = () => {
                 </View>
 
                 <View style={styles.navigationActions}>
+                    {!!isGasStationWaypoint ? (
+                        <IconButton
+                            icon="gas-station-off"
+                            onPress={() => dispatch(mapWaypointActions.removeGasStationWaypoints())}
+                            type="white"
+                            size="lg"
+                        />
+                    ) : (
+                        <IconButton icon="gas-station" onPress={selectWaypoint} type="white" size="lg" />
+                    )}
+
                     {isNavigationMode && (
                         <IconButton
                             icon={allowTextToSpeech ? "volume-high" : "volume-off"}

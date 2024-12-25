@@ -7,8 +7,8 @@ import { COLORS } from "@/constants/colors-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useGasStations from "@/hooks/useGasStations";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
@@ -17,10 +17,10 @@ import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 
 const Layers = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { incidents, speedCameras } = useContext(MapFeatureContext);
+    const { incidents, speedCameras, gasStations } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
     const directions = useSelector(mapNavigationSelectors.directions);
-    const { gasStations } = useGasStations();
+    const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
 
     return (
         <>
@@ -45,7 +45,7 @@ const Layers = () => {
             {gasStations && (
                 <ShapeSource
                     id="gas-station-source"
-                    shape={gasStations as GeoJSON.FeatureCollection}
+                    shape={gasStations.gasStations as GeoJSON.FeatureCollection}
                     onPress={(e) => {
                         openSheet<GasStation>({
                             type: SheetType.MARKER,
@@ -58,7 +58,9 @@ const Layers = () => {
                         id={LayerId.GAS_STATION}
                         style={{
                             iconImage: ["get", "iconType"],
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconSize: isGasStationWaypoint
+                                ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
+                                : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}

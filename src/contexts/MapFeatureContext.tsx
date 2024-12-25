@@ -1,7 +1,8 @@
 import { createContext } from "react";
 
-import { FeatureCollection } from "@turf/helpers";
+import { FeatureCollection, Geometry, GeometryCollection, Properties } from "@turf/helpers";
 
+import useGasStations from "@/hooks/useGasStations";
 import useIncidents from "@/hooks/useIncidents";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import { WarningAlert } from "@/types/IMap";
@@ -22,9 +23,16 @@ type Incident = {
     errorIncidents: Error | null;
 };
 
+type GasStation = {
+    gasStations: FeatureCollection<Geometry | GeometryCollection, Properties> | undefined;
+    loadingGasStations: boolean;
+    errorGasStations: Error | null;
+};
+
 interface ContextProps {
     speedCameras: SpeedCamera;
     incidents: Incident;
+    gasStations: GasStation;
 }
 
 interface ProviderProps {
@@ -44,11 +52,21 @@ export const MapFeatureContext = createContext<ContextProps>({
         loadingIncidents: false,
         errorIncidents: null,
     },
+    gasStations: {
+        gasStations: undefined,
+        loadingGasStations: false,
+        errorGasStations: null,
+    },
 });
 
 export const MapFeatureContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const speedCameras = useSpeedCameras();
     const incidents = useIncidents();
+    const gasStations = useGasStations();
 
-    return <MapFeatureContext.Provider value={{ speedCameras, incidents }}>{children}</MapFeatureContext.Provider>;
+    return (
+        <MapFeatureContext.Provider value={{ speedCameras, incidents, gasStations }}>
+            {children}
+        </MapFeatureContext.Provider>
+    );
 };
