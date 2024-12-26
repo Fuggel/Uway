@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
-import { mapNavigationActions } from "@/store/mapNavigation";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapWaypointActions } from "@/store/mapWaypoint";
 import { generateRandomNumber } from "@/utils/auth-utils";
 
 import IconButton from "../common/IconButton";
@@ -21,9 +22,10 @@ interface MapMarkerInfoProps {
 
 const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
     const dispatch = useDispatch();
+    const directions = useSelector(mapNavigationSelectors.directions);
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
 
-    const handleGasStationPress = () => {
+    const navigateToGasStation = () => {
         const street = sheetData?.markerProperties.street;
         const houseNumber = sheetData?.markerProperties.houseNumber || "";
         const postcode = sheetData?.markerProperties.postCode || "";
@@ -47,6 +49,16 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
         closeSheet();
     };
 
+    const waypointGasStation = () => {
+        dispatch(
+            mapWaypointActions.setGasStationWaypoints({
+                lon: sheetData?.markerProperties.lng,
+                lat: sheetData?.markerProperties.lat,
+            })
+        );
+        closeSheet();
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -55,7 +67,15 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
                 </Text>
                 {gasStation?.show && (
                     <View style={styles.iconButtonRight}>
-                        <IconButton icon="directions" size="lg" type="secondary" onPress={handleGasStationPress} />
+                        {directions && (
+                            <IconButton
+                                icon="map-marker-plus"
+                                size="md"
+                                type="secondary"
+                                onPress={waypointGasStation}
+                            />
+                        )}
+                        <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
                     </View>
                 )}
             </View>
@@ -79,18 +99,17 @@ const styles = StyleSheet.create({
     titleContainer: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
         flexWrap: "wrap",
     },
     title: {
-        textAlign: "center",
-        marginVertical: SIZES.spacing.md,
-        alignSelf: "center",
         flex: 1,
+        marginVertical: SIZES.spacing.md,
     },
     iconButtonRight: {
-        position: "absolute",
-        right: 0,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
     },
     itemContainer: {
         flexDirection: "row",
