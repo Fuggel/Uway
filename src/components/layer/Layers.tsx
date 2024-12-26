@@ -27,19 +27,44 @@ const Layers = () => {
             <LineLayer id={LayerId.INVISIBLE} style={{ lineWidth: 0 }} />
 
             {directions?.geometry && (
-                <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
-                    <LineLayer
-                        id={LayerId.ROUTE}
-                        style={{
-                            lineColor: COLORS.secondary_light,
-                            lineOpacity: 0.8,
-                            lineCap: "round",
-                            lineJoin: "round",
-                            lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
+                <>
+                    <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
+                        <LineLayer
+                            id={LayerId.ROUTE}
+                            style={{
+                                lineColor: COLORS.secondary_light,
+                                lineOpacity: 0.8,
+                                lineCap: "round",
+                                lineJoin: "round",
+                                lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
+                            }}
+                            belowLayerID={LayerId.INVISIBLE}
+                        />
+                    </ShapeSource>
+
+                    <ShapeSource
+                        id="destination-source"
+                        shape={{
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates:
+                                    directions.geometry.coordinates[directions.geometry.coordinates.length - 1],
+                            },
+                            properties: {},
                         }}
-                        belowLayerID={LayerId.INVISIBLE}
-                    />
-                </ShapeSource>
+                    >
+                        <SymbolLayer
+                            id={LayerId.ROUTE_DESTINATION}
+                            style={{
+                                iconImage: "route-destination",
+                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.5, 20, 0.7],
+                                iconAllowOverlap: true,
+                            }}
+                            belowLayerID={LayerId.INVISIBLE}
+                        />
+                    </ShapeSource>
+                </>
             )}
 
             {gasStations && (
