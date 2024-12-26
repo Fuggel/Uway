@@ -52,10 +52,10 @@ const useMapCamera = () => {
     };
 
     useEffect(() => {
-        if (isNavigationSelecting && directions) {
+        if (isNavigationSelecting && directions && tracking) {
             fitBounds();
         }
-    }, [isNavigationSelecting, directions]);
+    }, [isNavigationSelecting, directions, tracking]);
 
     useEffect(() => {
         const updateCamera = () => {
@@ -65,8 +65,15 @@ const useMapCamera = () => {
                 animationMode: "flyTo",
                 animationDuration: MAP_CONFIG.animationDuration,
                 centerCoordinate:
-                    tracking && userLocation ? [userLocation.coords.longitude, userLocation.coords.latitude] : undefined,
-                zoomLevel: currentSpeed && tracking ? MAP_CONFIG.zoom - 0.01 * currentSpeed : tracking ? MAP_CONFIG.zoom : undefined,
+                    tracking && userLocation
+                        ? [userLocation.coords.longitude, userLocation.coords.latitude]
+                        : undefined,
+                zoomLevel:
+                    currentSpeed && tracking
+                        ? MAP_CONFIG.zoom - 0.01 * currentSpeed
+                        : tracking
+                          ? MAP_CONFIG.zoom
+                          : undefined,
                 pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
                 heading: tracking ? userLocation?.coords.course : undefined,
                 padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
@@ -76,7 +83,13 @@ const useMapCamera = () => {
         if (!isNavigationSelecting && tracking) {
             updateCamera();
         }
-    }, [tracking, isNavigationSelecting, userLocation?.coords.longitude, userLocation?.coords.latitude, navigationView]);
+    }, [
+        tracking,
+        isNavigationSelecting,
+        userLocation?.coords.longitude,
+        userLocation?.coords.latitude,
+        navigationView,
+    ]);
 
     useEffect(() => {
         if (tracking && navigationMode && !navigationView) {
