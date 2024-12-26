@@ -31,6 +31,10 @@ export async function fetchDirections(params: {
         queryParams.append("banner_instructions", "true");
         queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
 
+        if (params.waypoint) {
+            queryParams.append("waypoints", "0;2");
+        }
+
         const url = `${API_URL.MAPBOX_DIRECTIONS}/${params.profile}/${coordinates}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
