@@ -1,23 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useInstructions from "@/hooks/useInstructions";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { Instruction, InstructionThreshold, SpokenInstructions } from "@/types/INavigation";
-import {
-    arrowDirection,
-    convertSpeedToKmh,
-    determineIncidentIcon,
-    instructionsWarningThresholds,
-} from "@/utils/map-utils";
+import { convertSpeedToKmh, determineIncidentIcon, instructionsWarningThresholds } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
 
 import Text from "../common/Text";
@@ -28,6 +23,7 @@ const deviceHeight = Dimensions.get("window").height;
 const MapAlerts = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
+    const { laneInformations, currentArrowDir, nextArrowDir } = useInstructions();
     const directions = useSelector(mapNavigationSelectors.directions);
     const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const [spokenInstructions, setSpokenInstructions] = useState<SpokenInstructions>({
@@ -49,8 +45,8 @@ const MapAlerts = () => {
 
     const distanceToNextStep = nextStepData?.maneuver?.location
         ? distance([userLocation!.coords.longitude, userLocation!.coords.latitude], nextStepData.maneuver.location, {
-            units: "meters",
-        })
+              units: "meters",
+          })
         : null;
 
     useEffect(() => {
@@ -95,46 +91,28 @@ const MapAlerts = () => {
                 {isNavigationMode &&
                     directions?.legs[0].steps
                         .slice(currentStep, currentStep + 1)
-                        .map((step: Instruction, index: number) => {
-                            const defaultArrow = "arrow-up-bold";
-
-                            const arrowDir = arrowDirection(step?.maneuver?.modifier);
-                            const arrowDirNext = arrowDirection(nextStepData?.maneuver?.modifier);
-
-                            const arrowName = arrowDir ?? defaultArrow;
-                            const arrowNameNext = arrowDirNext ?? defaultArrow;
-
-                            return (
-                                <View key={index}>
-                                    <View style={styles.instructionsContainer}>
-                                        <View style={styles.directionRow}>
-                                            <MaterialCommunityIcons
-                                                name={arrowName}
-                                                size={SIZES.iconSize.xl}
-                                                color={COLORS.white}
-                                            />
-                                            <Text type="white" textStyle="header">
-                                                {formatLength(step.distance)}
-                                            </Text>
-                                        </View>
-                                        <Text type="white">{step.maneuver.instruction}</Text>
+                        .map((step: Instruction, index: number) => (
+                            <View key={index}>
+                                <View style={styles.instructionsContainer}>
+                                    <View style={styles.directionRow}>
+                                        <Image source={currentArrowDir} style={styles.arrowImage} />
+                                        <Text type="white" textStyle="header">
+                                            {formatLength(step.distance)}
+                                        </Text>
                                     </View>
-
-                                    {nextInstruction && (
-                                        <View style={styles.nextInstructionContainer}>
-                                            <View style={styles.directionRow}>
-                                                <Text type="white">Dann</Text>
-                                                <MaterialCommunityIcons
-                                                    name={arrowNameNext}
-                                                    size={SIZES.iconSize.lg}
-                                                    color={COLORS.white}
-                                                />
-                                            </View>
-                                        </View>
-                                    )}
+                                    <Text type="white">{step.maneuver.instruction}</Text>
                                 </View>
-                            );
-                        })}
+
+                                {nextInstruction && nextArrowDir && (
+                                    <View style={styles.nextInstructionContainer}>
+                                        <View style={styles.directionRow}>
+                                            <Text type="white">Dann</Text>
+                                            <Image source={nextArrowDir} style={styles.arrowImage} />
+                                        </View>
+                                    </View>
+                                )}
+                            </View>
+                        ))}
 
                 {speedCameras?.speedCameras?.alert && speedCameras?.speedCameraWarningText?.title && (
                     <Toast
@@ -189,6 +167,10 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: SIZES.borderRadius.sm,
         borderBottomRightRadius: SIZES.borderRadius.sm,
         alignSelf: "flex-start",
+    },
+    arrowImage: {
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
     },
 });
 

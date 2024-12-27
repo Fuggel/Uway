@@ -20,25 +20,6 @@ export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     }
 }
 
-export function arrowDirection(modifier: ModifierType) {
-    switch (modifier) {
-        case ModifierType.U_TURN:
-            return "arrow-u-down-left-bold";
-        case ModifierType.SHARP_RIGHT:
-        case ModifierType.RIGHT:
-        case ModifierType.SLIGHT_RIGHT:
-            return "arrow-right-top-bold";
-        case ModifierType.STRAIGHT:
-            return "arrow-up-bold";
-        case ModifierType.SHARP_LEFT:
-        case ModifierType.LEFT:
-        case ModifierType.SLIGHT_LEFT:
-            return "arrow-left-top-bold";
-        default:
-            return undefined;
-    }
-}
-
 export function getManeuverImage(maneuver?: ManeuverType, modifier?: ModifierType, degrees?: number) {
     const directionalUrl = "../assets/images/map-icons/directions/directional";
     const roundaboutUrl = "../assets/images/map-icons/directions/roundabout";
