@@ -9,7 +9,6 @@ import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useSearch from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
-import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
 import { SearchLocation } from "@/types/ISearch";
@@ -27,7 +26,6 @@ interface MapSearchProps {
 const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
-    const { stopSpeech } = useTextToSpeech();
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
@@ -50,11 +48,6 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         onClose();
     };
 
-    const cancelNavigation = () => {
-        dispatch(mapNavigationActions.handleCancelNavigation());
-        stopSpeech();
-    };
-
     useEffect(() => {
         if (text) {
             dispatch(mapNavigationActions.setSearchQuery(text));
@@ -69,7 +62,9 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             value={location?.formatted || searchQuery}
             speechToText={{ isListening, startListening, stopListening }}
             onClear={() => {
-                location ? cancelNavigation() : dispatch(mapNavigationActions.setSearchQuery(""));
+                location
+                    ? dispatch(mapNavigationActions.handleCancelNavigation())
+                    : dispatch(mapNavigationActions.setSearchQuery(""));
             }}
         >
             {showSuggestions && searchQuery && (

@@ -31,6 +31,7 @@ export async function fetchDirections(params: {
         queryParams.append("banner_instructions", "true");
         queryParams.append("voice_instructions", "true");
         queryParams.append("voice_units", "metric");
+        queryParams.append("roundabout_exits", "true");
         queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
 
         if (params.waypoint) {

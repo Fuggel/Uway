@@ -1,12 +1,44 @@
+import { Geometry } from "@turf/helpers";
+
 export interface Instruction {
     distance: number;
-    bannerInstructions: any[];
-    maneuver: {
-        type: ManeuverType;
-        instruction: string;
-        location: number[];
-        modifier: ModifierType;
-    };
+    bannerInstructions: BannerInstruction[];
+    voiceInstructions: VoiceInstruction[];
+    maneuver: ManeuverInstruction;
+    duration: number;
+    geometry: Geometry;
+}
+
+export interface CurrentInstruction {
+    step: Instruction;
+    maneuverInstruction: ManeuverInstruction;
+    voiceInstruction: VoiceInstruction;
+    bannerInstruction: BannerInstruction;
+    laneInformation: LaneInformation;
+    maxSpeed: number | string;
+    remainingDistance: string;
+    remainingDuration: string;
+    remainingTime: number;
+    distanceToNextStep: number;
+}
+
+export interface LaneInformation {
+    primary: Lane[];
+    secondary: Lane[];
+    sub: Lane[];
+}
+
+export interface Lane {
+    active: boolean;
+    activeDirection: string | null;
+    directions: ["left", "right", "straight"];
+}
+
+export interface ManeuverInstruction {
+    type: ManeuverType;
+    instruction: string;
+    location: number[];
+    modifier: ModifierType;
 }
 
 export interface BannerInstruction {
@@ -14,6 +46,13 @@ export interface BannerInstruction {
     primary: BannerProperties;
     secondary: BannerProperties;
     sub: BannerProperties;
+}
+
+export interface VoiceInstruction {
+    distanceAlongGeometry: number;
+    announcement: string;
+    ssmlAnnouncement: string;
+    type: "ssml";
 }
 
 export interface BannerProperties {
@@ -27,6 +66,7 @@ export interface BannerProperties {
 
 export interface BannerComponent {
     text: string;
+    type: string;
     abbr: string;
     abbr_priority: number;
     imageBaseURL: string;
@@ -69,6 +109,14 @@ export interface Direction {
     distance: number;
     duration: number;
     legs: any;
+    steps: Instruction[];
+    annotation: Annotation;
+}
+
+export interface Annotation {
+    distance: number[];
+    duration: number[];
+    maxspeed: { speed: number; unit: string }[];
 }
 
 export interface InstructionWarningThreshold {

@@ -12,8 +12,8 @@ import {
 } from "@/types/INavigation";
 
 class Instructions {
-    public instructions: Instruction[];
-    public annotation: Annotation;
+    private instructions: Instruction[];
+    private annotation: Annotation;
     private userPosition: Location | null;
     private currentStepIndex = 0;
 
@@ -25,6 +25,22 @@ class Instructions {
 
     public getCurrentInstructions(): CurrentInstruction | undefined {
         return this.determineCurrentInstructions();
+    }
+
+    public checkIfArrived(onCancel: () => void) {
+        const lastStep = this.instructions.slice(-1)[0];
+        const targetCoordinates = lastStep?.geometry?.coordinates?.slice(-1)[0] as [number, number];
+
+        if (targetCoordinates && this.userPosition) {
+            const from = point([this.userPosition.coords.longitude, this.userPosition.coords.latitude]);
+            const to = point(targetCoordinates);
+
+            const dist = distance(from, to, { units: "meters" });
+
+            if (this.instructions[this.currentStepIndex]?.maneuver.type === "arrive" && dist <= 3) {
+                onCancel();
+            }
+        }
     }
 
     private determineCurrentInstructions(): CurrentInstruction | undefined {
@@ -59,6 +75,7 @@ class Instructions {
                 maxSpeed: this.getCurrentSpeedLimit(),
                 remainingDistance: this.getRemainingInfo().remainingDistance,
                 remainingDuration: this.getRemainingInfo().remainingDuration,
+                remainingTime: this.getRemainingInfo().remainingTime,
                 distanceToNextStep: this.getCurrentDistanceToStep(),
             };
         }
@@ -94,6 +111,7 @@ class Instructions {
         return {
             remainingDistance: distanceInMeters.toFixed(1),
             remainingDuration: timeInMinutes.toFixed(0),
+            remainingTime: totalRemainingTime,
         };
     }
 

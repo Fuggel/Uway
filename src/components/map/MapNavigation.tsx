@@ -30,14 +30,12 @@ const MapNavigation = () => {
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
-    const { remainingDistance, remainingTime, currentSpeedLimit, cancelNavigation } = useInstructions();
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
-
-    const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
-    const duration = `${(remainingTime / 60).toFixed(0)} min`;
+    const { currentInstruction } = useInstructions();
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
+    const remainingTime = currentInstruction?.remainingTime || 0;
 
     const determineArrivalTime = () => {
         const now = new Date();
@@ -80,8 +78,11 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    {currentSpeedLimit && (
-                        <Image source={determineSpeedLimitIcon(currentSpeedLimit)} style={styles.speedLimitImage} />
+                    {currentInstruction?.maxSpeed && (
+                        <Image
+                            source={determineSpeedLimitIcon(Number(currentInstruction.maxSpeed))}
+                            style={styles.speedLimitImage}
+                        />
                     )}
                 </View>
             )}
@@ -99,7 +100,7 @@ const MapNavigation = () => {
                     )}
 
                     <Text type="lightGray" style={{ fontWeight: "bold" }}>
-                        {duration} · {distance}
+                        {currentInstruction?.remainingDuration} min · {currentInstruction?.remainingDistance} km
                     </Text>
                 </View>
 
@@ -128,7 +129,14 @@ const MapNavigation = () => {
                         />
                     )}
 
-                    <IconButton icon="close-circle" onPress={cancelNavigation} type="error" size="lg" />
+                    <IconButton
+                        icon="close-circle"
+                        type="error"
+                        size="lg"
+                        onPress={() => {
+                            dispatch(mapNavigationActions.handleCancelNavigation());
+                        }}
+                    />
 
                     {!isNavigationMode && (
                         <IconButton

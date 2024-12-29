@@ -1,18 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-
-import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useInstructions from "@/hooks/useInstructions";
-import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { Instruction, InstructionThreshold, SpokenInstructions } from "@/types/INavigation";
-import { convertSpeedToKmh, determineIncidentIcon, instructionsWarningThresholds } from "@/utils/map-utils";
+import { determineIncidentIcon } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
 
 import Text from "../common/Text";
@@ -21,98 +16,33 @@ import Toast from "../common/Toast";
 const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = () => {
-    const { userLocation } = useContext(UserLocationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
-    const { laneInformations, currentArrowDir, nextArrowDir } = useInstructions();
-    const directions = useSelector(mapNavigationSelectors.directions);
-    const currentStep = useSelector(mapNavigationSelectors.currentStep);
-    const [spokenInstructions, setSpokenInstructions] = useState<SpokenInstructions>({
-        [InstructionThreshold.CURRENT]: false,
-        [InstructionThreshold.EARLY]: false,
-        [InstructionThreshold.LATE]: false,
-    });
+    const { currentInstruction, maneuverImage } = useInstructions();
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const { startSpeech } = useTextToSpeech();
-
-    const currentStepData = directions?.legs[0]?.steps[currentStep];
-    const nextStepData = directions?.legs[0]?.steps[currentStep + 1];
-
-    const currentInstruction = currentStepData?.maneuver?.instruction;
-    const nextInstruction = nextStepData?.maneuver?.instruction;
-
-    const userSpeed = userLocation!.coords.speed;
-    const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
-
-    const distanceToNextStep = nextStepData?.maneuver?.location
-        ? distance([userLocation!.coords.longitude, userLocation!.coords.latitude], nextStepData.maneuver.location, {
-              units: "meters",
-          })
-        : null;
-
-    useEffect(() => {
-        setSpokenInstructions({
-            [InstructionThreshold.CURRENT]: false,
-            [InstructionThreshold.EARLY]: false,
-            [InstructionThreshold.LATE]: false,
-        });
-    }, [currentStep, isNavigationMode]);
-
-    useEffect(() => {
-        if (!isNavigationMode || !currentInstruction || spokenInstructions.current) return;
-
-        startSpeech(currentInstruction);
-        setSpokenInstructions((prev) => ({ ...prev, [InstructionThreshold.CURRENT]: true }));
-    }, [isNavigationMode, currentInstruction, spokenInstructions]);
-
-    useEffect(() => {
-        if (!isNavigationMode || !distanceToNextStep || !nextInstruction) return;
-
-        const { early: earlyThreshold, late: lateThreshold } = instructionsWarningThresholds(currentSpeed);
-
-        const thresholds = [
-            {
-                key: InstructionThreshold.EARLY,
-                condition: distanceToNextStep <= earlyThreshold && distanceToNextStep > lateThreshold,
-            },
-            { key: InstructionThreshold.LATE, condition: distanceToNextStep <= lateThreshold },
-        ];
-
-        thresholds.forEach(({ key, condition }) => {
-            if (!spokenInstructions[key] && condition) {
-                startSpeech(`In ${Math.round(distanceToNextStep)} Metern, ${nextInstruction}`);
-                setSpokenInstructions((prev) => ({ ...prev, [key]: true }));
-            }
-        });
-    }, [isNavigationMode, distanceToNextStep, nextInstruction, spokenInstructions]);
 
     return (
         <View style={styles.absoluteTop}>
             <View style={styles.alertContainer}>
-                {isNavigationMode &&
-                    directions?.legs[0].steps
-                        .slice(currentStep, currentStep + 1)
-                        .map((step: Instruction, index: number) => (
-                            <View key={index}>
-                                <View style={styles.instructionsContainer}>
-                                    <View style={styles.directionRow}>
-                                        <Image source={currentArrowDir} style={styles.arrowImage} />
-                                        <Text type="white" textStyle="header">
-                                            {formatLength(step.distance)}
-                                        </Text>
-                                    </View>
-                                    <Text type="white">{step.maneuver.instruction}</Text>
-                                </View>
-
-                                {nextInstruction && nextArrowDir && (
-                                    <View style={styles.nextInstructionContainer}>
-                                        <View style={styles.directionRow}>
-                                            <Text type="white">Dann</Text>
-                                            <Image source={nextArrowDir} style={styles.arrowImage} />
-                                        </View>
-                                    </View>
-                                )}
+                {currentInstruction && isNavigationMode && (
+                    <View>
+                        <View style={styles.instructionsContainer}>
+                            <View style={styles.directionRow}>
+                                <Image source={maneuverImage()?.currentArrowDir} style={styles.arrowImage} />
+                                <Text type="white" textStyle="header">
+                                    {formatLength(currentInstruction.distanceToNextStep)}
+                                </Text>
                             </View>
-                        ))}
+                            <Text type="white">{currentInstruction.maneuverInstruction.instruction}</Text>
+                        </View>
+
+                        <View style={styles.nextInstructionContainer}>
+                            <View style={styles.directionRow}>
+                                <Text type="white">Dann</Text>
+                                <Image source={maneuverImage()?.nextArrowDir} style={styles.arrowImage} />
+                            </View>
+                        </View>
+                    </View>
+                )}
 
                 {speedCameras?.speedCameras?.alert && speedCameras?.speedCameraWarningText?.title && (
                     <Toast
