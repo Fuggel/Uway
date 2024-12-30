@@ -11,9 +11,9 @@ export interface Instruction {
 
 export interface CurrentInstruction {
     step: Instruction;
-    maneuverInstruction: ManeuverInstruction;
     voiceInstruction: VoiceInstruction;
     bannerInstruction: BannerInstruction;
+    nextBannerInstruction: BannerInstruction | null;
     laneInformation: LaneInformation | null;
     maxSpeed: number | string;
     remainingDistance: string;

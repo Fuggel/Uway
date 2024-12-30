@@ -36,16 +36,16 @@ const useInstructions = () => {
         if (!currentInstruction) return;
 
         const currentArrowDir = getManeuverImage(
-            currentInstruction.maneuverInstruction.type,
-            currentInstruction.maneuverInstruction.modifier,
-            180
+            currentInstruction.bannerInstruction.primary.type,
+            currentInstruction.bannerInstruction.primary.modifier,
+            currentInstruction.bannerInstruction.primary.degrees
         );
 
         const nextArrowDir =
             getManeuverImage(
-                currentInstruction?.bannerInstruction?.primary?.type,
-                currentInstruction?.bannerInstruction?.primary?.modifier,
-                currentInstruction?.bannerInstruction?.primary?.degrees
+                currentInstruction?.nextBannerInstruction?.primary.type,
+                currentInstruction?.nextBannerInstruction?.primary.modifier,
+                currentInstruction?.nextBannerInstruction?.primary.degrees
             ) || null;
 
         return { currentArrowDir, nextArrowDir };

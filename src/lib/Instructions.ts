@@ -28,16 +28,17 @@ class Instructions {
     }
 
     public checkIfArrived(onCancel: () => void) {
-        const lastStep = this.instructions.slice(-1)[0];
-        const targetCoordinates = lastStep?.geometry?.coordinates?.slice(-1)[0] as [number, number];
+        if (!this.userPosition) return;
 
-        if (targetCoordinates && this.userPosition) {
+        const lastStep = this.instructions[this.instructions.length - 1];
+        if (lastStep.maneuver.type === "arrive" && this.userPosition) {
+            const targetCoordinates = lastStep.geometry.coordinates.slice(-1)[0] as number[];
+
             const from = point([this.userPosition.coords.longitude, this.userPosition.coords.latitude]);
             const to = point(targetCoordinates);
-
             const dist = distance(from, to, { units: "meters" });
 
-            if (this.instructions[this.currentStepIndex]?.maneuver.type === "arrive" && dist <= 3) {
+            if (dist <= 3) {
                 onCancel();
             }
         }
@@ -63,14 +64,14 @@ class Instructions {
         });
 
         if (closestStep) {
-            const { activeManeuverInstruction, activeBannerInstruction, activeVoiceInstruction } =
+            const { activeBannerInstruction, nextBannerInstruction, activeVoiceInstruction } =
                 this.getActiveInstruction(closestStep, minDistance);
 
             return {
                 step: closestStep,
-                maneuverInstruction: activeManeuverInstruction,
                 voiceInstruction: activeVoiceInstruction,
                 bannerInstruction: activeBannerInstruction,
+                nextBannerInstruction,
                 laneInformation: this.getLaneInformation(activeBannerInstruction),
                 maxSpeed: this.getCurrentSpeedLimit(),
                 remainingDistance: this.getRemainingInfo().remainingDistance,
@@ -141,12 +142,14 @@ class Instructions {
     }
 
     private getActiveInstruction(closestStep: Instruction, minDistance: number) {
+        const nextStep = this.getNextStep();
+
         return {
-            activeManeuverInstruction: closestStep.maneuver,
             activeBannerInstruction:
                 closestStep.bannerInstructions.find(
                     (instruction) => instruction.distanceAlongGeometry >= minDistance
                 ) || closestStep.bannerInstructions[0],
+            nextBannerInstruction: nextStep?.bannerInstructions[0] || null,
             activeVoiceInstruction:
                 closestStep.voiceInstructions.find((instruction) => instruction.distanceAlongGeometry >= minDistance) ||
                 closestStep.voiceInstructions[0],

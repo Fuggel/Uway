@@ -32,7 +32,7 @@ const MapAlerts = () => {
                                     {formatLength(currentInstruction.distanceToNextStep)}
                                 </Text>
                             </View>
-                            <Text type="white">{currentInstruction.maneuverInstruction.instruction}</Text>
+                            <Text type="white">{currentInstruction.bannerInstruction.primary.text}</Text>
                         </View>
 
                         {maneuverImage()?.nextArrowDir && (
