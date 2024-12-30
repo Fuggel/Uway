@@ -14,7 +14,7 @@ export interface CurrentInstruction {
     maneuverInstruction: ManeuverInstruction;
     voiceInstruction: VoiceInstruction;
     bannerInstruction: BannerInstruction;
-    laneInformation: LaneInformation;
+    laneInformation: LaneInformation | null;
     maxSpeed: number | string;
     remainingDistance: string;
     remainingDuration: string;
@@ -80,8 +80,11 @@ export enum ManeuverType {
     DEPART = "depart",
     ARRIVE = "arrive",
     MERGE = "merge",
+    ON_RAMP = "on ramp",
     OFF_RAMP = "off ramp",
     FORK = "fork",
+    END_OF_ROAD = "end of road",
+    CONTINUE = "continue",
     ROUNDABOUT = "roundabout",
 }
 

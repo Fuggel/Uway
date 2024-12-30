@@ -35,12 +35,14 @@ const MapAlerts = () => {
                             <Text type="white">{currentInstruction.maneuverInstruction.instruction}</Text>
                         </View>
 
-                        <View style={styles.nextInstructionContainer}>
-                            <View style={styles.directionRow}>
-                                <Text type="white">Dann</Text>
-                                <Image source={maneuverImage()?.nextArrowDir} style={styles.arrowImage} />
+                        {maneuverImage()?.nextArrowDir && (
+                            <View style={styles.nextInstructionContainer}>
+                                <View style={styles.nextDirectionRow}>
+                                    <Text type="white">Dann</Text>
+                                    <Image source={maneuverImage()?.nextArrowDir} style={styles.nextArrowImage} />
+                                </View>
                             </View>
-                        </View>
+                        )}
                     </View>
                 )}
 
@@ -89,6 +91,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: SIZES.spacing.xs,
     },
+    nextDirectionRow: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
     nextInstructionContainer: {
         padding: SIZES.spacing.sm,
         backgroundColor: COLORS.secondary_light,
@@ -101,6 +107,10 @@ const styles = StyleSheet.create({
     arrowImage: {
         width: SIZES.iconSize.xl,
         height: SIZES.iconSize.xl,
+    },
+    nextArrowImage: {
+        width: SIZES.iconSize.lg,
+        height: SIZES.iconSize.lg,
     },
 });
 

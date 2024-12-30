@@ -41,11 +41,12 @@ const useInstructions = () => {
             180
         );
 
-        const nextArrowDir = getManeuverImage(
-            currentInstruction.bannerInstruction.primary.type,
-            currentInstruction.bannerInstruction.primary.modifier,
-            currentInstruction.bannerInstruction.primary.degrees
-        );
+        const nextArrowDir =
+            getManeuverImage(
+                currentInstruction?.bannerInstruction?.primary?.type,
+                currentInstruction?.bannerInstruction?.primary?.modifier,
+                currentInstruction?.bannerInstruction?.primary?.degrees
+            ) || null;
 
         return { currentArrowDir, nextArrowDir };
     };

@@ -29,7 +29,6 @@ import MapAlerts from "@/components/map/MapAlerts";
 import MapBottomSheet from "@/components/map/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
-import MyComponent from "@/components/map/Test";
 
 Mapbox.setAccessToken(API_KEY.MAPBOX_ACCESS_TOKEN);
 
@@ -106,8 +105,6 @@ const Map = () => {
                     />
                 )}
             </View>
-
-            <MyComponent />
 
             {location && directions && <MapNavigation />}
         </>
