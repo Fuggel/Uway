@@ -33,12 +33,7 @@ const MyComponent = () => {
                 <View>
                     <Text>{currentInstruction.maneuverInstruction.instruction}</Text>
                     <Text>{currentInstruction.voiceInstruction.announcement}</Text>
-                    <Text>{currentInstruction.bannerInstruction.primary.modifier}</Text>
-
-                    <Text>{currentInstruction.maxSpeed}</Text>
-                    <Text>{currentInstruction.remainingDistance}</Text>
-                    <Text>{currentInstruction.remainingDuration}</Text>
-                    <Text>{currentInstruction.distanceToNextStep}</Text>
+                    <Text>{currentInstruction.bannerInstruction.primary.components[0].text}</Text>
                 </View>
             )}
         </View>
