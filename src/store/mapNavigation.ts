@@ -13,7 +13,6 @@ interface IMapNavigationState {
     isNavigationSelecting: boolean;
     isNavigationMode: boolean;
     navigationProfile: RouteProfileType;
-    currentStep: number;
     directions: Direction | null;
 }
 
@@ -25,7 +24,6 @@ const initialMapNavigationState: IMapNavigationState = {
     isNavigationSelecting: false,
     isNavigationMode: false,
     navigationProfile: RouteProfileType.DRIVING,
-    currentStep: 0,
     directions: null,
 };
 
@@ -54,15 +52,11 @@ const mapNavigationSlice = createSlice({
         setNavigationProfile(state, action: PayloadAction<RouteProfileType>) {
             state.navigationProfile = action.payload;
         },
-        setCurrentStep(state, action: PayloadAction<number>) {
-            state.currentStep = action.payload;
-        },
         setDirections(state, action: PayloadAction<Direction | null>) {
             state.directions = action.payload;
         },
         handleCancelNavigation(state) {
             state.directions = null;
-            state.currentStep = 0;
             state.location = null;
             state.navigationView = false;
             state.isNavigationSelecting = false;
@@ -80,7 +74,6 @@ export const mapNavigationSelectors = {
     isNavigationSelecting: (state: RootState): boolean => state.mapNavigation.isNavigationSelecting,
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,
     navigationProfile: (state: RootState): RouteProfileType => state.mapNavigation.navigationProfile,
-    currentStep: (state: RootState): number => state.mapNavigation.currentStep,
     directions: (state: RootState): Direction | null => state.mapNavigation.directions,
 };
 

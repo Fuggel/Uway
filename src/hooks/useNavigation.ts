@@ -54,7 +54,6 @@ const useNavigation = () => {
             }),
         onSuccess: (data) => {
             if (data?.routes?.length > 0) {
-                dispatch(mapNavigationActions.setCurrentStep(0));
                 dispatch(mapNavigationActions.setDirections(data.routes[0]));
             }
         },
