@@ -103,9 +103,14 @@ export function getManeuverImage(maneuver?: ManeuverType, modifier?: ModifierTyp
             else return require(`${directionalUrl}/continue-straight.png`);
         case ManeuverType.ROUNDABOUT:
             if (!degrees) return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
-            else if (degrees === 180) return require(`${roundaboutUrl}/roundabout-anticlockwise-straight.png`);
-            else if (degrees < 180) return require(`${roundaboutUrl}/roundabout-anticlockwise-left.png`);
-            else if (degrees > 180) return require(`${roundaboutUrl}/roundabout-anticlockwise-right.png`);
+            else if (degrees >= 140 && degrees <= 220)
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-straight.png`);
+            else if (degrees >= 45 && degrees <= 135)
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-right.png`);
+            else if ((degrees >= 0 && degrees <= 40) || (degrees >= 320 && degrees <= 359))
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-alt.png`);
+            else if (degrees >= 225 && degrees <= 315)
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-left.png`);
             else return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
     }
 }
