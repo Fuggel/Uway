@@ -122,13 +122,7 @@ class Instructions {
     }
 
     private getLaneInformation(bannerInstruction: BannerInstruction) {
-        const laneInformation = {
-            primary: this.extractLaneInformation(bannerInstruction.primary),
-            secondary: this.extractLaneInformation(bannerInstruction.secondary),
-            sub: this.extractLaneInformation(bannerInstruction.sub),
-        };
-
-        return laneInformation;
+        return this.extractLaneInformation(bannerInstruction.sub);
     }
 
     private extractLaneInformation(bannerPart: BannerProperties): Lane[] {
@@ -136,7 +130,7 @@ class Instructions {
 
         return laneInformations?.map((lane) => ({
             active: lane.active || false,
-            activeDirection: lane.active_direction || null,
+            active_direction: lane.active_direction || null,
             directions: lane.directions || [],
         }));
     }

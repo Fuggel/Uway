@@ -14,7 +14,7 @@ export interface CurrentInstruction {
     voiceInstruction: VoiceInstruction;
     bannerInstruction: BannerInstruction;
     nextBannerInstruction: BannerInstruction | null;
-    laneInformation: LaneInformation | null;
+    laneInformation: Lane[];
     maxSpeed: number | string;
     remainingDistance: string;
     remainingDuration: string;
@@ -22,16 +22,21 @@ export interface CurrentInstruction {
     distanceToNextStep: number;
 }
 
-export interface LaneInformation {
-    primary: Lane[];
-    secondary: Lane[];
-    sub: Lane[];
-}
-
 export interface Lane {
     active: boolean;
-    activeDirection: string | null;
-    directions: ["left", "right", "straight"];
+    active_direction: string | null;
+    directions: LaneDirection[];
+}
+
+export enum LaneDirection {
+    STRAIGHT = "straight",
+    SHARP_LEFT = "sharp left",
+    LEFT = "left",
+    SLIGHT_LEFT = "slight left",
+    SLIGHT_RIGHT = "slight right",
+    RIGHT = "right",
+    SHARP_RIGHT = "sharp right",
+    U_TURN = "uturn",
 }
 
 export interface ManeuverInstruction {
