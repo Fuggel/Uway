@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Dimensions, ImageSourcePropType } from "react-native";
 
 import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection, Position } from "@turf/helpers";
@@ -11,6 +11,8 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 const MAP_ICONS_URL = "../assets/images/map-icons";
+const MAP_LANE_DIRECTIONS_URL = "../assets/images/map-icons/directions/lane";
+
 export const DEFAULT_FC: FeatureCollection<Geometry, GeometryCollection> = { type: "FeatureCollection", features: [] };
 
 export const MAP_CONFIG: MapConfig = {
@@ -80,6 +82,37 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "gas-station-expensive": require(`${MAP_ICONS_URL}/gas-station/gas-station-expensive.png`),
     "gas-station-average": require(`${MAP_ICONS_URL}/gas-station/gas-station-average.png`),
     "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station/gas-station-cheap.png`),
+};
+
+export const LANE_IMAGES: { [key: string]: ImageSourcePropType } = {
+    uturn: require(`${MAP_LANE_DIRECTIONS_URL}/uturn.png`),
+    "uturn-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/uturn-inactive.png`),
+    "turn-right": require(`${MAP_LANE_DIRECTIONS_URL}/turn-right.png`),
+    "turn-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/turn-right-inactive.png`),
+    "turn-left": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left.png`),
+    "turn-left-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-right-right.png`),
+    "turn-left-right-left": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-right-left.png`),
+    "turn-left-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-right-inactive.png`),
+    "turn-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-inactive.png`),
+    straight: require(`${MAP_LANE_DIRECTIONS_URL}/straight.png`),
+    "straight-right-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-straight.png`),
+    "straight-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-right.png`),
+    "straight-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-inactive.png`),
+    "straight-left-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-straight.png`),
+    "straight-left-right-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-straight.png`),
+    "straight-left-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-right.png`),
+    "straight-left-right-left": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-left.png`),
+    "straight-left-left": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-left.png`),
+    "straight-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-inactive.png`),
+    "straight-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-inactive.png`),
+    "slight-right": require(`${MAP_LANE_DIRECTIONS_URL}/slight-right.png`),
+    "slight-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/slight-right-inactive.png`),
+    "slight-left": require(`${MAP_LANE_DIRECTIONS_URL}/slight-left.png`),
+    "slight-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/slight-left-inactive.png`),
+    "sharp-right": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-right.png`),
+    "sharp-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-right-inactive.png`),
+    "sharp-left": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-left.png`),
+    "sharp-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-left-inactive.png`),
 };
 
 export const SPEED_CAMERA_TYPE: SpeedCameraProfile[] = [

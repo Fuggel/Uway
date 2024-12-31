@@ -17,8 +17,13 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = () => {
     const { speedCameras, incidents } = useContext(MapFeatureContext);
-    const { currentInstruction, maneuverImage } = useInstructions();
+    const { currentInstruction, maneuverImage, laneImages } = useInstructions();
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+
+    const maneuverImg = maneuverImage();
+    const laneImg = laneImages();
+
+    const isLanesAvailable = laneImg && laneImg.length > 0;
 
     return (
         <View style={styles.absoluteTop}>
@@ -27,7 +32,7 @@ const MapAlerts = () => {
                     <View>
                         <View style={styles.instructionsContainer}>
                             <View style={styles.directionRow}>
-                                <Image source={maneuverImage()?.currentArrowDir} style={styles.arrowImage} />
+                                <Image source={maneuverImg?.currentArrowDir} style={styles.arrowImage} />
                                 <Text type="white" textStyle="header">
                                     {formatLength(currentInstruction.distanceToNextStep)}
                                 </Text>
@@ -35,12 +40,21 @@ const MapAlerts = () => {
                             <Text type="white">{currentInstruction.bannerInstruction.primary.text}</Text>
                         </View>
 
-                        {maneuverImage()?.nextArrowDir && (
+                        {!isLanesAvailable && maneuverImg?.nextArrowDir && (
                             <View style={styles.nextInstructionContainer}>
                                 <View style={styles.nextDirectionRow}>
                                     <Text type="white">Dann</Text>
-                                    <Image source={maneuverImage()?.nextArrowDir} style={styles.nextArrowImage} />
+                                    <Image source={maneuverImg?.nextArrowDir} style={styles.nextArrowImage} />
                                 </View>
+                            </View>
+                        )}
+
+                        {isLanesAvailable && (
+                            <View style={styles.laneInstructionContainer}>
+                                {laneImg.map((lane, i) => {
+                                    if (!lane) return null;
+                                    return <Image key={i} source={lane} />;
+                                })}
                             </View>
                         )}
                     </View>
@@ -83,6 +97,7 @@ const styles = StyleSheet.create({
     instructionsContainer: {
         borderRadius: SIZES.borderRadius.md,
         borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
         padding: SIZES.spacing.sm,
         backgroundColor: COLORS.secondary,
     },
@@ -103,6 +118,17 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: SIZES.borderRadius.sm,
         borderBottomRightRadius: SIZES.borderRadius.sm,
         alignSelf: "flex-start",
+    },
+    laneInstructionContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: SIZES.spacing.sm,
+        backgroundColor: COLORS.secondary_light,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: SIZES.borderRadius.sm,
+        borderBottomRightRadius: SIZES.borderRadius.sm,
+        padding: SIZES.spacing.xs,
     },
     arrowImage: {
         width: SIZES.iconSize.xl,

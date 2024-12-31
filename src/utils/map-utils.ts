@@ -1,9 +1,10 @@
 import { Position, lineString, point } from "@turf/helpers";
 import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 
+import { LANE_IMAGES } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { InstructionWarningThreshold, ManeuverType, ModifierType } from "@/types/INavigation";
+import { InstructionWarningThreshold, Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -113,6 +114,77 @@ export function getManeuverImage(maneuver?: ManeuverType, modifier?: ModifierTyp
                 return require(`${roundaboutUrl}/roundabout-anticlockwise-left.png`);
             else return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
     }
+}
+
+export function getLaneImage(lane: Lane) {
+    const { active, active_direction, directions } = lane;
+
+    if (!directions || directions.length === 0) {
+        return null;
+    }
+
+    let imageName = "";
+
+    if (directions.length > 1) {
+        switch (true) {
+            case directions.includes(LaneDirection.STRAIGHT) &&
+                directions.includes(LaneDirection.LEFT) &&
+                directions.includes(LaneDirection.RIGHT):
+                imageName = "straight-left-right";
+                break;
+            case directions.includes(LaneDirection.STRAIGHT) && directions.includes(LaneDirection.LEFT):
+                imageName = "straight-left";
+                break;
+            case directions.includes(LaneDirection.STRAIGHT) && directions.includes(LaneDirection.RIGHT):
+                imageName = "straight-right";
+                break;
+            case directions.includes(LaneDirection.LEFT) && directions.includes(LaneDirection.RIGHT):
+                imageName = "turn-left-right";
+                break;
+            default:
+                return null;
+        }
+    } else {
+        const direction = directions[0];
+        switch (direction) {
+            case LaneDirection.STRAIGHT:
+                imageName = "straight";
+                break;
+            case LaneDirection.RIGHT:
+                imageName = "turn-right";
+                break;
+            case LaneDirection.SHARP_RIGHT:
+                imageName = "sharp-right";
+                break;
+            case LaneDirection.SLIGHT_RIGHT:
+                imageName = "slight-right";
+                break;
+            case LaneDirection.LEFT:
+                imageName = "turn-left";
+                break;
+            case LaneDirection.SHARP_LEFT:
+                imageName = "sharp-left";
+                break;
+            case LaneDirection.SLIGHT_LEFT:
+                imageName = "slight-left";
+                break;
+            case LaneDirection.U_TURN:
+                imageName = "uturn";
+                break;
+            default:
+                return null;
+        }
+    }
+
+    if (active_direction && directions.length > 1) {
+        imageName += `-${active_direction}`;
+    }
+
+    if (!active) {
+        imageName += "-inactive";
+    }
+
+    return LANE_IMAGES[imageName];
 }
 
 export function isValidLonLat(lon: number | undefined, lat: number | undefined) {

@@ -5,7 +5,7 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import Instructions from "@/lib/Instructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { CurrentInstruction } from "@/types/INavigation";
-import { getManeuverImage } from "@/utils/map-utils";
+import { getLaneImage, getManeuverImage } from "@/utils/map-utils";
 
 const useInstructions = () => {
     const dispatch = useDispatch();
@@ -51,7 +51,14 @@ const useInstructions = () => {
         return { currentArrowDir, nextArrowDir };
     };
 
-    return { currentInstruction, maneuverImage };
+    const laneImages = () => {
+        if (!currentInstruction) return;
+
+        const laneDirections = currentInstruction?.laneInformation?.map((lane) => getLaneImage(lane));
+        return laneDirections;
+    };
+
+    return { currentInstruction, maneuverImage, laneImages };
 };
 
 export default useInstructions;

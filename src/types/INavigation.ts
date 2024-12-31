@@ -24,7 +24,7 @@ export interface CurrentInstruction {
 
 export interface Lane {
     active: boolean;
-    active_direction: string | null;
+    active_direction: LaneDirection | null;
     directions: LaneDirection[];
 }
 
@@ -75,9 +75,9 @@ export interface BannerComponent {
     abbr: string;
     abbr_priority: number;
     imageBaseURL: string;
-    directions: ["left", "right", "straight"];
+    directions: LaneDirection[];
     active: boolean;
-    active_direction: string;
+    active_direction: LaneDirection;
 }
 
 export enum ManeuverType {
