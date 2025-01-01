@@ -120,7 +120,7 @@ export function getLaneImage(lane: Lane) {
     const { active, active_direction, directions } = lane;
 
     if (!directions || directions.length === 0) {
-        return null;
+        return undefined;
     }
 
     let imageName = "";
@@ -142,7 +142,7 @@ export function getLaneImage(lane: Lane) {
                 imageName = "turn-left-right";
                 break;
             default:
-                return null;
+                return undefined;
         }
     } else {
         const direction = directions[0];
@@ -172,7 +172,7 @@ export function getLaneImage(lane: Lane) {
                 imageName = "uturn";
                 break;
             default:
-                return null;
+                return undefined;
         }
     }
 

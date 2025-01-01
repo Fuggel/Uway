@@ -6,8 +6,8 @@ import { COLORS } from "@/constants/colors-constants";
 import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useInstructions from "@/hooks/useInstructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { mapWaypointActions, mapWaypointSelectors } from "@/store/mapWaypoint";
@@ -25,13 +25,13 @@ const MapNavigation = () => {
     const dispatch = useDispatch();
     const { showSheet, openSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
+    const { currentInstruction } = useContext(MapInstructionContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
-    const { currentInstruction } = useInstructions();
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";

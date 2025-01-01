@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import useInstructions from "@/hooks/useInstructions";
+import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { determineIncidentIcon } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
@@ -17,7 +17,7 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = () => {
     const { speedCameras, incidents } = useContext(MapFeatureContext);
-    const { currentInstruction, maneuverImage, laneImages } = useInstructions();
+    const { currentInstruction, maneuverImage, laneImages } = useContext(MapInstructionContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
 
     const maneuverImg = maneuverImage();

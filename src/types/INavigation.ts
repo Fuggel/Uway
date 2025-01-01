@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 import { Geometry } from "@turf/helpers";
 
 export interface Instruction {
@@ -143,3 +145,10 @@ export enum InstructionThreshold {
     EARLY = "early",
     LATE = "late",
 }
+
+export interface ManeuverImage {
+    currentArrowDir: ImageSourcePropType;
+    nextArrowDir: ImageSourcePropType | null;
+}
+
+export type LaneImage = (ImageSourcePropType | undefined)[];
