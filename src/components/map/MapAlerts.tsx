@@ -43,7 +43,7 @@ const MapAlerts = () => {
                         {!isLanesAvailable && maneuverImg?.nextArrowDir && (
                             <View style={styles.nextInstructionContainer}>
                                 <View style={styles.nextDirectionRow}>
-                                    <Text type="white">Dann</Text>
+                                    <Text type="white">Dann:</Text>
                                     <Image source={maneuverImg?.nextArrowDir} style={styles.nextArrowImage} />
                                 </View>
                             </View>
