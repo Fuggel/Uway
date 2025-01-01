@@ -53,7 +53,7 @@ const MapAlerts = () => {
                             <View style={styles.laneInstructionContainer}>
                                 {laneImg.map((lane, i) => {
                                     if (!lane) return null;
-                                    return <Image key={i} source={lane} />;
+                                    return <Image key={i} source={lane} style={{ width: 30, height: 30 }} />;
                                 })}
                             </View>
                         )}
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     laneInstructionContainer: {
         flexDirection: "row",
         justifyContent: "center",
-        gap: SIZES.spacing.sm,
+        gap: SIZES.spacing.xs,
         backgroundColor: COLORS.secondary_light,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,

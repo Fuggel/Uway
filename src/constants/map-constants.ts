@@ -100,6 +100,7 @@ export const LANE_IMAGES: { [key: string]: ImageSourcePropType } = {
     "straight-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-inactive.png`),
     "straight-left-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-straight.png`),
     "straight-left-right-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-straight.png`),
+    "straight-left-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-inactive.png`),
     "straight-left-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-right.png`),
     "straight-left-right-left": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-left.png`),
     "straight-left-left": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-left.png`),
