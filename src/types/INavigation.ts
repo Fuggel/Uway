@@ -152,3 +152,10 @@ export interface ManeuverImage {
 }
 
 export type LaneImage = (ImageSourcePropType | undefined)[];
+
+export enum RoadShieldType {
+    MOTORWAY = "motorway",
+    MOTORWAY_EXIT = "motorwayExit",
+    FEDERAL_HIGHWAY = "federalHighway",
+    EUROPEAN_ROAD = "europeanRoad",
+}
