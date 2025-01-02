@@ -7,7 +7,6 @@ import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { RoadShieldType } from "@/types/INavigation";
 import { determineIncidentIcon } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
 
@@ -35,15 +34,31 @@ const MapAlerts = () => {
                         <View style={styles.instructionsContainer}>
                             <View style={styles.directionRow}>
                                 <Image source={maneuverImg?.currentArrowDir} style={styles.arrowImage} />
-                                {/* <RoadShield name={RoadShieldType.MOTORWAY} display_ref="1" text_color="white" />
-                                <RoadShield name={RoadShieldType.MOTORWAY_EXIT} display_ref="17" text_color="white" />
-                                <RoadShield name={RoadShieldType.EUROPEAN_ROAD} display_ref="E 21" text_color="white" />
-                                <RoadShield name={RoadShieldType.FEDERAL_HIGHWAY} display_ref="35" text_color="black" /> */}
+
                                 <Text type="white" textStyle="header">
                                     {formatLength(currentInstruction.distanceToNextStep)}
                                 </Text>
                             </View>
-                            <Text type="white">{currentInstruction.bannerInstruction.primary.text}</Text>
+
+                            <View style={styles.roadShieldContainer}>
+                                {currentInstruction?.shieldInformation?.icon
+                                    ?.filter((shield) => shield !== null)
+                                    .map((shield, i) => (
+                                        <RoadShield
+                                            key={i}
+                                            type={shield.type}
+                                            name={shield.name}
+                                            display_ref={shield.display_ref}
+                                            text_color={shield.text_color}
+                                        />
+                                    ))}
+                            </View>
+
+                            <Text type="white">{currentInstruction?.shieldInformation?.text}</Text>
+
+                            {!currentInstruction?.shieldInformation?.text && (
+                                <Text type="white">{currentInstruction?.bannerInstruction?.primary?.text}</Text>
+                            )}
                         </View>
 
                         {!isLanesAvailable && maneuverImg?.nextArrowDir && (
@@ -143,6 +158,11 @@ const styles = StyleSheet.create({
     nextArrowImage: {
         width: SIZES.iconSize.lg,
         height: SIZES.iconSize.lg,
+    },
+    roadShieldContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: SIZES.spacing.xs,
     },
 });
 

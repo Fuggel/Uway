@@ -37,6 +37,7 @@ export function getManeuverImage(maneuver?: ManeuverType, modifier?: ModifierTyp
             else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/turn-left.png`);
             else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/sharp-left.png`);
             else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/slight-left.png`);
+            else if (modifier === ModifierType.U_TURN) return require(`${directionalUrl}/uturn-left.png`);
             else return undefined;
         case ManeuverType.DEPART:
             if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/depart-straight.png`);

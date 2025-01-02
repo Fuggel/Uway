@@ -5,10 +5,12 @@ import { distance, nearestPointOnLine } from "@turf/turf";
 import {
     Annotation,
     BannerInstruction,
-    BannerProperties,
     CurrentInstruction,
     Instruction,
     Lane,
+    ManeuverType,
+    RoadShield,
+    ShieldComponentType,
 } from "@/types/INavigation";
 
 class Instructions {
@@ -31,7 +33,7 @@ class Instructions {
         if (!this.userPosition) return;
 
         const lastStep = this.instructions[this.instructions.length - 1];
-        if (lastStep.maneuver.type === "arrive" && this.userPosition) {
+        if (lastStep.maneuver.type === ManeuverType.ARRIVE && this.userPosition) {
             const targetCoordinates = lastStep.geometry.coordinates.slice(-1)[0] as number[];
 
             const from = point([this.userPosition.coords.longitude, this.userPosition.coords.latitude]);
@@ -72,7 +74,8 @@ class Instructions {
                 voiceInstruction: activeVoiceInstruction,
                 bannerInstruction: activeBannerInstruction,
                 nextBannerInstruction,
-                laneInformation: this.getLaneInformation(activeBannerInstruction),
+                laneInformation: this.extractLaneInformation(activeBannerInstruction),
+                shieldInformation: this.extractShieldInformation(activeBannerInstruction),
                 maxSpeed: this.getCurrentSpeedLimit(),
                 remainingDistance: this.getRemainingInfo().remainingDistance,
                 remainingDuration: this.getRemainingInfo().remainingDuration,
@@ -121,12 +124,37 @@ class Instructions {
         return currentSpeedLimit ? currentSpeedLimit.speed : 0;
     }
 
-    private getLaneInformation(bannerInstruction: BannerInstruction) {
-        return this.extractLaneInformation(bannerInstruction.sub);
+    private extractShieldInformation(bannerInstruction: BannerInstruction): RoadShield {
+        const icons = bannerInstruction?.primary?.components || [];
+        const shieldText = bannerInstruction?.secondary || {};
+
+        const shieldIcon = icons.map((shield) => {
+            switch (shield?.type) {
+                case ShieldComponentType.ICON:
+                    return {
+                        type: ShieldComponentType.ICON,
+                        name: shield.mapbox_shield?.name || null,
+                        display_ref: shield.mapbox_shield?.display_ref || null,
+                        text_color: shield.mapbox_shield?.text_color || null,
+                    };
+                case ShieldComponentType.EXIT_NUMBER:
+                    return {
+                        type: ShieldComponentType.EXIT_NUMBER,
+                        display_ref: shield.text || null,
+                    };
+                default:
+                    return null;
+            }
+        }) as RoadShield["icon"];
+
+        return {
+            icon: shieldIcon,
+            text: shieldText?.text || null,
+        };
     }
 
-    private extractLaneInformation(bannerPart: BannerProperties): Lane[] {
-        const laneInformations = bannerPart?.components?.filter((component) => component.type === "lane");
+    private extractLaneInformation(bannerInstruction: BannerInstruction): Lane[] {
+        const laneInformations = bannerInstruction?.sub?.components?.filter((component) => component.type === "lane");
 
         return laneInformations?.map((lane) => ({
             active: lane.active || false,

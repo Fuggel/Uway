@@ -17,6 +17,7 @@ export interface CurrentInstruction {
     bannerInstruction: BannerInstruction;
     nextBannerInstruction: BannerInstruction | null;
     laneInformation: Lane[];
+    shieldInformation: RoadShield;
     maxSpeed: number | string;
     remainingDistance: string;
     remainingDuration: string;
@@ -24,10 +25,41 @@ export interface CurrentInstruction {
     distanceToNextStep: number;
 }
 
+export interface RoadShield {
+    icon: ShieldComponent[] | null;
+    text: string | null;
+}
+
+export interface ShieldComponent {
+    type: ShieldComponentType | null;
+    name?: RoadShieldName | null;
+    display_ref?: string | null;
+    text_color?: string | null;
+    text: string | null;
+}
+
+export enum ShieldComponentType {
+    ICON = "icon",
+    EXIT_NUMBER = "exit-number",
+    TEXT = "text",
+}
+
+export interface RoadShieldIcon {
+    name: RoadShieldName | null;
+    display_ref: string | null;
+    text_color: string | null;
+}
+
 export interface Lane {
     active: boolean;
     active_direction: LaneDirection | null;
     directions: LaneDirection[];
+}
+
+export enum RoadShieldName {
+    DE_MOTORWAY = "de-motorway",
+    MOTORWAY_EXIT = "motorwayExit",
+    RECTANGLE_YELLOW = "rectangle-yellow",
 }
 
 export enum LaneDirection {
@@ -76,7 +108,7 @@ export interface BannerComponent {
     type: string;
     abbr: string;
     abbr_priority: number;
-    imageBaseURL: string;
+    mapbox_shield: RoadShieldIcon;
     directions: LaneDirection[];
     active: boolean;
     active_direction: LaneDirection;
@@ -152,10 +184,3 @@ export interface ManeuverImage {
 }
 
 export type LaneImage = (ImageSourcePropType | undefined)[];
-
-export enum RoadShieldType {
-    MOTORWAY = "motorway",
-    MOTORWAY_EXIT = "motorwayExit",
-    FEDERAL_HIGHWAY = "federalHighway",
-    EUROPEAN_ROAD = "europeanRoad",
-}
