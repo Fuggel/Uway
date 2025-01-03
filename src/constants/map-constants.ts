@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Dimensions, ImageSourcePropType } from "react-native";
 
 import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection, Position } from "@turf/helpers";
@@ -11,6 +11,8 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MAP_STYLES_URL = "../assets/images/map-styles";
 const MAP_ICONS_URL = "../assets/images/map-icons";
+const MAP_LANE_DIRECTIONS_URL = "../assets/images/map-icons/directions/lane";
+
 export const DEFAULT_FC: FeatureCollection<Geometry, GeometryCollection> = { type: "FeatureCollection", features: [] };
 
 export const MAP_CONFIG: MapConfig = {
@@ -36,7 +38,7 @@ export const MAP_CONFIG: MapConfig = {
         paddingBottom: 0,
         paddingLeft: 0,
     },
-    style: MapboxStyle.DARK,
+    style: MapboxStyle.NAVIGATION_DARK,
 };
 
 export const DEFAULT_CAMERA_SETTINGS = {
@@ -49,18 +51,13 @@ export const DEFAULT_CAMERA_SETTINGS = {
 export const MAP_STYLES: MapStyle[] = [
     {
         label: "Dunkel",
-        value: MapboxStyle.DARK,
-        img: require(`${MAP_STYLES_URL}/dark.png`),
+        value: MapboxStyle.NAVIGATION_DARK,
+        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
     },
     {
         label: "Hell",
-        value: MapboxStyle.LIGHT,
-        img: require(`${MAP_STYLES_URL}/light.png`),
-    },
-    {
-        label: "Navigation",
-        value: MapboxStyle.NAVIGATION_DARK,
-        img: require(`${MAP_STYLES_URL}/navigation-dark.png`),
+        value: MapboxStyle.NAVIGATION_LIGHT,
+        img: require(`${MAP_STYLES_URL}/navigation-light.png`),
     },
     {
         label: "Satellit",
@@ -69,21 +66,54 @@ export const MAP_STYLES: MapStyle[] = [
     },
 ];
 
-export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry; } = {
-    "user-location": require(`${MAP_ICONS_URL}/user-location.png`),
-    "speed-camera": require(`${MAP_ICONS_URL}/speed-camera.png`),
-    "incident-caution": require(`${MAP_ICONS_URL}/incident-caution.png`),
-    "incident-accident": require(`${MAP_ICONS_URL}/incident-accident.png`),
-    "incident-jam": require(`${MAP_ICONS_URL}/incident-jam.png`),
-    "incident-road-works": require(`${MAP_ICONS_URL}/incident-road-works.png`),
-    "incident-broken-down-vehicle": require(`${MAP_ICONS_URL}/incident-broken-down-vehicle.png`),
-    "incident-road-closure": require(`${MAP_ICONS_URL}/incident-road-closure.png`),
-    "incident-wind": require(`${MAP_ICONS_URL}/incident-wind.png`),
-    "incident-rain": require(`${MAP_ICONS_URL}/incident-rain.png`),
-    "incident-ice": require(`${MAP_ICONS_URL}/incident-ice.png`),
-    "gas-station-expensive": require(`${MAP_ICONS_URL}/gas-station-expensive.png`),
-    "gas-station-average": require(`${MAP_ICONS_URL}/gas-station-average.png`),
-    "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station-cheap.png`),
+export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
+    "user-location": require(`${MAP_ICONS_URL}/user-location/user-location.png`),
+    "route-destination": require(`${MAP_ICONS_URL}/directions/directional/route-destination.png`),
+    "speed-camera": require(`${MAP_ICONS_URL}/speed-camera/speed-camera.png`),
+    "incident-caution": require(`${MAP_ICONS_URL}/incidents/incident-caution.png`),
+    "incident-accident": require(`${MAP_ICONS_URL}/incidents/incident-accident.png`),
+    "incident-jam": require(`${MAP_ICONS_URL}/incidents/incident-jam.png`),
+    "incident-road-works": require(`${MAP_ICONS_URL}/incidents/incident-road-works.png`),
+    "incident-broken-down-vehicle": require(`${MAP_ICONS_URL}/incidents/incident-broken-down-vehicle.png`),
+    "incident-road-closure": require(`${MAP_ICONS_URL}/incidents/incident-road-closure.png`),
+    "incident-wind": require(`${MAP_ICONS_URL}/incidents/incident-wind.png`),
+    "incident-rain": require(`${MAP_ICONS_URL}/incidents/incident-rain.png`),
+    "incident-ice": require(`${MAP_ICONS_URL}/incidents/incident-ice.png`),
+    "gas-station-expensive": require(`${MAP_ICONS_URL}/gas-station/gas-station-expensive.png`),
+    "gas-station-average": require(`${MAP_ICONS_URL}/gas-station/gas-station-average.png`),
+    "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station/gas-station-cheap.png`),
+};
+
+export const LANE_IMAGES: { [key: string]: ImageSourcePropType } = {
+    uturn: require(`${MAP_LANE_DIRECTIONS_URL}/uturn.png`),
+    "uturn-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/uturn-inactive.png`),
+    "turn-right": require(`${MAP_LANE_DIRECTIONS_URL}/turn-right.png`),
+    "turn-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/turn-right-inactive.png`),
+    "turn-left": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left.png`),
+    "turn-left-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-right-right.png`),
+    "turn-left-right-left": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-right-left.png`),
+    "turn-left-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-right-inactive.png`),
+    "turn-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/turn-left-inactive.png`),
+    straight: require(`${MAP_LANE_DIRECTIONS_URL}/straight.png`),
+    "straight-right-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-straight.png`),
+    "straight-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-right.png`),
+    "straight-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-right-inactive.png`),
+    "straight-left-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-straight.png`),
+    "straight-left-right-straight": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-straight.png`),
+    "straight-left-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-inactive.png`),
+    "straight-left-right-right": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-right.png`),
+    "straight-left-right-left": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-right-left.png`),
+    "straight-left-left": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-left.png`),
+    "straight-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-left-inactive.png`),
+    "straight-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/straight-inactive.png`),
+    "slight-right": require(`${MAP_LANE_DIRECTIONS_URL}/slight-right.png`),
+    "slight-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/slight-right-inactive.png`),
+    "slight-left": require(`${MAP_LANE_DIRECTIONS_URL}/slight-left.png`),
+    "slight-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/slight-left-inactive.png`),
+    "sharp-right": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-right.png`),
+    "sharp-right-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-right-inactive.png`),
+    "sharp-left": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-left.png`),
+    "sharp-left-inactive": require(`${MAP_LANE_DIRECTIONS_URL}/sharp-left-inactive.png`),
 };
 
 export const SPEED_CAMERA_TYPE: SpeedCameraProfile[] = [

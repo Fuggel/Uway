@@ -1,14 +1,10 @@
-import axios from "axios";
-
 import { Position, lineString, point } from "@turf/helpers";
 import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 
-import { API_URL } from "@/constants/api-constants";
-import { API_KEY } from "@/constants/env-constants";
+import { LANE_IMAGES } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { InstructionWarningThreshold, ModifierType } from "@/types/INavigation";
-import { ReverseGeocodeProperties } from "@/types/ISearch";
+import { InstructionWarningThreshold, Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -16,44 +12,180 @@ export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
     switch (styleUrl) {
         case MapboxStyle.NAVIGATION_DARK:
             return MapboxStyle.NAVIGATION_DARK;
-        case MapboxStyle.STREETS:
-            return MapboxStyle.STREETS;
-        case MapboxStyle.DARK:
-            return MapboxStyle.DARK;
-        case MapboxStyle.LIGHT:
-            return MapboxStyle.LIGHT;
-        case MapboxStyle.OUTDOORS:
-            return MapboxStyle.OUTDOORS;
-        case MapboxStyle.SATELLITE:
-            return MapboxStyle.SATELLITE;
+        case MapboxStyle.NAVIGATION_LIGHT:
+            return MapboxStyle.NAVIGATION_LIGHT;
         case MapboxStyle.SATELLITE_STREETS:
             return MapboxStyle.SATELLITE_STREETS;
-        case MapboxStyle.TRAFFIC_DAY:
-            return MapboxStyle.TRAFFIC_DAY;
-        case MapboxStyle.TRAFFIC_NIGHT:
-            return MapboxStyle.TRAFFIC_NIGHT;
         default:
             return MapboxStyle.NAVIGATION_DARK;
     }
 }
 
-export function arrowDirection(modifier: ModifierType) {
-    switch (modifier) {
-        case ModifierType.U_TURN:
-            return "arrow-u-down-left-bold";
-        case ModifierType.SHARP_RIGHT:
-        case ModifierType.RIGHT:
-        case ModifierType.SLIGHT_RIGHT:
-            return "arrow-right-top-bold";
-        case ModifierType.STRAIGHT:
-            return "arrow-up-bold";
-        case ModifierType.SHARP_LEFT:
-        case ModifierType.LEFT:
-        case ModifierType.SLIGHT_LEFT:
-            return "arrow-left-top-bold";
-        default:
-            return undefined;
+export function getManeuverImage(maneuver?: ManeuverType, modifier?: ModifierType, degrees?: number) {
+    const directionalUrl = "../assets/images/map-icons/directions/directional";
+    const roundaboutUrl = "../assets/images/map-icons/directions/roundabout";
+
+    if (!maneuver) {
+        return undefined;
     }
+
+    switch (maneuver) {
+        case ManeuverType.TURN:
+            if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/turn-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/sharp-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/turn-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/sharp-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/slight-left.png`);
+            else if (modifier === ModifierType.U_TURN) return require(`${directionalUrl}/uturn-left.png`);
+            else return undefined;
+        case ManeuverType.DEPART:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/depart-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/depart-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/depart-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/depart-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/depart-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/depart-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/depart-left.png`);
+            else return require(`${directionalUrl}/depart-straight.png`);
+        case ManeuverType.ARRIVE:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/arrive-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/arrive-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/arrive-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/arrive-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/arrive-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/arrive-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/arrive-left.png`);
+            else return require(`${directionalUrl}/arrive-straight.png`);
+        case ManeuverType.MERGE:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/merge-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/merge-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/merge-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/merge-slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/merge-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/merge-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/merge-slight-left.png`);
+            else return require(`${directionalUrl}/merge.png`);
+        case ManeuverType.ON_RAMP:
+        case ManeuverType.OFF_RAMP:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/continue-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/turn-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/sharp-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/turn-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/sharp-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/slight-left.png`);
+            else return require(`${directionalUrl}/continue-straight.png`);
+        case ManeuverType.FORK:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/fork-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/fork-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/fork-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/fork-slight-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/fork-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/fork-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/fork-slight-left.png`);
+            else return require(`${directionalUrl}/fork.png`);
+        case ManeuverType.END_OF_ROAD:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/continue-straight.png`);
+            else if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/end-of-road-right.png`);
+            else if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/end-of-road-right.png`);
+            else if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/end-of-road-right.png`);
+            else if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/end-of-road-left.png`);
+            else if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/end-of-road-left.png`);
+            else if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/end-of-road-left.png`);
+            else return undefined;
+        case ManeuverType.CONTINUE:
+            if (modifier === ModifierType.STRAIGHT) return require(`${directionalUrl}/continue-straight.png`);
+            if (modifier === ModifierType.RIGHT) return require(`${directionalUrl}/turn-right.png`);
+            if (modifier === ModifierType.SHARP_RIGHT) return require(`${directionalUrl}/sharp-right.png`);
+            if (modifier === ModifierType.SLIGHT_RIGHT) return require(`${directionalUrl}/slight-right.png`);
+            if (modifier === ModifierType.LEFT) return require(`${directionalUrl}/turn-left.png`);
+            if (modifier === ModifierType.SHARP_LEFT) return require(`${directionalUrl}/sharp-left.png`);
+            if (modifier === ModifierType.SLIGHT_LEFT) return require(`${directionalUrl}/slight-left.png`);
+            else return require(`${directionalUrl}/continue-straight.png`);
+        case ManeuverType.ROUNDABOUT:
+            if (!degrees) return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
+            else if (degrees >= 140 && degrees <= 220)
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-straight.png`);
+            else if (degrees >= 45 && degrees <= 135)
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-right.png`);
+            else if ((degrees >= 0 && degrees <= 40) || (degrees >= 320 && degrees <= 359))
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-alt.png`);
+            else if (degrees >= 225 && degrees <= 315)
+                return require(`${roundaboutUrl}/roundabout-anticlockwise-left.png`);
+            else return require(`${roundaboutUrl}/roundabout-anticlockwise.png`);
+    }
+}
+
+export function getLaneImage(lane: Lane) {
+    const { active, active_direction, directions } = lane;
+
+    if (!directions || directions.length === 0) {
+        return undefined;
+    }
+
+    let imageName = "";
+
+    if (directions.length > 1) {
+        switch (true) {
+            case directions.includes(LaneDirection.STRAIGHT) &&
+                directions.includes(LaneDirection.LEFT) &&
+                directions.includes(LaneDirection.RIGHT):
+                imageName = "straight-left-right";
+                break;
+            case directions.includes(LaneDirection.STRAIGHT) && directions.includes(LaneDirection.LEFT):
+                imageName = "straight-left";
+                break;
+            case directions.includes(LaneDirection.STRAIGHT) && directions.includes(LaneDirection.RIGHT):
+                imageName = "straight-right";
+                break;
+            case directions.includes(LaneDirection.LEFT) && directions.includes(LaneDirection.RIGHT):
+                imageName = "turn-left-right";
+                break;
+            default:
+                return undefined;
+        }
+    } else {
+        const direction = directions[0];
+        switch (direction) {
+            case LaneDirection.STRAIGHT:
+                imageName = "straight";
+                break;
+            case LaneDirection.RIGHT:
+                imageName = "turn-right";
+                break;
+            case LaneDirection.SHARP_RIGHT:
+                imageName = "sharp-right";
+                break;
+            case LaneDirection.SLIGHT_RIGHT:
+                imageName = "slight-right";
+                break;
+            case LaneDirection.LEFT:
+                imageName = "turn-left";
+                break;
+            case LaneDirection.SHARP_LEFT:
+                imageName = "sharp-left";
+                break;
+            case LaneDirection.SLIGHT_LEFT:
+                imageName = "slight-left";
+                break;
+            case LaneDirection.U_TURN:
+                imageName = "uturn";
+                break;
+            default:
+                return undefined;
+        }
+    }
+
+    if (active_direction && directions.length > 1) {
+        imageName += `-${active_direction}`;
+    }
+
+    if (!active) {
+        imageName += "-inactive";
+    }
+
+    return LANE_IMAGES[imageName];
 }
 
 export function isValidLonLat(lon: number | undefined, lat: number | undefined) {
@@ -80,37 +212,37 @@ export function boundingBox(lonLat: LonLat, distance: number) {
     };
 }
 
-export function determineSpeedLimitIcon(speedLimit: string) {
-    const assetsUrl = "../assets/images/map-icons";
+export function determineSpeedLimitIcon(speedLimit: number) {
+    const assetsUrl = "../assets/images/map-icons/speed-limits";
 
     switch (speedLimit) {
-        case "5":
+        case 5:
             return require(`${assetsUrl}/speed-limit-5.png`);
-        case "10":
+        case 10:
             return require(`${assetsUrl}/speed-limit-10.png`);
-        case "15":
+        case 15:
             return require(`${assetsUrl}/speed-limit-15.png`);
-        case "20":
+        case 20:
             return require(`${assetsUrl}/speed-limit-20.png`);
-        case "25":
+        case 25:
             return require(`${assetsUrl}/speed-limit-25.png`);
-        case "30":
+        case 30:
             return require(`${assetsUrl}/speed-limit-30.png`);
-        case "40":
+        case 40:
             return require(`${assetsUrl}/speed-limit-40.png`);
-        case "45":
+        case 45:
             return require(`${assetsUrl}/speed-limit-45.png`);
-        case "50":
+        case 50:
             return require(`${assetsUrl}/speed-limit-50.png`);
-        case "60":
+        case 60:
             return require(`${assetsUrl}/speed-limit-60.png`);
-        case "70":
+        case 70:
             return require(`${assetsUrl}/speed-limit-70.png`);
-        case "80":
+        case 80:
             return require(`${assetsUrl}/speed-limit-80.png`);
-        case "100":
+        case 100:
             return require(`${assetsUrl}/speed-limit-100.png`);
-        case "120":
+        case 120:
             return require(`${assetsUrl}/speed-limit-120.png`);
         default:
             return require(`${assetsUrl}/speed-limit-unknown.png`);
@@ -118,7 +250,7 @@ export function determineSpeedLimitIcon(speedLimit: string) {
 }
 
 export function determineIncidentIcon(iconCategory: IncidentType) {
-    const assetsUrl = "../assets/images/map-icons";
+    const assetsUrl = "../assets/images/map-icons/incidents";
 
     switch (iconCategory) {
         case IncidentType.Accident:
@@ -154,22 +286,22 @@ export function getStationIcon(stations: GasStation[], price: number) {
     }
 }
 
-export async function reverseGeocode(lon: number, lat: number): Promise<ReverseGeocodeProperties> {
-    if (!isValidLonLat(lon, lat)) {
-        return { name: "Unbekannt", full_address: "Adresse nicht gefunden" };
-    }
+export function getOrderedGasStations(gasStations: GasStation[] | undefined): GasStation[] {
+    if (!gasStations || gasStations.length === 0) return [];
 
-    const response = await axios.get(
-        `${API_URL.MAPBOX_REVERSE_GEOCODING}?longitude=${lon}&latitude=${lat}&limit=1&language=de&access_token=${API_KEY.MAPBOX_ACCESS_TOKEN}`
-    );
+    return gasStations
+        .map((station) => {
+            const distance = station.dist;
+            const dieselPrice = station.diesel;
 
-    const fullAddress = response.data?.features[0]?.properties.full_address ?? "Adresse nicht gefunden";
-    const name = response.data?.features[0]?.properties.name ?? "Unbekannt";
+            const score = distance > 0 ? dieselPrice / distance : Number.MAX_VALUE;
 
-    return {
-        name: name,
-        full_address: fullAddress,
-    };
+            return {
+                ...station,
+                score,
+            };
+        })
+        .sort((a, b) => b.score - a.score);
 }
 
 export function distanceToPointText(params: { pos1: Position; pos2: Position }) {

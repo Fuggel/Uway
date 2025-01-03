@@ -6,13 +6,12 @@ import { COLORS } from "@/constants/colors-constants";
 import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useInstructions from "@/hooks/useInstructions";
-import useSpeedLimits from "@/hooks/useSpeedLimits";
-import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
-import { SpeedLimitFeature } from "@/types/ISpeed";
+import { mapWaypointActions, mapWaypointSelectors } from "@/store/mapWaypoint";
+import { SheetType } from "@/types/ISheet";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
 
@@ -24,23 +23,19 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapNavigation = () => {
     const dispatch = useDispatch();
-    const { stopSpeech } = useTextToSpeech();
-    const { showSheet } = useContext(BottomSheetContext);
+    const { showSheet, openSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
+    const { currentInstruction } = useContext(MapInstructionContext);
     const directions = useSelector(mapNavigationSelectors.directions);
-    const currentStep = useSelector(mapNavigationSelectors.currentStep);
     const location = useSelector(mapNavigationSelectors.location);
+    const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
-    const { speedLimits } = useSpeedLimits();
-    const { remainingDistance, remainingTime } = useInstructions();
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
-
-    const distance = `${(remainingDistance / 1000).toFixed(2).replace(".", ",")} km`;
-    const duration = `${(remainingTime / 60).toFixed(0)} min`;
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
+    const remainingTime = currentInstruction?.remainingTime || 0;
 
     const determineArrivalTime = () => {
         const now = new Date();
@@ -48,9 +43,9 @@ const MapNavigation = () => {
         setArrivalTime(toGermanDate({ isoDate: now.toISOString(), showTimeOnly: true }));
     };
 
-    const cancelNavigation = () => {
-        dispatch(mapNavigationActions.handleCancelNavigation());
-        stopSpeech();
+    const selectWaypoint = () => {
+        dispatch(mapWaypointActions.setSelectGasStationWaypoint(true));
+        openSheet({ type: SheetType.WAYPOINT });
     };
 
     useEffect(() => {
@@ -70,12 +65,6 @@ const MapNavigation = () => {
         }
     }, [isNavigationMode, directions]);
 
-    useEffect(() => {
-        if (directions?.legs[0].steps[currentStep]?.maneuver?.type === "arrive") {
-            cancelNavigation();
-        }
-    }, [currentStep, directions]);
-
     return (
         <View style={{ ...styles.container, display: showSheet ? "none" : "flex" }}>
             {userLocation?.coords && isNavigationMode && (
@@ -89,11 +78,9 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    {speedLimits?.alert && (
+                    {currentInstruction?.maxSpeed && (
                         <Image
-                            source={determineSpeedLimitIcon(
-                                (speedLimits.alert.feature.properties as SpeedLimitFeature).maxspeed
-                            )}
+                            source={determineSpeedLimitIcon(Number(currentInstruction.maxSpeed))}
                             style={styles.speedLimitImage}
                         />
                     )}
@@ -113,11 +100,22 @@ const MapNavigation = () => {
                     )}
 
                     <Text type="lightGray" style={{ fontWeight: "bold" }}>
-                        {duration} · {distance}
+                        {currentInstruction?.remainingDuration} min · {currentInstruction?.remainingDistance} km
                     </Text>
                 </View>
 
                 <View style={styles.navigationActions}>
+                    {!!isGasStationWaypoint ? (
+                        <IconButton
+                            icon="gas-station-off"
+                            onPress={() => dispatch(mapWaypointActions.removeGasStationWaypoints())}
+                            type="white"
+                            size="lg"
+                        />
+                    ) : (
+                        <IconButton icon="gas-station" onPress={selectWaypoint} type="white" size="lg" />
+                    )}
+
                     {isNavigationMode && (
                         <IconButton
                             icon={allowTextToSpeech ? "volume-high" : "volume-off"}
@@ -131,7 +129,14 @@ const MapNavigation = () => {
                         />
                     )}
 
-                    <IconButton icon="close-circle" onPress={cancelNavigation} type="error" size="lg" />
+                    <IconButton
+                        icon="close-circle"
+                        type="error"
+                        size="lg"
+                        onPress={() => {
+                            dispatch(mapNavigationActions.handleCancelNavigation());
+                        }}
+                    />
 
                     {!isNavigationMode && (
                         <IconButton

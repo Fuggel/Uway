@@ -1,57 +1,87 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { point, distance as turfDistance } from "@turf/turf";
-
-import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import Instructions from "@/lib/Instructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { Instruction } from "@/types/INavigation";
+import { CurrentInstruction, LaneImage, ManeuverImage } from "@/types/INavigation";
+import { getLaneImage, getManeuverImage } from "@/utils/map-utils";
+
+import useTextToSpeech from "./useTextToSpeech";
 
 const useInstructions = () => {
-    const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
+    const { userLocation } = useContext(UserLocationContext);
+    const { startSpeech } = useTextToSpeech();
     const directions = useSelector(mapNavigationSelectors.directions);
-    const currentStep = useSelector(mapNavigationSelectors.currentStep);
-    const [remainingTime, setRemainingTime] = useState(0);
-    const [remainingDistance, setRemainingDistance] = useState(0);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const [currentInstruction, setCurrentInstruction] = useState<CurrentInstruction | null>(null);
+    const [spokenInstruction, setSpokenInstruction] = useState<string | null>(null);
+
+    const instructions = useMemo(() => {
+        const steps = directions?.legs[0]?.steps;
+        const annotations = directions?.legs[0]?.annotation;
+
+        if (!steps || !annotations || !userLocation) return null;
+
+        const instructions = new Instructions(steps, annotations, userLocation);
+
+        return {
+            getCurrentInstructions: instructions.getCurrentInstructions(),
+            checkIfArrived: instructions.checkIfArrived,
+        };
+    }, [directions]);
 
     useEffect(() => {
-        if (directions && userLocation) {
-            const steps = directions.legs[0].steps;
-            const nextStep = steps[currentStep + 1] as Instruction;
+        if (!instructions) return;
 
-            const calculateRemainingTimeAndDistance = () => {
-                let totalRemainingTime = 0;
-                let totalRemainingDistance = 0;
-
-                for (let i = currentStep; i < steps.length; i++) {
-                    totalRemainingTime += steps[i].duration;
-                    totalRemainingDistance += steps[i].distance;
-                }
-
-                setRemainingTime(totalRemainingTime);
-                setRemainingDistance(totalRemainingDistance);
-            };
-
-            if (nextStep) {
-                const userPoint = point([userLocation.coords.longitude, userLocation.coords.latitude]);
-                const stepPoint = point(nextStep.maneuver.location);
-
-                const distanceToNextStep = turfDistance(userPoint, stepPoint, {
-                    units: "meters",
-                });
-
-                if (distanceToNextStep < THRESHOLD.NAVIGATION.NEXT_STEP_IN_METERS) {
-                    dispatch(mapNavigationActions.setCurrentStep(currentStep + 1));
-                }
-            }
-
-            calculateRemainingTimeAndDistance();
+        if (instructions.getCurrentInstructions) {
+            setCurrentInstruction(instructions.getCurrentInstructions);
         }
-    }, [userLocation, currentStep, directions]);
 
-    return { remainingTime, remainingDistance };
+        instructions.checkIfArrived(() => {
+            dispatch(mapNavigationActions.handleCancelNavigation());
+        });
+    }, [instructions]);
+
+    useEffect(() => {
+        if (!isNavigationMode || !instructions?.getCurrentInstructions) return;
+
+        const announcement = instructions.getCurrentInstructions?.voiceInstruction?.announcement;
+
+        if (announcement && spokenInstruction !== announcement) {
+            setSpokenInstruction(announcement);
+            startSpeech(announcement);
+        }
+    }, [isNavigationMode, instructions?.getCurrentInstructions]);
+
+    const maneuverImage = (): ManeuverImage | undefined => {
+        if (!currentInstruction) return;
+
+        const currentArrowDir = getManeuverImage(
+            currentInstruction.bannerInstruction.primary.type,
+            currentInstruction.bannerInstruction.primary.modifier,
+            currentInstruction.bannerInstruction.primary.degrees
+        );
+
+        const nextArrowDir =
+            getManeuverImage(
+                currentInstruction?.nextBannerInstruction?.primary.type,
+                currentInstruction?.nextBannerInstruction?.primary.modifier,
+                currentInstruction?.nextBannerInstruction?.primary.degrees
+            ) || null;
+
+        return { currentArrowDir, nextArrowDir };
+    };
+
+    const laneImages = (): LaneImage | undefined => {
+        if (!currentInstruction) return;
+
+        const laneDirections = currentInstruction?.laneInformation?.map((lane) => getLaneImage(lane));
+        return laneDirections;
+    };
+
+    return { currentInstruction, maneuverImage, laneImages };
 };
 
 export default useInstructions;

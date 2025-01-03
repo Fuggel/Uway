@@ -1,140 +1,87 @@
-import { useContext, useEffect, useState } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { useContext } from "react";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useTextToSpeech from "@/hooks/useTextToSpeech";
+import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { Instruction, InstructionThreshold, SpokenInstructions } from "@/types/INavigation";
-import {
-    arrowDirection,
-    convertSpeedToKmh,
-    determineIncidentIcon,
-    instructionsWarningThresholds,
-} from "@/utils/map-utils";
+import { determineIncidentIcon } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
 
 import Text from "../common/Text";
 import Toast from "../common/Toast";
+import RoadShield from "../ui/RoadShield";
 
 const deviceHeight = Dimensions.get("window").height;
 
 const MapAlerts = () => {
-    const { userLocation } = useContext(UserLocationContext);
     const { speedCameras, incidents } = useContext(MapFeatureContext);
-    const directions = useSelector(mapNavigationSelectors.directions);
-    const currentStep = useSelector(mapNavigationSelectors.currentStep);
-    const [spokenInstructions, setSpokenInstructions] = useState<SpokenInstructions>({
-        [InstructionThreshold.CURRENT]: false,
-        [InstructionThreshold.EARLY]: false,
-        [InstructionThreshold.LATE]: false,
-    });
+    const { currentInstruction, maneuverImage, laneImages } = useContext(MapInstructionContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const { startSpeech } = useTextToSpeech();
 
-    const currentStepData = directions?.legs[0]?.steps[currentStep];
-    const nextStepData = directions?.legs[0]?.steps[currentStep + 1];
+    const maneuverImg = maneuverImage();
+    const laneImg = laneImages();
 
-    const currentInstruction = currentStepData?.maneuver?.instruction;
-    const nextInstruction = nextStepData?.maneuver?.instruction;
-
-    const userSpeed = userLocation!.coords.speed;
-    const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
-
-    const distanceToNextStep = nextStepData?.maneuver?.location
-        ? distance([userLocation!.coords.longitude, userLocation!.coords.latitude], nextStepData.maneuver.location, {
-              units: "meters",
-          })
-        : null;
-
-    useEffect(() => {
-        setSpokenInstructions({
-            [InstructionThreshold.CURRENT]: false,
-            [InstructionThreshold.EARLY]: false,
-            [InstructionThreshold.LATE]: false,
-        });
-    }, [currentStep, isNavigationMode]);
-
-    useEffect(() => {
-        if (!isNavigationMode || !currentInstruction || spokenInstructions.current) return;
-
-        startSpeech(currentInstruction);
-        setSpokenInstructions((prev) => ({ ...prev, [InstructionThreshold.CURRENT]: true }));
-    }, [isNavigationMode, currentInstruction, spokenInstructions]);
-
-    useEffect(() => {
-        if (!isNavigationMode || !distanceToNextStep || !nextInstruction) return;
-
-        const { early: earlyThreshold, late: lateThreshold } = instructionsWarningThresholds(currentSpeed);
-
-        const thresholds = [
-            {
-                key: InstructionThreshold.EARLY,
-                condition: distanceToNextStep <= earlyThreshold && distanceToNextStep > lateThreshold,
-            },
-            { key: InstructionThreshold.LATE, condition: distanceToNextStep <= lateThreshold },
-        ];
-
-        thresholds.forEach(({ key, condition }) => {
-            if (!spokenInstructions[key] && condition) {
-                startSpeech(`In ${Math.round(distanceToNextStep)} Metern, ${nextInstruction}`);
-                setSpokenInstructions((prev) => ({ ...prev, [key]: true }));
-            }
-        });
-    }, [isNavigationMode, distanceToNextStep, nextInstruction, spokenInstructions]);
+    const isLanesAvailable = laneImg && laneImg.length > 0;
 
     return (
         <View style={styles.absoluteTop}>
             <View style={styles.alertContainer}>
-                {isNavigationMode &&
-                    directions?.legs[0].steps
-                        .slice(currentStep, currentStep + 1)
-                        .map((step: Instruction, index: number) => {
-                            const defaultArrow = "arrow-up-bold";
+                {currentInstruction && isNavigationMode && (
+                    <View>
+                        <View style={styles.directionRow}>
+                            <Image source={maneuverImg?.currentArrowDir} style={styles.arrowImage} />
 
-                            const arrowDir = arrowDirection(step?.maneuver?.modifier);
-                            const arrowDirNext = arrowDirection(nextStepData?.maneuver?.modifier);
+                            <View style={styles.intructionsContainer}>
+                                <View style={styles.instructionsHeading}>
+                                    <Text type="white" textStyle="header">
+                                        {formatLength(currentInstruction.distanceToNextStep)}
+                                    </Text>
 
-                            const arrowName = arrowDir ?? defaultArrow;
-                            const arrowNameNext = arrowDirNext ?? defaultArrow;
-
-                            return (
-                                <View key={index}>
-                                    <View style={styles.instructionsContainer}>
-                                        <View style={styles.directionRow}>
-                                            <MaterialCommunityIcons
-                                                name={arrowName}
-                                                size={SIZES.iconSize.xl}
-                                                color={COLORS.white}
-                                            />
-                                            <Text type="white" textStyle="header">
-                                                {formatLength(step.distance)}
-                                            </Text>
-                                        </View>
-                                        <Text type="white">{step.maneuver.instruction}</Text>
-                                    </View>
-
-                                    {nextInstruction && (
-                                        <View style={styles.nextInstructionContainer}>
-                                            <View style={styles.directionRow}>
-                                                <Text type="white">Dann</Text>
-                                                <MaterialCommunityIcons
-                                                    name={arrowNameNext}
-                                                    size={SIZES.iconSize.lg}
-                                                    color={COLORS.white}
+                                    <View style={styles.roadShieldContainer}>
+                                        {currentInstruction?.shieldInformation?.icon
+                                            ?.filter((shield) => shield !== null)
+                                            .map((shield, i) => (
+                                                <RoadShield
+                                                    key={i}
+                                                    type={shield.type}
+                                                    name={shield.name}
+                                                    display_ref={shield.display_ref}
+                                                    text_color={shield.text_color}
                                                 />
-                                            </View>
-                                        </View>
-                                    )}
+                                            ))}
+                                    </View>
                                 </View>
-                            );
-                        })}
+
+                                <Text type="white" textStyle="header">
+                                    {currentInstruction.shieldInformation?.text
+                                        ? currentInstruction.shieldInformation.text
+                                        : currentInstruction?.bannerInstruction?.primary?.text}
+                                </Text>
+                            </View>
+                        </View>
+
+                        {!isLanesAvailable && maneuverImg?.nextArrowDir && (
+                            <View style={styles.nextInstructionContainer}>
+                                <View style={styles.nextDirectionRow}>
+                                    <Text type="white">Dann:</Text>
+                                    <Image source={maneuverImg?.nextArrowDir} style={styles.nextArrowImage} />
+                                </View>
+                            </View>
+                        )}
+
+                        {isLanesAvailable && (
+                            <View style={styles.laneInstructionContainer}>
+                                {laneImg.map((lane, i) => {
+                                    if (!lane) return null;
+                                    return <Image key={i} source={lane} style={styles.laneImage} />;
+                                })}
+                            </View>
+                        )}
+                    </View>
+                )}
 
                 {speedCameras?.speedCameras?.alert && speedCameras?.speedCameraWarningText?.title && (
                     <Toast
@@ -168,27 +115,65 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         gap: SIZES.spacing.sm,
-        maxWidth: "60%",
     },
-    instructionsContainer: {
-        borderRadius: SIZES.borderRadius.md,
-        borderBottomLeftRadius: 0,
-        padding: SIZES.spacing.sm,
-        backgroundColor: COLORS.secondary,
+    intructionsContainer: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "center",
     },
     directionRow: {
+        borderTopRightRadius: SIZES.borderRadius.md,
+        borderTopLeftRadius: SIZES.borderRadius.md,
+        padding: SIZES.spacing.sm,
+        backgroundColor: COLORS.secondary,
+        flexDirection: "row",
+        gap: SIZES.spacing.sm,
+    },
+    nextDirectionRow: {
         flexDirection: "row",
         alignItems: "center",
-        gap: SIZES.spacing.xs,
     },
     nextInstructionContainer: {
-        padding: SIZES.spacing.sm,
+        paddingHorizontal: SIZES.spacing.sm,
+        paddingVertical: SIZES.spacing.xxs,
         backgroundColor: COLORS.secondary_light,
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        borderBottomLeftRadius: SIZES.borderRadius.sm,
-        borderBottomRightRadius: SIZES.borderRadius.sm,
+        borderBottomLeftRadius: SIZES.borderRadius.md,
+        borderBottomRightRadius: SIZES.borderRadius.md,
         alignSelf: "flex-start",
+    },
+    laneInstructionContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: SIZES.spacing.xs,
+        backgroundColor: COLORS.secondary_light,
+        borderBottomRightRadius: SIZES.borderRadius.md,
+        borderBottomLeftRadius: SIZES.borderRadius.md,
+        padding: SIZES.spacing.xs,
+    },
+    instructionsHeading: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: SIZES.spacing.xxs,
+    },
+    laneImage: {
+        width: 30,
+        height: 30,
+    },
+    arrowImage: {
+        width: SIZES.iconSize.xl,
+        height: SIZES.iconSize.xl,
+    },
+    nextArrowImage: {
+        width: SIZES.iconSize.lg,
+        height: SIZES.iconSize.lg,
+    },
+    roadShieldContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: SIZES.spacing.xs,
     },
 });
 

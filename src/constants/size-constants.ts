@@ -2,6 +2,7 @@ import { Size } from "@/types/ISize";
 
 export const SIZES: Size = {
     spacing: {
+        xxs: 4,
         xs: 8,
         sm: 12,
         md: 24,

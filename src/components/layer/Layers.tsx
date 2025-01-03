@@ -7,8 +7,8 @@ import { COLORS } from "@/constants/colors-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useGasStations from "@/hooks/useGasStations";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
@@ -17,35 +17,60 @@ import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 
 const Layers = () => {
     const { userLocation } = useContext(UserLocationContext);
-    const { incidents, speedCameras } = useContext(MapFeatureContext);
+    const { incidents, speedCameras, gasStations } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
     const directions = useSelector(mapNavigationSelectors.directions);
-    const { gasStations } = useGasStations();
+    const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
 
     return (
         <>
             <LineLayer id={LayerId.INVISIBLE} style={{ lineWidth: 0 }} />
 
             {directions?.geometry && (
-                <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
-                    <LineLayer
-                        id={LayerId.ROUTE}
-                        style={{
-                            lineColor: COLORS.secondary_light,
-                            lineOpacity: 0.8,
-                            lineCap: "round",
-                            lineJoin: "round",
-                            lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
+                <>
+                    <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
+                        <LineLayer
+                            id={LayerId.ROUTE}
+                            style={{
+                                lineColor: COLORS.secondary_light,
+                                lineOpacity: 0.8,
+                                lineCap: "round",
+                                lineJoin: "round",
+                                lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
+                            }}
+                            belowLayerID={LayerId.INVISIBLE}
+                        />
+                    </ShapeSource>
+
+                    <ShapeSource
+                        id="destination-source"
+                        shape={{
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates:
+                                    directions.geometry.coordinates[directions.geometry.coordinates.length - 1],
+                            },
+                            properties: {},
                         }}
-                        belowLayerID={LayerId.INVISIBLE}
-                    />
-                </ShapeSource>
+                    >
+                        <SymbolLayer
+                            id={LayerId.ROUTE_DESTINATION}
+                            style={{
+                                iconImage: "route-destination",
+                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.5, 20, 0.7],
+                                iconAllowOverlap: true,
+                            }}
+                            belowLayerID={LayerId.INVISIBLE}
+                        />
+                    </ShapeSource>
+                </>
             )}
 
             {gasStations && (
                 <ShapeSource
                     id="gas-station-source"
-                    shape={gasStations as GeoJSON.FeatureCollection}
+                    shape={gasStations.gasStations as GeoJSON.FeatureCollection}
                     onPress={(e) => {
                         openSheet<GasStation>({
                             type: SheetType.MARKER,
@@ -58,7 +83,9 @@ const Layers = () => {
                         id={LayerId.GAS_STATION}
                         style={{
                             iconImage: ["get", "iconType"],
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconSize: isGasStationWaypoint
+                                ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
+                                : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}

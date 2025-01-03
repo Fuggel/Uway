@@ -1,5 +1,6 @@
 export enum SheetType {
     MARKER = "marker",
+    WAYPOINT = "waypoint",
 }
 
 export enum MarkerSheet {

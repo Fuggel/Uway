@@ -13,7 +13,3 @@ export interface SearchLocation {
     category: string;
     place_id: string;
 }
-export interface ReverseGeocodeProperties {
-    full_address: string;
-    name: string;
-}

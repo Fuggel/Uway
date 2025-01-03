@@ -1,6 +1,6 @@
 import { Audio } from "expo-av";
 import { useEffect, useRef, useState } from "react";
-import { LogBox, Platform } from "react-native";
+import { LogBox } from "react-native";
 
 import Voice from "@react-native-voice/voice";
 
@@ -18,8 +18,6 @@ const useSpeechToText = () => {
     const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const playSound = async (key: keyof typeof SOUND_FILES) => {
-        if (Platform.OS !== "ios") return;
-
         try {
             const { sound } = await Audio.Sound.createAsync(SOUND_FILES[key]);
             await sound.playAsync();

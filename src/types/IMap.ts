@@ -28,14 +28,8 @@ export interface MapConfig {
 
 export enum MapboxStyle {
     NAVIGATION_DARK = "mapbox://styles/fuggel-dev/clzzy4fvv005s01qs235m7rhi",
-    STREETS = "mapbox://styles/mapbox/streets-v11",
-    DARK = "mapbox://styles/mapbox/dark-v10",
-    LIGHT = "mapbox://styles/mapbox/light-v10",
-    OUTDOORS = "mapbox://styles/mapbox/outdoors-v11",
-    SATELLITE = "mapbox://styles/mapbox/satellite-v9",
+    NAVIGATION_LIGHT = "mapbox://styles/fuggel-dev/cm4rcwlis00ca01qv6vkze62x",
     SATELLITE_STREETS = "mapbox://styles/mapbox/satellite-streets-v11",
-    TRAFFIC_DAY = "mapbox://styles/mapbox/navigation-preview-day-v4",
-    TRAFFIC_NIGHT = "mapbox://styles/mapbox/navigation-preview-night-v4",
 }
 
 export interface Location {
@@ -57,6 +51,7 @@ export interface WarningAlert {
 export enum LayerId {
     USER_LOCATION = "user-location-layer",
     ROUTE = "route-layer",
+    ROUTE_DESTINATION = "route-destination-layer",
     GAS_STATION = "gas-station-layer",
     SPEED_CAMERA = "speed-camera-layer",
     INCIDENT_LINE = "incident-line-layer",

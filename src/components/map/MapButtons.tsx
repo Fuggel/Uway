@@ -19,8 +19,16 @@ const MapButtons = () => {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const tracking = useSelector(mapNavigationSelectors.tracking);
 
+    const getTopOffset = () => {
+        if (deviceHeight > 1000) {
+            return isNavigationMode ? "16%" : "4%";
+        } else {
+            return isNavigationMode ? "22%" : "7%";
+        }
+    };
+
     return (
-        <View style={styles.topRight}>
+        <View style={{ ...styles.topRight, top: getTopOffset() }}>
             {userLocation && !isNavigationMode && (
                 <View style={styles.iconButton}>
                     <IconButton type="white" icon="magnify" onPress={() => router.push("/(modal)/search")} />
@@ -47,7 +55,6 @@ const MapButtons = () => {
 const styles = StyleSheet.create({
     topRight: {
         position: "absolute",
-        top: deviceHeight > 1000 ? "4%" : "7%",
         right: SIZES.spacing.sm,
         gap: SIZES.spacing.xs,
     },
