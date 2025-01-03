@@ -7,6 +7,7 @@ interface RoadShieldProps {
     name?: RoadShieldName | null;
     display_ref?: string | null;
     text_color?: string | null;
+    fontSize?: number | null;
 }
 
 const RoadShield = ({ type, name, display_ref, text_color }: RoadShieldProps) => {
@@ -46,9 +47,9 @@ const RoadShieldIcon = ({ name, display_ref, text_color }: Partial<RoadShieldPro
             </Svg>
         ),
         [RoadShieldName.MOTORWAY_EXIT]: (
-            <Svg width="40" height="40" viewBox="0 0 50 50">
-                <Circle cx="25" cy="25" r="20" fill="#154889" stroke="white" strokeWidth="2" />
-                <RoadShieldText display_ref={display_ref} text_color={text_color} />
+            <Svg width="40" height="40" viewBox="0 0 40 40">
+                <Circle cx="20" cy="20" r="18.5" fill="#154889" stroke="white" strokeWidth="2" />
+                <RoadShieldText display_ref={display_ref} text_color={text_color} fontSize={18} />
             </Svg>
         ),
         [RoadShieldName.RECTANGLE_YELLOW]: (
@@ -73,14 +74,14 @@ const RoadShieldIcon = ({ name, display_ref, text_color }: Partial<RoadShieldPro
     return roadShields[name as RoadShieldName] || null;
 };
 
-const RoadShieldText = ({ display_ref, text_color }: Partial<RoadShieldProps>) => {
+const RoadShieldText = ({ display_ref, text_color, fontSize }: Partial<RoadShieldProps>) => {
     if (!display_ref || !text_color) return null;
 
     return (
         <Text
             x="50%"
             y="52%"
-            fontSize="24"
+            fontSize={fontSize || 24}
             textAnchor="middle"
             fontFamily="Lato"
             alignmentBaseline="middle"

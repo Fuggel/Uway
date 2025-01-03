@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     image: {
-        width: SIZES.iconSize.xl,
-        height: SIZES.iconSize.xl,
+        width: SIZES.iconSize.lg,
+        height: SIZES.iconSize.lg,
     },
     title: {
         fontWeight: "bold",
