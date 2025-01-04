@@ -43,7 +43,7 @@ export async function fetchIncidents(params: {
                 geometry: incident.geometry,
                 properties: {
                     ...incident.properties,
-                    lastPoint: incident.geometry.coordinates[incident.geometry.coordinates.length - 1],
+                    firstPoint: incident.geometry.coordinates[0],
                 },
             })),
         };

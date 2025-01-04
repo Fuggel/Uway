@@ -54,7 +54,6 @@ export enum LayerId {
     ROUTE_DESTINATION = "route-destination-layer",
     GAS_STATION = "gas-station-layer",
     SPEED_CAMERA = "speed-camera-layer",
-    INCIDENT_LINE = "incident-line-layer",
     INCIDENT_SYMBOL = "incident-symbol-layer",
     INVISIBLE = "invisible-layer",
 }
