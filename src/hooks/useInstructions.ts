@@ -14,9 +14,9 @@ const useInstructions = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { startSpeech } = useTextToSpeech();
     const directions = useSelector(mapNavigationSelectors.directions);
+    const spokenInstruction = useSelector(mapNavigationSelectors.spokenInstruction);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [currentInstruction, setCurrentInstruction] = useState<CurrentInstruction | null>(null);
-    const [spokenInstruction, setSpokenInstruction] = useState<string | null>(null);
 
     const instructions = useMemo(() => {
         const steps = directions?.legs[0]?.steps;
@@ -50,7 +50,7 @@ const useInstructions = () => {
         const announcement = instructions.getCurrentInstructions?.voiceInstruction?.announcement;
 
         if (announcement && spokenInstruction !== announcement) {
-            setSpokenInstruction(announcement);
+            dispatch(mapNavigationActions.setSpokenInstruction(announcement));
             startSpeech(announcement);
         }
     }, [isNavigationMode, instructions?.getCurrentInstructions]);

@@ -14,6 +14,7 @@ interface IMapNavigationState {
     isNavigationMode: boolean;
     navigationProfile: RouteProfileType;
     directions: Direction | null;
+    spokenInstruction: string | null;
 }
 
 const initialMapNavigationState: IMapNavigationState = {
@@ -25,6 +26,7 @@ const initialMapNavigationState: IMapNavigationState = {
     isNavigationMode: false,
     navigationProfile: RouteProfileType.DRIVING,
     directions: null,
+    spokenInstruction: null,
 };
 
 const mapNavigationSlice = createSlice({
@@ -55,8 +57,12 @@ const mapNavigationSlice = createSlice({
         setDirections(state, action: PayloadAction<Direction | null>) {
             state.directions = action.payload;
         },
+        setSpokenInstruction(state, action: PayloadAction<string | null>) {
+            state.spokenInstruction = action.payload;
+        },
         handleCancelNavigation(state) {
             state.directions = null;
+            state.spokenInstruction = null;
             state.location = null;
             state.navigationView = false;
             state.isNavigationSelecting = false;
@@ -75,6 +81,7 @@ export const mapNavigationSelectors = {
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,
     navigationProfile: (state: RootState): RouteProfileType => state.mapNavigation.navigationProfile,
     directions: (state: RootState): Direction | null => state.mapNavigation.directions,
+    spokenInstruction: (state: RootState): string | null => state.mapNavigation.spokenInstruction,
 };
 
 export const mapNavigationActions = mapNavigationSlice.actions;
