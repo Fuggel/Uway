@@ -28,7 +28,7 @@ const useInstructions = () => {
 
         return {
             getCurrentInstructions: instructions.getCurrentInstructions(),
-            checkIfArrived: instructions.checkIfArrived,
+            checkIfArrived: (onCancel: () => void) => instructions.checkIfArrived(onCancel),
         };
     }, [directions]);
 

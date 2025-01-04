@@ -30,7 +30,7 @@ class Instructions {
     }
 
     public checkIfArrived(onCancel: () => void) {
-        if (!this.userPosition) return;
+        if (!this.userPosition || !this.instructions) return;
 
         const lastStep = this.instructions[this.instructions.length - 1];
         if (lastStep.maneuver.type === ManeuverType.ARRIVE && this.userPosition) {
