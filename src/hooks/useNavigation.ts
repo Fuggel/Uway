@@ -63,17 +63,6 @@ const useNavigation = () => {
     });
 
     useEffect(() => {
-        if (isNavigationMode && directions && longitude && latitude) {
-            dispatch(
-                mapNavigationActions.setDirections({
-                    ...directions,
-                    geometry: directions.geometry,
-                })
-            );
-        }
-    }, [longitude, latitude, isNavigationMode]);
-
-    useEffect(() => {
         if (data?.routes?.length > 0) {
             dispatch(mapNavigationActions.setDirections(data.routes[0]));
         }

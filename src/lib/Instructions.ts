@@ -12,12 +12,15 @@ import {
     RoadShield,
     ShieldComponentType,
 } from "@/types/INavigation";
+import { convertSpeedToKmh } from "@/utils/map-utils";
 
 class Instructions {
+    public userPosition: Location | null;
+
     private instructions: Instruction[];
     private annotation: Annotation;
-    private userPosition: Location | null;
     private currentStepIndex = 0;
+    private lastDistanceToNextStep = 0;
 
     constructor(instructions: Instruction[], annotation: Annotation, userPosition: Location | null) {
         this.instructions = instructions;
@@ -93,11 +96,18 @@ class Instructions {
         const userPoint = point([this.userPosition.coords.longitude, this.userPosition.coords.latitude]);
         const stepPoint = point(nextStep.maneuver.location);
 
-        const distanceToNextStep = distance(userPoint, stepPoint, {
-            units: "meters",
-        });
+        const distanceToNextStep = distance(userPoint, stepPoint, { units: "meters" });
+        const distanceToNextStepRounded = Math.round(distanceToNextStep / 10) * 10;
 
-        return Math.round(distanceToNextStep);
+        const currentSpeed = this.userPosition.coords.speed ? convertSpeedToKmh(this.userPosition.coords.speed) : 0;
+        const updateThreshold = this.getUpdateThreshold(currentSpeed);
+
+        if (Math.abs(distanceToNextStepRounded - this.lastDistanceToNextStep) >= updateThreshold) {
+            this.lastDistanceToNextStep = distanceToNextStepRounded;
+            return distanceToNextStepRounded;
+        }
+
+        return this.lastDistanceToNextStep;
     }
 
     private getRemainingInfo() {
@@ -176,6 +186,13 @@ class Instructions {
                 closestStep.voiceInstructions.find((instruction) => instruction.distanceAlongGeometry >= minDistance) ||
                 closestStep.voiceInstructions[0],
         };
+    }
+
+    private getUpdateThreshold(speed: number) {
+        if (speed <= 30) return 10;
+        if (speed <= 50) return 20;
+        if (speed <= 80) return 50;
+        return 100;
     }
 
     private getNextStep() {
