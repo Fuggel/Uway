@@ -5,6 +5,7 @@ import { distance, nearestPointOnLine } from "@turf/turf";
 import {
     Annotation,
     BannerInstruction,
+    CurrentAnnotation,
     CurrentInstruction,
     Instruction,
     Lane,
@@ -17,12 +18,20 @@ import { convertSpeedToKmh } from "@/utils/map-utils";
 class Instructions {
     public userPosition: Location | null;
 
+    private routeGeometry: number[][] = [];
     private instructions: Instruction[];
     private annotation: Annotation;
     private currentStepIndex = 0;
+    private currentAnnotationIndex = 0;
     private lastDistanceToNextStep = 0;
 
-    constructor(instructions: Instruction[], annotation: Annotation, userPosition: Location | null) {
+    constructor(
+        routeGeometry: number[][],
+        instructions: Instruction[],
+        annotation: Annotation,
+        userPosition: Location | null
+    ) {
+        this.routeGeometry = routeGeometry;
         this.instructions = instructions;
         this.annotation = annotation;
         this.userPosition = userPosition;
@@ -30,6 +39,10 @@ class Instructions {
 
     public getCurrentInstructions(): CurrentInstruction | undefined {
         return this.determineCurrentInstructions();
+    }
+
+    public getCurrentAnnotations(): CurrentAnnotation | undefined {
+        return this.determineCurrentAnnotation();
     }
 
     public checkIfArrived(onCancel: () => void) {
@@ -79,11 +92,40 @@ class Instructions {
                 nextBannerInstruction,
                 laneInformation: this.extractLaneInformation(activeBannerInstruction),
                 shieldInformation: this.extractShieldInformation(activeBannerInstruction),
+                distanceToNextStep: this.getCurrentDistanceToStep(),
+            };
+        }
+    }
+
+    public determineCurrentAnnotation() {
+        if (!this.userPosition || !this.routeGeometry) return;
+
+        let minDistance = Infinity;
+        let closestLeg: number[][] = [];
+
+        const userPoint = point([this.userPosition.coords.longitude, this.userPosition.coords.latitude]);
+
+        for (let i = 0; i < this.routeGeometry.length - 1; i++) {
+            const line = {
+                type: "LineString",
+                coordinates: [this.routeGeometry[i], this.routeGeometry[i + 1]],
+            } as LineString;
+
+            const snappedPoint = nearestPointOnLine(line, userPoint);
+
+            if (snappedPoint.properties.dist < minDistance) {
+                minDistance = snappedPoint.properties.dist;
+                closestLeg = line.coordinates;
+                this.currentAnnotationIndex = i;
+            }
+        }
+
+        if (closestLeg) {
+            return {
                 maxSpeed: this.getCurrentSpeedLimit(),
                 remainingDistance: this.getRemainingInfo().remainingDistance,
                 remainingDuration: this.getRemainingInfo().remainingDuration,
                 remainingTime: this.getRemainingInfo().remainingTime,
-                distanceToNextStep: this.getCurrentDistanceToStep(),
             };
         }
     }
@@ -114,9 +156,9 @@ class Instructions {
         let totalRemainingDistance = 0;
         let totalRemainingTime = 0;
 
-        for (let i = this.currentStepIndex; i < this.instructions.length; i++) {
-            totalRemainingDistance += this.instructions[i].distance;
-            totalRemainingTime += this.instructions[i].duration;
+        for (let i = this.currentAnnotationIndex; i < this.routeGeometry.length; i++) {
+            totalRemainingDistance += this.annotation.distance[i] || 0;
+            totalRemainingTime += this.annotation.duration[i] || 0;
         }
 
         const distanceInMeters = totalRemainingDistance / 1000;
@@ -130,7 +172,7 @@ class Instructions {
     }
 
     private getCurrentSpeedLimit() {
-        const currentSpeedLimit = this.annotation.maxspeed[this.currentStepIndex];
+        const currentSpeedLimit = this.annotation.maxspeed[this.currentAnnotationIndex];
         return currentSpeedLimit ? currentSpeedLimit.speed : 0;
     }
 

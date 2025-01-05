@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import Instructions from "@/lib/Instructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { CurrentInstruction, LaneImage, ManeuverImage } from "@/types/INavigation";
+import { CurrentAnnotation, CurrentInstruction, LaneImage, ManeuverImage } from "@/types/INavigation";
 import { getLaneImage, getManeuverImage } from "@/utils/map-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
@@ -18,13 +18,15 @@ const useInstructions = () => {
     const spokenInstruction = useSelector(mapNavigationSelectors.spokenInstruction);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [currentInstruction, setCurrentInstruction] = useState<CurrentInstruction | undefined>(undefined);
+    const [currentAnnotation, setCurrentAnnotation] = useState<CurrentAnnotation | undefined>(undefined);
 
     useEffect(() => {
+        const routeGeometry = directions?.geometry?.coordinates || [];
         const steps = directions?.legs[0]?.steps || [];
         const annotation = directions?.legs[0]?.annotation || {};
 
         if (directions) {
-            instructionsRef.current = new Instructions(steps, annotation, userLocation);
+            instructionsRef.current = new Instructions(routeGeometry, steps, annotation, userLocation);
         }
     }, [directions]);
 
@@ -33,7 +35,10 @@ const useInstructions = () => {
             instructionsRef.current.userPosition = userLocation;
 
             const updatedInstruction = instructionsRef.current.getCurrentInstructions();
+            const updatedAnnotation = instructionsRef.current.getCurrentAnnotations();
+
             setCurrentInstruction(updatedInstruction);
+            setCurrentAnnotation(updatedAnnotation);
 
             instructionsRef.current.checkIfArrived(() => {
                 dispatch(mapNavigationActions.handleCancelNavigation());
@@ -78,7 +83,7 @@ const useInstructions = () => {
         return laneDirections;
     };
 
-    return { currentInstruction, maneuverImage, laneImages };
+    return { currentInstruction, currentAnnotation, maneuverImage, laneImages };
 };
 
 export default useInstructions;

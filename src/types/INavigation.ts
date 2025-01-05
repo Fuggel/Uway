@@ -18,11 +18,14 @@ export interface CurrentInstruction {
     nextBannerInstruction: BannerInstruction | null;
     laneInformation: Lane[];
     shieldInformation: RoadShield;
+    distanceToNextStep: number;
+}
+
+export interface CurrentAnnotation {
     maxSpeed: number | string;
     remainingDistance: string;
     remainingDuration: string;
     remainingTime: number;
-    distanceToNextStep: number;
 }
 
 export interface RoadShield {
