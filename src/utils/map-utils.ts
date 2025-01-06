@@ -4,7 +4,7 @@ import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { InstructionWarningThreshold, Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
+import { Lane, LaneDirection, ManeuverType, ModifierType, WarningThresholds, WarningType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -365,9 +365,17 @@ function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBuffer
     return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
 
-export function instructionsWarningThresholds(speed: number): InstructionWarningThreshold {
-    if (speed <= 30) return { early: 300, late: 150 };
-    if (speed <= 50) return { early: 500, late: 150 };
-    if (speed > 90) return { early: 2500, late: 500 };
-    return { early: 750, late: 250 };
+export function warningThresholds(type: WarningType, speed: number) {
+    switch (type) {
+        case WarningType.ALERT:
+            if (speed <= 30) return { early: 300, late: 150 };
+            if (speed <= 50) return { early: 500, late: 250 };
+            if (speed > 90) return { early: 1500, late: 800 };
+            return { early: 800, late: 400 };
+        case WarningType.INSTRUCTION:
+            if (speed <= 30) return { early: 200, late: 75 };
+            if (speed <= 50) return { early: 400, late: 150 };
+            if (speed > 90) return { early: 1000, late: 500 };
+            return { early: 600, late: 200 };
+    }
 }
