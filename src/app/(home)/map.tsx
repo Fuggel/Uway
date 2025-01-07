@@ -1,3 +1,4 @@
+import { useKeepAwake } from "expo-keep-awake";
 import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
@@ -43,6 +44,8 @@ const Map = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+
+    useKeepAwake();
 
     useEffect(() => {
         if (location) {
