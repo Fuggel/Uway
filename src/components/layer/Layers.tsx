@@ -38,7 +38,7 @@ const Layers = () => {
                                 lineJoin: "round",
                                 lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             }}
-                            belowLayerID={LayerId.INVISIBLE}
+                            belowLayerID={LayerId.STREET_NAME}
                         />
                     </ShapeSource>
 
