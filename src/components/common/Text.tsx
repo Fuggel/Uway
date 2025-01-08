@@ -53,7 +53,6 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
         <RNText
             style={{
                 fontFamily: "Lato",
-                lineHeight: SIZES.spacing.md,
                 ...getTextStyle(),
                 ...getTypeStyle(),
                 ...style,

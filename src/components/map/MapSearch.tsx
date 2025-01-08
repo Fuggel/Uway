@@ -94,9 +94,14 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="map-marker" size={24} color="black" />
-                                        <Text>
-                                            {suggestion.name}, {suggestion.place_formatted}
-                                        </Text>
+                                        <View>
+                                            <Text>{suggestion.name}</Text>
+                                            {suggestion.place_formatted && (
+                                                <Text type="gray" textStyle="caption">
+                                                    {suggestion.place_formatted}
+                                                </Text>
+                                            )}
+                                        </View>
                                     </View>
                                     <Text type="gray" textStyle="caption">
                                         {readableDistance(suggestion.distance)}
@@ -126,9 +131,14 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="history" size={24} color="black" />
-                                        <Text>
-                                            {location.name}, {location.place_formatted}
-                                        </Text>
+                                        <View>
+                                            <Text>{location.name}</Text>
+                                            {location.place_formatted && (
+                                                <Text type="gray" textStyle="caption">
+                                                    {location.place_formatted}
+                                                </Text>
+                                            )}
+                                        </View>
                                     </View>
 
                                     <Text type="gray" textStyle="caption">
@@ -159,7 +169,6 @@ const styles = StyleSheet.create({
     suggestionPlace: {
         flexDirection: "row",
         maxWidth: "75%",
-        alignItems: "center",
         gap: SIZES.spacing.xs,
     },
     suggestionItem: {
