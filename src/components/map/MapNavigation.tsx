@@ -13,7 +13,7 @@ import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTex
 import { mapWaypointActions, mapWaypointSelectors } from "@/store/mapWaypoint";
 import { SheetType } from "@/types/ISheet";
 import { toGermanDate } from "@/utils/date-utils";
-import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
+import { convertSpeedToKmh, determineSpeedLimitIcon, readableDuration } from "@/utils/map-utils";
 
 import Card from "../common/Card";
 import IconButton from "../common/IconButton";
@@ -100,7 +100,8 @@ const MapNavigation = () => {
                     )}
 
                     <Text type="lightGray" style={{ fontWeight: "bold" }}>
-                        {currentAnnotation?.remainingDuration} min · {currentAnnotation?.remainingDistance} km
+                        {readableDuration(currentAnnotation?.remainingDuration)} ·{" "}
+                        {currentAnnotation?.remainingDistance} km
                     </Text>
                 </View>
 

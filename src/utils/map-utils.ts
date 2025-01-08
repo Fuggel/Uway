@@ -328,6 +328,22 @@ export function readableDistance(distance: number) {
     }
 }
 
+export function readableDuration(duration: string | undefined) {
+    if (!duration) return "";
+
+    const totalMinutes = parseInt(duration);
+    if (isNaN(totalMinutes)) return "";
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours >= 1) {
+        return `${hours}:${minutes.toString().padStart(2, "0")} h`;
+    } else {
+        return `${minutes} min`;
+    }
+}
+
 export function convertSpeedToKmh(speed: number) {
     return speed * 3.6;
 }

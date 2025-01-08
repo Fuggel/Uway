@@ -1,15 +1,25 @@
+export interface SearchSuggestion {
+    suggestions: SearchSuggestionProperties[];
+}
+
+export interface SearchSuggestionProperties {
+    mapbox_id: string;
+    name: string;
+    full_address: string;
+    place_formatted: string;
+    distance: number;
+}
+
 export interface SearchLocation {
-    id?: string;
-    country: string;
-    country_code?: string;
-    city: string;
-    district?: string;
-    suburb?: string;
-    lon: number;
-    lat: number;
-    formatted: string;
-    address_line1: string;
-    address_line2: string;
-    category: string;
-    place_id: string;
+    name: string;
+    mapbox_id?: string;
+    feature_type: string;
+    address: string;
+    full_address: string;
+    place_formatted: string;
+    maki: string;
+    coordinates: {
+        longitude: number;
+        latitude: number;
+    };
 }
