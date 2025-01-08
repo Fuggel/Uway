@@ -313,7 +313,7 @@ export function distanceToPointText(params: { pos1: Position; pos2: Position }) 
     const distanceInKm = distance(point1, point2, { units: "kilometers" });
 
     if (distanceInKm >= 1) {
-        return `${distanceInKm.toFixed(1)} km`;
+        return `${parseFloat(distanceInKm.toFixed(1))} km`;
     } else {
         const distanceInMeters = distanceInKm * 1000;
         return `${Math.round(distanceInMeters)} m`;
@@ -322,13 +322,13 @@ export function distanceToPointText(params: { pos1: Position; pos2: Position }) 
 
 export function readableDistance(distance: number) {
     if (distance >= 1000) {
-        return `${(distance / 1000).toFixed(1)} km`;
+        return `${parseFloat((distance / 1000).toFixed(1))} km`;
     } else {
         return `${distance} m`;
     }
 }
 
-export function readableDuration(duration: string | undefined) {
+export function readableStringDuration(duration: string | undefined) {
     if (!duration) return "";
 
     const totalMinutes = parseInt(duration);
@@ -341,6 +341,20 @@ export function readableDuration(duration: string | undefined) {
         return `${hours}:${minutes.toString().padStart(2, "0")} h`;
     } else {
         return `${minutes} min`;
+    }
+}
+
+export function readableStringDistance(distance: string | undefined) {
+    if (!distance) return "";
+
+    const totalMeters = parseFloat(distance);
+
+    if (isNaN(totalMeters)) return "";
+
+    if (totalMeters < 1) {
+        return `${Math.round(totalMeters * 1000)} m`;
+    } else {
+        return `${parseFloat(totalMeters.toFixed(1))} km`;
     }
 }
 
