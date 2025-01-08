@@ -95,7 +95,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="map-marker" size={24} color="black" />
                                         <View>
-                                            <Text>{suggestion.name}</Text>
+                                            <Text style={{ fontWeight: "bold" }}>{suggestion.name}</Text>
                                             {suggestion.place_formatted && (
                                                 <Text type="gray" textStyle="caption">
                                                     {suggestion.place_formatted}
@@ -132,7 +132,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="history" size={24} color="black" />
                                         <View>
-                                            <Text>{location.name}</Text>
+                                            <Text style={{ fontWeight: "bold" }}>{location.name}</Text>
                                             {location.place_formatted && (
                                                 <Text type="gray" textStyle="caption">
                                                     {location.place_formatted}
