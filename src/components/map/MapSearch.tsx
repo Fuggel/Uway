@@ -16,6 +16,7 @@ import { distanceToPointText, readableDistance } from "@/utils/map-utils";
 
 import Searchbar from "../common/Searchbar";
 import Text from "../common/Text";
+import MakiIcon from "../ui/MakiIcon";
 import NoResults from "../ui/NoResults";
 
 interface MapSearchProps {
@@ -91,7 +92,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                             >
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
-                                        <MaterialCommunityIcons name="map-marker" size={24} color="black" />
+                                        <MakiIcon name={suggestion.maki} />
                                         <View>
                                             <Text style={{ fontWeight: "bold" }}>{suggestion.name}</Text>
                                             {suggestion.place_formatted && (

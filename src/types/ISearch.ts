@@ -8,6 +8,7 @@ export interface SearchSuggestionProperties {
     full_address: string;
     place_formatted: string;
     distance: number;
+    maki: string;
 }
 
 export interface SearchLocation {
