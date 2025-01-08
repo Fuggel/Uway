@@ -7,13 +7,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { SIZES } from "@/constants/size-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
-import useSearch from "@/hooks/useSearch";
+import { useSearchLocation, useSearchSuggestion } from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
+import store from "@/store";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchSelectors } from "@/store/mapSearch";
-import { SearchLocation } from "@/types/ISearch";
-import { generateRandomNumber } from "@/utils/auth-utils";
-import { distanceToPointText } from "@/utils/map-utils";
+import { distanceToPointText, readableDistance } from "@/utils/map-utils";
 
 import Searchbar from "../common/Searchbar";
 import Text from "../common/Text";
@@ -28,24 +27,35 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     const { userLocation } = useContext(UserLocationContext);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
+    const locationId = useSelector(mapNavigationSelectors.locationId);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const { text, isListening, startListening, stopListening } = useSpeechToText();
-    const { suggestions } = useSearch({ query: searchQuery });
+    const { suggestions } = useSearchSuggestion({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
+
+    useSearchLocation();
 
     const longitude = userLocation?.coords.longitude as number;
     const latitude = userLocation?.coords.latitude as number;
+
+    const selectedSuggestion = suggestions?.find((suggestion) => suggestion.mapbox_id === locationId);
 
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
         setShowSuggestions(true);
     };
 
-    const handleSelectLocation = (newLocation: SearchLocation) => {
-        dispatch(mapNavigationActions.setLocation(newLocation));
+    const handleLocationComplete = () => {
         dispatch(mapNavigationActions.setIsNavigationSelecting(true));
         setShowSuggestions(false);
-        onClose();
+
+        const unsubscribe = store.subscribe(() => {
+            const selectedLocation = store.getState().mapNavigation.location;
+            if (selectedLocation) {
+                unsubscribe();
+                onClose();
+            }
+        });
     };
 
     useEffect(() => {
@@ -59,7 +69,9 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         <Searchbar
             placeholder="Suche nach Ort"
             onChangeText={handleSearch}
-            value={location?.formatted || searchQuery}
+            value={
+                selectedSuggestion ? `${selectedSuggestion.name} ${selectedSuggestion.place_formatted}` : searchQuery
+            }
             speechToText={{ isListening, startListening, stopListening }}
             onClear={() => {
                 location
@@ -74,34 +86,20 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                             <TouchableOpacity
                                 key={i}
                                 style={styles.scrollContainer}
-                                onPress={() =>
-                                    handleSelectLocation({
-                                        id: generateRandomNumber(),
-                                        formatted: suggestion.formatted,
-                                        lat: suggestion.lat,
-                                        lon: suggestion.lon,
-                                        country: suggestion.country,
-                                        country_code: suggestion.country_code,
-                                        city: suggestion.city,
-                                        district: suggestion.district,
-                                        address_line1: suggestion.address_line1,
-                                        address_line2: suggestion.address_line2,
-                                        category: suggestion.category,
-                                        place_id: suggestion.place_id,
-                                        suburb: suggestion.suburb,
-                                    })
-                                }
+                                onPress={() => {
+                                    dispatch(mapNavigationActions.setLocationId(suggestion.mapbox_id));
+                                    handleLocationComplete();
+                                }}
                             >
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="map-marker" size={24} color="black" />
-                                        <Text>{suggestion.formatted}</Text>
+                                        <Text>
+                                            {suggestion.name}, {suggestion.place_formatted}
+                                        </Text>
                                     </View>
                                     <Text type="gray" textStyle="caption">
-                                        {distanceToPointText({
-                                            pos1: [longitude, latitude],
-                                            pos2: [suggestion.lon, suggestion.lat],
-                                        })}
+                                        {readableDistance(suggestion.distance)}
                                     </Text>
                                 </View>
                                 <Divider style={styles.divider} />
@@ -120,23 +118,23 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                             <TouchableOpacity
                                 key={i}
                                 style={styles.scrollContainer}
-                                onPress={() =>
-                                    handleSelectLocation({
-                                        ...location,
-                                        id: generateRandomNumber(),
-                                    })
-                                }
+                                onPress={() => {
+                                    dispatch(mapNavigationActions.setLocation(location));
+                                    handleLocationComplete();
+                                }}
                             >
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="history" size={24} color="black" />
-                                        <Text>{location?.formatted}</Text>
+                                        <Text>
+                                            {location.name}, {location.place_formatted}
+                                        </Text>
                                     </View>
 
                                     <Text type="gray" textStyle="caption">
                                         {distanceToPointText({
                                             pos1: [longitude, latitude],
-                                            pos2: [location.lon, location.lat],
+                                            pos2: [location?.coordinates?.longitude, location?.coordinates?.latitude],
                                         })}
                                     </Text>
                                 </View>

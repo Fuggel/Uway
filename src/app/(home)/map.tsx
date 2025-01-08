@@ -51,7 +51,10 @@ const Map = () => {
         if (location) {
             dispatch(
                 mapSearchActions.setRecentSearches(
-                    [location, ...recentSearches.filter((loc) => loc.formatted !== location.formatted)].slice(0, 5)
+                    [
+                        location,
+                        ...recentSearches.filter((loc) => loc.place_formatted !== location.place_formatted),
+                    ].slice(0, 5)
                 )
             );
         }

@@ -4,7 +4,6 @@ export const API_KEY = {
     MAPBOX_ACCESS_TOKEN: String(process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN),
     TOMTOM: String(process.env.EXPO_PUBLIC_TOMTOM_API_KEY),
     TANKERKOENIG: String(process.env.EXPO_PUBLIC_TANKERKOENIG_API_KEY),
-    GEOAPIFY: String(process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY),
 };
 
 export const REFETCH_INTERVAL = {

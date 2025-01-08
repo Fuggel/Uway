@@ -1,27 +1,40 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchSearch } from "@/services/search";
-import { SearchLocation } from "@/types/ISearch";
+import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
+import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { SearchSuggestionProperties } from "@/types/ISearch";
+import { generateRandomNumber } from "@/utils/auth-utils";
 
-const useSearch = (params: { query: string }) => {
-    const [suggestions, setSuggestions] = useState<SearchLocation[] | null>(null);
+export const useSearchSuggestion = (params: { query: string }) => {
+    const { userLocation } = useContext(UserLocationContext);
+    const [suggestions, setSuggestions] = useState<SearchSuggestionProperties[] | null>(null);
+
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
 
     const {
         data: suggestionData,
         isLoading: loadingSearch,
         error: errorSearch,
     } = useQuery({
-        queryKey: ["search", params.query],
-        queryFn: () => fetchSearch({ query: params.query }),
+        queryKey: ["searchSuggestion", params.query],
+        queryFn: () =>
+            fetchSearchSuggestion({
+                query: params.query,
+                sessionToken: generateRandomNumber(),
+                lngLat: { lon: longitude, lat: latitude },
+            }),
         enabled: params.query.length > 0,
         staleTime: Infinity,
     });
 
     useEffect(() => {
         if (suggestionData) {
-            setSuggestions(suggestionData);
+            setSuggestions(suggestionData.suggestions);
         }
 
         if (params.query.length === 0) {
@@ -32,4 +45,30 @@ const useSearch = (params: { query: string }) => {
     return { suggestions, loadingSearch, errorSearch };
 };
 
-export default useSearch;
+export const useSearchLocation = () => {
+    const dispatch = useDispatch();
+    const locationId = useSelector(mapNavigationSelectors.locationId);
+
+    const {
+        data: searchData,
+        isLoading: loadingSearchData,
+        error: errorSearchData,
+    } = useQuery({
+        queryKey: ["searchLocation", locationId],
+        queryFn: () =>
+            fetchSearchLocation({
+                mapboxId: locationId,
+                sessionToken: generateRandomNumber(),
+            }),
+        enabled: locationId.length > 0,
+        staleTime: Infinity,
+    });
+
+    useEffect(() => {
+        if (searchData) {
+            dispatch(mapNavigationActions.setLocation(searchData.features[0].properties));
+        }
+    }, [searchData]);
+
+    return { loadingSearchData, errorSearchData };
+};

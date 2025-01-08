@@ -24,8 +24,8 @@ const useNavigation = () => {
     const latitude = userLocation?.coords?.latitude;
 
     const destinationLngLat = {
-        lon: location?.lon,
-        lat: location?.lat,
+        lon: location?.coordinates.longitude,
+        lat: location?.coordinates.latitude,
     };
 
     const {

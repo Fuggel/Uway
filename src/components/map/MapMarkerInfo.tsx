@@ -7,6 +7,7 @@ import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointActions } from "@/store/mapWaypoint";
+import { SearchLocation } from "@/types/ISearch";
 import { generateRandomNumber } from "@/utils/auth-utils";
 
 import IconButton from "../common/IconButton";
@@ -32,17 +33,17 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
         const city = sheetData?.markerProperties.place || "";
         const country = "Deutschland";
 
-        const newLocation = {
-            id: generateRandomNumber(),
-            country,
-            city,
-            lon: sheetData?.markerProperties.lng,
-            lat: sheetData?.markerProperties.lat,
-            formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
-            address_line1: `${street} ${houseNumber}`,
-            address_line2: `${postcode} ${city}, ${country}`,
-            category: "commercial.gas",
-            place_id: sheetData?.markerProperties.id,
+        const newLocation: SearchLocation = {
+            name: `${street} ${houseNumber}`,
+            feature_type: "custom-waypoint",
+            address: `${street} ${houseNumber}`,
+            full_address: `${postcode} ${city}`,
+            place_formatted: `${sheetData?.markerProperties.brand}, ${postcode} ${city}, ${country}`,
+            maki: "fuel",
+            coordinates: {
+                longitude: sheetData?.markerProperties.lng,
+                latitude: sheetData?.markerProperties.lat,
+            },
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));

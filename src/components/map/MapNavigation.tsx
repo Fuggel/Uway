@@ -95,7 +95,7 @@ const MapNavigation = () => {
                         </Text>
                     ) : (
                         <Text type="white" textStyle="header">
-                            {location?.address_line1}
+                            {location?.name}
                         </Text>
                     )}
 

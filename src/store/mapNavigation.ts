@@ -7,6 +7,7 @@ import { RootState } from ".";
 
 interface IMapNavigationState {
     searchQuery: string;
+    locationId: string;
     location: SearchLocation | null;
     tracking: boolean;
     navigationView: boolean;
@@ -19,6 +20,7 @@ interface IMapNavigationState {
 
 const initialMapNavigationState: IMapNavigationState = {
     searchQuery: "",
+    locationId: "",
     location: null,
     tracking: true,
     navigationView: false,
@@ -35,6 +37,9 @@ const mapNavigationSlice = createSlice({
     reducers: {
         setSearchQuery(state, action: PayloadAction<string>) {
             state.searchQuery = action.payload;
+        },
+        setLocationId(state, action: PayloadAction<string>) {
+            state.locationId = action.payload;
         },
         setLocation(state, action: PayloadAction<SearchLocation | null>) {
             state.location = action.payload;
@@ -62,6 +67,8 @@ const mapNavigationSlice = createSlice({
         },
         handleCancelNavigation(state) {
             state.directions = null;
+            state.searchQuery = "";
+            state.locationId = "";
             state.spokenInstruction = null;
             state.location = null;
             state.navigationView = false;
@@ -74,6 +81,7 @@ const mapNavigationSlice = createSlice({
 
 export const mapNavigationSelectors = {
     searchQuery: (state: RootState): string => state.mapNavigation.searchQuery,
+    locationId: (state: RootState): string => state.mapNavigation.locationId,
     location: (state: RootState): SearchLocation | null => state.mapNavigation.location,
     tracking: (state: RootState): boolean => state.mapNavigation.tracking,
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,
