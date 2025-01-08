@@ -69,9 +69,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         <Searchbar
             placeholder="Suche nach Ort"
             onChangeText={handleSearch}
-            value={
-                selectedSuggestion ? `${selectedSuggestion.name} ${selectedSuggestion.place_formatted}` : searchQuery
-            }
+            value={selectedSuggestion ? selectedSuggestion.name : searchQuery}
             speechToText={{ isListening, startListening, stopListening }}
             onClear={() => {
                 location
