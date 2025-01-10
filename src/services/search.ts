@@ -3,15 +3,20 @@ import axios from "axios";
 import { API_URL } from "@/constants/api-constants";
 import { API_KEY } from "@/constants/env-constants";
 import { LonLat } from "@/types/IMap";
+import { SearchSuggestion } from "@/types/ISearch";
 
-export async function fetchSearchSuggestion(params: { query: string; sessionToken: string; lngLat: LonLat }) {
+export async function fetchSearchSuggestion(params: {
+    query: string;
+    sessionToken: string;
+    lngLat: LonLat;
+}): Promise<SearchSuggestion> {
     try {
         const queryParams = new URLSearchParams();
         queryParams.append("q", params.query);
         queryParams.append("session_token", params.sessionToken);
         queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
         queryParams.append("proximity", `${params.lngLat.lon},${params.lngLat.lat}`);
-        queryParams.append("types", "address,street,place,poi,locality,city,district");
+        queryParams.append("types", "address,street,place,poi,locality,city,district,postcode,country");
         queryParams.append("limit", "10");
         queryParams.append("language", "de");
 
@@ -21,7 +26,7 @@ export async function fetchSearchSuggestion(params: { query: string; sessionToke
         return response.data;
     } catch (error) {
         console.log(`Error fetching search suggestions: ${error}`);
-        return [];
+        return { suggestions: [] };
     }
 }
 

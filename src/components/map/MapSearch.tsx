@@ -98,7 +98,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                 <View style={styles.suggestionItem}>
                                     <View style={styles.suggestionPlace}>
                                         <MakiIcon name={suggestion.maki} />
-                                        <View>
+                                        <View style={styles.locationItem}>
                                             <Text style={{ fontWeight: "bold" }}>{suggestion.name}</Text>
                                             {suggestion.place_formatted && (
                                                 <Text type="gray" textStyle="caption">
@@ -140,7 +140,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                     <View style={styles.suggestionItem}>
                                         <View style={styles.suggestionPlace}>
                                             <MaterialCommunityIcons name="history" size={24} color="black" />
-                                            <View>
+                                            <View style={styles.locationItem}>
                                                 <Text style={{ fontWeight: "bold" }}>{location.name}</Text>
                                                 {location.place_formatted && (
                                                     <Text type="gray" textStyle="caption">
@@ -178,6 +178,9 @@ const styles = StyleSheet.create({
         paddingVertical: SIZES.spacing.sm,
         marginTop: 2,
         borderRadius: SIZES.borderRadius.sm,
+    },
+    locationItem: {
+        width: "70%",
     },
     suggestionPlace: {
         flexDirection: "row",
