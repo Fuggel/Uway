@@ -7,7 +7,7 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { SearchSuggestionProperties } from "@/types/ISearch";
-import { generateRandomNumber } from "@/utils/auth-utils";
+import { generateRandomId } from "@/utils/auth-utils";
 
 export const useSearchSuggestion = (params: { query: string }) => {
     const { userLocation } = useContext(UserLocationContext);
@@ -25,7 +25,7 @@ export const useSearchSuggestion = (params: { query: string }) => {
         queryFn: () =>
             fetchSearchSuggestion({
                 query: params.query,
-                sessionToken: generateRandomNumber(),
+                sessionToken: generateRandomId(),
                 lngLat: { lon: longitude, lat: latitude },
             }),
         enabled: params.query.length > 0,
@@ -57,16 +57,21 @@ export const useSearchLocation = () => {
         queryKey: ["searchLocation", locationId],
         queryFn: () =>
             fetchSearchLocation({
-                mapboxId: locationId,
-                sessionToken: generateRandomNumber(),
+                mapboxId: locationId?.mapbox_id || "",
+                sessionToken: generateRandomId(),
             }),
-        enabled: locationId.length > 0,
+        enabled: locationId?.mapbox_id ? locationId?.mapbox_id.length > 0 : false,
         staleTime: Infinity,
     });
 
     useEffect(() => {
         if (searchData) {
-            dispatch(mapNavigationActions.setLocation(searchData.features[0].properties));
+            dispatch(
+                mapNavigationActions.setLocation({
+                    ...searchData.features[0].properties,
+                    default_id: generateRandomId(),
+                })
+            );
         }
     }, [searchData]);
 

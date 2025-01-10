@@ -3,6 +3,7 @@ export interface SearchSuggestion {
 }
 
 export interface SearchSuggestionProperties {
+    default_id: string;
     mapbox_id: string;
     name: string;
     full_address: string;
@@ -13,6 +14,7 @@ export interface SearchSuggestionProperties {
 
 export interface SearchLocation {
     name: string;
+    default_id: string;
     mapbox_id?: string;
     feature_type: string;
     address: string;
@@ -23,4 +25,9 @@ export interface SearchLocation {
         longitude: number;
         latitude: number;
     };
+}
+
+export interface LocationId {
+    default: string;
+    mapbox_id: string | null;
 }

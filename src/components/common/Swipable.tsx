@@ -6,6 +6,7 @@ import { COLORS } from "@/constants/colors-constants";
 
 interface ActionProps {
     text: string;
+    onPress: () => void;
     bgSt?: ViewStyle;
     textSt?: TextStyle;
 }
@@ -29,7 +30,9 @@ const Action = (_: SharedValue<number>, drag: SharedValue<number>, props: Action
 
     return (
         <Reanimated.View style={styleAnimation}>
-            <Text style={{ ...styles.action, ...props.textSt }}>{props.text}</Text>
+            <Text style={{ ...styles.action, ...props.textSt }} onPress={props.onPress}>
+                {props.text}
+            </Text>
         </Reanimated.View>
     );
 };

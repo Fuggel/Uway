@@ -11,7 +11,7 @@ import { useSearchLocation, useSearchSuggestion } from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import store from "@/store";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapSearchSelectors } from "@/store/mapSearch";
+import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { distanceToPointText, readableDistance } from "@/utils/map-utils";
 
 import Searchbar from "../common/Searchbar";
@@ -40,7 +40,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     const longitude = userLocation?.coords.longitude as number;
     const latitude = userLocation?.coords.latitude as number;
 
-    const selectedSuggestion = suggestions?.find((suggestion) => suggestion.mapbox_id === locationId);
+    const selectedSuggestion = suggestions?.find((suggestion) => suggestion.default_id === locationId?.default);
 
     const handleSearch = (val: string) => {
         dispatch(mapNavigationActions.setSearchQuery(val));
@@ -86,7 +86,12 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                             <TouchableOpacity
                                 key={i}
                                 onPress={() => {
-                                    dispatch(mapNavigationActions.setLocationId(suggestion.mapbox_id));
+                                    dispatch(
+                                        mapNavigationActions.setLocationId({
+                                            default: suggestion.default_id,
+                                            mapbox_id: suggestion.mapbox_id,
+                                        })
+                                    );
                                     handleLocationComplete();
                                 }}
                             >
@@ -118,8 +123,14 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             {!searchQuery && (
                 <View style={styles.suggestions}>
                     {recentSearches.length > 0 ? (
-                        recentSearches.map((location, i) => (
-                            <Swipable key={i} actionProps={{ text: "Löschen" }}>
+                        recentSearches.map((location) => (
+                            <Swipable
+                                key={location.default_id}
+                                actionProps={{
+                                    text: "Löschen",
+                                    onPress: () => dispatch(mapSearchActions.deleteRecentSearch(location.default_id)),
+                                }}
+                            >
                                 <TouchableOpacity
                                     onPress={() => {
                                         dispatch(mapNavigationActions.setLocation(location));

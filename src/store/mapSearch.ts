@@ -19,6 +19,9 @@ const mapSearchSlice = createSlice({
         setRecentSearches: (state, action: PayloadAction<SearchLocation[]>) => {
             state.recentSearches = action.payload;
         },
+        deleteRecentSearch: (state, action: PayloadAction<string>) => {
+            state.recentSearches = state.recentSearches.filter((search) => search.default_id !== action.payload);
+        },
     },
 });
 

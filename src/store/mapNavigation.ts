@@ -1,13 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { Direction, RouteProfileType } from "@/types/INavigation";
-import { SearchLocation } from "@/types/ISearch";
+import { LocationId, SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
 
 interface IMapNavigationState {
     searchQuery: string;
-    locationId: string;
+    locationId: LocationId;
     location: SearchLocation | null;
     tracking: boolean;
     navigationView: boolean;
@@ -20,7 +20,7 @@ interface IMapNavigationState {
 
 const initialMapNavigationState: IMapNavigationState = {
     searchQuery: "",
-    locationId: "",
+    locationId: { default: "", mapbox_id: "" },
     location: null,
     tracking: true,
     navigationView: false,
@@ -38,7 +38,7 @@ const mapNavigationSlice = createSlice({
         setSearchQuery(state, action: PayloadAction<string>) {
             state.searchQuery = action.payload;
         },
-        setLocationId(state, action: PayloadAction<string>) {
+        setLocationId(state, action: PayloadAction<LocationId>) {
             state.locationId = action.payload;
         },
         setLocation(state, action: PayloadAction<SearchLocation | null>) {
@@ -68,7 +68,7 @@ const mapNavigationSlice = createSlice({
         handleCancelNavigation(state) {
             state.directions = null;
             state.searchQuery = "";
-            state.locationId = "";
+            state.locationId = { default: "", mapbox_id: "" };
             state.spokenInstruction = null;
             state.location = null;
             state.navigationView = false;
@@ -81,7 +81,7 @@ const mapNavigationSlice = createSlice({
 
 export const mapNavigationSelectors = {
     searchQuery: (state: RootState): string => state.mapNavigation.searchQuery,
-    locationId: (state: RootState): string => state.mapNavigation.locationId,
+    locationId: (state: RootState): LocationId => state.mapNavigation.locationId,
     location: (state: RootState): SearchLocation | null => state.mapNavigation.location,
     tracking: (state: RootState): boolean => state.mapNavigation.tracking,
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,

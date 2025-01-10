@@ -53,7 +53,13 @@ const Map = () => {
                 mapSearchActions.setRecentSearches(
                     [
                         location,
-                        ...recentSearches.filter((loc) => loc.place_formatted !== location.place_formatted),
+                        ...recentSearches.filter((loc) => {
+                            if (loc.mapbox_id) {
+                                return loc.mapbox_id !== location.mapbox_id;
+                            }
+
+                            return loc.default_id !== location.default_id;
+                        }),
                     ].slice(0, 5)
                 )
             );

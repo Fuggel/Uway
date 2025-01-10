@@ -8,7 +8,7 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointActions } from "@/store/mapWaypoint";
 import { SearchLocation } from "@/types/ISearch";
-import { generateRandomNumber } from "@/utils/auth-utils";
+import { generateRandomId } from "@/utils/auth-utils";
 
 import IconButton from "../common/IconButton";
 import Text from "../common/Text";
@@ -34,6 +34,7 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
         const country = "Deutschland";
 
         const newLocation: SearchLocation = {
+            default_id: generateRandomId(),
             name: `${street} ${houseNumber}`,
             feature_type: "custom-waypoint",
             address: `${street} ${houseNumber}`,
