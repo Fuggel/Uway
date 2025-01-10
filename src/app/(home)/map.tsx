@@ -27,7 +27,7 @@ import { determineTheme, invertTheme } from "@/utils/theme-utils";
 import Loading from "@/components/common/Loading";
 import Layers from "@/components/layer/Layers";
 import MapAlerts from "@/components/map/MapAlerts";
-import MapBottomSheet from "@/components/map/MapBottomSheet";
+import MapBottomSheet from "@/components/map/MapBottomSheet/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
 

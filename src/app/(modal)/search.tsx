@@ -5,7 +5,7 @@ import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { SIZES } from "@/constants/size-constants";
 
 import Link from "@/components/common/Link";
-import MapSearch from "@/components/map/MapSearch";
+import MapSearch from "@/components/map/MapSearch/MapSearch";
 
 const Modal = () => {
     const router = useRouter();

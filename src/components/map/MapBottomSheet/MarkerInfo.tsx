@@ -10,10 +10,10 @@ import { mapWaypointActions } from "@/store/mapWaypoint";
 import { SearchLocation } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
 
-import IconButton from "../common/IconButton";
-import Text from "../common/Text";
+import IconButton from "@/components/common/IconButton";
+import Text from "@/components/common/Text";
 
-interface MapMarkerInfoProps {
+interface MarkerInfoProps {
     title: string;
     data: { label: string; value: string | number | React.ReactNode }[] | null;
     gasStation?: {
@@ -21,7 +21,7 @@ interface MapMarkerInfoProps {
     };
 }
 
-const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
+const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
     const dispatch = useDispatch();
     const directions = useSelector(mapNavigationSelectors.directions);
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
@@ -129,4 +129,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MapMarkerInfo;
+export default MarkerInfo;

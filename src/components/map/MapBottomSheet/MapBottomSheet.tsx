@@ -5,9 +5,9 @@ import { GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
 import { SheetType } from "@/types/ISheet";
 
-import BottomSheetComponent from "../common/BottomSheet";
-import MapMarkerInfo from "./MapMarkerInfo";
-import MapWaypointInfo from "./MapWaypointInfo";
+import BottomSheetComponent from "../../common/BottomSheet";
+import MarkerInfo from "./MarkerInfo";
+import WaypointInfo from "./WaypointInfo";
 
 interface MapBottomSheetProps {
     onClose: () => void;
@@ -32,10 +32,10 @@ const MapBottomSheet = ({ onClose, markerProps, waypointProps }: MapBottomSheetP
     return (
         <BottomSheetComponent onClose={onClose} height={sheetData.type === SheetType.WAYPOINT ? "50%" : undefined}>
             {sheetData.type === SheetType.MARKER && markerProps && (
-                <MapMarkerInfo title={markerProps.title} data={markerProps.data} gasStation={markerProps.gasStation} />
+                <MarkerInfo title={markerProps.title} data={markerProps.data} gasStation={markerProps.gasStation} />
             )}
             {sheetData.type === SheetType.WAYPOINT && waypointProps && (
-                <MapWaypointInfo data={waypointProps.data} onSelect={waypointProps.onSelect} />
+                <WaypointInfo data={waypointProps.data} onSelect={waypointProps.onSelect} />
             )}
         </BottomSheetComponent>
     );

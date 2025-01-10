@@ -5,16 +5,16 @@ import { SIZES } from "@/constants/size-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
 
-import IconButton from "../common/IconButton";
-import Text from "../common/Text";
-import PriceDisplay from "../ui/PriceDisplay";
+import IconButton from "@/components/common/IconButton";
+import Text from "@/components/common/Text";
+import PriceDisplay from "@/components/ui/PriceDisplay";
 
-interface MapWaypointInfoProps {
+interface WaypointInfoProps {
     data: GasStation[] | undefined;
     onSelect: (coords: LonLat) => void;
 }
 
-const MapWaypointInfo = ({ data, onSelect }: MapWaypointInfoProps) => {
+const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
     const gasStationData = (gasStationProperties: GasStation | undefined) => {
         const street = gasStationProperties?.street;
         const houseNumber = gasStationProperties?.houseNumber;
@@ -181,4 +181,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MapWaypointInfo;
+export default WaypointInfo;
