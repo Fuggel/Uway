@@ -15,6 +15,7 @@ import { mapSearchSelectors } from "@/store/mapSearch";
 import { distanceToPointText, readableDistance } from "@/utils/map-utils";
 
 import Searchbar from "../common/Searchbar";
+import Swipable from "../common/Swipable";
 import Text from "../common/Text";
 import MakiIcon from "../ui/MakiIcon";
 import NoResults from "../ui/NoResults";
@@ -84,7 +85,6 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                         suggestions.map((suggestion, i) => (
                             <TouchableOpacity
                                 key={i}
-                                style={styles.scrollContainer}
                                 onPress={() => {
                                     dispatch(mapNavigationActions.setLocationId(suggestion.mapbox_id));
                                     handleLocationComplete();
@@ -106,7 +106,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                                         {readableDistance(suggestion.distance)}
                                     </Text>
                                 </View>
-                                <Divider style={styles.divider} />
+                                <Divider />
                             </TouchableOpacity>
                         ))
                     ) : (
@@ -119,36 +119,39 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                 <View style={styles.suggestions}>
                     {recentSearches.length > 0 ? (
                         recentSearches.map((location, i) => (
-                            <TouchableOpacity
-                                key={i}
-                                style={styles.scrollContainer}
-                                onPress={() => {
-                                    dispatch(mapNavigationActions.setLocation(location));
-                                    handleLocationComplete();
-                                }}
-                            >
-                                <View style={styles.suggestionItem}>
-                                    <View style={styles.suggestionPlace}>
-                                        <MaterialCommunityIcons name="history" size={24} color="black" />
-                                        <View>
-                                            <Text style={{ fontWeight: "bold" }}>{location.name}</Text>
-                                            {location.place_formatted && (
-                                                <Text type="gray" textStyle="caption">
-                                                    {location.place_formatted}
-                                                </Text>
-                                            )}
+                            <Swipable key={i} actionProps={{ text: "Löschen" }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        dispatch(mapNavigationActions.setLocation(location));
+                                        handleLocationComplete();
+                                    }}
+                                >
+                                    <View style={styles.suggestionItem}>
+                                        <View style={styles.suggestionPlace}>
+                                            <MaterialCommunityIcons name="history" size={24} color="black" />
+                                            <View>
+                                                <Text style={{ fontWeight: "bold" }}>{location.name}</Text>
+                                                {location.place_formatted && (
+                                                    <Text type="gray" textStyle="caption">
+                                                        {location.place_formatted}
+                                                    </Text>
+                                                )}
+                                            </View>
                                         </View>
-                                    </View>
 
-                                    <Text type="gray" textStyle="caption">
-                                        {distanceToPointText({
-                                            pos1: [longitude, latitude],
-                                            pos2: [location?.coordinates?.longitude, location?.coordinates?.latitude],
-                                        })}
-                                    </Text>
-                                </View>
-                                <Divider style={styles.divider} />
-                            </TouchableOpacity>
+                                        <Text type="gray" textStyle="caption">
+                                            {distanceToPointText({
+                                                pos1: [longitude, latitude],
+                                                pos2: [
+                                                    location?.coordinates?.longitude,
+                                                    location?.coordinates?.latitude,
+                                                ],
+                                            })}
+                                        </Text>
+                                    </View>
+                                    <Divider />
+                                </TouchableOpacity>
+                            </Swipable>
                         ))
                     ) : (
                         <NoResults text="Keine letzten Suchen." />
@@ -161,13 +164,13 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
 
 const styles = StyleSheet.create({
     suggestions: {
-        padding: SIZES.spacing.sm,
+        paddingVertical: SIZES.spacing.sm,
         marginTop: 2,
         borderRadius: SIZES.borderRadius.sm,
     },
     suggestionPlace: {
         flexDirection: "row",
-        maxWidth: "75%",
+        alignItems: "center",
         gap: SIZES.spacing.xs,
     },
     suggestionItem: {
@@ -175,12 +178,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         flexWrap: "wrap",
-    },
-    scrollContainer: {
-        marginVertical: 4,
-    },
-    divider: {
-        marginTop: SIZES.spacing.xs,
+        paddingVertical: SIZES.spacing.xs,
+        paddingRight: SIZES.spacing.md,
+        paddingLeft: SIZES.spacing.sm,
     },
 });
 

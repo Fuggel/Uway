@@ -2,6 +2,7 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import Purchases from "react-native-purchases";
 import { Provider } from "react-redux";
@@ -68,27 +69,29 @@ export default function RootLayout() {
                             <MapInstructionContextProvider>
                                 <BottomSheetContextProvider>
                                     <MapFeatureContextProvider>
-                                        <Stack>
-                                            <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
-                                            <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
-                                            <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
-                                            <Stack.Screen
-                                                name="(modal)/search"
-                                                options={{ presentation: "modal", headerShown: false }}
-                                            />
-                                            <Stack.Screen
-                                                name="settings/index"
-                                                options={{ title: "Einstellungen", headerBackTitle: "Map" }}
-                                            />
-                                            <Stack.Screen
-                                                name="settings/speed-camera/index"
-                                                options={{ title: "Blitzer" }}
-                                            />
-                                            <Stack.Screen
-                                                name="settings/incidents/index"
-                                                options={{ title: "Verkehrsdaten" }}
-                                            />
-                                        </Stack>
+                                        <GestureHandlerRootView>
+                                            <Stack>
+                                                <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
+                                                <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
+                                                <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
+                                                <Stack.Screen
+                                                    name="(modal)/search"
+                                                    options={{ presentation: "modal", headerShown: false }}
+                                                />
+                                                <Stack.Screen
+                                                    name="settings/index"
+                                                    options={{ title: "Einstellungen", headerBackTitle: "Map" }}
+                                                />
+                                                <Stack.Screen
+                                                    name="settings/speed-camera/index"
+                                                    options={{ title: "Blitzer" }}
+                                                />
+                                                <Stack.Screen
+                                                    name="settings/incidents/index"
+                                                    options={{ title: "Verkehrsdaten" }}
+                                                />
+                                            </Stack>
+                                        </GestureHandlerRootView>
                                     </MapFeatureContextProvider>
                                 </BottomSheetContextProvider>
                             </MapInstructionContextProvider>

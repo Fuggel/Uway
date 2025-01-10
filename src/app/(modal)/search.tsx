@@ -27,7 +27,6 @@ const Modal = () => {
 const styles = StyleSheet.create({
     container: {
         marginTop: SIZES.spacing.xl,
-        paddingHorizontal: SIZES.spacing.xs,
         height: "100%",
     },
     closeButton: {
