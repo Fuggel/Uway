@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { SearchLocation } from "@/types/ISearch";
+import { SavedSearchLocation, SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
 
@@ -21,7 +21,7 @@ const mapSearchSlice = createSlice({
         setRecentSearches: (state, action: PayloadAction<SearchLocation[]>) => {
             state.recentSearches = action.payload;
         },
-        setSavedSearches: (state, action: PayloadAction<SearchLocation[]>) => {
+        setSavedSearches: (state, action: PayloadAction<SavedSearchLocation[]>) => {
             state.savedSearches = action.payload;
         },
         deleteRecentSearch: (state, action: PayloadAction<string>) => {

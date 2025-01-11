@@ -79,6 +79,10 @@ export default function RootLayout() {
                                                     options={{ presentation: "modal", headerShown: false }}
                                                 />
                                                 <Stack.Screen
+                                                    name="(modal)/save-search"
+                                                    options={{ presentation: "modal", headerShown: false }}
+                                                />
+                                                <Stack.Screen
                                                     name="settings/index"
                                                     options={{ title: "Einstellungen", headerBackTitle: "Map" }}
                                                 />

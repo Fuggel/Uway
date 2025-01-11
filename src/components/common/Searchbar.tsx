@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import SearchBar from "react-native-platform-searchbar";
 

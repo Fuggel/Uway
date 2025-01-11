@@ -33,7 +33,7 @@ const Input = ({ value, onChange, type, onBlur, placeholder }: InputProps) => {
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        width: 60,
+        width: "100%",
         borderWidth: 1,
         padding: 10,
         textAlign: "center",

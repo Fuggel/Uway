@@ -1,3 +1,4 @@
+import { usePathname } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -5,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
+import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { SearchSuggestionProperties } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
@@ -47,6 +49,7 @@ export const useSearchSuggestion = (params: { query: string }) => {
 
 export const useSearchLocation = () => {
     const dispatch = useDispatch();
+    const pathname = usePathname();
     const locationId = useSelector(mapNavigationSelectors.locationId);
 
     const {
@@ -66,12 +69,11 @@ export const useSearchLocation = () => {
 
     useEffect(() => {
         if (searchData) {
-            dispatch(
-                mapNavigationActions.setLocation({
-                    ...searchData.features[0].properties,
-                    default_id: generateRandomId(),
-                })
-            );
+            const location = { ...searchData.features[0].properties, default_id: generateRandomId() };
+
+            pathname === "/save-search"
+                ? dispatch(mapLayoutsActions.setOpenSearchModal(true))
+                : dispatch(mapNavigationActions.setLocation(location));
         }
     }, [searchData]);
 

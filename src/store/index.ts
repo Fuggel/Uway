@@ -5,6 +5,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import mapGasStationReduce from "./mapGasStation";
 import mapIncidentReduce from "./mapIncident";
+import mapLayoutsReduce from "./mapLayouts";
 import mapNavigationReduce from "./mapNavigation";
 import mapSearchReduce from "./mapSearch";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
@@ -26,6 +27,7 @@ const reducer = combineReducers({
     mapIncident: mapIncidentReduce,
     mapTextToSpeech: mapTextToSpeechReduce,
     mapSearch: mapSearchReduce,
+    mapLayouts: mapLayoutsReduce,
     mapWaypoint: mapWaypointReduce,
 });
 

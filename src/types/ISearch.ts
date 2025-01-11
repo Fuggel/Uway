@@ -27,6 +27,10 @@ export interface SearchLocation {
     };
 }
 
+export interface SavedSearchLocation extends SearchLocation {
+    title: string;
+}
+
 export interface LocationId {
     default: string;
     mapbox_id: string | null;
