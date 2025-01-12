@@ -10,7 +10,7 @@ import store from "@/store";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
-import { SavedSearchLocation } from "@/types/ISearch";
+import { SaveSearchError, SavedSearchLocation } from "@/types/ISearch";
 
 import Searchbar from "../../common/Searchbar";
 import RecentSearches from "./RecentSearches";
@@ -31,6 +31,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     const pathname = usePathname();
     const openSearchModal = useSelector(mapLayoutsSelectors.openSearchModal);
     const [savedSearchName, setSavedSearchName] = useState("");
+    const [saveSearchError, setSaveSearchError] = useState<SaveSearchError>(SaveSearchError.NONE);
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
     const locationId = useSelector(mapNavigationSelectors.locationId);
@@ -42,7 +43,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
 
     useSearchLocation();
 
-    const selectedSuggestion = suggestions?.find((suggestion) => suggestion.default_id === locationId?.default);
+    const selectedSuggestion = suggestions?.find((suggestion) => suggestion.mapbox_id === locationId?.mapbox_id);
     const isSaveSearchPath = pathname === "/save-search";
 
     const handleSearch = (val: string) => {
@@ -64,6 +65,14 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     };
 
     const handleSaveSearch = () => {
+        if (
+            savedSearches.some(
+                (search) => search.title === savedSearchName || search.mapbox_id === saveSearch.mapbox_id
+            )
+        ) {
+            return setSaveSearchError(SaveSearchError.DUPLICATE);
+        }
+
         const saveValue = { ...saveSearch, title: savedSearchName };
 
         dispatch(mapSearchActions.setSaveSearch(saveValue));
@@ -75,9 +84,12 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     };
 
     const handleDismissModal = () => {
-        dispatch(mapLayoutsActions.setOpenSearchModal(false));
         dispatch(mapSearchActions.setSaveSearch({} as SavedSearchLocation));
         dispatch(mapNavigationActions.setSearchQuery(""));
+        dispatch(mapLayoutsActions.setOpenSearchModal(false));
+        dispatch(mapNavigationActions.setLocationId({ default: "", mapbox_id: "", saveSearch: false }));
+
+        setSaveSearchError(SaveSearchError.NONE);
     };
 
     useEffect(() => {
@@ -111,6 +123,12 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                 <View style={{ gap: SIZES.spacing.md }}>
                     <Text textStyle="header">Name</Text>
                     <Input value={savedSearchName} type="default" onChange={(val) => setSavedSearchName(val)} />
+
+                    {saveSearchError === SaveSearchError.DUPLICATE && (
+                        <Text type="error">
+                            Es gibt bereits einen gespeicherten Ort mit diesem Namen oder dieser Adresse.
+                        </Text>
+                    )}
                 </View>
             </Modal>
         </Searchbar>

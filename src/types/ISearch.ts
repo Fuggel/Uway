@@ -34,4 +34,10 @@ export interface SavedSearchLocation extends SearchLocation {
 export interface LocationId {
     default: string;
     mapbox_id: string | null;
+    saveSearch?: boolean;
+}
+
+export enum SaveSearchError {
+    DUPLICATE = "DUPLICATE",
+    NONE = "NONE",
 }

@@ -34,6 +34,7 @@ const SavedSearches = ({ handleLocationComplete }: SavedSearchesProps) => {
                             key={search.mapbox_id}
                             style={{ ...styles.iconButton, ...styles.savedButton }}
                             onPress={() => handleLocationSearch(search)}
+                            onLongPress={() => console.log("Long Pressed")}
                         >
                             <Text type="gray">{search.title}</Text>
                         </Pressable>

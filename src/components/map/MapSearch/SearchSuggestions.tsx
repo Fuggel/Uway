@@ -1,3 +1,4 @@
+import { usePathname } from "expo-router";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { useDispatch } from "react-redux";
@@ -18,6 +19,7 @@ interface SearchSuggestionsProps {
 
 const SearchSuggestions = ({ suggestions, handleLocationComplete }: SearchSuggestionsProps) => {
     const dispatch = useDispatch();
+    const pathname = usePathname();
 
     return (
         <ScrollView style={styles.suggestions}>
@@ -30,6 +32,7 @@ const SearchSuggestions = ({ suggestions, handleLocationComplete }: SearchSugges
                                 mapNavigationActions.setLocationId({
                                     default: suggestion.default_id,
                                     mapbox_id: suggestion.mapbox_id,
+                                    saveSearch: pathname === "/save-search",
                                 })
                             );
                             handleLocationComplete();

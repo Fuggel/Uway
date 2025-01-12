@@ -75,7 +75,7 @@ export const useSearchLocation = () => {
             if (pathname === "/save-search") {
                 dispatch(mapLayoutsActions.setOpenSearchModal(true));
                 dispatch(mapSearchActions.setSaveSearch(location));
-            } else {
+            } else if (!locationId.saveSearch) {
                 dispatch(mapNavigationActions.setLocation(location));
             }
         }
