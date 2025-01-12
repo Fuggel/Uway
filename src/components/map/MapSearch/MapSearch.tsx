@@ -1,4 +1,4 @@
-import { usePathname } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,8 @@ import useSpeechToText from "@/hooks/useSpeechToText";
 import store from "@/store";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
+import { SavedSearchLocation } from "@/types/ISearch";
 
 import Searchbar from "../../common/Searchbar";
 import RecentSearches from "./RecentSearches";
@@ -25,12 +27,15 @@ interface MapSearchProps {
 
 const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
+    const route = useRouter();
     const pathname = usePathname();
     const openSearchModal = useSelector(mapLayoutsSelectors.openSearchModal);
     const [savedSearchName, setSavedSearchName] = useState("");
     const searchQuery = useSelector(mapNavigationSelectors.searchQuery);
     const location = useSelector(mapNavigationSelectors.location);
     const locationId = useSelector(mapNavigationSelectors.locationId);
+    const saveSearch = useSelector(mapSearchSelectors.saveSearch);
+    const savedSearches = useSelector(mapSearchSelectors.savedSearches);
     const { text, isListening, startListening, stopListening } = useSpeechToText();
     const { suggestions } = useSearchSuggestion({ query: searchQuery });
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -58,6 +63,23 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         });
     };
 
+    const handleSaveSearch = () => {
+        const saveValue = { ...saveSearch, title: savedSearchName };
+
+        dispatch(mapSearchActions.setSaveSearch(saveValue));
+        dispatch(mapSearchActions.setSavedSearches([...savedSearches, saveValue]));
+
+        handleDismissModal();
+
+        route.back();
+    };
+
+    const handleDismissModal = () => {
+        dispatch(mapLayoutsActions.setOpenSearchModal(false));
+        dispatch(mapSearchActions.setSaveSearch({} as SavedSearchLocation));
+        dispatch(mapNavigationActions.setSearchQuery(""));
+    };
+
     useEffect(() => {
         if (text) {
             dispatch(mapNavigationActions.setSearchQuery(text));
@@ -77,7 +99,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
                     : dispatch(mapNavigationActions.setSearchQuery(""));
             }}
         >
-            {!isSaveSearchPath && <SavedSearches />}
+            {!isSaveSearchPath && <SavedSearches handleLocationComplete={handleLocationComplete} />}
 
             {showSuggestions && searchQuery && (
                 <SearchSuggestions suggestions={suggestions} handleLocationComplete={handleLocationComplete} />
@@ -85,11 +107,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
 
             {!searchQuery && <RecentSearches handleLocationComplete={handleLocationComplete} />}
 
-            <Modal
-                visible={openSearchModal}
-                onSave={() => {}}
-                onDismiss={() => dispatch(mapLayoutsActions.setOpenSearchModal(false))}
-            >
+            <Modal visible={openSearchModal} onSave={handleSaveSearch} onDismiss={handleDismissModal}>
                 <View style={{ gap: SIZES.spacing.md }}>
                     <Text textStyle="header">Name</Text>
                     <Input value={savedSearchName} type="default" onChange={(val) => setSavedSearchName(val)} />

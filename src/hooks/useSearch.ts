@@ -8,6 +8,7 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
 import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapSearchActions } from "@/store/mapSearch";
 import { SearchSuggestionProperties } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
 
@@ -71,9 +72,12 @@ export const useSearchLocation = () => {
         if (searchData) {
             const location = { ...searchData.features[0].properties, default_id: generateRandomId() };
 
-            pathname === "/save-search"
-                ? dispatch(mapLayoutsActions.setOpenSearchModal(true))
-                : dispatch(mapNavigationActions.setLocation(location));
+            if (pathname === "/save-search") {
+                dispatch(mapLayoutsActions.setOpenSearchModal(true));
+                dispatch(mapSearchActions.setSaveSearch(location));
+            } else {
+                dispatch(mapNavigationActions.setLocation(location));
+            }
         }
     }, [searchData]);
 

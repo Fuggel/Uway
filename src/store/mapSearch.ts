@@ -6,11 +6,13 @@ import { RootState } from ".";
 
 interface IMapSearchState {
     recentSearches: SearchLocation[];
-    savedSearches: SearchLocation[];
+    saveSearch: SavedSearchLocation;
+    savedSearches: SavedSearchLocation[];
 }
 
 const initialMapSearchState: IMapSearchState = {
     recentSearches: [],
+    saveSearch: {} as SavedSearchLocation,
     savedSearches: [],
 };
 
@@ -20,6 +22,9 @@ const mapSearchSlice = createSlice({
     reducers: {
         setRecentSearches: (state, action: PayloadAction<SearchLocation[]>) => {
             state.recentSearches = action.payload;
+        },
+        setSaveSearch: (state, action: PayloadAction<SavedSearchLocation>) => {
+            state.saveSearch = action.payload;
         },
         setSavedSearches: (state, action: PayloadAction<SavedSearchLocation[]>) => {
             state.savedSearches = action.payload;
@@ -32,7 +37,8 @@ const mapSearchSlice = createSlice({
 
 export const mapSearchSelectors = {
     recentSearches: (state: RootState): SearchLocation[] => state.mapSearch.recentSearches,
-    savedSearches: (state: RootState): SearchLocation[] => state.mapSearch.savedSearches,
+    saveSearch: (state: RootState): SavedSearchLocation => state.mapSearch.saveSearch,
+    savedSearches: (state: RootState): SavedSearchLocation[] => state.mapSearch.savedSearches,
 };
 
 export const mapSearchActions = mapSearchSlice.actions;

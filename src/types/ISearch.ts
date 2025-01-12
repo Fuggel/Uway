@@ -28,7 +28,7 @@ export interface SearchLocation {
 }
 
 export interface SavedSearchLocation extends SearchLocation {
-    title: string;
+    title?: string;
 }
 
 export interface LocationId {

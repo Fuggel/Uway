@@ -32,9 +32,13 @@ const RecentSearches = ({ handleLocationComplete }: RecentSearchesProps) => {
     const latitude = userLocation?.coords.latitude as number;
 
     const handleLocation = (location: SearchLocation) => {
-        pathname === "/save-search"
-            ? dispatch(mapLayoutsActions.setOpenSearchModal(true))
-            : dispatch(mapNavigationActions.setLocation(location));
+        if (pathname === "/save-search") {
+            dispatch(mapLayoutsActions.setOpenSearchModal(true));
+            dispatch(mapSearchActions.setSaveSearch(location));
+        } else {
+            dispatch(mapNavigationActions.setLocation(location));
+        }
+
         handleLocationComplete();
     };
 
