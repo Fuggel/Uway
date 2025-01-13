@@ -1,4 +1,4 @@
-import { usePathname } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Divider } from "react-native-paper";
@@ -24,15 +24,21 @@ interface RecentSearchesProps {
 
 const RecentSearches = ({ handleLocationComplete }: RecentSearchesProps) => {
     const dispatch = useDispatch();
+    const router = useRouter();
     const pathname = usePathname();
     const { userLocation } = useContext(UserLocationContext);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
+    const editingSearch = useSelector(mapSearchSelectors.startEditingSearch);
 
     const longitude = userLocation?.coords.longitude as number;
     const latitude = userLocation?.coords.latitude as number;
 
     const handleLocation = (location: SearchLocation) => {
-        if (pathname === "/save-search") {
+        if (pathname === "/save-search" && editingSearch) {
+            dispatch(mapSearchActions.updateSavedSearch({ ...location, title: editingSearch.title }));
+            dispatch(mapNavigationActions.setSearchQuery(""));
+            router.back();
+        } else if (pathname === "/save-search") {
             dispatch(mapLayoutsActions.setOpenSearchModal(true));
             dispatch(mapSearchActions.setSaveSearch(location));
         } else {

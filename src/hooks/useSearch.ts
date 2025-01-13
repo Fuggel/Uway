@@ -1,4 +1,4 @@
-import { usePathname } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -8,7 +8,7 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
 import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapSearchActions } from "@/store/mapSearch";
+import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { SearchSuggestionProperties } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
 
@@ -50,8 +50,10 @@ export const useSearchSuggestion = (params: { query: string }) => {
 
 export const useSearchLocation = () => {
     const dispatch = useDispatch();
+    const router = useRouter();
     const pathname = usePathname();
     const locationId = useSelector(mapNavigationSelectors.locationId);
+    const editingSearch = useSelector(mapSearchSelectors.startEditingSearch);
 
     const {
         data: searchData,
@@ -72,7 +74,11 @@ export const useSearchLocation = () => {
         if (searchData) {
             const location = { ...searchData.features[0].properties, default_id: generateRandomId() };
 
-            if (pathname === "/save-search") {
+            if (pathname === "/save-search" && editingSearch) {
+                dispatch(mapSearchActions.updateSavedSearch({ ...location, title: editingSearch.title }));
+                dispatch(mapNavigationActions.setSearchQuery(""));
+                router.back();
+            } else if (pathname === "/save-search") {
                 dispatch(mapLayoutsActions.setOpenSearchModal(true));
                 dispatch(mapSearchActions.setSaveSearch(location));
             } else if (!locationId.saveSearch) {
