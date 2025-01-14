@@ -6,10 +6,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
+import store from "@/store";
 import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
-import { SearchSuggestionProperties } from "@/types/ISearch";
+import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
 
 export const useSearchSuggestion = (params: { query: string }) => {
@@ -72,16 +73,37 @@ export const useSearchLocation = () => {
 
     useEffect(() => {
         if (searchData) {
-            const location = { ...searchData.features[0].properties, default_id: generateRandomId() };
+            const location = {
+                ...searchData.features[0].properties,
+                default_id: generateRandomId(),
+            } as unknown as SearchLocation;
 
-            if (pathname === "/save-search" && editingSearch) {
+            const categoryFeatures = searchData.features.filter((feature) => feature.properties.feature_type === "poi");
+
+            if (categoryFeatures.length > 0) {
+                dispatch(
+                    mapNavigationActions.setCategoryLocation({
+                        type: searchData.type,
+                        features: categoryFeatures,
+                    })
+                );
+                dispatch(mapNavigationActions.setSearchQuery(""));
+
+                const unsubscribe = store.subscribe(() => {
+                    const selectedLocation = store.getState().mapNavigation.categoryLocation;
+                    if (selectedLocation) {
+                        unsubscribe();
+                        router.back();
+                    }
+                });
+            } else if (pathname === "/save-search" && editingSearch && categoryFeatures.length === 0) {
                 dispatch(mapSearchActions.updateSavedSearch({ ...location, title: editingSearch.title }));
                 dispatch(mapNavigationActions.setSearchQuery(""));
                 router.back();
             } else if (pathname === "/save-search") {
                 dispatch(mapLayoutsActions.setOpenSearchModal(true));
                 dispatch(mapSearchActions.setSaveSearch(location));
-            } else if (!locationId.saveSearch) {
+            } else if (!locationId.saveSearch && categoryFeatures.length === 0) {
                 dispatch(mapNavigationActions.setLocation(location));
             }
         }

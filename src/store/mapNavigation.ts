@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { Direction, RouteProfileType } from "@/types/INavigation";
-import { LocationId, SearchLocation } from "@/types/ISearch";
+import { LocationId, SearchFeatureCollection, SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
 
@@ -9,6 +9,7 @@ interface IMapNavigationState {
     searchQuery: string;
     locationId: LocationId;
     location: SearchLocation | null;
+    categoryLocation: SearchFeatureCollection | null;
     tracking: boolean;
     navigationView: boolean;
     isNavigationSelecting: boolean;
@@ -22,6 +23,7 @@ const initialMapNavigationState: IMapNavigationState = {
     searchQuery: "",
     locationId: { default: "", mapbox_id: "" },
     location: null,
+    categoryLocation: null,
     tracking: true,
     navigationView: false,
     isNavigationSelecting: false,
@@ -43,6 +45,9 @@ const mapNavigationSlice = createSlice({
         },
         setLocation(state, action: PayloadAction<SearchLocation | null>) {
             state.location = action.payload;
+        },
+        setCategoryLocation(state, action: PayloadAction<SearchFeatureCollection | null>) {
+            state.categoryLocation = action.payload;
         },
         setTracking(state, action: PayloadAction<boolean>) {
             state.tracking = action.payload;
@@ -83,6 +88,7 @@ export const mapNavigationSelectors = {
     searchQuery: (state: RootState): string => state.mapNavigation.searchQuery,
     locationId: (state: RootState): LocationId => state.mapNavigation.locationId,
     location: (state: RootState): SearchLocation | null => state.mapNavigation.location,
+    categoryLocation: (state: RootState): SearchFeatureCollection | null => state.mapNavigation.categoryLocation,
     tracking: (state: RootState): boolean => state.mapNavigation.tracking,
     navigationView: (state: RootState): boolean => state.mapNavigation.navigationView,
     isNavigationSelecting: (state: RootState): boolean => state.mapNavigation.isNavigationSelecting,

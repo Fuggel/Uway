@@ -21,6 +21,7 @@ const Layers = () => {
     const { openSheet } = useContext(BottomSheetContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
+    const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
 
     return (
         <>
@@ -65,6 +66,30 @@ const Layers = () => {
                         />
                     </ShapeSource>
                 </>
+            )}
+
+            {categoryLocation && (
+                <ShapeSource
+                    id="category-source"
+                    shape={categoryLocation as GeoJSON.FeatureCollection}
+                    onPress={(e) => {
+                        openSheet<GasStation>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.GAS_STATION,
+                            markerProperties: e.features[0].properties as GasStation,
+                        });
+                    }}
+                >
+                    <SymbolLayer
+                        id={LayerId.CATEGORY_LOCATION}
+                        style={{
+                            iconImage: "route-destination",
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.5, 20, 0.7],
+                            iconAllowOverlap: true,
+                        }}
+                        aboveLayerID={LayerId.INVISIBLE}
+                    />
+                </ShapeSource>
             )}
 
             {gasStations && (

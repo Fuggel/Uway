@@ -35,6 +35,7 @@ import Car from "../../assets/images/map-icons/maki/car.svg";
 import Casino from "../../assets/images/map-icons/maki/casino.svg";
 import CastleJP from "../../assets/images/map-icons/maki/castle-JP.svg";
 import Castle from "../../assets/images/map-icons/maki/castle.svg";
+import Category from "../../assets/images/map-icons/maki/category.svg";
 import Caution from "../../assets/images/map-icons/maki/caution.svg";
 import CemeteryJP from "../../assets/images/map-icons/maki/cemetery-JP.svg";
 import Cemetery from "../../assets/images/map-icons/maki/cemetery.svg";
@@ -215,10 +216,15 @@ import Zoo from "../../assets/images/map-icons/maki/zoo.svg";
 
 interface SvgIconProps {
     name: string;
+    type: string;
 }
 
-const SvgIcon = ({ name }: SvgIconProps) => {
+const SvgIcon = ({ name, type }: SvgIconProps) => {
     const getMakiIcon = () => {
+        if (type === "category") {
+            return <Category width={24} height={24} />;
+        }
+
         switch (name) {
             case "aerialway":
                 return <Aerialway width={24} height={24} />;

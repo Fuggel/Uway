@@ -1,3 +1,5 @@
+import { Geometry } from "@turf/helpers";
+
 export interface SearchSuggestion {
     suggestions: SearchSuggestionProperties[];
 }
@@ -10,6 +12,7 @@ export interface SearchSuggestionProperties {
     place_formatted: string;
     distance: number;
     maki: string;
+    feature_type: string;
 }
 
 export interface SearchLocation {
@@ -29,6 +32,17 @@ export interface SearchLocation {
 
 export interface SavedSearchLocation extends SearchLocation {
     title?: string;
+}
+
+export interface SearchFeatureCollection {
+    type: string;
+    features: SearchFeature[];
+}
+
+export interface SearchFeature {
+    type: string;
+    geometry: Geometry;
+    properties: SearchSuggestionProperties;
 }
 
 export interface LocationId {

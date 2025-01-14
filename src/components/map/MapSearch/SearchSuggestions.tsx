@@ -21,37 +21,39 @@ const SearchSuggestions = ({ suggestions, handleLocationComplete }: SearchSugges
     const dispatch = useDispatch();
     const pathname = usePathname();
 
+    const handleLocation = (suggestion: SearchSuggestionProperties) => {
+        dispatch(
+            mapNavigationActions.setLocationId({
+                default: suggestion.default_id,
+                mapbox_id: suggestion.mapbox_id,
+                saveSearch: pathname === "/save-search",
+            })
+        );
+
+        handleLocationComplete();
+    };
+
     return (
         <ScrollView style={styles.suggestions}>
             {suggestions && suggestions.length > 0 ? (
                 suggestions.map((suggestion, i) => (
-                    <TouchableOpacity
-                        key={i}
-                        onPress={() => {
-                            dispatch(
-                                mapNavigationActions.setLocationId({
-                                    default: suggestion.default_id,
-                                    mapbox_id: suggestion.mapbox_id,
-                                    saveSearch: pathname === "/save-search",
-                                })
-                            );
-                            handleLocationComplete();
-                        }}
-                    >
+                    <TouchableOpacity key={i} onPress={() => handleLocation(suggestion)}>
                         <View style={styles.suggestionItem}>
                             <View style={styles.suggestionPlace}>
-                                <MakiIcon name={suggestion.maki} />
+                                <MakiIcon name={suggestion.maki} type={suggestion.feature_type} />
                                 <View style={styles.locationItem}>
                                     <Text style={{ fontWeight: "bold" }}>{suggestion.name}</Text>
                                     {suggestion.place_formatted && (
                                         <Text type="gray" textStyle="caption">
-                                            {suggestion.place_formatted}
+                                            {suggestion.feature_type === "category"
+                                                ? "Kategorie"
+                                                : suggestion.place_formatted}
                                         </Text>
                                     )}
                                 </View>
                             </View>
                             <Text type="gray" textStyle="caption">
-                                {readableDistance(suggestion.distance)}
+                                {suggestion.feature_type !== "category" && readableDistance(suggestion.distance)}
                             </Text>
                         </View>
                         <Divider />

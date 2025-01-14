@@ -69,7 +69,9 @@ const RecentSearches = ({ handleLocationComplete }: RecentSearchesProps) => {
                                     <View style={styles.suggestionPlace}>
                                         <MaterialCommunityIcons name="history" size={24} color="black" />
                                         <View style={styles.locationItem}>
-                                            <Text style={{ fontWeight: "bold" }}>{location.name}</Text>
+                                            <Text style={{ fontWeight: "bold" }}>
+                                                {location.feature_type === "category" ? "Kategorie" : location.name}
+                                            </Text>
                                             {location.place_formatted && (
                                                 <Text type="gray" textStyle="caption">
                                                     {location.place_formatted}
@@ -79,10 +81,14 @@ const RecentSearches = ({ handleLocationComplete }: RecentSearchesProps) => {
                                     </View>
 
                                     <Text type="gray" textStyle="caption">
-                                        {distanceToPointText({
-                                            pos1: [longitude, latitude],
-                                            pos2: [location?.coordinates?.longitude, location?.coordinates?.latitude],
-                                        })}
+                                        {location.feature_type !== "category" &&
+                                            distanceToPointText({
+                                                pos1: [longitude, latitude],
+                                                pos2: [
+                                                    location?.coordinates?.longitude,
+                                                    location?.coordinates?.latitude,
+                                                ],
+                                            })}
                                     </Text>
                                 </View>
                                 <Divider />

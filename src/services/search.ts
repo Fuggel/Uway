@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_URL } from "@/constants/api-constants";
 import { API_KEY } from "@/constants/env-constants";
 import { LonLat } from "@/types/IMap";
-import { SearchSuggestion } from "@/types/ISearch";
+import { SearchFeatureCollection, SearchSuggestion } from "@/types/ISearch";
 
 export async function fetchSearchSuggestion(params: {
     query: string;
@@ -16,8 +16,8 @@ export async function fetchSearchSuggestion(params: {
         queryParams.append("session_token", params.sessionToken);
         queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
         queryParams.append("proximity", `${params.lngLat.lon},${params.lngLat.lat}`);
-        queryParams.append("types", "address,street,place,poi,locality,city,district,postcode,country");
-        queryParams.append("limit", "10");
+        queryParams.append("types", "address,street,place,poi,locality,city,district,postcode,country,category");
+        queryParams.append("limit", "8");
         queryParams.append("language", "de");
 
         const url = `${API_URL.MAPBOX_SEARCH_SUGGESTION}?${queryParams.toString()}`;
@@ -30,7 +30,10 @@ export async function fetchSearchSuggestion(params: {
     }
 }
 
-export async function fetchSearchLocation(params: { mapboxId: string; sessionToken: string }) {
+export async function fetchSearchLocation(params: {
+    mapboxId: string;
+    sessionToken: string;
+}): Promise<SearchFeatureCollection> {
     try {
         const queryParams = new URLSearchParams();
         queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
@@ -43,6 +46,6 @@ export async function fetchSearchLocation(params: { mapboxId: string; sessionTok
         return response.data;
     } catch (error) {
         console.log(`Error fetching search results: ${error}`);
-        return [];
+        return { type: "FeatureCollection", features: [] };
     }
 }

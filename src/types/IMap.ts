@@ -53,6 +53,7 @@ export enum LayerId {
     STREET_NAME = "road-label-navigation",
     ROUTE = "route-layer",
     ROUTE_DESTINATION = "route-destination-layer",
+    CATEGORY_LOCATION = "category-location-layer",
     GAS_STATION = "gas-station-layer",
     SPEED_CAMERA = "speed-camera-layer",
     INCIDENT_SYMBOL = "incident-symbol-layer",

@@ -44,6 +44,7 @@ const Map = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const categorySearch = useSelector(mapNavigationSelectors.categoryLocation);
 
     useKeepAwake();
 
