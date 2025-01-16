@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
-import store from "@/store";
 import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
@@ -88,18 +87,9 @@ export const useSearchLocation = () => {
                     })
                 );
                 dispatch(mapNavigationActions.setSearchQuery(""));
-
-                const unsubscribe = store.subscribe(() => {
-                    const selectedLocation = store.getState().mapNavigation.categoryLocation;
-                    if (selectedLocation) {
-                        unsubscribe();
-                        router.back();
-                    }
-                });
             } else if (pathname === "/save-search" && editingSearch && categoryFeatures.length === 0) {
                 dispatch(mapSearchActions.updateSavedSearch({ ...location, title: editingSearch.title }));
                 dispatch(mapNavigationActions.setSearchQuery(""));
-                router.back();
             } else if (pathname === "/save-search") {
                 dispatch(mapLayoutsActions.setOpenSearchModal(true));
                 dispatch(mapSearchActions.setSaveSearch(location));

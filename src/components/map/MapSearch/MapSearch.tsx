@@ -64,6 +64,18 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         });
     };
 
+    const handlePoiLocationComplete = () => {
+        setShowSuggestions(false);
+
+        const unsubscribe = store.subscribe(() => {
+            const selectedLocation = store.getState().mapNavigation.categoryLocation;
+            if (selectedLocation) {
+                unsubscribe();
+                onClose();
+            }
+        });
+    };
+
     const handleSaveSearch = () => {
         if (
             savedSearches.some(
@@ -114,7 +126,11 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             {!isSaveSearchPath && <SavedSearches handleLocationComplete={handleLocationComplete} />}
 
             {showSuggestions && searchQuery && (
-                <SearchSuggestions suggestions={suggestions} handleLocationComplete={handleLocationComplete} />
+                <SearchSuggestions
+                    suggestions={suggestions}
+                    handleLocationComplete={handleLocationComplete}
+                    handlePoiLocationComplete={handlePoiLocationComplete}
+                />
             )}
 
             {!searchQuery && <RecentSearches handleLocationComplete={handleLocationComplete} />}

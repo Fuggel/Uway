@@ -7,7 +7,9 @@ import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointActions } from "@/store/mapWaypoint";
-import { SearchLocation } from "@/types/ISearch";
+import { GasStation } from "@/types/IGasStation";
+import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
+import { MarkerSheet } from "@/types/ISheet";
 import { generateRandomId } from "@/utils/auth-utils";
 
 import IconButton from "@/components/common/IconButton";
@@ -24,13 +26,16 @@ interface MarkerInfoProps {
 const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
     const dispatch = useDispatch();
     const directions = useSelector(mapNavigationSelectors.directions);
+    const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
 
     const navigateToGasStation = () => {
-        const street = sheetData?.markerProperties.street;
-        const houseNumber = sheetData?.markerProperties.houseNumber || "";
-        const postcode = sheetData?.markerProperties.postCode || "";
-        const city = sheetData?.markerProperties.place || "";
+        const properties = sheetData?.markerProperties as GasStation;
+
+        const street = properties.street;
+        const houseNumber = properties.houseNumber || "";
+        const postcode = properties.postCode || "";
+        const city = properties.place || "";
         const country = "Deutschland";
 
         const newLocation: SearchLocation = {
@@ -39,11 +44,37 @@ const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
             feature_type: "custom-waypoint",
             address: `${street} ${houseNumber}`,
             full_address: `${postcode} ${city}`,
-            place_formatted: `${sheetData?.markerProperties.brand}, ${postcode} ${city}, ${country}`,
+            place_formatted: `${properties.brand}, ${postcode} ${city}, ${country}`,
             maki: "fuel",
             coordinates: {
-                longitude: sheetData?.markerProperties.lng,
-                latitude: sheetData?.markerProperties.lat,
+                longitude: properties.lng,
+                latitude: properties.lat,
+            },
+        };
+
+        dispatch(mapNavigationActions.setLocation(newLocation));
+        closeSheet();
+    };
+
+    const navigateToSearchCategory = () => {
+        const properties = sheetData?.markerProperties as SearchSuggestionProperties;
+        const full_address = properties.full_address;
+        const name = properties.name;
+        const place_formatted = properties.place_formatted;
+        const maki = properties.maki;
+        const feature_type = properties.feature_type;
+
+        const newLocation: SearchLocation = {
+            default_id: generateRandomId(),
+            name,
+            feature_type,
+            address: full_address,
+            full_address,
+            place_formatted,
+            maki,
+            coordinates: {
+                longitude: sheetData?.markerProperties.coordinates?.longitude,
+                latitude: sheetData?.markerProperties.coordinates?.latitude,
             },
         };
 
@@ -67,9 +98,9 @@ const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
                 <Text textStyle="header" style={styles.title}>
                     {title}
                 </Text>
-                {gasStation?.show && (
+                {(gasStation?.show || categoryLocation) && (
                     <View style={styles.iconButtonRight}>
-                        {directions && (
+                        {directions && gasStation?.show && (
                             <IconButton
                                 icon="map-marker-plus"
                                 size="md"
@@ -77,7 +108,18 @@ const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
                                 onPress={waypointGasStation}
                             />
                         )}
-                        <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
+                        {gasStation?.show && sheetData?.markerType === MarkerSheet.GAS_STATION && (
+                            <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
+                        )}
+
+                        {categoryLocation && sheetData?.markerType === MarkerSheet.CATEGORY_LOCATION && (
+                            <IconButton
+                                icon="directions"
+                                size="md"
+                                type="secondary"
+                                onPress={navigateToSearchCategory}
+                            />
+                        )}
                     </View>
                 )}
             </View>

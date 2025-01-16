@@ -15,9 +15,14 @@ import NoResults from "../../ui/NoResults";
 interface SearchSuggestionsProps {
     suggestions: SearchSuggestionProperties[] | null;
     handleLocationComplete: () => void;
+    handlePoiLocationComplete: () => void;
 }
 
-const SearchSuggestions = ({ suggestions, handleLocationComplete }: SearchSuggestionsProps) => {
+const SearchSuggestions = ({
+    suggestions,
+    handleLocationComplete,
+    handlePoiLocationComplete,
+}: SearchSuggestionsProps) => {
     const dispatch = useDispatch();
     const pathname = usePathname();
 
@@ -29,6 +34,11 @@ const SearchSuggestions = ({ suggestions, handleLocationComplete }: SearchSugges
                 saveSearch: pathname === "/save-search",
             })
         );
+
+        if (suggestion.feature_type === "category") {
+            handlePoiLocationComplete();
+            return;
+        }
 
         handleLocationComplete();
     };

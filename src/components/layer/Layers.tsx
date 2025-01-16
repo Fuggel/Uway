@@ -11,6 +11,7 @@ import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
+import { SearchSuggestionProperties } from "@/types/ISearch";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
@@ -73,10 +74,10 @@ const Layers = () => {
                     id="category-source"
                     shape={categoryLocation as GeoJSON.FeatureCollection}
                     onPress={(e) => {
-                        openSheet<GasStation>({
+                        openSheet<SearchSuggestionProperties>({
                             type: SheetType.MARKER,
-                            markerType: MarkerSheet.GAS_STATION,
-                            markerProperties: e.features[0].properties as GasStation,
+                            markerType: MarkerSheet.CATEGORY_LOCATION,
+                            markerProperties: e.features[0].properties as SearchSuggestionProperties,
                         });
                     }}
                 >
