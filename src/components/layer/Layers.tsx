@@ -84,8 +84,8 @@ const Layers = () => {
                     <SymbolLayer
                         id={LayerId.CATEGORY_LOCATION}
                         style={{
-                            iconImage: "route-destination",
-                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.5, 20, 0.7],
+                            iconImage: "search-category",
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,
                         }}
                         aboveLayerID={LayerId.INVISIBLE}
