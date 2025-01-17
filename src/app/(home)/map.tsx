@@ -20,6 +20,7 @@ import { mapViewSelectors } from "@/store/mapView";
 import { mapWaypointActions } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
+import { SearchLocation } from "@/types/ISearch";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle, getOrderedGasStations } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
@@ -40,6 +41,7 @@ const Map = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const { gasStations } = useContext(MapFeatureContext);
+    const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const { loadingDirections } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
@@ -112,6 +114,13 @@ const Map = () => {
                             onSelect: (coords: LonLat) => {
                                 dispatch(mapWaypointActions.setSelectGasStationWaypoint(false));
                                 dispatch(mapWaypointActions.setGasStationWaypoints(coords));
+                                closeSheet();
+                            },
+                        }}
+                        poiProps={{
+                            data: categoryLocations?.features.map((feature) => feature.properties),
+                            onSelect: (newLocation: SearchLocation) => {
+                                dispatch(mapNavigationActions.setLocation(newLocation));
                                 closeSheet();
                             },
                         }}

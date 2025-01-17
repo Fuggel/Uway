@@ -109,27 +109,31 @@ const useMapCamera = () => {
         const ne: Position = [Math.max(...lons), Math.max(...lats)];
         const sw: Position = [Math.min(...lons), Math.min(...lats)];
 
-        const WAYPOINT_OFFSET_HORIZONTAL = 0.15;
-        const WAYPOINT_OFFSET_BOTTOM = 0.35;
-
         cameraRef.current.fitBounds(
             ne,
             sw,
             [
-                0,
-                width * MAP_CONFIG.boundsOffset * WAYPOINT_OFFSET_HORIZONTAL,
-                height * WAYPOINT_OFFSET_BOTTOM,
-                width * MAP_CONFIG.boundsOffset * WAYPOINT_OFFSET_HORIZONTAL,
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
             ],
             MAP_CONFIG.animationDuration
         );
     };
 
     useEffect(() => {
-        if (isNavigationSelecting && directions && tracking && !selectingGasStationWaypoint) {
+        if (isNavigationSelecting && directions && tracking && !selectingGasStationWaypoint && !categoryLocations) {
             fitBounds();
         }
-    }, [isNavigationSelecting, directions, tracking, isGasStationWaypoint, selectingGasStationWaypoint]);
+    }, [
+        isNavigationSelecting,
+        directions,
+        tracking,
+        isGasStationWaypoint,
+        selectingGasStationWaypoint,
+        categoryLocations,
+    ]);
 
     useEffect(() => {
         if (directions && selectingGasStationWaypoint && tracking) {

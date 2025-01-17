@@ -13,6 +13,10 @@ export interface SearchSuggestionProperties {
     distance: number;
     maki: string;
     feature_type: string;
+    coordinates: {
+        longitude: number;
+        latitude: number;
+    };
 }
 
 export interface SearchLocation {

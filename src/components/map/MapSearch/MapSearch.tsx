@@ -1,9 +1,10 @@
 import { usePathname, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { useSearchLocation, useSearchSuggestion } from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import store from "@/store";
@@ -11,6 +12,7 @@ import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { SaveSearchError, SavedSearchLocation } from "@/types/ISearch";
+import { SheetType } from "@/types/ISheet";
 
 import Searchbar from "../../common/Searchbar";
 import RecentSearches from "./RecentSearches";
@@ -29,6 +31,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     const dispatch = useDispatch();
     const route = useRouter();
     const pathname = usePathname();
+    const { openSheet } = useContext(BottomSheetContext);
     const openSearchModal = useSelector(mapLayoutsSelectors.openSearchModal);
     const [savedSearchName, setSavedSearchName] = useState("");
     const [saveSearchError, setSaveSearchError] = useState<SaveSearchError>(SaveSearchError.NONE);
@@ -66,6 +69,8 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
 
     const handlePoiLocationComplete = () => {
         setShowSuggestions(false);
+        dispatch(mapLayoutsActions.setOpenCategoryLocationsList(true));
+        openSheet({ type: SheetType.POI });
 
         const unsubscribe = store.subscribe(() => {
             const selectedLocation = store.getState().mapNavigation.categoryLocation;
