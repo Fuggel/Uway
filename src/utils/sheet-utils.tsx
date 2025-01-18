@@ -1,4 +1,5 @@
 import { GasStation } from "@/types/IGasStation";
+import { SearchSuggestionProperties } from "@/types/ISearch";
 import { MarkerSheet } from "@/types/ISheet";
 import { SpeedCameraProperties, SpeedCameraType } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
@@ -16,6 +17,8 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
             return gasStationTitle(properties as GasStation);
         case MarkerSheet.SPEED_CAMERA:
             return speedCameraTitle();
+        case MarkerSheet.CATEGORY_LOCATION:
+            return categoryTitle(properties as SearchSuggestionProperties);
         default:
             return "Unbekannt";
     }
@@ -32,6 +35,8 @@ export function sheetData<T>(
             return gasStationData(properties as GasStation);
         case MarkerSheet.SPEED_CAMERA:
             return speedCameraData(properties as SpeedCameraProperties);
+        case MarkerSheet.CATEGORY_LOCATION:
+            return categoryData(properties as SearchSuggestionProperties);
         default:
             return null;
     }
@@ -113,6 +118,15 @@ function speedCameraData(speedCameraProperties: SpeedCameraProperties | undefine
     ];
 }
 
+function categoryData(suggestion: SearchSuggestionProperties) {
+    return [
+        {
+            label: "Adresse",
+            value: suggestion.full_address,
+        },
+    ];
+}
+
 export function incidentTitle(incidentProperties: IncidentProperties | undefined) {
     switch (incidentProperties?.iconCategory) {
         case IncidentType.Accident:
@@ -146,4 +160,8 @@ function gasStationTitle(gasStationProperties: GasStation | undefined) {
 
 function speedCameraTitle() {
     return "Blitzer";
+}
+
+function categoryTitle(suggestion: SearchSuggestionProperties) {
+    return suggestion.name;
 }

@@ -1,3 +1,4 @@
+import { useKeepAwake } from "expo-keep-awake";
 import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
@@ -18,6 +19,7 @@ import { mapViewSelectors } from "@/store/mapView";
 import { mapWaypointActions } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
+import { SearchLocation } from "@/types/ISearch";
 import { MarkerSheet } from "@/types/ISheet";
 import { determineMapStyle, getOrderedGasStations } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
@@ -26,7 +28,7 @@ import { determineTheme, invertTheme } from "@/utils/theme-utils";
 import Loading from "@/components/common/Loading";
 import Layers from "@/components/layer/Layers";
 import MapAlerts from "@/components/map/MapAlerts";
-import MapBottomSheet from "@/components/map/MapBottomSheet";
+import MapBottomSheet from "@/components/map/MapBottomSheet/MapBottomSheet";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
 
@@ -38,17 +40,29 @@ const Map = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const { gasStations } = useContext(MapFeatureContext);
+    const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const { loadingDirections } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
 
+    useKeepAwake();
+
     useEffect(() => {
         if (location) {
             dispatch(
                 mapSearchActions.setRecentSearches(
-                    [location, ...recentSearches.filter((loc) => loc.formatted !== location.formatted)].slice(0, 5)
+                    [
+                        location,
+                        ...recentSearches.filter((loc) => {
+                            if (loc.mapbox_id) {
+                                return loc.mapbox_id !== location.mapbox_id;
+                            }
+
+                            return loc.default_id !== location.default_id && loc.name !== location.name;
+                        }),
+                    ].slice(0, 5)
                 )
             );
         }
@@ -99,6 +113,13 @@ const Map = () => {
                             onSelect: (coords: LonLat) => {
                                 dispatch(mapWaypointActions.setSelectGasStationWaypoint(false));
                                 dispatch(mapWaypointActions.setGasStationWaypoints(coords));
+                                closeSheet();
+                            },
+                        }}
+                        poiProps={{
+                            data: categoryLocations?.features.map((feature) => feature.properties),
+                            onSelect: (newLocation: SearchLocation) => {
+                                dispatch(mapNavigationActions.setLocation(newLocation));
                                 closeSheet();
                             },
                         }}

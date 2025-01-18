@@ -13,7 +13,12 @@ import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTex
 import { mapWaypointActions, mapWaypointSelectors } from "@/store/mapWaypoint";
 import { SheetType } from "@/types/ISheet";
 import { toGermanDate } from "@/utils/date-utils";
-import { convertSpeedToKmh, determineSpeedLimitIcon } from "@/utils/map-utils";
+import {
+    convertSpeedToKmh,
+    determineSpeedLimitIcon,
+    readableStringDistance,
+    readableStringDuration,
+} from "@/utils/map-utils";
 
 import Card from "../common/Card";
 import IconButton from "../common/IconButton";
@@ -25,7 +30,7 @@ const MapNavigation = () => {
     const dispatch = useDispatch();
     const { showSheet, openSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
-    const { currentInstruction } = useContext(MapInstructionContext);
+    const { currentAnnotation } = useContext(MapInstructionContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
@@ -35,7 +40,7 @@ const MapNavigation = () => {
 
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
-    const remainingTime = currentInstruction?.remainingTime || 0;
+    const remainingTime = currentAnnotation?.remainingTime || 0;
 
     const determineArrivalTime = () => {
         const now = new Date();
@@ -78,9 +83,9 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    {currentInstruction?.maxSpeed && (
+                    {currentAnnotation?.maxSpeed && (
                         <Image
-                            source={determineSpeedLimitIcon(Number(currentInstruction.maxSpeed))}
+                            source={determineSpeedLimitIcon(Number(currentAnnotation.maxSpeed))}
                             style={styles.speedLimitImage}
                         />
                     )}
@@ -95,12 +100,13 @@ const MapNavigation = () => {
                         </Text>
                     ) : (
                         <Text type="white" textStyle="header">
-                            {location?.address_line1}
+                            {location?.name}
                         </Text>
                     )}
 
                     <Text type="lightGray" style={{ fontWeight: "bold" }}>
-                        {currentInstruction?.remainingDuration} min · {currentInstruction?.remainingDistance} km
+                        {readableStringDuration(currentAnnotation?.remainingDuration)} ·{" "}
+                        {readableStringDistance(currentAnnotation?.remainingDistance)}
                     </Text>
                 </View>
 

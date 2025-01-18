@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import RevenueCatUI from "react-native-purchases-ui";
 
 interface PaywallProps {

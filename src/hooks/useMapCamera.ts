@@ -26,6 +26,7 @@ const useMapCamera = () => {
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const selectingGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
+    const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
 
     const userSpeed = userLocation?.coords.speed || 0;
     const currentSpeed = convertSpeedToKmh(userSpeed);
@@ -90,17 +91,61 @@ const useMapCamera = () => {
         );
     };
 
+    const fitBoundsToUserAndPois = () => {
+        if (!cameraRef.current || !userLocation || !categoryLocations?.features) return;
+
+        const userCoords: Position = [userLocation.coords.longitude, userLocation.coords.latitude];
+
+        const poiCoords = categoryLocations.features.map((poi) => {
+            const geometry = poi.geometry as Geometry;
+            return geometry.coordinates;
+        }) as Position[];
+
+        const allCoords: Position[] = [userCoords, ...poiCoords];
+
+        const lons = allCoords.map(([lon]) => lon);
+        const lats = allCoords.map(([, lat]) => lat);
+
+        const ne: Position = [Math.max(...lons), Math.max(...lats)];
+        const sw: Position = [Math.min(...lons), Math.min(...lats)];
+
+        cameraRef.current.fitBounds(
+            ne,
+            sw,
+            [
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+            ],
+            MAP_CONFIG.animationDuration
+        );
+    };
+
     useEffect(() => {
-        if (isNavigationSelecting && directions && tracking && !selectingGasStationWaypoint) {
+        if (isNavigationSelecting && directions && tracking && !selectingGasStationWaypoint && !categoryLocations) {
             fitBounds();
         }
-    }, [isNavigationSelecting, directions, tracking, isGasStationWaypoint, selectingGasStationWaypoint]);
+    }, [
+        isNavigationSelecting,
+        directions,
+        tracking,
+        isGasStationWaypoint,
+        selectingGasStationWaypoint,
+        categoryLocations,
+    ]);
 
     useEffect(() => {
         if (directions && selectingGasStationWaypoint && tracking) {
             fitBoundsToUserAndGasStations();
         }
     }, [directions, selectingGasStationWaypoint, tracking]);
+
+    useEffect(() => {
+        if (categoryLocations && tracking) {
+            fitBoundsToUserAndPois();
+        }
+    }, [categoryLocations, tracking]);
 
     useEffect(() => {
         const updateCamera = () => {

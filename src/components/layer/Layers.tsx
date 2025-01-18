@@ -11,6 +11,7 @@ import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
+import { SearchSuggestionProperties } from "@/types/ISearch";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
@@ -21,6 +22,7 @@ const Layers = () => {
     const { openSheet } = useContext(BottomSheetContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
+    const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
 
     return (
         <>
@@ -38,7 +40,7 @@ const Layers = () => {
                                 lineJoin: "round",
                                 lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
                             }}
-                            belowLayerID={LayerId.INVISIBLE}
+                            belowLayerID={LayerId.STREET_NAME}
                         />
                     </ShapeSource>
 
@@ -65,6 +67,30 @@ const Layers = () => {
                         />
                     </ShapeSource>
                 </>
+            )}
+
+            {categoryLocation && (
+                <ShapeSource
+                    id="category-source"
+                    shape={categoryLocation as GeoJSON.FeatureCollection}
+                    onPress={(e) => {
+                        openSheet<SearchSuggestionProperties>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.CATEGORY_LOCATION,
+                            markerProperties: e.features[0].properties as SearchSuggestionProperties,
+                        });
+                    }}
+                >
+                    <SymbolLayer
+                        id={LayerId.CATEGORY_LOCATION}
+                        style={{
+                            iconImage: "search-category",
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconAllowOverlap: true,
+                        }}
+                        aboveLayerID={LayerId.INVISIBLE}
+                    />
+                </ShapeSource>
             )}
 
             {gasStations && (
@@ -121,93 +147,60 @@ const Layers = () => {
             )}
 
             {incidents?.incidents?.data && (
-                <>
-                    <ShapeSource
-                        id="incident-line-source"
-                        shape={incidents.incidents.data as GeoJSON.FeatureCollection}
-                        onPress={(e) => {
-                            openSheet<IncidentProperties>({
-                                type: SheetType.MARKER,
-                                markerType: MarkerSheet.INCIDENT,
-                                markerProperties: e.features[0].properties as IncidentProperties,
-                            });
+                <ShapeSource
+                    id="incident-symbol-source"
+                    shape={{
+                        type: "FeatureCollection",
+                        features: incidents.incidents.data.features.map((incident) => ({
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: (incident.properties as IncidentProperties).firstPoint,
+                            },
+                            properties: incident.properties,
+                        })),
+                    }}
+                    onPress={(e) => {
+                        openSheet<IncidentProperties>({
+                            type: SheetType.MARKER,
+                            markerType: MarkerSheet.INCIDENT,
+                            markerProperties: e.features[0].properties as IncidentProperties,
+                        });
+                    }}
+                >
+                    <SymbolLayer
+                        id={LayerId.INCIDENT_SYMBOL}
+                        style={{
+                            iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
+                            iconImage: [
+                                "match",
+                                ["get", "iconCategory"],
+                                IncidentType.Accident,
+                                "incident-accident",
+                                IncidentType.Rain,
+                                "incident-rain",
+                                IncidentType.Ice,
+                                "incident-ice",
+                                IncidentType.Jam,
+                                "incident-jam",
+                                IncidentType.LaneClosed,
+                                "incident-road-closure",
+                                IncidentType.RoadClosed,
+                                "incident-road-closure",
+                                IncidentType.RoadWorks,
+                                "incident-road-works",
+                                IncidentType.Wind,
+                                "incident-wind",
+                                IncidentType.BrokenDownVehicle,
+                                "incident-broken-down-vehicle",
+                                "incident-caution",
+                            ],
+                            iconAllowOverlap: true,
+                            iconRotate: 0,
                         }}
-                    >
-                        <LineLayer
-                            id={LayerId.INCIDENT_LINE}
-                            style={{
-                                lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
-                                lineColor: "#FF0000",
-                                lineOpacity: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0, 18, 1, 20, 1],
-                                lineCap: "round",
-                                lineJoin: "round",
-                                visibility: "visible",
-                            }}
-                            aboveLayerID={LayerId.INVISIBLE}
-                        />
-                    </ShapeSource>
-
-                    <ShapeSource
-                        id="incident-symbol-source"
-                        shape={{
-                            type: "FeatureCollection",
-                            features: incidents.incidents.data.features
-                                .filter(
-                                    (incident) =>
-                                        (incident.properties as IncidentProperties).lastPoint &&
-                                        (incident.properties as IncidentProperties).lastPoint.length === 2
-                                )
-                                .map((incident) => ({
-                                    type: "Feature",
-                                    geometry: {
-                                        type: "Point",
-                                        coordinates: (incident.properties as IncidentProperties).lastPoint,
-                                    },
-                                    properties: incident.properties,
-                                })),
-                        }}
-                        onPress={(e) => {
-                            openSheet<IncidentProperties>({
-                                type: SheetType.MARKER,
-                                markerType: MarkerSheet.INCIDENT,
-                                markerProperties: e.features[0].properties as IncidentProperties,
-                            });
-                        }}
-                    >
-                        <SymbolLayer
-                            id={LayerId.INCIDENT_SYMBOL}
-                            style={{
-                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.3],
-                                iconImage: [
-                                    "match",
-                                    ["get", "iconCategory"],
-                                    IncidentType.Accident,
-                                    "incident-accident",
-                                    IncidentType.Rain,
-                                    "incident-rain",
-                                    IncidentType.Ice,
-                                    "incident-ice",
-                                    IncidentType.Jam,
-                                    "incident-jam",
-                                    IncidentType.LaneClosed,
-                                    "incident-road-closure",
-                                    IncidentType.RoadClosed,
-                                    "incident-road-closure",
-                                    IncidentType.RoadWorks,
-                                    "incident-road-works",
-                                    IncidentType.Wind,
-                                    "incident-wind",
-                                    IncidentType.BrokenDownVehicle,
-                                    "incident-broken-down-vehicle",
-                                    "incident-caution",
-                                ],
-                                iconAllowOverlap: true,
-                                iconRotate: 0,
-                            }}
-                            aboveLayerID={LayerId.INCIDENT_LINE}
-                        />
-                    </ShapeSource>
-                </>
+                        aboveLayerID={LayerId.INVISIBLE}
+                    />
+                </ShapeSource>
             )}
 
             {userLocation && (

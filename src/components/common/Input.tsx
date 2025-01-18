@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { KeyboardTypeOptions, SafeAreaView, StyleSheet, TextInput } from "react-native";
 
 import { SIZES } from "@/constants/size-constants";
@@ -12,18 +11,16 @@ interface InputProps {
 }
 
 const Input = ({ value, onChange, type, onBlur, placeholder }: InputProps) => {
-    const [inputValue, setInputValue] = useState(value);
-
     return (
         <SafeAreaView>
             <TextInput
                 style={styles.input}
-                onChangeText={setInputValue}
-                value={inputValue}
+                onChangeText={onChange}
+                value={value}
                 keyboardType={type}
                 placeholder={placeholder}
-                onSubmitEditing={onChange ? () => onChange(inputValue) : undefined}
-                onBlur={onBlur ? () => onBlur(inputValue) : undefined}
+                onSubmitEditing={onChange ? () => onChange(value) : undefined}
+                onBlur={onBlur ? () => onBlur(value) : undefined}
                 returnKeyType="done"
             />
         </SafeAreaView>
@@ -33,10 +30,10 @@ const Input = ({ value, onChange, type, onBlur, placeholder }: InputProps) => {
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        width: 60,
+        width: "100%",
         borderWidth: 1,
         padding: 10,
-        textAlign: "center",
+        fontSize: SIZES.fontSize.md,
         borderRadius: SIZES.borderRadius.sm,
     },
 });

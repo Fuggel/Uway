@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { distance, lineSlice, lineString, nearestPointOnLine, point } from "@turf/turf";
+import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
 
 import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
@@ -24,8 +24,8 @@ const useNavigation = () => {
     const latitude = userLocation?.coords?.latitude;
 
     const destinationLngLat = {
-        lon: location?.lon,
-        lat: location?.lat,
+        lon: location?.coordinates.longitude,
+        lat: location?.coordinates.latitude,
     };
 
     const {
@@ -62,44 +62,11 @@ const useNavigation = () => {
         },
     });
 
-    const updateRemainingRoute = () => {
-        if (directions && longitude && latitude) {
-            const routeCoordinates = directions.geometry.coordinates;
-            const userPoint = point([longitude, latitude]);
-            const routeLine = lineString(routeCoordinates);
-
-            const nearestPointFeature = nearestPointOnLine(routeLine, userPoint);
-
-            if (nearestPointFeature && nearestPointFeature.geometry) {
-                const nearestCoordinates = nearestPointFeature.geometry.coordinates;
-
-                const remainingRoute = lineSlice(
-                    point(nearestCoordinates),
-                    point(routeCoordinates[routeCoordinates.length - 1]),
-                    routeLine
-                );
-
-                dispatch(
-                    mapNavigationActions.setDirections({
-                        ...directions,
-                        geometry: remainingRoute.geometry,
-                    })
-                );
-            }
-        }
-    };
-
     useEffect(() => {
         if (data?.routes?.length > 0) {
             dispatch(mapNavigationActions.setDirections(data.routes[0]));
         }
     }, [data]);
-
-    useEffect(() => {
-        if (isNavigationMode) {
-            updateRemainingRoute();
-        }
-    }, [longitude, latitude, isNavigationMode]);
 
     useEffect(() => {
         if (directions && longitude && latitude && isNavigationMode) {

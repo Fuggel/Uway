@@ -2,39 +2,50 @@ import axios from "axios";
 
 import { API_URL } from "@/constants/api-constants";
 import { API_KEY } from "@/constants/env-constants";
-import { SearchLocation } from "@/types/ISearch";
+import { LonLat } from "@/types/IMap";
+import { SearchFeatureCollection, SearchSuggestion } from "@/types/ISearch";
 
-export async function fetchSearch(params: { query: string }): Promise<SearchLocation[]> {
+export async function fetchSearchSuggestion(params: {
+    query: string;
+    sessionToken: string;
+    lngLat: LonLat;
+}): Promise<SearchSuggestion> {
     try {
         const queryParams = new URLSearchParams();
-        queryParams.append("text", params.query);
-        queryParams.append("apiKey", API_KEY.GEOAPIFY);
-        queryParams.append("limit", "10");
-        queryParams.append("lang", "de");
-        queryParams.append("format", "json");
-        queryParams.append("filter", `countrycode:de`);
+        queryParams.append("q", params.query);
+        queryParams.append("session_token", params.sessionToken);
+        queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
+        queryParams.append("proximity", `${params.lngLat.lon},${params.lngLat.lat}`);
+        queryParams.append("types", "address,street,place,poi,locality,city,district,postcode,country,category");
+        queryParams.append("limit", "8");
+        queryParams.append("language", "de");
 
-        const url = `${API_URL.GEOAPIFY_AUTOCOMPLETE}?${queryParams.toString()}`;
+        const url = `${API_URL.MAPBOX_SEARCH_SUGGESTION}?${queryParams.toString()}`;
         const response = await axios.get(url);
 
-        return response.data.results.map(
-            (feature: SearchLocation): SearchLocation => ({
-                country: feature.country,
-                country_code: feature.country_code,
-                city: feature.city,
-                lon: feature.lon,
-                lat: feature.lat,
-                formatted: feature.formatted,
-                address_line1: feature.address_line1,
-                address_line2: feature.address_line2,
-                district: feature.district,
-                category: feature.category,
-                place_id: feature.place_id,
-                suburb: feature.suburb,
-            })
-        );
+        return response.data;
     } catch (error) {
         console.log(`Error fetching search suggestions: ${error}`);
-        return [];
+        return { suggestions: [] };
+    }
+}
+
+export async function fetchSearchLocation(params: {
+    mapboxId: string;
+    sessionToken: string;
+}): Promise<SearchFeatureCollection> {
+    try {
+        const queryParams = new URLSearchParams();
+        queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
+        queryParams.append("session_token", params.sessionToken);
+        queryParams.append("language", "de");
+
+        const url = `${API_URL.MAPBOX_SEARCH_RETRIEVE}/${params.mapboxId}?${queryParams.toString()}`;
+        const response = await axios.get(url);
+
+        return response.data;
+    } catch (error) {
+        console.log(`Error fetching search results: ${error}`);
+        return { type: "FeatureCollection", features: [] };
     }
 }

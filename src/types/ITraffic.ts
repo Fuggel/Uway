@@ -49,7 +49,7 @@ export interface IncidentProperties {
     events: IncidentEvent[];
     probabilityOfOccurrence: string;
     lastReportTime: string;
-    lastPoint: number[];
+    firstPoint: number[];
     geometry: {
         type: string;
         coordinates: number[][];

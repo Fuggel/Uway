@@ -4,7 +4,7 @@ import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { InstructionWarningThreshold, Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
+import { Lane, LaneDirection, ManeuverType, ModifierType, WarningThresholds, WarningType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -304,17 +304,55 @@ export function getOrderedGasStations(gasStations: GasStation[] | undefined): Ga
         .sort((a, b) => b.score - a.score);
 }
 
-export function distanceToPointText(params: { pos1: Position; pos2: Position; }) {
+export function distanceToPointText(params: { pos1: Position; pos2: Position }) {
     const point1 = point(params.pos1);
     const point2 = point(params.pos2);
 
     const distanceInKm = distance(point1, point2, { units: "kilometers" });
 
     if (distanceInKm >= 1) {
-        return `${distanceInKm.toFixed(1)} km`;
+        return `${parseFloat(distanceInKm.toFixed(1))} km`;
     } else {
         const distanceInMeters = distanceInKm * 1000;
         return `${Math.round(distanceInMeters)} m`;
+    }
+}
+
+export function readableDistance(distance: number) {
+    if (distance >= 1000) {
+        return `${parseFloat((distance / 1000).toFixed(1))} km`;
+    } else {
+        return `${distance} m`;
+    }
+}
+
+export function readableStringDuration(duration: string | undefined) {
+    if (!duration) return "";
+
+    const totalMinutes = parseInt(duration);
+    if (isNaN(totalMinutes)) return "";
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours >= 1) {
+        return `${hours}:${minutes.toString().padStart(2, "0")} h`;
+    } else {
+        return `${minutes} min`;
+    }
+}
+
+export function readableStringDistance(distance: string | undefined) {
+    if (!distance) return "";
+
+    const totalMeters = parseFloat(distance);
+
+    if (isNaN(totalMeters)) return "";
+
+    if (totalMeters < 1) {
+        return `${Math.round(totalMeters * 1000)} m`;
+    } else {
+        return `${parseFloat(totalMeters.toFixed(1))} km`;
     }
 }
 
@@ -336,9 +374,9 @@ export function isFeatureRelevant(params: RelevantFeatureParams) {
 
     const isSameLane = directions
         ? directions.some((dir) => {
-            const oppositeDir = (dir + 180) % 360;
-            return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
-        })
+              const oppositeDir = (dir + 180) % 360;
+              return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
+          })
         : calculateAngleDifference(heading, bearingToFeature) < laneThreshold;
 
     const isOnRoute = route ? isFeatureOnRoute(featurePoint, route, routeBufferTolerance) : false;
@@ -365,9 +403,17 @@ function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBuffer
     return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
 
-export function instructionsWarningThresholds(speed: number): InstructionWarningThreshold {
-    if (speed <= 30) return { early: 300, late: 150 };
-    if (speed <= 50) return { early: 500, late: 150 };
-    if (speed > 90) return { early: 2500, late: 500 };
-    return { early: 750, late: 250 };
+export function warningThresholds(type: WarningType, speed: number) {
+    switch (type) {
+        case WarningType.ALERT:
+            if (speed <= 30) return { early: 300, late: 150 };
+            if (speed <= 50) return { early: 500, late: 250 };
+            if (speed > 90) return { early: 1500, late: 800 };
+            return { early: 800, late: 400 };
+        case WarningType.INSTRUCTION:
+            if (speed <= 30) return { early: 200, late: 75 };
+            if (speed <= 50) return { early: 400, late: 150 };
+            if (speed > 90) return { early: 1000, late: 500 };
+            return { early: 600, late: 200 };
+    }
 }

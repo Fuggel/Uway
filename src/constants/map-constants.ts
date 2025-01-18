@@ -82,6 +82,7 @@ export const MAP_ICONS: { [key: string]: Mapbox.ImageEntry } = {
     "gas-station-expensive": require(`${MAP_ICONS_URL}/gas-station/gas-station-expensive.png`),
     "gas-station-average": require(`${MAP_ICONS_URL}/gas-station/gas-station-average.png`),
     "gas-station-cheap": require(`${MAP_ICONS_URL}/gas-station/gas-station-cheap.png`),
+    "search-category": require(`${MAP_ICONS_URL}/categories/search-category.png`),
 };
 
 export const LANE_IMAGES: { [key: string]: ImageSourcePropType } = {

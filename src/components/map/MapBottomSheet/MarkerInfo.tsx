@@ -7,12 +7,15 @@ import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointActions } from "@/store/mapWaypoint";
-import { generateRandomNumber } from "@/utils/auth-utils";
+import { GasStation } from "@/types/IGasStation";
+import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
+import { MarkerSheet } from "@/types/ISheet";
+import { generateRandomId } from "@/utils/auth-utils";
 
-import IconButton from "../common/IconButton";
-import Text from "../common/Text";
+import IconButton from "@/components/common/IconButton";
+import Text from "@/components/common/Text";
 
-interface MapMarkerInfoProps {
+interface MarkerInfoProps {
     title: string;
     data: { label: string; value: string | number | React.ReactNode }[] | null;
     gasStation?: {
@@ -20,29 +23,59 @@ interface MapMarkerInfoProps {
     };
 }
 
-const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
+const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
     const dispatch = useDispatch();
     const directions = useSelector(mapNavigationSelectors.directions);
+    const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
 
     const navigateToGasStation = () => {
-        const street = sheetData?.markerProperties.street;
-        const houseNumber = sheetData?.markerProperties.houseNumber || "";
-        const postcode = sheetData?.markerProperties.postCode || "";
-        const city = sheetData?.markerProperties.place || "";
+        const properties = sheetData?.markerProperties as GasStation;
+
+        const street = properties.street;
+        const houseNumber = properties.houseNumber || "";
+        const postcode = properties.postCode || "";
+        const city = properties.place || "";
         const country = "Deutschland";
 
-        const newLocation = {
-            id: generateRandomNumber(),
-            country,
-            city,
-            lon: sheetData?.markerProperties.lng,
-            lat: sheetData?.markerProperties.lat,
-            formatted: `${street} ${houseNumber}, ${postcode} ${city}, ${country}`,
-            address_line1: `${street} ${houseNumber}`,
-            address_line2: `${postcode} ${city}, ${country}`,
-            category: "commercial.gas",
-            place_id: sheetData?.markerProperties.id,
+        const newLocation: SearchLocation = {
+            default_id: generateRandomId(),
+            name: `${street} ${houseNumber}`,
+            feature_type: "custom-waypoint",
+            address: `${street} ${houseNumber}`,
+            full_address: `${postcode} ${city}`,
+            place_formatted: `${properties.brand}, ${postcode} ${city}, ${country}`,
+            maki: "fuel",
+            coordinates: {
+                longitude: properties.lng,
+                latitude: properties.lat,
+            },
+        };
+
+        dispatch(mapNavigationActions.setLocation(newLocation));
+        closeSheet();
+    };
+
+    const navigateToSearchCategory = () => {
+        const properties = sheetData?.markerProperties as SearchSuggestionProperties;
+        const full_address = properties.full_address;
+        const name = properties.name;
+        const place_formatted = properties.place_formatted;
+        const maki = properties.maki;
+        const feature_type = properties.feature_type;
+
+        const newLocation: SearchLocation = {
+            default_id: generateRandomId(),
+            name,
+            feature_type,
+            address: full_address,
+            full_address,
+            place_formatted,
+            maki,
+            coordinates: {
+                longitude: sheetData?.markerProperties.coordinates?.longitude,
+                latitude: sheetData?.markerProperties.coordinates?.latitude,
+            },
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));
@@ -65,9 +98,9 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
                 <Text textStyle="header" style={styles.title}>
                     {title}
                 </Text>
-                {gasStation?.show && (
+                {(gasStation?.show || categoryLocation) && (
                     <View style={styles.iconButtonRight}>
-                        {directions && (
+                        {directions && gasStation?.show && (
                             <IconButton
                                 icon="map-marker-plus"
                                 size="md"
@@ -75,7 +108,18 @@ const MapMarkerInfo = ({ title, data, gasStation }: MapMarkerInfoProps) => {
                                 onPress={waypointGasStation}
                             />
                         )}
-                        <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
+                        {gasStation?.show && sheetData?.markerType === MarkerSheet.GAS_STATION && (
+                            <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
+                        )}
+
+                        {categoryLocation && sheetData?.markerType === MarkerSheet.CATEGORY_LOCATION && (
+                            <IconButton
+                                icon="directions"
+                                size="md"
+                                type="secondary"
+                                onPress={navigateToSearchCategory}
+                            />
+                        )}
                     </View>
                 )}
             </View>
@@ -127,4 +171,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MapMarkerInfo;
+export default MarkerInfo;

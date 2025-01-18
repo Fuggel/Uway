@@ -50,11 +50,12 @@ export interface WarningAlert {
 
 export enum LayerId {
     USER_LOCATION = "user-location-layer",
+    STREET_NAME = "road-label-navigation",
     ROUTE = "route-layer",
     ROUTE_DESTINATION = "route-destination-layer",
+    CATEGORY_LOCATION = "category-location-layer",
     GAS_STATION = "gas-station-layer",
     SPEED_CAMERA = "speed-camera-layer",
-    INCIDENT_LINE = "incident-line-layer",
     INCIDENT_SYMBOL = "incident-symbol-layer",
     INVISIBLE = "invisible-layer",
 }

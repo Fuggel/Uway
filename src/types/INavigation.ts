@@ -18,11 +18,14 @@ export interface CurrentInstruction {
     nextBannerInstruction: BannerInstruction | null;
     laneInformation: Lane[];
     shieldInformation: RoadShield;
+    distanceToNextStep: number;
+}
+
+export interface CurrentAnnotation {
     maxSpeed: number | string;
     remainingDistance: string;
     remainingDuration: string;
     remainingTime: number;
-    distanceToNextStep: number;
 }
 
 export interface RoadShield {
@@ -161,21 +164,19 @@ export interface Annotation {
     maxspeed: { speed: number; unit: string }[];
 }
 
-export interface InstructionWarningThreshold {
-    [InstructionThreshold.EARLY]: number;
-    [InstructionThreshold.LATE]: number;
+export interface WarningThresholds {
+    [WarningThreshold.EARLY]: number;
+    [WarningThreshold.LATE]: number;
 }
 
-export interface SpokenInstructions {
-    [InstructionThreshold.CURRENT]: boolean;
-    [InstructionThreshold.EARLY]: boolean;
-    [InstructionThreshold.LATE]: boolean;
-}
-
-export enum InstructionThreshold {
-    CURRENT = "current",
+export enum WarningThreshold {
     EARLY = "early",
     LATE = "late",
+}
+
+export enum WarningType {
+    INSTRUCTION = "instruction",
+    ALERT = "alert",
 }
 
 export interface ManeuverImage {
