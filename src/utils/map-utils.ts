@@ -305,8 +305,6 @@ export function getOrderedGasStations(gasStations: GasStation[] | undefined): Ga
 }
 
 export function distanceToPointText(params: { pos1: Position; pos2: Position }) {
-    if (!isValidLonLat(params.pos1[0], params.pos1[1]) || !isValidLonLat(params.pos2[0], params.pos2[1])) return;
-
     const point1 = point(params.pos1);
     const point2 = point(params.pos2);
 

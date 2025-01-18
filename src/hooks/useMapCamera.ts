@@ -149,7 +149,7 @@ const useMapCamera = () => {
 
     useEffect(() => {
         const updateCamera = () => {
-            if (!cameraRef.current) return;
+            if (!cameraRef.current || selectingGasStationWaypoint) return;
 
             cameraRef.current.setCamera({
                 animationMode: "flyTo",
@@ -162,8 +162,8 @@ const useMapCamera = () => {
                     currentSpeed && tracking
                         ? MAP_CONFIG.zoom - 0.01 * currentSpeed
                         : tracking
-                          ? MAP_CONFIG.zoom
-                          : undefined,
+                            ? MAP_CONFIG.zoom
+                            : undefined,
                 pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
                 heading: tracking ? userLocation?.coords.course : undefined,
                 padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,

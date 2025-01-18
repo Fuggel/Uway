@@ -167,7 +167,6 @@ const styles = StyleSheet.create({
         color: COLORS.primary,
     },
     tableCell: {
-        flex: 1,
         textAlign: "center",
         color: COLORS.primary,
         fontSize: SIZES.fontSize.sm,
