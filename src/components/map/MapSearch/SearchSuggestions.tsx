@@ -43,10 +43,13 @@ const SearchSuggestions = ({
         handleLocationComplete();
     };
 
+    const pathBasedSuggestions =
+        pathname === "/save-search" ? suggestions?.filter((s) => s.feature_type !== "category") : suggestions;
+
     return (
         <ScrollView style={styles.suggestions}>
-            {suggestions && suggestions.length > 0 ? (
-                suggestions.map((suggestion, i) => (
+            {pathBasedSuggestions && pathBasedSuggestions.length > 0 ? (
+                pathBasedSuggestions.map((suggestion, i) => (
                     <TouchableOpacity key={i} onPress={() => handleLocation(suggestion)}>
                         <View style={styles.suggestionItem}>
                             <View style={styles.suggestionPlace}>

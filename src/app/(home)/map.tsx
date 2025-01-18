@@ -1,5 +1,4 @@
 import { useKeepAwake } from "expo-keep-awake";
-import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
