@@ -61,7 +61,7 @@ const Map = () => {
                                 return loc.mapbox_id !== location.mapbox_id;
                             }
 
-                            return loc.default_id !== location.default_id;
+                            return loc.default_id !== location.default_id && loc.name !== location.name;
                         }),
                     ].slice(0, 5)
                 )
