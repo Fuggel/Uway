@@ -2,17 +2,21 @@ import { useKeepAwake } from "expo-keep-awake";
 import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 
+import { COLORS } from "@/constants/colors-constants";
 import { API_KEY } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
+import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
+import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
@@ -20,12 +24,14 @@ import { mapWaypointActions } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
 import { SearchLocation } from "@/types/ISearch";
-import { MarkerSheet } from "@/types/ISheet";
+import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { determineMapStyle, getOrderedGasStations } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 import { determineTheme, invertTheme } from "@/utils/theme-utils";
 
+import Button from "@/components/common/Button";
 import Loading from "@/components/common/Loading";
+import Text from "@/components/common/Text";
 import Layers from "@/components/layer/Layers";
 import MapAlerts from "@/components/map/MapAlerts";
 import MapBottomSheet from "@/components/map/MapBottomSheet/MapBottomSheet";
@@ -38,7 +44,7 @@ const Map = () => {
     const dispatch = useDispatch();
     const { cameraRef } = useMapCamera();
     const { userLocation } = useContext(UserLocationContext);
-    const { sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
+    const { openSheet, sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const { gasStations } = useContext(MapFeatureContext);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const { loadingDirections } = useNavigation();
@@ -46,6 +52,7 @@ const Map = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
 
     useKeepAwake();
 
@@ -120,10 +127,28 @@ const Map = () => {
                             data: categoryLocations?.features.map((feature) => feature.properties),
                             onSelect: (newLocation: SearchLocation) => {
                                 dispatch(mapNavigationActions.setLocation(newLocation));
+                                dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
+                                dispatch(mapNavigationActions.setCategoryLocation(null));
                                 closeSheet();
                             },
                         }}
                     />
+                )}
+
+                {!showSheet && selectingCategoryLocation && (
+                    <TouchableOpacity
+                        activeOpacity={0.9}
+                        style={styles.showListContainer}
+                        onPress={() => {
+                            openSheet({ type: SheetType.POI });
+                            dispatch(mapLayoutsActions.setOpenCategoryLocationsList(true));
+                        }}
+                    >
+                        <View style={styles.showList}>
+                            <Button icon="chevron-up" />
+                            <Text style={{ textAlign: "center" }}>Liste anzeigen</Text>
+                        </View>
+                    </TouchableOpacity>
                 )}
             </View>
 
@@ -139,6 +164,22 @@ const styles = StyleSheet.create({
     },
     map: {
         flex: 1,
+    },
+    showListContainer: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: COLORS.white,
+        padding: SIZES.spacing.sm,
+        borderTopLeftRadius: SIZES.borderRadius.md,
+        borderTopRightRadius: SIZES.borderRadius.md,
+        zIndex: 999999,
+    },
+    showList: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 

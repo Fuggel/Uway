@@ -51,7 +51,7 @@ const PoiList = ({ data, onSelect }: PoiListProps) => {
                         </View>
 
                         <IconButton
-                            icon="map-marker-plus"
+                            icon="directions"
                             size="md"
                             type="secondary"
                             onPress={() => onSelect(newLocation)}

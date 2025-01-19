@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import { useDispatch } from "react-redux";
 
+import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions } from "@/store/mapNavigation";
 import { mapWaypointActions } from "@/store/mapWaypoint";
 import { MarkerSheet, OpenSheet, SheetType } from "@/types/ISheet";
@@ -44,7 +45,7 @@ export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }
         setSheetData(null);
         dispatch(mapNavigationActions.setSearchQuery(""));
         dispatch(mapWaypointActions.setSelectGasStationWaypoint(false));
-        dispatch(mapNavigationActions.setCategoryLocation(null));
+        dispatch(mapLayoutsActions.setOpenCategoryLocationsList(false));
     };
 
     return (
