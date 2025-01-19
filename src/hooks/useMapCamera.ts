@@ -8,6 +8,7 @@ import { Geometry, Position } from "@turf/helpers";
 import { MAP_CONFIG } from "@/constants/map-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { convertSpeedToKmh } from "@/utils/map-utils";
@@ -27,6 +28,7 @@ const useMapCamera = () => {
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const selectingGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
+    const isOpenCategoryList = useSelector(mapLayoutsSelectors.openCategoryLocationsList);
 
     const userSpeed = userLocation?.coords.speed || 0;
     const currentSpeed = convertSpeedToKmh(userSpeed);
@@ -109,21 +111,24 @@ const useMapCamera = () => {
         const ne: Position = [Math.max(...lons), Math.max(...lats)];
         const sw: Position = [Math.min(...lons), Math.min(...lats)];
 
+        const POI_OFFSET_HORIZONTAL = 0.35;
+        const POI_OFFSET_BOTTOM = 0.4;
+
         cameraRef.current.fitBounds(
             ne,
             sw,
             [
-                height * MAP_CONFIG.boundsOffset,
-                width * MAP_CONFIG.boundsOffset,
-                height * MAP_CONFIG.boundsOffset,
-                width * MAP_CONFIG.boundsOffset,
+                0,
+                width * MAP_CONFIG.boundsOffset * POI_OFFSET_HORIZONTAL,
+                height * POI_OFFSET_BOTTOM,
+                width * MAP_CONFIG.boundsOffset * POI_OFFSET_HORIZONTAL,
             ],
             MAP_CONFIG.animationDuration
         );
     };
 
     useEffect(() => {
-        if (isNavigationSelecting && directions && tracking && !selectingGasStationWaypoint && !categoryLocations) {
+        if (isNavigationSelecting && directions && tracking && !selectingGasStationWaypoint && !isOpenCategoryList) {
             fitBounds();
         }
     }, [
@@ -132,7 +137,7 @@ const useMapCamera = () => {
         tracking,
         isGasStationWaypoint,
         selectingGasStationWaypoint,
-        categoryLocations,
+        isOpenCategoryList,
     ]);
 
     useEffect(() => {
@@ -142,14 +147,14 @@ const useMapCamera = () => {
     }, [directions, selectingGasStationWaypoint, tracking]);
 
     useEffect(() => {
-        if (categoryLocations && tracking) {
+        if (isOpenCategoryList && tracking) {
             fitBoundsToUserAndPois();
         }
-    }, [categoryLocations, tracking]);
+    }, [isOpenCategoryList, categoryLocations, tracking]);
 
     useEffect(() => {
         const updateCamera = () => {
-            if (!cameraRef.current || selectingGasStationWaypoint) return;
+            if (!cameraRef.current || selectingGasStationWaypoint || isOpenCategoryList) return;
 
             cameraRef.current.setCamera({
                 animationMode: "flyTo",
@@ -162,8 +167,8 @@ const useMapCamera = () => {
                     currentSpeed && tracking
                         ? MAP_CONFIG.zoom - 0.01 * currentSpeed
                         : tracking
-                            ? MAP_CONFIG.zoom
-                            : undefined,
+                          ? MAP_CONFIG.zoom
+                          : undefined,
                 pitch: navigationView ? MAP_CONFIG.followPitch : MAP_CONFIG.pitch,
                 heading: tracking ? userLocation?.coords.course : undefined,
                 padding: navigationView ? MAP_CONFIG.followPadding : MAP_CONFIG.padding,
