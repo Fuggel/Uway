@@ -70,6 +70,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     const handlePoiLocationComplete = () => {
         setShowSuggestions(false);
         dispatch(mapLayoutsActions.setOpenCategoryLocationsList(true));
+        dispatch(mapLayoutsActions.setSelectingCategoryLocation(true));
         openSheet({ type: SheetType.POI });
 
         const unsubscribe = store.subscribe(() => {

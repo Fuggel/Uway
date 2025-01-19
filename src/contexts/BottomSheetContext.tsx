@@ -45,7 +45,6 @@ export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }
         setSheetData(null);
         dispatch(mapNavigationActions.setSearchQuery(""));
         dispatch(mapWaypointActions.setSelectGasStationWaypoint(false));
-        dispatch(mapNavigationActions.setCategoryLocation(null));
         dispatch(mapLayoutsActions.setOpenCategoryLocationsList(false));
     };
 

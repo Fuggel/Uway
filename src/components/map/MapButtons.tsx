@@ -1,11 +1,13 @@
 import { useRouter } from "expo-router";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 
 import IconButton from "../common/IconButton";
@@ -18,6 +20,8 @@ const MapButtons = () => {
     const { userLocation } = useContext(UserLocationContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const tracking = useSelector(mapNavigationSelectors.tracking);
+    const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
+    const { closeSheet } = useContext(BottomSheetContext);
 
     const getTopOffset = () => {
         if (deviceHeight > 1000) {
@@ -28,27 +32,45 @@ const MapButtons = () => {
     };
 
     return (
-        <View style={{ ...styles.topRight, top: getTopOffset() }}>
-            {userLocation && !isNavigationMode && (
-                <View style={styles.iconButton}>
-                    <IconButton type="white" icon="magnify" onPress={() => router.push("/(modal)/search")} />
+        <>
+            {selectingCategoryLocation && (
+                <View style={{ ...styles.topLeft, top: getTopOffset() }}>
+                    <View style={styles.iconButton}>
+                        <IconButton
+                            type="white"
+                            icon="arrow-left"
+                            onPress={() => {
+                                dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
+                                dispatch(mapNavigationActions.setCategoryLocation(null));
+                                closeSheet();
+                            }}
+                        />
+                    </View>
                 </View>
             )}
 
-            <View style={styles.iconButton}>
-                <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
+            <View style={{ ...styles.topRight, top: getTopOffset() }}>
+                {userLocation && !isNavigationMode && (
+                    <View style={styles.iconButton}>
+                        <IconButton type="white" icon="magnify" onPress={() => router.push("/(modal)/search")} />
+                    </View>
+                )}
+
+                <View style={styles.iconButton}>
+                    <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
+                </View>
+
+                {!tracking && (
+                    <View style={styles.iconButton}>
+                        <IconButton
+                            type="white"
+                            icon="crosshairs-gps"
+                            onPress={() => dispatch(mapNavigationActions.setTracking(true))}
+                        />
+                    </View>
+                )}
             </View>
-
-            {!tracking && (
-                <View style={styles.iconButton}>
-                    <IconButton
-                        type="white"
-                        icon="crosshairs-gps"
-                        onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                    />
-                </View>
-            )}
-        </View>
+        </>
     );
 };
 
@@ -56,6 +78,11 @@ const styles = StyleSheet.create({
     topRight: {
         position: "absolute",
         right: SIZES.spacing.sm,
+        gap: SIZES.spacing.xs,
+    },
+    topLeft: {
+        position: "absolute",
+        left: SIZES.spacing.sm,
         gap: SIZES.spacing.xs,
     },
     iconButton: {
