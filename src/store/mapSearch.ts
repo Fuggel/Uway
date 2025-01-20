@@ -10,6 +10,7 @@ interface IMapSearchState {
     savedSearches: SavedSearchLocation[];
     editingSearch: SavedSearchLocation | null;
     isEditingSavedSearch: boolean;
+    isPoiSearch: boolean;
 }
 
 const initialMapSearchState: IMapSearchState = {
@@ -18,6 +19,7 @@ const initialMapSearchState: IMapSearchState = {
     savedSearches: [],
     editingSearch: null,
     isEditingSavedSearch: false,
+    isPoiSearch: false,
 };
 
 const mapSearchSlice = createSlice({
@@ -44,6 +46,9 @@ const mapSearchSlice = createSlice({
                 state.savedSearches[index] = action.payload;
             }
         },
+        setIsPoiSearch: (state, action: PayloadAction<boolean>) => {
+            state.isPoiSearch = action.payload;
+        },
         deleteRecentSearch: (state, action: PayloadAction<string>) => {
             state.recentSearches = state.recentSearches.filter((search) => search.default_id !== action.payload);
         },
@@ -59,6 +64,7 @@ export const mapSearchSelectors = {
     savedSearches: (state: RootState): SavedSearchLocation[] => state.mapSearch.savedSearches,
     startEditingSearch: (state: RootState): SavedSearchLocation | null => state.mapSearch.editingSearch,
     isEditingSavedSearch: (state: RootState): boolean => state.mapSearch.isEditingSavedSearch,
+    isPoiSearch: (state: RootState): boolean => state.mapSearch.isPoiSearch,
 };
 
 export const mapSearchActions = mapSearchSlice.actions;

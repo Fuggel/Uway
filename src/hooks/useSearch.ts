@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "expo-router";
+import { usePathname } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -50,10 +50,10 @@ export const useSearchSuggestion = (params: { query: string }) => {
 
 export const useSearchLocation = () => {
     const dispatch = useDispatch();
-    const router = useRouter();
     const pathname = usePathname();
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const editingSearch = useSelector(mapSearchSelectors.startEditingSearch);
+    const isPoiSearch = useSelector(mapSearchSelectors.isPoiSearch);
 
     const {
         data: searchData,
@@ -79,7 +79,7 @@ export const useSearchLocation = () => {
 
             const categoryFeatures = searchData.features.filter((feature) => feature.properties.feature_type === "poi");
 
-            if (categoryFeatures.length > 0) {
+            if (categoryFeatures.length > 0 && isPoiSearch) {
                 dispatch(
                     mapNavigationActions.setCategoryLocation({
                         type: searchData.type,
@@ -87,13 +87,15 @@ export const useSearchLocation = () => {
                     })
                 );
                 dispatch(mapNavigationActions.setSearchQuery(""));
-            } else if (pathname === "/save-search" && editingSearch && categoryFeatures.length === 0) {
+            } else if (pathname === "/save-search" && editingSearch) {
                 dispatch(mapSearchActions.updateSavedSearch({ ...location, title: editingSearch.title }));
                 dispatch(mapNavigationActions.setSearchQuery(""));
+                dispatch(mapSearchActions.startEditingSearch(null));
             } else if (pathname === "/save-search") {
+                dispatch(mapSearchActions.startEditingSearch(null));
                 dispatch(mapLayoutsActions.setOpenSearchModal(true));
                 dispatch(mapSearchActions.setSaveSearch(location));
-            } else if (!locationId.saveSearch && categoryFeatures.length === 0) {
+            } else if (!locationId.saveSearch && !isPoiSearch) {
                 dispatch(mapNavigationActions.setLocation(location));
             }
         }
