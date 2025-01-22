@@ -60,7 +60,8 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         setShowSuggestions(false);
 
         const unsubscribe = store.subscribe(() => {
-            const selectedLocation = store.getState().mapNavigation.location;
+            const selectedLocation =
+                store.getState().mapNavigation.location || store.getState().mapSearch.editingSearch;
             if (selectedLocation) {
                 unsubscribe();
                 onClose();
