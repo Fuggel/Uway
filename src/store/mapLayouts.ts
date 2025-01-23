@@ -6,12 +6,14 @@ interface IMapLayoutsState {
     openSearchModal: boolean;
     openCategoryLocationsList: boolean;
     selectingCategoryLocation: boolean;
+    openGasStationsList: boolean;
 }
 
 const initialMapLayoutsState: IMapLayoutsState = {
     openSearchModal: false,
     openCategoryLocationsList: false,
     selectingCategoryLocation: false,
+    openGasStationsList: false,
 };
 
 const mapLayoutsSlice = createSlice({
@@ -27,6 +29,9 @@ const mapLayoutsSlice = createSlice({
         setSelectingCategoryLocation: (state, action: PayloadAction<boolean>) => {
             state.selectingCategoryLocation = action.payload;
         },
+        setOpenGasStationsList: (state, action: PayloadAction<boolean>) => {
+            state.openGasStationsList = action.payload;
+        },
     },
 });
 
@@ -34,6 +39,7 @@ export const mapLayoutsSelectors = {
     openSearchModal: (state: RootState): boolean => state.mapLayouts.openSearchModal,
     openCategoryLocationsList: (state: RootState): boolean => state.mapLayouts.openCategoryLocationsList,
     selectingCategoryLocation: (state: RootState): boolean => state.mapLayouts.selectingCategoryLocation,
+    openGasStationsList: (state: RootState): boolean => state.mapLayouts.openGasStationsList,
 };
 
 export const mapLayoutsActions = mapLayoutsSlice.actions;

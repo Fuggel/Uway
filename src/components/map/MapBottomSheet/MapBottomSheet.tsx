@@ -7,6 +7,7 @@ import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
 import { SheetType } from "@/types/ISheet";
 
 import BottomSheetComponent from "../../common/BottomSheet";
+import GasStationsList from "./GasStationsList";
 import MarkerInfo from "./MarkerInfo";
 import PoiList from "./PoiList";
 import WaypointInfo from "./WaypointInfo";
@@ -38,7 +39,13 @@ const MapBottomSheet = ({ onClose, markerProps, waypointProps, poiProps }: MapBo
     return (
         <BottomSheetComponent
             onClose={onClose}
-            height={sheetData.type === SheetType.WAYPOINT || sheetData.type === SheetType.POI ? "50%" : undefined}
+            height={
+                sheetData.type === SheetType.WAYPOINT ||
+                sheetData.type === SheetType.POI ||
+                sheetData.type === SheetType.GAS_STATION_LIST
+                    ? "50%"
+                    : undefined
+            }
         >
             {sheetData.type === SheetType.MARKER && markerProps && (
                 <MarkerInfo title={markerProps.title} data={markerProps.data} gasStation={markerProps.gasStation} />
@@ -49,6 +56,7 @@ const MapBottomSheet = ({ onClose, markerProps, waypointProps, poiProps }: MapBo
             {sheetData.type === SheetType.POI && poiProps && (
                 <PoiList data={poiProps.data} onSelect={poiProps.onSelect} />
             )}
+            {sheetData.type === SheetType.GAS_STATION_LIST && <GasStationsList />}
         </BottomSheetComponent>
     );
 };

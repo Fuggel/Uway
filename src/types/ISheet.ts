@@ -2,6 +2,7 @@ export enum SheetType {
     MARKER = "marker",
     WAYPOINT = "waypoint",
     POI = "poi",
+    GAS_STATION_LIST = "gas_station_list",
 }
 
 export enum MarkerSheet {

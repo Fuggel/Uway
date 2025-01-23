@@ -9,6 +9,7 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { SheetType } from "@/types/ISheet";
 
 import IconButton from "../common/IconButton";
 
@@ -21,7 +22,8 @@ const MapButtons = () => {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
-    const { closeSheet } = useContext(BottomSheetContext);
+    const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
+    const { openSheet, closeSheet } = useContext(BottomSheetContext);
 
     const getTopOffset = () => {
         if (deviceHeight > 1000) {
@@ -66,6 +68,19 @@ const MapButtons = () => {
                             type="white"
                             icon="crosshairs-gps"
                             onPress={() => dispatch(mapNavigationActions.setTracking(true))}
+                        />
+                    </View>
+                )}
+
+                {!openGasStationsList && !isNavigationMode && (
+                    <View style={styles.iconButton}>
+                        <IconButton
+                            type="white"
+                            icon="gas-station"
+                            onPress={() => {
+                                dispatch(mapLayoutsActions.setOpenGasStationsList(true));
+                                openSheet({ type: SheetType.GAS_STATION_LIST });
+                            }}
                         />
                     </View>
                 )}
