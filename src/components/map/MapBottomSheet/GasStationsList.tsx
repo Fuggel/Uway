@@ -1,18 +1,18 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapWaypointActions } from "@/store/mapWaypoint";
-import { GasStation } from "@/types/IGasStation";
+import { mapNavigationActions } from "@/store/mapNavigation";
+import { DefaultFilter, GasStation } from "@/types/IGasStation";
 import { SearchLocation } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
 import { getOrderedGasStations } from "@/utils/map-utils";
 
+import Dropdown from "@/components/common/Dropdown";
 import IconButton from "@/components/common/IconButton";
 import Text from "@/components/common/Text";
 import PriceDisplay from "@/components/ui/PriceDisplay";
@@ -21,7 +21,8 @@ const GasStationsList = () => {
     const dispatch = useDispatch();
     const { closeSheet } = useContext(BottomSheetContext);
     const { gasStations } = useContext(MapFeatureContext);
-    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const [selectedBrand, setSelectedBrand] = useState<string>(DefaultFilter.ALL);
+    const [selectedFuelType, setSelectedFuelType] = useState<string>(DefaultFilter.ALL);
 
     const data = getOrderedGasStations(
         gasStations.gasStations?.features.map((feature) => feature.properties as GasStation)
@@ -75,22 +76,43 @@ const GasStationsList = () => {
         closeSheet();
     };
 
-    const waypointGasStation = (gasStationProperties: GasStation | undefined) => {
-        if (!gasStationProperties) return;
-
-        dispatch(
-            mapWaypointActions.setGasStationWaypoints({
-                lon: gasStationProperties.lng,
-                lat: gasStationProperties.lat,
-            })
-        );
-        closeSheet();
-    };
-
     if (!data) return null;
 
     return (
         <View style={styles.container}>
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    gap: SIZES.spacing.md,
+                    marginBottom: SIZES.spacing.md,
+                }}
+            >
+                <Dropdown
+                    icon="gas-station"
+                    placeholder="Filtern nach Tankstelle"
+                    data={[...new Set(data.map((item) => item.brand))]
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((brand) => ({
+                            label: brand,
+                            value: brand,
+                        }))}
+                    value={selectedBrand}
+                    onChange={(item: string) => setSelectedBrand(item)}
+                />
+
+                <Dropdown
+                    icon="fuel"
+                    placeholder="Filtern nach Kraftstoff"
+                    data={["Diesel", "E5", "E10"].map((fuelType) => ({
+                        label: fuelType,
+                        value: fuelType,
+                    }))}
+                    value={selectedFuelType}
+                    onChange={(item: string) => setSelectedFuelType(item)}
+                />
+            </View>
+
             {data?.map((item, i) => {
                 const station = gasStationData(item);
 
@@ -162,15 +184,6 @@ const GasStationsList = () => {
                             type="secondary"
                             onPress={() => navigateToGasStation(item)}
                         />
-
-                        {isNavigationMode && (
-                            <IconButton
-                                icon="location"
-                                size="md"
-                                type="secondary"
-                                onPress={() => waypointGasStation(item)}
-                            />
-                        )}
                     </ScrollView>
                 );
             })}

@@ -62,16 +62,6 @@ const MapButtons = () => {
                     <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
                 </View>
 
-                {!tracking && (
-                    <View style={styles.iconButton}>
-                        <IconButton
-                            type="white"
-                            icon="crosshairs-gps"
-                            onPress={() => dispatch(mapNavigationActions.setTracking(true))}
-                        />
-                    </View>
-                )}
-
                 {!openGasStationsList && !isNavigationMode && (
                     <View style={styles.iconButton}>
                         <IconButton
@@ -81,6 +71,16 @@ const MapButtons = () => {
                                 dispatch(mapLayoutsActions.setOpenGasStationsList(true));
                                 openSheet({ type: SheetType.GAS_STATION_LIST });
                             }}
+                        />
+                    </View>
+                )}
+
+                {!tracking && (
+                    <View style={styles.iconButton}>
+                        <IconButton
+                            type="white"
+                            icon="crosshairs-gps"
+                            onPress={() => dispatch(mapNavigationActions.setTracking(true))}
                         />
                     </View>
                 )}

@@ -8,6 +8,7 @@ export const SIZES: Size = {
         md: 24,
         lg: 36,
         xl: 40,
+        xxl: 48,
     },
     borderRadius: {
         sm: 6,
