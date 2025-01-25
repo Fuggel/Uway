@@ -1,25 +1,32 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { useDispatch } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapFeatureContext } from "@/contexts/MapFeatureContext";
+import { mapNavigationActions } from "@/store/mapNavigation";
 import { DefaultFilter, FuelType, GasStation } from "@/types/IGasStation";
-import { LonLat } from "@/types/IMap";
-import { getStationColor } from "@/utils/map-utils";
+import { SearchLocation } from "@/types/ISearch";
+import { generateRandomId } from "@/utils/auth-utils";
+import { getOrderedGasStations, getStationColor } from "@/utils/map-utils";
 
 import Dropdown from "@/components/common/Dropdown";
 import IconButton from "@/components/common/IconButton";
 import Text from "@/components/common/Text";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 
-interface WaypointInfoProps {
-    data: GasStation[] | undefined;
-    onSelect: (coords: LonLat) => void;
-}
-
-const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
+const GasStationsList = () => {
+    const dispatch = useDispatch();
+    const { closeSheet } = useContext(BottomSheetContext);
+    const { gasStations } = useContext(MapFeatureContext);
     const [selectedBrand, setSelectedBrand] = useState<string>(DefaultFilter.ALL);
     const [selectedFuelType, setSelectedFuelType] = useState<string>(FuelType.DIESEL);
+
+    const data = getOrderedGasStations(
+        gasStations.gasStations?.features.map((feature) => feature.properties as GasStation)
+    );
 
     const gasStationData = (gasStationProperties: GasStation | undefined) => {
         const street = gasStationProperties?.street;
@@ -42,7 +49,36 @@ const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
         };
     };
 
-    const filteredData = data?.filter((item) => {
+    const navigateToGasStation = (gasStationProperties: GasStation | undefined) => {
+        if (!gasStationProperties) return;
+
+        const street = gasStationProperties.street;
+        const houseNumber = gasStationProperties.houseNumber || "";
+        const postcode = gasStationProperties.postCode || "";
+        const city = gasStationProperties.place || "";
+        const country = "Deutschland";
+
+        const newLocation: SearchLocation = {
+            default_id: generateRandomId(),
+            name: `${street} ${houseNumber}`,
+            feature_type: "custom-waypoint",
+            address: `${street} ${houseNumber}`,
+            full_address: `${postcode} ${city}`,
+            place_formatted: `${gasStationProperties.brand}, ${postcode} ${city}, ${country}`,
+            maki: "fuel",
+            coordinates: {
+                longitude: gasStationProperties.lng,
+                latitude: gasStationProperties.lat,
+            },
+        };
+
+        dispatch(mapNavigationActions.setLocation(newLocation));
+        closeSheet();
+    };
+
+    if (!data) return null;
+
+    const filteredData = data.filter((item) => {
         const fuelTypeMatches =
             selectedFuelType === DefaultFilter.ALL ||
             (selectedFuelType === FuelType.DIESEL && item.diesel > 0) ||
@@ -74,7 +110,7 @@ const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
                     clearable
                     icon="gas-station"
                     placeholder="Tankstelle"
-                    data={[...new Set(data?.map((item) => item.brand))]
+                    data={[...new Set(data.map((item) => item.brand))]
                         .sort((a, b) => a.localeCompare(b))
                         .map((brand) => ({
                             label: brand,
@@ -125,11 +161,12 @@ const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
                                 st={{ color: priceColor, fontSize: SIZES.fontSize.lg }}
                                 stSub={{ color: priceColor, fontSize: SIZES.fontSize.md }}
                             />
+
                             <IconButton
-                                icon="map-marker-plus"
+                                icon="directions"
                                 size="md"
                                 type="secondary"
-                                onPress={() => onSelect({ lon: item.lng, lat: item.lat })}
+                                onPress={() => navigateToGasStation(item)}
                             />
                         </View>
                     </ScrollView>
@@ -175,4 +212,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WaypointInfo;
+export default GasStationsList;

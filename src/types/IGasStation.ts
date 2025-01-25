@@ -14,3 +14,13 @@ export interface GasStation {
     houseNumber: string;
     postCode: number;
 }
+
+export enum DefaultFilter {
+    ALL = "all",
+}
+
+export enum FuelType {
+    DIESEL = "Diesel",
+    E5 = "E5",
+    E10 = "E10",
+}

@@ -30,6 +30,7 @@ const useMapCamera = () => {
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const isOpenCategoryList = useSelector(mapLayoutsSelectors.openCategoryLocationsList);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
+    const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
 
     const userSpeed = userLocation?.coords.speed || 0;
     const currentSpeed = convertSpeedToKmh(userSpeed);
@@ -134,7 +135,8 @@ const useMapCamera = () => {
             directions &&
             tracking &&
             !selectingGasStationWaypoint &&
-            !selectingCategoryLocation
+            !selectingCategoryLocation &&
+            !openGasStationsList
         ) {
             fitBounds();
         }
@@ -145,13 +147,14 @@ const useMapCamera = () => {
         isGasStationWaypoint,
         selectingGasStationWaypoint,
         selectingCategoryLocation,
+        openGasStationsList,
     ]);
 
     useEffect(() => {
-        if (directions && selectingGasStationWaypoint && tracking) {
+        if ((selectingGasStationWaypoint || openGasStationsList) && tracking) {
             fitBoundsToUserAndGasStations();
         }
-    }, [directions, selectingGasStationWaypoint, tracking]);
+    }, [selectingGasStationWaypoint, openGasStationsList, tracking]);
 
     useEffect(() => {
         if (selectingCategoryLocation && tracking) {
@@ -161,7 +164,8 @@ const useMapCamera = () => {
 
     useEffect(() => {
         const updateCamera = () => {
-            if (!cameraRef.current || selectingGasStationWaypoint || selectingCategoryLocation) return;
+            if (!cameraRef.current || selectingGasStationWaypoint || selectingCategoryLocation || openGasStationsList)
+                return;
 
             cameraRef.current.setCamera({
                 animationMode: "flyTo",

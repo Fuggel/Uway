@@ -5,3 +5,8 @@ export interface MapStyle {
     value: string;
     img?: ImageSourcePropType;
 }
+
+export interface DropdownItem {
+    label: string;
+    value: string;
+}

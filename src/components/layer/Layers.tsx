@@ -7,6 +7,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
@@ -23,6 +24,7 @@ const Layers = () => {
     const directions = useSelector(mapNavigationSelectors.directions);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
     const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
+    const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
 
     return (
         <>
@@ -109,9 +111,10 @@ const Layers = () => {
                         id={LayerId.GAS_STATION}
                         style={{
                             iconImage: ["get", "iconType"],
-                            iconSize: isGasStationWaypoint
-                                ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
-                                : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconSize:
+                                isGasStationWaypoint || openGasStationsList
+                                    ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
+                                    : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
