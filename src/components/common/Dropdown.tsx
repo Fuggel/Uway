@@ -14,10 +14,11 @@ interface DropdownProps<T> {
     value: string;
     icon: string;
     placeholder?: string;
+    clearable?: boolean;
     onChange: (value: string) => void;
 }
 
-export default function Dropdown<T>({ data, value, icon, placeholder, onChange }: DropdownProps<T>) {
+export default function Dropdown<T>({ data, value, icon, placeholder, clearable, onChange }: DropdownProps<T>) {
     const renderItem = (item: DropdownItem) => (
         <View style={styles.itemContainer}>
             <Text style={styles.itemLabel}>{item.label}</Text>
@@ -45,7 +46,7 @@ export default function Dropdown<T>({ data, value, icon, placeholder, onChange }
             renderRightIcon={() => (
                 <MaterialCommunityIcons
                     onPress={() => onChange(DefaultFilter.ALL)}
-                    name={value === DefaultFilter.ALL ? "chevron-down" : "close"}
+                    name={clearable ? (value === DefaultFilter.ALL ? "chevron-down" : "close") : "chevron-down"}
                     style={styles.iconLeft}
                     size={SIZES.iconSize.sm}
                 />

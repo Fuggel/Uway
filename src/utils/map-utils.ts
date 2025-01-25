@@ -1,8 +1,9 @@
 import { Position, lineString, point } from "@turf/helpers";
 import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 
+import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
-import { GasStation } from "@/types/IGasStation";
+import { FuelType, GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
 import { Lane, LaneDirection, ManeuverType, ModifierType, WarningThresholds, WarningType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
@@ -283,6 +284,37 @@ export function getStationIcon(stations: GasStation[], price: number) {
         return `${iconName}-cheap`;
     } else {
         return `${iconName}-average`;
+    }
+}
+
+export function getStationColor(stations: GasStation[], price: number, fuelType: FuelType) {
+    const totalPrice = stations.reduce((sum, station) => {
+        const fuelPrice = (() => {
+            switch (fuelType) {
+                case FuelType.DIESEL:
+                    return station.diesel;
+                case FuelType.E5:
+                    return station.e5;
+                case FuelType.E10:
+                    return station.e10;
+                default:
+                    return station.diesel;
+            }
+        })();
+
+        return sum + fuelPrice;
+    }, 0);
+
+    const avgPrice = totalPrice / stations.length;
+
+    const diffPercentage = ((price - avgPrice) / avgPrice) * 100;
+
+    if (diffPercentage >= 5) {
+        return COLORS.error;
+    } else if (diffPercentage <= -5) {
+        return COLORS.success;
+    } else {
+        return COLORS.secondary;
     }
 }
 

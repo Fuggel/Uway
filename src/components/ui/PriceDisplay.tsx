@@ -1,5 +1,7 @@
 import { StyleSheet, TextStyle, View } from "react-native";
 
+import { SIZES } from "@/constants/size-constants";
+
 import Text from "../common/Text";
 
 interface PriceDisplayProps {
@@ -16,7 +18,7 @@ const PriceDisplay = ({ price, st, stSub }: PriceDisplayProps) => {
     return (
         <View style={styles.priceContainer}>
             <Text style={{ ...styles.price, ...st }}>
-                {euros},{mainCents}
+                {euros}.{mainCents}
             </Text>
             <Text textStyle="xs" style={{ ...styles.superscript, ...stSub }}>
                 {smallCents}
@@ -30,7 +32,7 @@ const styles = StyleSheet.create({
     priceContainer: {
         flexDirection: "row",
         alignItems: "flex-end",
-        gap: 4,
+        gap: SIZES.spacing.xs,
     },
     price: {
         fontWeight: "bold",
@@ -39,7 +41,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         position: "absolute",
         top: -5,
-        right: 11,
+        right: 13,
     },
 });
 

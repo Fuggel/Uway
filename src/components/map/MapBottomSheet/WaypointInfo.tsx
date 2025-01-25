@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import { GasStation } from "@/types/IGasStation";
+import { DefaultFilter, FuelType, GasStation } from "@/types/IGasStation";
 import { LonLat } from "@/types/IMap";
+import { getStationColor } from "@/utils/map-utils";
 
+import Dropdown from "@/components/common/Dropdown";
 import IconButton from "@/components/common/IconButton";
 import Text from "@/components/common/Text";
 import PriceDisplay from "@/components/ui/PriceDisplay";
@@ -15,6 +18,9 @@ interface WaypointInfoProps {
 }
 
 const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
+    const [selectedBrand, setSelectedBrand] = useState<string>(DefaultFilter.ALL);
+    const [selectedFuelType, setSelectedFuelType] = useState<string>(FuelType.DIESEL);
+
     const gasStationData = (gasStationProperties: GasStation | undefined) => {
         const street = gasStationProperties?.street;
         const houseNumber = gasStationProperties?.houseNumber;
@@ -36,10 +42,63 @@ const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
         };
     };
 
+    const filteredData = data?.filter((item) => {
+        const fuelTypeMatches =
+            selectedFuelType === DefaultFilter.ALL ||
+            (selectedFuelType === FuelType.DIESEL && item.diesel > 0) ||
+            (selectedFuelType === FuelType.E5 && item.e5 > 0) ||
+            (selectedFuelType === FuelType.E10 && item.e10 > 0);
+
+        const brandMatches = selectedBrand === DefaultFilter.ALL || item.brand === selectedBrand;
+
+        return fuelTypeMatches && brandMatches;
+    });
+
+    const selectedPrice = (item: GasStation) => {
+        switch (selectedFuelType) {
+            case FuelType.DIESEL:
+                return item.diesel;
+            case FuelType.E5:
+                return item.e5;
+            case FuelType.E10:
+                return item.e10;
+            default:
+                return item.diesel;
+        }
+    };
+
     return (
         <View style={styles.container}>
-            {data?.map((item, i) => {
+            <View style={styles.filterContainer}>
+                <Dropdown
+                    clearable
+                    icon="gas-station"
+                    placeholder="Tankstelle"
+                    data={[...new Set(data?.map((item) => item.brand))]
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((brand) => ({
+                            label: brand,
+                            value: brand,
+                        }))}
+                    value={selectedBrand}
+                    onChange={(item: string) => setSelectedBrand(item)}
+                />
+
+                <Dropdown
+                    icon="fuel"
+                    placeholder="Kraftstoff"
+                    data={[FuelType.DIESEL, FuelType.E5, FuelType.E10].map((fuelType) => ({
+                        label: fuelType,
+                        value: fuelType,
+                    }))}
+                    value={selectedFuelType}
+                    onChange={(item: string) => setSelectedFuelType(item)}
+                />
+            </View>
+
+            {filteredData?.map((item, i) => {
                 const station = gasStationData(item);
+                const priceColor = getStationColor(filteredData, selectedPrice(item), selectedFuelType as FuelType);
 
                 return (
                     <ScrollView key={i} style={styles.itemContainer} contentContainerStyle={styles.contentContainer}>
@@ -58,57 +117,21 @@ const WaypointInfo = ({ data, onSelect }: WaypointInfoProps) => {
                                 <Text style={styles.textBody}> · </Text>
                                 <Text style={styles.textBody}>{station.dist} km</Text>
                             </View>
-
-                            <View style={styles.priceTable}>
-                                <View style={styles.tableRow}>
-                                    <Text style={styles.tableHeader}>Diesel</Text>
-                                    <Text style={styles.tableHeader}>E5</Text>
-                                    <Text style={styles.tableHeader}>E10</Text>
-                                </View>
-                                <View style={styles.tableRow}>
-                                    <Text style={styles.tableCell}>
-                                        {station.diesel ? (
-                                            <PriceDisplay
-                                                price={station.diesel}
-                                                st={styles.tableCell}
-                                                stSub={styles.tableCellSub}
-                                            />
-                                        ) : (
-                                            "-"
-                                        )}
-                                    </Text>
-                                    <Text style={styles.tableCell}>
-                                        {station.e5 ? (
-                                            <PriceDisplay
-                                                price={station.e5}
-                                                st={styles.tableCell}
-                                                stSub={styles.tableCellSub}
-                                            />
-                                        ) : (
-                                            "-"
-                                        )}
-                                    </Text>
-                                    <Text style={styles.tableCell}>
-                                        {station.e10 ? (
-                                            <PriceDisplay
-                                                price={station.e10}
-                                                st={styles.tableCell}
-                                                stSub={styles.tableCellSub}
-                                            />
-                                        ) : (
-                                            "-"
-                                        )}
-                                    </Text>
-                                </View>
-                            </View>
                         </View>
 
-                        <IconButton
-                            icon="map-marker-plus"
-                            size="md"
-                            type="secondary"
-                            onPress={() => onSelect({ lon: item.lng, lat: item.lat })}
-                        />
+                        <View style={{ alignItems: "flex-end", justifyContent: "space-between" }}>
+                            <PriceDisplay
+                                price={selectedPrice(item)}
+                                st={{ color: priceColor, fontSize: SIZES.fontSize.lg }}
+                                stSub={{ color: priceColor, fontSize: SIZES.fontSize.md }}
+                            />
+                            <IconButton
+                                icon="map-marker-plus"
+                                size="md"
+                                type="secondary"
+                                onPress={() => onSelect({ lon: item.lng, lat: item.lat })}
+                            />
+                        </View>
                     </ScrollView>
                 );
             })}
@@ -121,6 +144,12 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingHorizontal: SIZES.spacing.md,
         paddingBottom: SIZES.spacing.md,
+    },
+    filterContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        gap: SIZES.spacing.md,
+        marginVertical: SIZES.spacing.md,
     },
     itemContainer: {
         flexDirection: "row",
@@ -143,40 +172,6 @@ const styles = StyleSheet.create({
     textBody: {
         color: COLORS.gray,
         fontSize: SIZES.fontSize.sm,
-    },
-    priceTable: {
-        marginVertical: SIZES.spacing.xs,
-        borderColor: COLORS.secondary,
-        borderWidth: 1,
-        borderRadius: SIZES.borderRadius.md,
-        padding: SIZES.spacing.xs,
-    },
-    tableRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingHorizontal: SIZES.spacing.xs,
-    },
-    tableHeader: {
-        flex: 1,
-        fontWeight: "bold",
-        textAlign: "center",
-        marginVertical: SIZES.spacing.xxs,
-        borderBottomWidth: 0.5,
-        borderBottomColor: COLORS.primary,
-        fontSize: SIZES.fontSize.sm,
-        color: COLORS.primary,
-    },
-    tableCell: {
-        textAlign: "center",
-        color: COLORS.primary,
-        fontSize: SIZES.fontSize.sm,
-        fontWeight: "normal",
-        marginRight: 1.5,
-    },
-    tableCellSub: {
-        fontSize: SIZES.fontSize.xs,
-        color: COLORS.primary,
-        fontWeight: "normal",
     },
 });
 
