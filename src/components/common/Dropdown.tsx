@@ -45,7 +45,7 @@ export default function Dropdown<T>({ data, value, icon, placeholder, clearable,
             )}
             renderRightIcon={() => (
                 <MaterialCommunityIcons
-                    onPress={() => onChange(DefaultFilter.ALL)}
+                    onPress={clearable ? () => onChange(DefaultFilter.ALL) : undefined}
                     name={clearable ? (value === DefaultFilter.ALL ? "chevron-down" : "close") : "chevron-down"}
                     style={styles.iconLeft}
                     size={SIZES.iconSize.sm}
