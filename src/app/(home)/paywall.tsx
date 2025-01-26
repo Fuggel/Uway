@@ -17,12 +17,10 @@ const Paywall = ({ onSubscriptionChange }: PaywallProps) => {
             <RevenueCatUI.Paywall
                 onPurchaseCompleted={() => {
                     onSubscriptionChange();
-                    console.log("Purchase completed");
                     router.push("/map");
                 }}
                 onRestoreCompleted={() => {
                     onSubscriptionChange();
-                    console.log("Restore completed");
                 }}
             />
         </>
