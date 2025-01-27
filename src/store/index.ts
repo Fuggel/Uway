@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "@react-native-async-storage/async-storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
+import mapExcludeNavigationReduce from "./mapExcludeNavigation";
 import mapGasStationReduce from "./mapGasStation";
 import mapIncidentReduce from "./mapIncident";
 import mapLayoutsReduce from "./mapLayouts";
@@ -16,7 +17,15 @@ import mapWaypointReduce from "./mapWaypoint";
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["mapView", "mapSpeedCamera", "mapGasStation", "mapIncident", "mapTextToSpeech", "mapSearch"],
+    whitelist: [
+        "mapView",
+        "mapSpeedCamera",
+        "mapGasStation",
+        "mapIncident",
+        "mapTextToSpeech",
+        "mapSearch",
+        "mapExcludeNavigation",
+    ],
 };
 
 const reducer = combineReducers({
@@ -29,6 +38,7 @@ const reducer = combineReducers({
     mapSearch: mapSearchReduce,
     mapLayouts: mapLayoutsReduce,
     mapWaypoint: mapWaypointReduce,
+    mapExcludeNavigation: mapExcludeNavigationReduce,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

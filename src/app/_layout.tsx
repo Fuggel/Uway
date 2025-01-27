@@ -87,6 +87,10 @@ export default function RootLayout() {
                                                     options={{ title: "Einstellungen", headerBackTitle: "Map" }}
                                                 />
                                                 <Stack.Screen
+                                                    name="settings/navigation/index"
+                                                    options={{ title: "Navigation" }}
+                                                />
+                                                <Stack.Screen
                                                     name="settings/speed-camera/index"
                                                     options={{ title: "Blitzer" }}
                                                 />

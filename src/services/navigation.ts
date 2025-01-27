@@ -3,11 +3,13 @@ import axios from "axios";
 import { API_URL } from "@/constants/api-constants";
 import { API_KEY } from "@/constants/env-constants";
 import { LonLat } from "@/types/IMap";
+import { ExcludeTypes } from "@/types/INavigation";
 
 export async function fetchDirections(params: {
     profile: string;
     startLngLat: LonLat;
     destinationLngLat: LonLat;
+    excludeTypes: ExcludeTypes;
     waypoint?: LonLat;
 }) {
     try {
@@ -36,6 +38,14 @@ export async function fetchDirections(params: {
 
         if (params.waypoint) {
             queryParams.append("waypoints", "0;2");
+        }
+
+        if (params.excludeTypes && Object.keys(params.excludeTypes).length > 0) {
+            const excludeTypes = Object.keys(params.excludeTypes).filter(
+                (key) => params.excludeTypes[key as keyof ExcludeTypes]
+            );
+
+            queryParams.append("exclude", excludeTypes.join(","));
         }
 
         const url = `${API_URL.MAPBOX_DIRECTIONS}/${params.profile}/${coordinates}?${queryParams.toString()}`;

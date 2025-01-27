@@ -3,15 +3,21 @@ import React, { useContext } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
+
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
+import { ExcludeTypes } from "@/types/INavigation";
 import { SheetType } from "@/types/ISheet";
 
+import CircleSeparator from "../common/CircleSeparator";
 import IconButton from "../common/IconButton";
+import Text from "../common/Text";
 
 const deviceHeight = Dimensions.get("window").height;
 
@@ -20,10 +26,16 @@ const MapButtons = () => {
     const router = useRouter();
     const { userLocation } = useContext(UserLocationContext);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
+    const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
     const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
     const { openSheet, closeSheet } = useContext(BottomSheetContext);
+
+    const excludeTypesLength = Object.keys(excludeTypes).filter(
+        (key) => excludeTypes[key as keyof ExcludeTypes]
+    ).length;
 
     const getTopOffset = () => {
         if (deviceHeight > 1000) {
@@ -35,8 +47,8 @@ const MapButtons = () => {
 
     return (
         <>
-            {selectingCategoryLocation && (
-                <View style={{ ...styles.topLeft, top: getTopOffset() }}>
+            <View style={{ ...styles.topLeft, top: getTopOffset() }}>
+                {selectingCategoryLocation && (
                     <View style={styles.iconButton}>
                         <IconButton
                             type="white"
@@ -48,8 +60,27 @@ const MapButtons = () => {
                             }}
                         />
                     </View>
-                </View>
-            )}
+                )}
+
+                {isNavigationSelecting && (
+                    <TouchableOpacity
+                        style={styles.excludeButton}
+                        activeOpacity={0.9}
+                        onPress={() => router.push("/settings/navigation")}
+                    >
+                        <Text type="white">Vermeiden</Text>
+
+                        {excludeTypesLength > 0 && (
+                            <>
+                                <CircleSeparator />
+                                <View style={styles.excludeBadge}>
+                                    <Text type="white">{excludeTypesLength}</Text>
+                                </View>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
+            </View>
 
             <View style={{ ...styles.topRight, top: getTopOffset() }}>
                 {userLocation && !isNavigationMode && (
@@ -99,6 +130,22 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: SIZES.spacing.sm,
         gap: SIZES.spacing.xs,
+    },
+    excludeButton: {
+        backgroundColor: COLORS.primary,
+        borderRadius: SIZES.borderRadius.md,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: SIZES.spacing.md,
+        paddingVertical: SIZES.spacing.sm,
+    },
+    excludeBadge: {
+        backgroundColor: COLORS.secondary,
+        borderRadius: 1000,
+        width: 24,
+        height: 24,
+        alignItems: "center",
+        justifyContent: "center",
     },
     iconButton: {
         justifyContent: "center",

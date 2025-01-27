@@ -7,6 +7,7 @@ import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
 import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchDirections } from "@/services/navigation";
+import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { isValidLonLat } from "@/utils/map-utils";
@@ -18,6 +19,7 @@ const useNavigation = () => {
     const navigationProfile = useSelector(mapNavigationSelectors.navigationProfile);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const directions = useSelector(mapNavigationSelectors.directions);
+    const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
     const gasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
 
     const longitude = userLocation?.coords?.longitude;
@@ -33,12 +35,13 @@ const useNavigation = () => {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", navigationProfile, location, gasStationWaypoint],
+        queryKey: ["directions", navigationProfile, location, gasStationWaypoint, excludeTypes],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
                 startLngLat: { lon: longitude, lat: latitude },
                 destinationLngLat,
+                excludeTypes,
                 waypoint: gasStationWaypoint ? { lon: gasStationWaypoint.lon, lat: gasStationWaypoint.lat } : undefined,
             }),
         enabled: isValidLonLat(longitude, latitude) && isValidLonLat(destinationLngLat.lon, destinationLngLat.lat),
@@ -51,6 +54,7 @@ const useNavigation = () => {
                 profile: navigationProfile,
                 startLngLat: { lon: longitude, lat: latitude },
                 destinationLngLat: destinationLngLat,
+                excludeTypes,
             }),
         onSuccess: (data) => {
             if (data?.routes?.length > 0) {

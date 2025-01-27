@@ -82,6 +82,12 @@ const Settings = () => {
                         </View>
                     </SettingsItem>
                 </SettingsSection>
+
+                <SettingsSection icon="navigation" title="Navigation">
+                    <SettingsItem title="Vermeiden">
+                        <Link type="secondary" to={() => router.push("/settings/navigation")} />
+                    </SettingsItem>
+                </SettingsSection>
             </ScrollView>
         </>
     );
