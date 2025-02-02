@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 
 import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
 
-import { COLORS } from "@/constants/colors-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
@@ -17,10 +16,14 @@ import { MarkerSheet, SheetType } from "@/types/ISheet";
 import { SpeedCameraProperties } from "@/types/ISpeed";
 import { IncidentProperties, IncidentType } from "@/types/ITraffic";
 
+import { renderDestinationMarker, renderRouteLayer } from "./RouteLayers";
+
 const Layers = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { incidents, speedCameras, gasStations } = useContext(MapFeatureContext);
     const { openSheet } = useContext(BottomSheetContext);
+    const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
+    const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
     const directions = useSelector(mapNavigationSelectors.directions);
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
     const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
@@ -32,44 +35,17 @@ const Layers = () => {
 
             {directions?.geometry && (
                 <>
-                    <ShapeSource id="route-source" shape={directions.geometry as GeoJSON.Geometry}>
-                        <LineLayer
-                            id={LayerId.ROUTE}
-                            style={{
-                                lineColor: COLORS.secondary_light,
-                                lineOpacity: 0.8,
-                                lineCap: "round",
-                                lineJoin: "round",
-                                lineWidth: ["interpolate", ["exponential", 1.5], ["zoom"], 10, 5, 15, 8, 20, 20],
-                            }}
-                            belowLayerID={LayerId.STREET_NAME}
-                        />
-                    </ShapeSource>
-
-                    <ShapeSource
-                        id="destination-source"
-                        shape={{
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates:
-                                    directions.geometry.coordinates[directions.geometry.coordinates.length - 1],
-                            },
-                            properties: {},
-                        }}
-                    >
-                        <SymbolLayer
-                            id={LayerId.ROUTE_DESTINATION}
-                            style={{
-                                iconImage: "route-destination",
-                                iconSize: ["interpolate", ["linear"], ["zoom"], 10, 0.4, 15, 0.5, 20, 0.7],
-                                iconAllowOverlap: true,
-                            }}
-                            belowLayerID={LayerId.INVISIBLE}
-                        />
-                    </ShapeSource>
+                    {renderRouteLayer({ selectedRoute, route: directions, index: selectedRoute })}
+                    {renderDestinationMarker(directions)}
                 </>
             )}
+
+            {routeOptions?.map((route, index) => (
+                <React.Fragment key={index}>
+                    {renderRouteLayer({ selectedRoute, route, index })}
+                    {renderDestinationMarker(route)}
+                </React.Fragment>
+            ))}
 
             {categoryLocation && (
                 <ShapeSource

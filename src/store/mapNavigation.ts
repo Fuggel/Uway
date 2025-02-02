@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { Direction, Route, RouteProfileType } from "@/types/INavigation";
+import { Direction, RouteProfileType } from "@/types/INavigation";
 import { LocationId, SearchFeatureCollection, SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
@@ -15,7 +15,8 @@ interface IMapNavigationState {
     isNavigationSelecting: boolean;
     isNavigationMode: boolean;
     navigationProfile: RouteProfileType;
-    routeOptions: Route[] | null;
+    routeOptions: Direction[] | null;
+    selectedRoute: number;
     directions: Direction | null;
     spokenInstruction: string | null;
 }
@@ -31,6 +32,7 @@ const initialMapNavigationState: IMapNavigationState = {
     isNavigationMode: false,
     navigationProfile: RouteProfileType.DRIVING,
     routeOptions: null,
+    selectedRoute: 0,
     directions: null,
     spokenInstruction: null,
 };
@@ -66,8 +68,11 @@ const mapNavigationSlice = createSlice({
         setNavigationProfile(state, action: PayloadAction<RouteProfileType>) {
             state.navigationProfile = action.payload;
         },
-        setRouteOptions(state, action: PayloadAction<Route[] | null>) {
+        setRouteOptions(state, action: PayloadAction<Direction[] | null>) {
             state.routeOptions = action.payload;
+        },
+        setSelectedRoute(state, action: PayloadAction<number>) {
+            state.selectedRoute = action.payload;
         },
         setDirections(state, action: PayloadAction<Direction | null>) {
             state.directions = action.payload;
@@ -99,7 +104,8 @@ export const mapNavigationSelectors = {
     isNavigationSelecting: (state: RootState): boolean => state.mapNavigation.isNavigationSelecting,
     isNavigationMode: (state: RootState): boolean => state.mapNavigation.isNavigationMode,
     navigationProfile: (state: RootState): RouteProfileType => state.mapNavigation.navigationProfile,
-    routeOptions: (state: RootState): Route[] | null => state.mapNavigation.routeOptions,
+    routeOptions: (state: RootState): Direction[] | null => state.mapNavigation.routeOptions,
+    selectedRoute: (state: RootState): number => state.mapNavigation.selectedRoute,
     directions: (state: RootState): Direction | null => state.mapNavigation.directions,
     spokenInstruction: (state: RootState): string | null => state.mapNavigation.spokenInstruction,
 };

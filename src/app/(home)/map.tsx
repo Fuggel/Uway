@@ -13,6 +13,7 @@ import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
+import { RouteOptionsContext } from "@/contexts/RouteOptionsContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
@@ -29,12 +30,14 @@ import { determineMapStyle, getOrderedGasStations } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 import { determineTheme, invertTheme } from "@/utils/theme-utils";
 
+import BottomSheetComponent from "@/components/common/BottomSheet";
 import Button from "@/components/common/Button";
 import Loading from "@/components/common/Loading";
 import Text from "@/components/common/Text";
 import Layers from "@/components/layer/Layers";
 import MapAlerts from "@/components/map/MapAlerts";
 import MapBottomSheet from "@/components/map/MapBottomSheet/MapBottomSheet";
+import RouteOptions from "@/components/map/MapBottomSheet/RouteOptions";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
 
@@ -45,6 +48,7 @@ const Map = () => {
     const { cameraRef } = useMapCamera();
     const { userLocation } = useContext(UserLocationContext);
     const { openSheet, sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
+    const { showRouteOptions, cancelRouteOptions } = useContext(RouteOptionsContext);
     const { gasStations } = useContext(MapFeatureContext);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const { loadingDirections } = useNavigation();
@@ -151,6 +155,12 @@ const Map = () => {
                     </TouchableOpacity>
                 )}
             </View>
+
+            {showRouteOptions && (
+                <BottomSheetComponent onClose={() => cancelRouteOptions()}>
+                    <RouteOptions />
+                </BottomSheetComponent>
+            )}
 
             {location && directions && <MapNavigation />}
         </>

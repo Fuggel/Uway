@@ -20,6 +20,8 @@ const useMapCamera = () => {
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
     const { gasStations } = useContext(MapFeatureContext);
+    const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
+    const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
     const directions = useSelector(mapNavigationSelectors.directions);
     const tracking = useSelector(mapNavigationSelectors.tracking);
     const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
@@ -40,6 +42,32 @@ const useMapCamera = () => {
 
         const userCoords: Position = [userLocation!.coords.longitude, userLocation!.coords.latitude];
         const routeCoords = directions!.geometry.coordinates;
+        const allCoords: Position[] = [userCoords, ...routeCoords];
+
+        const lons = allCoords.map(([lon]) => lon);
+        const lats = allCoords.map(([, lat]) => lat);
+
+        const ne: Position = [Math.max(...lons), Math.max(...lats)];
+        const sw: Position = [Math.min(...lons), Math.min(...lats)];
+
+        cameraRef.current.fitBounds(
+            ne,
+            sw,
+            [
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+                height * MAP_CONFIG.boundsOffset,
+                width * MAP_CONFIG.boundsOffset,
+            ],
+            MAP_CONFIG.animationDuration
+        );
+    };
+
+    const fitBoundsToUserAndSelectedRoute = () => {
+        if (!cameraRef.current || !userLocation || !routeOptions) return;
+
+        const userCoords: Position = [userLocation!.coords.longitude, userLocation!.coords.latitude];
+        const routeCoords = routeOptions[selectedRoute].geometry.coordinates;
         const allCoords: Position[] = [userCoords, ...routeCoords];
 
         const lons = allCoords.map(([lon]) => lon);
@@ -163,8 +191,20 @@ const useMapCamera = () => {
     }, [selectingCategoryLocation, isOpenCategoryList, categoryLocations, tracking]);
 
     useEffect(() => {
+        if (routeOptions && tracking) {
+            fitBoundsToUserAndSelectedRoute();
+        }
+    }, [selectedRoute, routeOptions, tracking]);
+
+    useEffect(() => {
         const updateCamera = () => {
-            if (!cameraRef.current || selectingGasStationWaypoint || selectingCategoryLocation || openGasStationsList)
+            if (
+                !cameraRef.current ||
+                selectingGasStationWaypoint ||
+                selectingCategoryLocation ||
+                openGasStationsList ||
+                routeOptions
+            )
                 return;
 
             cameraRef.current.setCamera({

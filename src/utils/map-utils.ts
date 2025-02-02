@@ -358,6 +358,20 @@ export function readableDistance(distance: number) {
     }
 }
 
+export function readableDuration(duration: number) {
+    if (isNaN(duration) || duration <= 0) return "0 min";
+
+    const totalMinutes = Math.round(duration / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours >= 1) {
+        return `${hours}:${minutes.toString().padStart(2, "0")} h`;
+    } else {
+        return `${minutes} min`;
+    }
+}
+
 export function readableStringDuration(duration: string | undefined) {
     if (!duration) return "";
 
