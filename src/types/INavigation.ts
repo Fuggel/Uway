@@ -174,11 +174,6 @@ export enum WarningThreshold {
     LATE = "late",
 }
 
-export enum WarningType {
-    INSTRUCTION = "instruction",
-    ALERT = "alert",
-}
-
 export interface ManeuverImage {
     currentArrowDir: ImageSourcePropType;
     nextArrowDir: ImageSourcePropType | null;

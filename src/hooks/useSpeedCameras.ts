@@ -12,7 +12,6 @@ import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { WarningAlert } from "@/types/IMap";
-import { WarningType } from "@/types/INavigation";
 import { SpeedCameraAlert, SpeedCameraProperties } from "@/types/ISpeed";
 import { convertSpeedToKmh, isFeatureRelevant, warningThresholds } from "@/utils/map-utils";
 
@@ -55,7 +54,7 @@ const useSpeedCameras = () => {
 
     useEffect(() => {
         if (data && showSpeedCameras && longitude && latitude) {
-            const { early, late } = warningThresholds(WarningType.ALERT, currentSpeed);
+            const { early, late } = warningThresholds(currentSpeed);
             let closestCamera: SpeedCameraAlert | null = null;
             let isWithinAnyWarningZone = false;
 

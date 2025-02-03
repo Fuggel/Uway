@@ -5,7 +5,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { Lane, LaneDirection, ManeuverType, ModifierType, WarningType } from "@/types/INavigation";
+import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -449,17 +449,15 @@ function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBuffer
     return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
 
-export function warningThresholds(type: WarningType, speed: number) {
-    switch (type) {
-        case WarningType.ALERT:
-            if (speed <= 30) return { early: 300, late: 150 };
-            if (speed <= 50) return { early: 500, late: 250 };
-            if (speed > 90) return { early: 1500, late: 800 };
+export function warningThresholds(speed: number) {
+    switch (true) {
+        case speed <= 30:
+            return { early: 300, late: 150 };
+        case speed <= 50:
+            return { early: 500, late: 250 };
+        case speed > 90:
+            return { early: 1500, late: 800 };
+        default:
             return { early: 800, late: 400 };
-        case WarningType.INSTRUCTION:
-            if (speed <= 30) return { early: 200, late: 75 };
-            if (speed <= 50) return { early: 400, late: 150 };
-            if (speed > 90) return { early: 1000, late: 500 };
-            return { early: 600, late: 200 };
     }
 }
