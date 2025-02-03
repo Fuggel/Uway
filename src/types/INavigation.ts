@@ -13,7 +13,7 @@ export interface Instruction {
 
 export interface CurrentInstruction {
     step: Instruction;
-    voiceInstruction: VoiceInstruction;
+    voiceInstruction: VoiceInstruction | null;
     bannerInstruction: BannerInstruction;
     nextBannerInstruction: BannerInstruction | null;
     laneInformation: Lane[];

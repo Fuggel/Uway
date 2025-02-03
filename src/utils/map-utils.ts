@@ -5,7 +5,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { Lane, LaneDirection, ManeuverType, ModifierType, WarningThresholds, WarningType } from "@/types/INavigation";
+import { Lane, LaneDirection, ManeuverType, ModifierType, WarningType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
