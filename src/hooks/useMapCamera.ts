@@ -207,12 +207,6 @@ const useMapCamera = () => {
                 openGasStationsList ||
                 showRouteOptions
             ) {
-                console.log(
-                    showRouteOptions,
-                    selectingGasStationWaypoint,
-                    selectingCategoryLocation,
-                    openGasStationsList
-                );
                 return;
             }
 
