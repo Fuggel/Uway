@@ -29,6 +29,7 @@ export const RouteOptionsContextProvider: React.FC<ProviderProps> = ({ children 
         dispatch(mapNavigationActions.setIsNavigationSelecting(false));
         dispatch(mapNavigationActions.setRouteOptions(null));
         dispatch(mapNavigationActions.setSelectedRoute(0));
+        dispatch(mapNavigationActions.setLocation(null));
         setShowRouteOptions(false);
     };
 
