@@ -35,7 +35,7 @@ const useNavigation = () => {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", navigationProfile, location, gasStationWaypoint, excludeTypes],
+        queryKey: ["directions", location, gasStationWaypoint, excludeTypes],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
