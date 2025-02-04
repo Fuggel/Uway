@@ -205,9 +205,16 @@ const useMapCamera = () => {
                 selectingGasStationWaypoint ||
                 selectingCategoryLocation ||
                 openGasStationsList ||
-                routeOptions
-            )
+                showRouteOptions
+            ) {
+                console.log(
+                    showRouteOptions,
+                    selectingGasStationWaypoint,
+                    selectingCategoryLocation,
+                    openGasStationsList
+                );
                 return;
+            }
 
             cameraRef.current.setCamera({
                 animationMode: "flyTo",
@@ -237,6 +244,9 @@ const useMapCamera = () => {
         userLocation?.coords.longitude,
         userLocation?.coords.latitude,
         navigationView,
+        showRouteOptions,
+        openGasStationsList,
+        selectingGasStationWaypoint,
     ]);
 
     useEffect(() => {
