@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
-import { RouteOptionsContext } from "@/contexts/RouteOptionsContext";
 import { useSearchLocation, useSearchSuggestion } from "@/hooks/useSearch";
 import useSpeechToText from "@/hooks/useSpeechToText";
 import store from "@/store";
@@ -33,7 +32,6 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
     const route = useRouter();
     const pathname = usePathname();
     const { openSheet } = useContext(BottomSheetContext);
-    const { setShowRouteOptions } = useContext(RouteOptionsContext);
     const openSearchModal = useSelector(mapLayoutsSelectors.openSearchModal);
     const [savedSearchName, setSavedSearchName] = useState("");
     const [saveSearchError, setSaveSearchError] = useState<SaveSearchError>(SaveSearchError.NONE);
@@ -60,7 +58,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         dispatch(mapNavigationActions.setIsNavigationSelecting(true));
         dispatch(mapSearchActions.setIsPoiSearch(false));
         setShowSuggestions(false);
-        setShowRouteOptions(true);
+        dispatch(mapNavigationActions.setShowRouteOptions(true));
 
         const unsubscribe = store.subscribe(() => {
             const selectedLocation =

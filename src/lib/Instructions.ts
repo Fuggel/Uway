@@ -18,6 +18,7 @@ import { convertSpeedToKmh } from "@/utils/map-utils";
 
 class Instructions {
     public userPosition: Location | null;
+    public isArrived = false;
 
     private routeGeometry: number[][] = [];
     private instructions: Instruction[];
@@ -49,7 +50,7 @@ class Instructions {
     }
 
     public checkIfArrived(onCancel: () => void) {
-        if (!this.userPosition || !this.instructions) return;
+        if (!this.userPosition || !this.instructions || this.isArrived) return;
 
         const lastStep = this.instructions[this.instructions.length - 1];
         if (lastStep.maneuver.type === ManeuverType.ARRIVE && this.userPosition) {
@@ -60,6 +61,7 @@ class Instructions {
             const dist = distance(from, to, { units: "meters" });
 
             if (dist <= 3) {
+                this.isArrived = true;
                 onCancel();
             }
         }
@@ -201,7 +203,10 @@ class Instructions {
             const instruction = voiceInstructions[i];
             const distanceDifference = Math.abs(currentDistance - instruction.distanceAlongGeometry);
 
-            if (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold) {
+            if (
+                i === 0 ||
+                (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold)
+            ) {
                 return instruction;
             }
         }

@@ -1,11 +1,9 @@
-import { useContext } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import { RouteOptionsContext } from "@/contexts/RouteOptionsContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { readableDistance, readableDuration } from "@/utils/map-utils";
 
@@ -15,7 +13,6 @@ const RouteOptions = () => {
     const dispatch = useDispatch();
     const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
     const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
-    const { setShowRouteOptions, cancelRouteOptions } = useContext(RouteOptionsContext);
 
     const handleStartNavigation = () => {
         if (!routeOptions) return;
@@ -26,7 +23,7 @@ const RouteOptions = () => {
         dispatch(mapNavigationActions.setIsNavigationSelecting(false));
         dispatch(mapNavigationActions.setRouteOptions(null));
         dispatch(mapNavigationActions.setSelectedRoute(0));
-        setShowRouteOptions(false);
+        dispatch(mapNavigationActions.setShowRouteOptions(false));
     };
 
     if (!routeOptions) return null;
@@ -57,7 +54,7 @@ const RouteOptions = () => {
                     mode="outlined"
                     style={{ width: "48%", borderColor: COLORS.primary }}
                     textColor={COLORS.primary}
-                    onPress={() => cancelRouteOptions()}
+                    onPress={() => dispatch(mapNavigationActions.handleCancelNavigation())}
                 >
                     Abbrechen
                 </Button>

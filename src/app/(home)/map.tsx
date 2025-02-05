@@ -13,7 +13,6 @@ import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { RouteOptionsContext } from "@/contexts/RouteOptionsContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
@@ -48,9 +47,9 @@ const Map = () => {
     const { cameraRef } = useMapCamera();
     const { userLocation } = useContext(UserLocationContext);
     const { openSheet, sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
-    const { showRouteOptions, cancelRouteOptions } = useContext(RouteOptionsContext);
     const { gasStations } = useContext(MapFeatureContext);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
+    const showRouteOptions = useSelector(mapNavigationSelectors.showRouteOptions);
     const { loadingDirections } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
@@ -157,7 +156,7 @@ const Map = () => {
             </View>
 
             {showRouteOptions && (
-                <BottomSheetComponent onClose={() => cancelRouteOptions()}>
+                <BottomSheetComponent onClose={() => dispatch(mapNavigationActions.handleCancelNavigation())}>
                     <RouteOptions />
                 </BottomSheetComponent>
             )}

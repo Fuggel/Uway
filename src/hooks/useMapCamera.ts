@@ -7,7 +7,6 @@ import { Geometry, Position } from "@turf/helpers";
 
 import { MAP_CONFIG } from "@/constants/map-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
-import { RouteOptionsContext } from "@/contexts/RouteOptionsContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
@@ -21,8 +20,8 @@ const useMapCamera = () => {
     const dispatch = useDispatch();
     const { userLocation } = useContext(UserLocationContext);
     const { gasStations } = useContext(MapFeatureContext);
-    const { showRouteOptions } = useContext(RouteOptionsContext);
     const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
+    const showRouteOptions = useSelector(mapNavigationSelectors.showRouteOptions);
     const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
     const directions = useSelector(mapNavigationSelectors.directions);
     const tracking = useSelector(mapNavigationSelectors.tracking);

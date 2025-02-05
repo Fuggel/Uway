@@ -19,6 +19,7 @@ interface IMapNavigationState {
     selectedRoute: number;
     directions: Direction | null;
     spokenInstruction: string | null;
+    showRouteOptions: boolean;
 }
 
 const initialMapNavigationState: IMapNavigationState = {
@@ -35,6 +36,7 @@ const initialMapNavigationState: IMapNavigationState = {
     selectedRoute: 0,
     directions: null,
     spokenInstruction: null,
+    showRouteOptions: false,
 };
 
 const mapNavigationSlice = createSlice({
@@ -80,9 +82,14 @@ const mapNavigationSlice = createSlice({
         setSpokenInstruction(state, action: PayloadAction<string | null>) {
             state.spokenInstruction = action.payload;
         },
+        setShowRouteOptions(state, action: PayloadAction<boolean>) {
+            state.showRouteOptions = action.payload;
+        },
         handleCancelNavigation(state) {
             state.directions = null;
-            state.searchQuery = "";
+            state.routeOptions = null;
+            state.selectedRoute = 0;
+            state.showRouteOptions = false;
             state.locationId = { default: "", mapbox_id: "" };
             state.spokenInstruction = null;
             state.location = null;
@@ -108,6 +115,7 @@ export const mapNavigationSelectors = {
     selectedRoute: (state: RootState): number => state.mapNavigation.selectedRoute,
     directions: (state: RootState): Direction | null => state.mapNavigation.directions,
     spokenInstruction: (state: RootState): string | null => state.mapNavigation.spokenInstruction,
+    showRouteOptions: (state: RootState): boolean => state.mapNavigation.showRouteOptions,
 };
 
 export const mapNavigationActions = mapNavigationSlice.actions;

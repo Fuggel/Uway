@@ -139,9 +139,7 @@ const MapNavigation = () => {
                         icon="close-circle"
                         type="error"
                         size="lg"
-                        onPress={() => {
-                            dispatch(mapNavigationActions.handleCancelNavigation());
-                        }}
+                        onPress={() => dispatch(mapNavigationActions.handleCancelNavigation())}
                     />
                 </View>
             </Card>
