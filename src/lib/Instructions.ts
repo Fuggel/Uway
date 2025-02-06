@@ -203,10 +203,7 @@ class Instructions {
             const instruction = voiceInstructions[i];
             const distanceDifference = Math.abs(currentDistance - instruction.distanceAlongGeometry);
 
-            if (
-                i === 0 ||
-                (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold)
-            ) {
+            if (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold) {
                 return instruction;
             }
         }
