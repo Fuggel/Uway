@@ -45,7 +45,6 @@ const useNavigation = () => {
                 waypoint: gasStationWaypoint ? { lon: gasStationWaypoint.lon, lat: gasStationWaypoint.lat } : undefined,
             }),
         enabled: isValidLonLat(longitude, latitude) && isValidLonLat(destinationLngLat.lon, destinationLngLat.lat),
-        staleTime: Infinity,
     });
 
     const { mutate: recalculateRoute } = useMutation({

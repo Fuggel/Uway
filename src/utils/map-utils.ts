@@ -354,7 +354,7 @@ export function readableDistance(distance: number) {
     if (distance >= 1000) {
         return `${parseFloat((distance / 1000).toFixed(1))} km`;
     } else {
-        return `${distance} m`;
+        return `${distance.toFixed(1)} m`;
     }
 }
 
