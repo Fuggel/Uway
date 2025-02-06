@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { Direction, RouteProfileType } from "@/types/INavigation";
+import { CurrentAnnotation, CurrentInstruction, Direction, RouteProfileType } from "@/types/INavigation";
 import { LocationId, SearchFeatureCollection, SearchLocation } from "@/types/ISearch";
 
 import { RootState } from ".";
@@ -20,6 +20,8 @@ interface IMapNavigationState {
     directions: Direction | null;
     spokenInstruction: string | null;
     showRouteOptions: boolean;
+    currentInstruction: CurrentInstruction | undefined;
+    currentAnnotation: CurrentAnnotation | undefined;
 }
 
 const initialMapNavigationState: IMapNavigationState = {
@@ -37,6 +39,8 @@ const initialMapNavigationState: IMapNavigationState = {
     directions: null,
     spokenInstruction: null,
     showRouteOptions: false,
+    currentInstruction: undefined,
+    currentAnnotation: undefined,
 };
 
 const mapNavigationSlice = createSlice({
@@ -85,6 +89,12 @@ const mapNavigationSlice = createSlice({
         setShowRouteOptions(state, action: PayloadAction<boolean>) {
             state.showRouteOptions = action.payload;
         },
+        setCurrentInstruction(state, action: PayloadAction<CurrentInstruction | undefined>) {
+            state.currentInstruction = action.payload;
+        },
+        setCurrentAnnotation(state, action: PayloadAction<CurrentAnnotation | undefined>) {
+            state.currentAnnotation = action.payload;
+        },
         handleCancelNavigation(state) {
             state.directions = null;
             state.routeOptions = null;
@@ -97,6 +107,8 @@ const mapNavigationSlice = createSlice({
             state.isNavigationSelecting = false;
             state.isNavigationMode = false;
             state.searchQuery = "";
+            state.currentInstruction = undefined;
+            state.currentAnnotation = undefined;
         },
     },
 });
@@ -116,6 +128,8 @@ export const mapNavigationSelectors = {
     directions: (state: RootState): Direction | null => state.mapNavigation.directions,
     spokenInstruction: (state: RootState): string | null => state.mapNavigation.spokenInstruction,
     showRouteOptions: (state: RootState): boolean => state.mapNavigation.showRouteOptions,
+    currentInstruction: (state: RootState): CurrentInstruction | undefined => state.mapNavigation.currentInstruction,
+    currentAnnotation: (state: RootState): CurrentAnnotation | undefined => state.mapNavigation.currentAnnotation,
 };
 
 export const mapNavigationActions = mapNavigationSlice.actions;
