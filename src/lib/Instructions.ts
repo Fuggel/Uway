@@ -198,12 +198,17 @@ class Instructions {
         if (!voiceInstructions.length) return null;
 
         const currentDistance = this.getCurrentDistanceToStep();
+        const firstStepInstruction = this.instructions[0].voiceInstructions[0];
 
         for (let i = 0; i < voiceInstructions.length; i++) {
             const instruction = voiceInstructions[i];
             const distanceDifference = Math.abs(currentDistance - instruction.distanceAlongGeometry);
+            const isFirstInstruction = firstStepInstruction.announcement === instruction.announcement;
 
-            if (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold) {
+            if (
+                isFirstInstruction ||
+                (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold)
+            ) {
                 return instruction;
             }
         }
