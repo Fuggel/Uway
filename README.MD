@@ -19,7 +19,3 @@ Information on gas stations with real-time fuel prices and available fuel types
 ### 🧭 Directions and Navigation
 
 Calculating optimal routes with turn-by-turn instructions
-
-### 🗺️ Customizable Map Style and Data
-
-Toggle between different features in the settings and customize the map view with various styles
