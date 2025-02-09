@@ -21,6 +21,7 @@ const useNavigation = () => {
     const directions = useSelector(mapNavigationSelectors.directions);
     const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
     const gasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
+    const directNavigation = useSelector(mapNavigationSelectors.directNavigation);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -67,7 +68,9 @@ const useNavigation = () => {
 
     useEffect(() => {
         if (data?.routes?.length > 0) {
-            dispatch(mapNavigationActions.setRouteOptions(data.routes));
+            directNavigation
+                ? dispatch(mapNavigationActions.setDirections(data.routes[0]))
+                : dispatch(mapNavigationActions.setRouteOptions(data.routes));
         }
     }, [data]);
 

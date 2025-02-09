@@ -17,6 +17,7 @@ const RouteOptions = () => {
     const handleStartNavigation = () => {
         if (!routeOptions) return;
 
+        dispatch(mapNavigationActions.setDirectNavigation(false));
         dispatch(mapNavigationActions.setDirections(routeOptions[selectedRoute]));
         dispatch(mapNavigationActions.setIsNavigationMode(true));
         dispatch(mapNavigationActions.setTracking(true));

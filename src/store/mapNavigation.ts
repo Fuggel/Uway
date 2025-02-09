@@ -22,6 +22,7 @@ interface IMapNavigationState {
     showRouteOptions: boolean;
     currentInstruction: CurrentInstruction | undefined;
     currentAnnotation: CurrentAnnotation | undefined;
+    directNavigation: boolean;
 }
 
 const initialMapNavigationState: IMapNavigationState = {
@@ -41,6 +42,7 @@ const initialMapNavigationState: IMapNavigationState = {
     showRouteOptions: false,
     currentInstruction: undefined,
     currentAnnotation: undefined,
+    directNavigation: false,
 };
 
 const mapNavigationSlice = createSlice({
@@ -95,6 +97,9 @@ const mapNavigationSlice = createSlice({
         setCurrentAnnotation(state, action: PayloadAction<CurrentAnnotation | undefined>) {
             state.currentAnnotation = action.payload;
         },
+        setDirectNavigation(state, action: PayloadAction<boolean>) {
+            state.directNavigation = action.payload;
+        },
         handleCancelNavigation(state) {
             state.directions = null;
             state.routeOptions = null;
@@ -109,6 +114,7 @@ const mapNavigationSlice = createSlice({
             state.searchQuery = "";
             state.currentInstruction = undefined;
             state.currentAnnotation = undefined;
+            state.directNavigation = false;
         },
     },
 });
@@ -130,6 +136,7 @@ export const mapNavigationSelectors = {
     showRouteOptions: (state: RootState): boolean => state.mapNavigation.showRouteOptions,
     currentInstruction: (state: RootState): CurrentInstruction | undefined => state.mapNavigation.currentInstruction,
     currentAnnotation: (state: RootState): CurrentAnnotation | undefined => state.mapNavigation.currentAnnotation,
+    directNavigation: (state: RootState): boolean => state.mapNavigation.directNavigation,
 };
 
 export const mapNavigationActions = mapNavigationSlice.actions;
