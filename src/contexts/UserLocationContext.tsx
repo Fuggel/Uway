@@ -1,8 +1,12 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 
 import Mapbox, { Location } from "@rnmapbox/maps";
 
+import { THRESHOLD } from "@/constants/env-constants";
 import useLocationPermission from "@/hooks/useLocationPermissions";
+import { SnapToRoute } from "@/lib/SnapToRoute";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 
 interface ContextProps {
     userLocation: Location | null;
@@ -18,23 +22,21 @@ export const UserLocationContext = createContext<ContextProps>({
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const { hasLocationPermissions } = useLocationPermission();
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [userLocation, setUserLocation] = useState<Location | null>(null);
-    const [lastLocations, setLastLocations] = useState<Location[]>([]);
+    const directions = useSelector(mapNavigationSelectors.directions);
 
-    const smoothLocation = (newLocation: Location) => {
-        const maxHistory = 5;
-        const updatedLocations = [...lastLocations, newLocation].slice(-maxHistory);
+    const snapToRoute = useMemo(() => {
+        if (isNavigationMode && directions) {
+            return new SnapToRoute({
+                snapRadius: THRESHOLD.NAVIGATION.SNAP_RADIUS_IN_METERS,
+                maxSpeedThreshold: THRESHOLD.NAVIGATION.MAX_SPEED_THRESHOLD_IN_M_PER_S,
+                minAccuracy: THRESHOLD.NAVIGATION.MIN_ACCURACY,
+            });
+        }
 
-        const avgLat = updatedLocations.reduce((sum, loc) => sum + loc.coords.latitude, 0) / updatedLocations.length;
-        const avgLng = updatedLocations.reduce((sum, loc) => sum + loc.coords.longitude, 0) / updatedLocations.length;
-
-        setLastLocations(updatedLocations);
-
-        return {
-            ...newLocation,
-            coords: { ...newLocation.coords, latitude: avgLat, longitude: avgLng },
-        };
-    };
+        return null;
+    }, [isNavigationMode, directions]);
 
     useEffect(() => {
         if (!hasLocationPermissions) {
@@ -42,17 +44,22 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         }
 
         Mapbox.locationManager.start();
-
         Mapbox.locationManager.setMinDisplacement(3);
+
         Mapbox.locationManager.addListener((location: Location) => {
-            const smoothedLocation = smoothLocation(location);
-            setUserLocation(smoothedLocation);
+            let updatedLocation = location;
+
+            if (snapToRoute && directions) {
+                updatedLocation = snapToRoute.processLocation(location, directions.geometry.coordinates) || location;
+            }
+
+            setUserLocation(updatedLocation);
         });
 
         return () => {
             Mapbox.locationManager.stop();
         };
-    }, [hasLocationPermissions]);
+    }, [hasLocationPermissions, snapToRoute]);
 
     return <UserLocationContext.Provider value={{ userLocation }}>{children}</UserLocationContext.Provider>;
 };

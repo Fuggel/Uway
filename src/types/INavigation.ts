@@ -192,3 +192,9 @@ export enum ExcludeType {
 export type ExcludeTypes = {
     [key in ExcludeType]: boolean;
 };
+
+export interface SnapToRouteConfig {
+    snapRadius: number;
+    maxSpeedThreshold: number;
+    minAccuracy: number;
+}
