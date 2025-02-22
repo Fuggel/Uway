@@ -6,6 +6,11 @@ export interface LonLat {
     lat: number | undefined;
 }
 
+export interface Position {
+    lon: number;
+    lat: number;
+}
+
 export interface BoundingBox {
     minLat: number;
     minLon: number;
