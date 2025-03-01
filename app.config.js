@@ -25,7 +25,13 @@ export default ({ config }) => {
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.Uway",
             infoPlist: {
-                NSPhotoLibraryUsageDescription: "Uway benötigt keinen Zugriff auf deine Galerie.",
+                NSLocationWhenInUseUsageDescription:
+                    "Uway benötigt Zugriff auf deinen Standort, um Navigation zu ermöglichen.",
+                NSLocationAlwaysUsageDescription:
+                    "Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.",
+                NSLocationAlwaysAndWhenInUseUsageDescription:
+                    "Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.",
+                UIBackgroundModes: ["location", "audio"],
             },
         },
         android: {
@@ -36,7 +42,13 @@ export default ({ config }) => {
             },
             icon: "./src/assets/images/build/android-icon.png",
             package: "com.fuggel.Uway",
-            permissions: ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"],
+            permissions: [
+                "android.permission.ACCESS_COARSE_LOCATION",
+                "android.permission.ACCESS_FINE_LOCATION",
+                "android.permission.FOREGROUND_SERVICE",
+                "android.permission.ACCESS_BACKGROUND_LOCATION",
+                "android.permission.RECORD_AUDIO",
+            ],
         },
         web: {
             bundler: "metro",
@@ -58,7 +70,7 @@ export default ({ config }) => {
             [
                 "expo-location",
                 {
-                    locationWhenInUsePermission: "Erlaube Uway deinen Standort zu verwenden.",
+                    locationAlwaysAndWhenInUsePermission: "Erlaube Uway deinen Standort zu verwenden.",
                 },
             ],
             [

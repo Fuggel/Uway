@@ -1,10 +1,10 @@
-import { Audio } from "expo-av";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import * as Speech from "expo-speech";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
+import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 
 const soundObject = new Audio.Sound();
 
@@ -22,7 +22,12 @@ const useTextToSpeech = () => {
 
         try {
             await Audio.setAudioModeAsync({
+                allowsRecordingIOS: false,
+                staysActiveInBackground: true,
+                interruptionModeIOS: InterruptionModeIOS.DuckOthers,
+                interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
                 playsInSilentModeIOS: true,
+                shouldDuckAndroid: true,
             });
 
             if (!soundObject._loaded) {

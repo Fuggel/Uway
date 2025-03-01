@@ -57,6 +57,7 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
     useEffect(() => {
         if (!hasLocationPermissions) return;
 
+        Mapbox.locationManager.setRequestsAlwaysUse(true);
         Mapbox.locationManager.start();
         Mapbox.locationManager.addListener(updateUserLocation);
 
