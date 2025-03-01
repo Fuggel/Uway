@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import Mapbox, { Location } from "@rnmapbox/maps";
@@ -22,20 +22,21 @@ export const UserLocationContext = createContext<ContextProps>({
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const { hasLocationPermissions } = useLocationPermission();
+    const snapToRoute = useRef<SnapToRoute | null>(null);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const [userLocation, setUserLocation] = useState<Location | null>(null);
     const directions = useSelector(mapNavigationSelectors.directions);
 
-    const snapToRoute = useMemo(() => {
+    useEffect(() => {
         if (isNavigationMode && directions) {
-            return new SnapToRoute({
+            snapToRoute.current = new SnapToRoute({
                 snapRadius: THRESHOLD.NAVIGATION.SNAP_RADIUS_IN_METERS,
                 maxSpeedThreshold: THRESHOLD.NAVIGATION.MAX_SPEED_THRESHOLD_IN_M_PER_S,
                 minAccuracy: THRESHOLD.NAVIGATION.MIN_ACCURACY,
             });
+        } else {
+            snapToRoute.current = null;
         }
-
-        return null;
     }, [isNavigationMode, directions]);
 
     useEffect(() => {
@@ -44,13 +45,13 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         }
 
         Mapbox.locationManager.start();
-        Mapbox.locationManager.setMinDisplacement(3);
 
         Mapbox.locationManager.addListener((location: Location) => {
             let updatedLocation = location;
 
-            if (snapToRoute && directions) {
-                updatedLocation = snapToRoute.processLocation(location, directions.geometry.coordinates) || location;
+            if (snapToRoute.current && directions) {
+                updatedLocation =
+                    snapToRoute.current.processLocation(location, directions.geometry.coordinates) || location;
             }
 
             setUserLocation(updatedLocation);
@@ -59,7 +60,7 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         return () => {
             Mapbox.locationManager.stop();
         };
-    }, [hasLocationPermissions, snapToRoute]);
+    }, [hasLocationPermissions]);
 
     return <UserLocationContext.Provider value={{ userLocation }}>{children}</UserLocationContext.Provider>;
 };

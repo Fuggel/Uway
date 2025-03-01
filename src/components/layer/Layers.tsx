@@ -183,7 +183,7 @@ const Layers = () => {
             )}
 
             {userLocation && (
-                <UserLocation animated>
+                <UserLocation animated coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}>
                     <SymbolLayer
                         id={LayerId.USER_LOCATION}
                         style={{

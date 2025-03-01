@@ -18,6 +18,7 @@ export class SnapToRoute {
 
     public processLocation(location: Location, route: number[][]): Location | null {
         if (!this.isValidLocation(location)) {
+            console.log("Location is not valid", location);
             return this.lastValidLocation;
         }
 
@@ -37,6 +38,7 @@ export class SnapToRoute {
         const distanceToRoad = turf.distance([filtered.lon, filtered.lat], snappedPoint, { units: "meters" });
 
         if (distanceToRoad > this.config.snapRadius) {
+            console.log("Location is too far from the route", distanceToRoad);
             return this.lastValidLocation;
         }
 
