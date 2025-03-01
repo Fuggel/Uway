@@ -1,10 +1,10 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import Instructions from "@/lib/Instructions";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { CurrentAnnotation, CurrentInstruction, LaneImage, ManeuverImage } from "@/types/INavigation";
+import { LaneImage, ManeuverImage } from "@/types/INavigation";
 import { getLaneImage, getManeuverImage } from "@/utils/map-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
@@ -15,10 +15,10 @@ const useInstructions = () => {
     const { userLocation } = useContext(UserLocationContext);
     const { startSpeech } = useTextToSpeech();
     const directions = useSelector(mapNavigationSelectors.directions);
+    const currentInstruction = useSelector(mapNavigationSelectors.currentInstruction);
+    const currentAnnotation = useSelector(mapNavigationSelectors.currentAnnotation);
     const spokenInstruction = useSelector(mapNavigationSelectors.spokenInstruction);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const [currentInstruction, setCurrentInstruction] = useState<CurrentInstruction | undefined>(undefined);
-    const [currentAnnotation, setCurrentAnnotation] = useState<CurrentAnnotation | undefined>(undefined);
 
     useEffect(() => {
         const routeGeometry = directions?.geometry?.coordinates || [];
@@ -28,6 +28,10 @@ const useInstructions = () => {
         if (directions) {
             instructionsRef.current = new Instructions(routeGeometry, steps, annotation, userLocation);
         }
+
+        return () => {
+            instructionsRef.current = null;
+        };
     }, [directions]);
 
     useEffect(() => {
@@ -37,8 +41,8 @@ const useInstructions = () => {
             const updatedInstruction = instructionsRef.current.getCurrentInstructions();
             const updatedAnnotation = instructionsRef.current.getCurrentAnnotations();
 
-            setCurrentInstruction(updatedInstruction);
-            setCurrentAnnotation(updatedAnnotation);
+            dispatch(mapNavigationActions.setCurrentInstruction(updatedInstruction));
+            dispatch(mapNavigationActions.setCurrentAnnotation(updatedAnnotation));
 
             instructionsRef.current.checkIfArrived(() => {
                 dispatch(mapNavigationActions.handleCancelNavigation());

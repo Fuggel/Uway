@@ -21,6 +21,7 @@ const useNavigation = () => {
     const directions = useSelector(mapNavigationSelectors.directions);
     const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
     const gasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
+    const directNavigation = useSelector(mapNavigationSelectors.directNavigation);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -35,7 +36,7 @@ const useNavigation = () => {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", navigationProfile, location, gasStationWaypoint, excludeTypes],
+        queryKey: ["directions", location, gasStationWaypoint, excludeTypes],
         queryFn: () =>
             fetchDirections({
                 profile: navigationProfile,
@@ -45,7 +46,6 @@ const useNavigation = () => {
                 waypoint: gasStationWaypoint ? { lon: gasStationWaypoint.lon, lat: gasStationWaypoint.lat } : undefined,
             }),
         enabled: isValidLonLat(longitude, latitude) && isValidLonLat(destinationLngLat.lon, destinationLngLat.lat),
-        staleTime: Infinity,
     });
 
     const { mutate: recalculateRoute } = useMutation({
@@ -68,7 +68,9 @@ const useNavigation = () => {
 
     useEffect(() => {
         if (data?.routes?.length > 0) {
-            dispatch(mapNavigationActions.setDirections(data.routes[0]));
+            directNavigation
+                ? dispatch(mapNavigationActions.setDirections(data.routes[0]))
+                : dispatch(mapNavigationActions.setRouteOptions(data.routes));
         }
     }, [data]);
 

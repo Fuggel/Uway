@@ -1,25 +1,25 @@
 import { bearing, booleanPointInPolygon, buffer, lineString, point } from "@turf/turf";
 
-import { WarningThresholds, WarningType } from "@/types/INavigation";
+import { WarningThresholds } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 
 export class WarningManager {
     private warningThresholds: WarningThresholds;
     private hasPlayedWarning = { early: false, late: false };
 
-    constructor(type: WarningType, speed: number) {
-        this.warningThresholds = this.getWarningThresholds(type, speed);
+    constructor(speed: number) {
+        this.warningThresholds = this.getWarningThresholds(speed);
     }
 
     public checkWarning(
         distanceToFeature: number,
         playWarning: (message: string) => void,
         warningMessage: string,
-        relevanceParams?: RelevantFeatureParams
+        relevanceParams: RelevantFeatureParams
     ) {
         const { early, late } = this.warningThresholds;
 
-        if (relevanceParams && !this.isFeatureRelevant(relevanceParams).isRelevant) {
+        if (!this.isFeatureRelevant(relevanceParams).isRelevant) {
             return;
         }
 
@@ -36,20 +36,16 @@ export class WarningManager {
         this.hasPlayedWarning = { early: false, late: false };
     }
 
-    private getWarningThresholds(type: WarningType, speed: number): WarningThresholds {
-        switch (type) {
-            case WarningType.ALERT:
-                if (speed <= 30) return { early: 300, late: 150 };
-                if (speed <= 50) return { early: 500, late: 250 };
-                if (speed > 90) return { early: 1500, late: 800 };
-                return { early: 800, late: 400 };
-            case WarningType.INSTRUCTION:
-                if (speed <= 30) return { early: 200, late: 75 };
-                if (speed <= 50) return { early: 400, late: 150 };
-                if (speed > 90) return { early: 1000, late: 500 };
-                return { early: 600, late: 200 };
+    private getWarningThresholds(speed: number): WarningThresholds {
+        switch (true) {
+            case speed <= 30:
+                return { early: 300, late: 150 };
+            case speed <= 50:
+                return { early: 500, late: 250 };
+            case speed > 90:
+                return { early: 1500, late: 800 };
             default:
-                return { early: 0, late: 0 };
+                return { early: 800, late: 400 };
         }
     }
 

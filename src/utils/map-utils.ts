@@ -5,7 +5,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation } from "@/types/IGasStation";
 import { LonLat, MapboxStyle } from "@/types/IMap";
-import { Lane, LaneDirection, ManeuverType, ModifierType, WarningThresholds, WarningType } from "@/types/INavigation";
+import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
@@ -354,7 +354,21 @@ export function readableDistance(distance: number) {
     if (distance >= 1000) {
         return `${parseFloat((distance / 1000).toFixed(1))} km`;
     } else {
-        return `${distance} m`;
+        return `${distance.toFixed(1)} m`;
+    }
+}
+
+export function readableDuration(duration: number) {
+    if (isNaN(duration) || duration <= 0) return "0 min";
+
+    const totalMinutes = Math.round(duration / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours >= 1) {
+        return `${hours}:${minutes.toString().padStart(2, "0")} h`;
+    } else {
+        return `${minutes} min`;
     }
 }
 
@@ -435,17 +449,15 @@ function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBuffer
     return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
 
-export function warningThresholds(type: WarningType, speed: number) {
-    switch (type) {
-        case WarningType.ALERT:
-            if (speed <= 30) return { early: 300, late: 150 };
-            if (speed <= 50) return { early: 500, late: 250 };
-            if (speed > 90) return { early: 1500, late: 800 };
+export function warningThresholds(speed: number) {
+    switch (true) {
+        case speed <= 30:
+            return { early: 300, late: 150 };
+        case speed <= 50:
+            return { early: 500, late: 250 };
+        case speed > 90:
+            return { early: 1500, late: 800 };
+        default:
             return { early: 800, late: 400 };
-        case WarningType.INSTRUCTION:
-            if (speed <= 30) return { early: 200, late: 75 };
-            if (speed <= 50) return { early: 400, late: 150 };
-            if (speed > 90) return { early: 1000, late: 500 };
-            return { early: 600, late: 200 };
     }
 }

@@ -12,11 +12,13 @@ import {
     ManeuverType,
     RoadShield,
     ShieldComponentType,
+    VoiceInstruction,
 } from "@/types/INavigation";
 import { convertSpeedToKmh } from "@/utils/map-utils";
 
 class Instructions {
     public userPosition: Location | null;
+    public isArrived = false;
 
     private routeGeometry: number[][] = [];
     private instructions: Instruction[];
@@ -24,6 +26,8 @@ class Instructions {
     private currentStepIndex = 0;
     private currentAnnotationIndex = 0;
     private lastDistanceToNextStep = 0;
+    private roundedUpdates = 10;
+    private distanceThreshold = 50;
 
     constructor(
         routeGeometry: number[][],
@@ -46,7 +50,7 @@ class Instructions {
     }
 
     public checkIfArrived(onCancel: () => void) {
-        if (!this.userPosition || !this.instructions) return;
+        if (!this.userPosition || !this.instructions || this.isArrived) return;
 
         const lastStep = this.instructions[this.instructions.length - 1];
         if (lastStep.maneuver.type === ManeuverType.ARRIVE && this.userPosition) {
@@ -57,6 +61,7 @@ class Instructions {
             const dist = distance(from, to, { units: "meters" });
 
             if (dist <= 3) {
+                this.isArrived = true;
                 onCancel();
             }
         }
@@ -139,7 +144,7 @@ class Instructions {
         const stepPoint = point(nextStep.maneuver.location);
 
         const distanceToNextStep = distance(userPoint, stepPoint, { units: "meters" });
-        const distanceToNextStepRounded = Math.round(distanceToNextStep / 10) * 10;
+        const distanceToNextStepRounded = Math.round(distanceToNextStep / this.roundedUpdates) * this.roundedUpdates;
 
         const currentSpeed = this.userPosition.coords.speed ? convertSpeedToKmh(this.userPosition.coords.speed) : 0;
         const updateThreshold = this.getUpdateThreshold(currentSpeed);
@@ -174,6 +179,52 @@ class Instructions {
     private getCurrentSpeedLimit() {
         const currentSpeedLimit = this.annotation.maxspeed[this.currentAnnotationIndex];
         return currentSpeedLimit ? currentSpeedLimit.speed : 0;
+    }
+
+    private getActiveInstruction(closestStep: Instruction, minDistance: number) {
+        const nextStep = this.getNextStep();
+
+        return {
+            activeBannerInstruction:
+                closestStep.bannerInstructions.find(
+                    (instruction) => instruction.distanceAlongGeometry >= minDistance
+                ) || closestStep.bannerInstructions[0],
+            nextBannerInstruction: nextStep?.bannerInstructions[0] || null,
+            activeVoiceInstruction: this.getActiveVoiceInstruction(closestStep.voiceInstructions),
+        };
+    }
+
+    private getActiveVoiceInstruction(voiceInstructions: VoiceInstruction[]) {
+        if (!voiceInstructions.length) return null;
+
+        const currentDistance = this.getCurrentDistanceToStep();
+        const firstStepInstruction = this.instructions[0].voiceInstructions[0];
+
+        for (let i = 0; i < voiceInstructions.length; i++) {
+            const instruction = voiceInstructions[i];
+            const distanceDifference = Math.abs(currentDistance - instruction.distanceAlongGeometry);
+            const isFirstInstruction = firstStepInstruction.announcement === instruction.announcement;
+
+            if (
+                isFirstInstruction ||
+                (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold)
+            ) {
+                return instruction;
+            }
+        }
+
+        return null;
+    }
+
+    private getUpdateThreshold(speed: number) {
+        if (speed <= 30) return 10;
+        if (speed <= 50) return 20;
+        if (speed <= 80) return 50;
+        return 100;
+    }
+
+    private getNextStep() {
+        return this.instructions[this.currentStepIndex + 1];
     }
 
     private extractShieldInformation(bannerInstruction: BannerInstruction): RoadShield {
@@ -213,32 +264,6 @@ class Instructions {
             active_direction: lane.active_direction || null,
             directions: lane.directions || [],
         }));
-    }
-
-    private getActiveInstruction(closestStep: Instruction, minDistance: number) {
-        const nextStep = this.getNextStep();
-
-        return {
-            activeBannerInstruction:
-                closestStep.bannerInstructions.find(
-                    (instruction) => instruction.distanceAlongGeometry >= minDistance
-                ) || closestStep.bannerInstructions[0],
-            nextBannerInstruction: nextStep?.bannerInstructions[0] || null,
-            activeVoiceInstruction:
-                closestStep.voiceInstructions.find((instruction) => instruction.distanceAlongGeometry >= minDistance) ||
-                closestStep.voiceInstructions[0],
-        };
-    }
-
-    private getUpdateThreshold(speed: number) {
-        if (speed <= 30) return 10;
-        if (speed <= 50) return 20;
-        if (speed <= 80) return 50;
-        return 100;
-    }
-
-    private getNextStep() {
-        return this.instructions[this.currentStepIndex + 1];
     }
 }
 

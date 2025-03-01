@@ -13,7 +13,7 @@ export interface Instruction {
 
 export interface CurrentInstruction {
     step: Instruction;
-    voiceInstruction: VoiceInstruction;
+    voiceInstruction: VoiceInstruction | null;
     bannerInstruction: BannerInstruction;
     nextBannerInstruction: BannerInstruction | null;
     laneInformation: Lane[];
@@ -174,11 +174,6 @@ export enum WarningThreshold {
     LATE = "late",
 }
 
-export enum WarningType {
-    INSTRUCTION = "instruction",
-    ALERT = "alert",
-}
-
 export interface ManeuverImage {
     currentArrowDir: ImageSourcePropType;
     nextArrowDir: ImageSourcePropType | null;
@@ -197,3 +192,8 @@ export enum ExcludeType {
 export type ExcludeTypes = {
     [key in ExcludeType]: boolean;
 };
+
+export interface SnapToRouteConfig {
+    snapRadius: number;
+    minAccuracy: number;
+}

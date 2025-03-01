@@ -58,6 +58,7 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         dispatch(mapNavigationActions.setIsNavigationSelecting(true));
         dispatch(mapSearchActions.setIsPoiSearch(false));
         setShowSuggestions(false);
+        dispatch(mapNavigationActions.setShowRouteOptions(true));
 
         const unsubscribe = store.subscribe(() => {
             const selectedLocation =

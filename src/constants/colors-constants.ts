@@ -9,5 +9,6 @@ export const COLORS: Color = {
     error: "#EB5757",
     gray: "#787C80",
     light_gray: "#B0B0B0",
+    shadow_gray: "rgba(241, 241, 241, 0.8)",
     white: "#FFFFFF",
 };

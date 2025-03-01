@@ -11,7 +11,6 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { WarningType } from "@/types/INavigation";
 import { IncidentAlert, IncidentProperties, WarningAlertIncident } from "@/types/ITraffic";
 import { convertSpeedToKmh, isFeatureRelevant, warningThresholds } from "@/utils/map-utils";
 import { incidentTitle } from "@/utils/sheet-utils";
@@ -53,7 +52,7 @@ const useIncidents = () => {
 
     useEffect(() => {
         if (data && showIncidents && longitude && latitude) {
-            const { early, late } = warningThresholds(WarningType.ALERT, currentSpeed);
+            const { early, late } = warningThresholds(currentSpeed);
             let closestIncident: IncidentAlert | null = null;
             let isWithinAnyWarningZone = false;
 
