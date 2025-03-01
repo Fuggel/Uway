@@ -3,6 +3,7 @@ import { Position, lineString } from "@turf/helpers";
 import * as turf from "@turf/turf";
 
 import { SnapToRouteConfig } from "@/types/INavigation";
+import { isValidLonLat } from "@/utils/map-utils";
 
 import { KalmanFilterWrapper } from "./KalmanFilterWrapper";
 
@@ -17,8 +18,7 @@ export class SnapToRoute {
     }
 
     public processLocation(location: Location, route: number[][]): Location | null {
-        if (!this.isValidLocation(location)) {
-            console.log("Location is not valid", location);
+        if (!this.isValidLocation(location) && !isValidLonLat(location.coords.longitude, location.coords.latitude)) {
             return this.lastValidLocation;
         }
 
@@ -38,15 +38,14 @@ export class SnapToRoute {
         const distanceToRoad = turf.distance([filtered.lon, filtered.lat], snappedPoint, { units: "meters" });
 
         if (distanceToRoad > this.config.snapRadius) {
-            console.log("Location is too far from the route", distanceToRoad);
             return this.lastValidLocation;
         }
 
         this.lastValidLocation = {
             coords: {
                 ...location.coords,
-                latitude: snappedPoint[1],
                 longitude: snappedPoint[0],
+                latitude: snappedPoint[1],
             },
             timestamp: location.timestamp,
         };
@@ -55,16 +54,11 @@ export class SnapToRoute {
     }
 
     private isValidLocation(location: Location): boolean {
-        const { accuracy, speed } = location.coords;
+        const { accuracy } = location.coords;
 
         if (accuracy !== undefined && accuracy > this.config.minAccuracy) {
             return false;
         }
-
-        if (speed !== undefined && speed > this.config.maxSpeedThreshold) {
-            return false;
-        }
-
         return true;
     }
 

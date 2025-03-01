@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import Mapbox, { Location } from "@rnmapbox/maps";
@@ -24,29 +24,24 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
     const { hasLocationPermissions } = useLocationPermission();
     const snapToRoute = useRef<SnapToRoute | null>(null);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const [userLocation, setUserLocation] = useState<Location | null>(null);
     const directions = useSelector(mapNavigationSelectors.directions);
+    const [userLocation, setUserLocation] = useState<Location | null>(null);
 
     useEffect(() => {
-        if (isNavigationMode && directions) {
-            snapToRoute.current = new SnapToRoute({
-                snapRadius: THRESHOLD.NAVIGATION.SNAP_RADIUS_IN_METERS,
-                maxSpeedThreshold: THRESHOLD.NAVIGATION.MAX_SPEED_THRESHOLD_IN_M_PER_S,
-                minAccuracy: THRESHOLD.NAVIGATION.MIN_ACCURACY,
-            });
-        } else {
+        if (!isNavigationMode || !directions) return;
+
+        snapToRoute.current = new SnapToRoute({
+            snapRadius: THRESHOLD.NAVIGATION.SNAP_RADIUS_IN_METERS,
+            minAccuracy: THRESHOLD.NAVIGATION.MIN_ACCURACY,
+        });
+
+        return () => {
             snapToRoute.current = null;
-        }
+        };
     }, [isNavigationMode, directions]);
 
-    useEffect(() => {
-        if (!hasLocationPermissions) {
-            return;
-        }
-
-        Mapbox.locationManager.start();
-
-        Mapbox.locationManager.addListener((location: Location) => {
+    const updateUserLocation = useCallback(
+        (location: Location) => {
             let updatedLocation = location;
 
             if (snapToRoute.current && directions) {
@@ -55,12 +50,21 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
             }
 
             setUserLocation(updatedLocation);
-        });
+        },
+        [directions]
+    );
+
+    useEffect(() => {
+        if (!hasLocationPermissions) return;
+
+        Mapbox.locationManager.start();
+        Mapbox.locationManager.addListener(updateUserLocation);
 
         return () => {
+            Mapbox.locationManager.removeListener(updateUserLocation);
             Mapbox.locationManager.stop();
         };
-    }, [hasLocationPermissions]);
+    }, [hasLocationPermissions, updateUserLocation]);
 
     return <UserLocationContext.Provider value={{ userLocation }}>{children}</UserLocationContext.Provider>;
 };

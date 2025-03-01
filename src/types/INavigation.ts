@@ -195,6 +195,5 @@ export type ExcludeTypes = {
 
 export interface SnapToRouteConfig {
     snapRadius: number;
-    maxSpeedThreshold: number;
     minAccuracy: number;
 }
