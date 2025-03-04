@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 
-import { LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
+import { CircleLayer, LineLayer, ShapeSource, SymbolLayer, UserLocation } from "@rnmapbox/maps";
 
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
@@ -184,6 +184,27 @@ const Layers = () => {
 
             {userLocation && (
                 <UserLocation animated coordinates={[userLocation.coords.longitude, userLocation.coords.latitude]}>
+                    <CircleLayer
+                        id={LayerId.GPS_ACCURACY}
+                        style={{
+                            circleRadius: [
+                                "interpolate",
+                                ["linear"],
+                                ["zoom"],
+                                10,
+                                Math.max(userLocation.coords.accuracy ?? 10, 8) * 2,
+                                15,
+                                Math.max(userLocation.coords.accuracy ?? 10, 8) * 4,
+                                20,
+                                Math.max(userLocation.coords.accuracy ?? 10, 8) * 6,
+                            ],
+                            circleColor: "rgba(0, 122, 252, 0.6)",
+                            circleOpacity: 0.6,
+                            circleStrokeWidth: 1,
+                            circleStrokeColor: "rgba(0, 122, 252, 0.9)",
+                        }}
+                    />
+
                     <SymbolLayer
                         id={LayerId.USER_LOCATION}
                         style={{
@@ -193,6 +214,7 @@ const Layers = () => {
                             iconRotate: userLocation?.coords.course || 0,
                             iconRotationAlignment: "map",
                         }}
+                        aboveLayerID={LayerId.GPS_ACCURACY}
                     />
                 </UserLocation>
             )}

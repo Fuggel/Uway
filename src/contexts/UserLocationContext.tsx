@@ -5,6 +5,7 @@ import Mapbox, { Location } from "@rnmapbox/maps";
 
 import { THRESHOLD } from "@/constants/env-constants";
 import useLocationPermission from "@/hooks/useLocationPermissions";
+import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { SnapToRoute } from "@/lib/SnapToRoute";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 
@@ -16,13 +17,13 @@ interface ProviderProps {
     children: React.ReactNode;
 }
 
-export const UserLocationContext = createContext<ContextProps>({
-    userLocation: null,
-});
+export const UserLocationContext = createContext<ContextProps>({ userLocation: null });
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const { hasLocationPermissions } = useLocationPermission();
+    const { startSpeech } = useTextToSpeech();
     const snapToRoute = useRef<SnapToRoute | null>(null);
+    const lastSpeechTime = useRef(0);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const directions = useSelector(mapNavigationSelectors.directions);
     const [userLocation, setUserLocation] = useState<Location | null>(null);
@@ -40,6 +41,27 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         };
     }, [isNavigationMode, directions]);
 
+    const shouldSpeakWarning = () => {
+        const now = Date.now();
+        if (now - lastSpeechTime.current > THRESHOLD.NAVIGATION.SPEECH_COOLDOWN_IN_SECONDS) {
+            lastSpeechTime.current = now;
+            return true;
+        }
+        return false;
+    };
+
+    const handleGPSWarnings = (accuracy?: number) => {
+        if (!accuracy) {
+            if (shouldSpeakWarning()) {
+                startSpeech("Achtung: Kein GPS-Signal erkannt.");
+            }
+        } else if (accuracy > THRESHOLD.NAVIGATION.GPS_WARNING_THRESHOLD) {
+            if (shouldSpeakWarning()) {
+                startSpeech("Achtung: GPS-Signal ist schwach. Die Navigation könnte ungenau sein.");
+            }
+        }
+    };
+
     const updateUserLocation = useCallback(
         (location: Location) => {
             let updatedLocation = location;
@@ -49,6 +71,7 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
                     snapToRoute.current.processLocation(location, directions.geometry.coordinates) || location;
             }
 
+            handleGPSWarnings(updatedLocation.coords.accuracy);
             setUserLocation(updatedLocation);
         },
         [directions]
