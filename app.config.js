@@ -5,7 +5,7 @@ export default ({ config }) => {
         owner: "fuggel",
         name: "Uway",
         slug: "uway",
-        version: "0.1.8",
+        version: "0.1.9",
         orientation: "portrait",
         icon: "./src/assets/images/build/icon.png",
         scheme: "Uway",
@@ -21,7 +21,7 @@ export default ({ config }) => {
             backgroundColor: "#ffffff",
         },
         ios: {
-            buildNumber: "0.1.8",
+            buildNumber: "0.1.9",
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.Uway",
             infoPlist: {
