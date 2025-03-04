@@ -1,11 +1,11 @@
 import { Location } from "@rnmapbox/maps";
-import { Position, lineString } from "@turf/helpers";
-import * as turf from "@turf/turf";
+import { Position, lineString, point } from "@turf/helpers";
 
 import { SnapToRouteConfig } from "@/types/INavigation";
-import { isValidLonLat } from "@/utils/map-utils";
+import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 import { KalmanFilterWrapper } from "./KalmanFilterWrapper";
+import { distance, nearestPointOnLine } from "@turf/turf";
 
 export class SnapToRoute {
     private lastValidLocation: Location | null = null;
@@ -35,7 +35,7 @@ export class SnapToRoute {
             route
         );
 
-        const distanceToRoad = turf.distance([filtered.lon, filtered.lat], snappedPoint, { units: "meters" });
+        const distanceToRoad = distance([filtered.lon, filtered.lat], snappedPoint, { units: "meters" });
 
         if (distanceToRoad > this.config.snapRadius) {
             return this.lastValidLocation;
@@ -63,9 +63,12 @@ export class SnapToRoute {
     }
 
     private snapToRoute(location: Location, route: number[][]): Position {
-        const point = turf.point([location.coords.longitude, location.coords.latitude]);
-        const routeLine = lineString(route);
-        const snapped = turf.nearestPointOnLine(routeLine, point);
+        const userPoint = point([location.coords.longitude, location.coords.latitude]);
+
+        const cleanRouteLine = removeConsecutiveDuplicates(route);
+        const routeLine = lineString(cleanRouteLine);
+
+        const snapped = nearestPointOnLine(routeLine, userPoint);
 
         return snapped.geometry.coordinates;
     }

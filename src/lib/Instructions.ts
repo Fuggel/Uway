@@ -1,5 +1,5 @@
 import { Location } from "@rnmapbox/maps";
-import { LineString, point } from "@turf/helpers";
+import { lineString, LineString, point } from "@turf/helpers";
 import { distance, nearestPointOnLine } from "@turf/turf";
 
 import {
@@ -14,7 +14,7 @@ import {
     ShieldComponentType,
     VoiceInstruction,
 } from "@/types/INavigation";
-import { convertSpeedToKmh } from "@/utils/map-utils";
+import { convertSpeedToKmh, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 class Instructions {
     public userPosition: Location | null;
@@ -75,9 +75,11 @@ class Instructions {
             if (!this.userPosition) return;
 
             const userPoint = point([this.userPosition.coords.longitude, this.userPosition.coords.latitude]);
-            const line = { type: "LineString", coordinates: step.geometry.coordinates } as LineString;
 
-            const snappedPoint = nearestPointOnLine(line, userPoint);
+            const cleanRouteLine = removeConsecutiveDuplicates(step.geometry.coordinates as number[][]);
+            const routeLine = lineString(cleanRouteLine);
+
+            const snappedPoint = nearestPointOnLine(routeLine, userPoint);
 
             if (snappedPoint.properties.dist < minDistance) {
                 minDistance = snappedPoint.properties.dist;

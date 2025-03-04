@@ -336,7 +336,7 @@ export function getOrderedGasStations(gasStations: GasStation[] | undefined): Ga
         .sort((a, b) => b.score - a.score);
 }
 
-export function distanceToPointText(params: { pos1: Position; pos2: Position }) {
+export function distanceToPointText(params: { pos1: Position; pos2: Position; }) {
     const point1 = point(params.pos1);
     const point2 = point(params.pos2);
 
@@ -420,9 +420,9 @@ export function isFeatureRelevant(params: RelevantFeatureParams) {
 
     const isSameLane = directions
         ? directions.some((dir) => {
-              const oppositeDir = (dir + 180) % 360;
-              return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
-          })
+            const oppositeDir = (dir + 180) % 360;
+            return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
+        })
         : calculateAngleDifference(heading, bearingToFeature) < laneThreshold;
 
     const isOnRoute = route ? isFeatureOnRoute(featurePoint, route, routeBufferTolerance) : false;
@@ -460,4 +460,29 @@ export function warningThresholds(speed: number) {
         default:
             return { early: 800, late: 400 };
     }
+}
+
+export function removeConsecutiveDuplicates(lineString: number[][]): number[][] {
+    if (!Array.isArray(lineString) || lineString.length < 2) {
+        throw new Error("Coordinates must be an array of two or more positions");
+    }
+
+    const filtered = lineString.filter((coord, index, array) => {
+        if (!Array.isArray(coord) || coord.length !== 2) {
+            throw new Error("Each coordinate must be an array of two numbers");
+        }
+
+        if (index === 0) return true;
+
+        const [prevX, prevY] = array[index - 1];
+        const [currX, currY] = coord;
+        return prevX !== currX || prevY !== currY;
+    });
+
+    if (filtered.length < 2) {
+        const [lon, lat] = lineString[0];
+        filtered.push([lon + 0.000001, lat]);
+    }
+
+    return filtered;
 }

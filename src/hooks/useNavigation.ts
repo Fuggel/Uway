@@ -10,7 +10,7 @@ import { fetchDirections } from "@/services/navigation";
 import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointSelectors } from "@/store/mapWaypoint";
-import { isValidLonLat } from "@/utils/map-utils";
+import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 const useNavigation = () => {
     const { userLocation } = useContext(UserLocationContext);
@@ -79,7 +79,9 @@ const useNavigation = () => {
             const routeCoordinates = directions.geometry.coordinates;
             const userPoint = point([longitude, latitude]);
 
-            const routeLine = lineString(routeCoordinates);
+            const cleanRouteLine = removeConsecutiveDuplicates(routeCoordinates);
+            const routeLine = lineString(cleanRouteLine);
+
             const nearestPointFeature = nearestPointOnLine(routeLine, userPoint);
 
             const nearestPoint = point(nearestPointFeature.geometry.coordinates);
