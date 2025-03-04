@@ -5,7 +5,7 @@ export default ({ config }) => {
         owner: "fuggel",
         name: "Uway",
         slug: "uway",
-        version: "0.1.9",
+        version: "0.2.0",
         orientation: "portrait",
         icon: "./src/assets/images/build/icon.png",
         scheme: "Uway",
@@ -21,7 +21,7 @@ export default ({ config }) => {
             backgroundColor: "#ffffff",
         },
         ios: {
-            buildNumber: "0.1.9",
+            buildNumber: "0.2.0",
             supportsTablet: true,
             bundleIdentifier: "com.fuggel.Uway",
             infoPlist: {
@@ -31,6 +31,7 @@ export default ({ config }) => {
                     "Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.",
                 NSLocationAlwaysAndWhenInUseUsageDescription:
                     "Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.",
+                NSPhotoLibraryUsageDescription: "Uway benötigt Zugriff auf deine Fotos, um Bilder zu speichern.",
                 UIBackgroundModes: ["location", "audio"],
             },
         },

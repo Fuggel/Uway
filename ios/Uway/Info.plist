@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1.9</string>
+    <string>0.2.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -33,7 +33,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>0.1.9</string>
+    <string>0.2.0</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -51,6 +51,8 @@
     <string>Uway benötigt Zugriff auf deinen Standort, um Navigation zu ermöglichen.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Erlaube Uway auf dein Mikrofon zuzugreifen, um nach Orten zu suchen.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Uway benötigt Zugriff auf deine Fotos, um Bilder zu speichern.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>Erlaube Uway sicher deine Sprache zu erkennen.</string>
     <key>NSUserActivityTypes</key>
