@@ -73,6 +73,12 @@ const GasStationsList = () => {
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));
+        dispatch(mapNavigationActions.setDirectNavigation(true));
+        dispatch(mapNavigationActions.setIsNavigationMode(true));
+        dispatch(mapNavigationActions.setTracking(true));
+        dispatch(mapNavigationActions.setIsNavigationSelecting(false));
+        dispatch(mapNavigationActions.setRouteOptions(null));
+        dispatch(mapNavigationActions.setSelectedRoute(0));
         closeSheet();
     };
 
