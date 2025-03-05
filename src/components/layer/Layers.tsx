@@ -28,6 +28,7 @@ const Layers = () => {
     const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
     const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
     const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
 
     return (
         <>
@@ -187,16 +188,15 @@ const Layers = () => {
                     <CircleLayer
                         id={LayerId.GPS_ACCURACY}
                         style={{
+                            visibility: isNavigationMode ? "visible" : "none",
                             circleRadius: [
                                 "interpolate",
                                 ["linear"],
                                 ["zoom"],
                                 10,
                                 Math.max(userLocation.coords.accuracy ?? 10, 8) * 2,
-                                15,
-                                Math.max(userLocation.coords.accuracy ?? 10, 8) * 4,
-                                20,
-                                Math.max(userLocation.coords.accuracy ?? 10, 8) * 6,
+                                18,
+                                Math.max(userLocation.coords.accuracy ?? 10, 8) * 3,
                             ],
                             circleColor: "rgba(0, 122, 252, 0.6)",
                             circleOpacity: 0.6,
