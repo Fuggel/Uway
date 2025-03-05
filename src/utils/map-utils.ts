@@ -336,7 +336,11 @@ export function getOrderedGasStations(gasStations: GasStation[] | undefined): Ga
         .sort((a, b) => b.score - a.score);
 }
 
-export function distanceToPointText(params: { pos1: Position; pos2: Position; }) {
+export function distanceToPointText(params: { pos1: Position | undefined; pos2: Position | undefined }) {
+    if (!params.pos1 || !params.pos2) {
+        return "Entfernung unbekannt";
+    }
+
     const point1 = point(params.pos1);
     const point2 = point(params.pos2);
 
@@ -420,9 +424,9 @@ export function isFeatureRelevant(params: RelevantFeatureParams) {
 
     const isSameLane = directions
         ? directions.some((dir) => {
-            const oppositeDir = (dir + 180) % 360;
-            return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
-        })
+              const oppositeDir = (dir + 180) % 360;
+              return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
+          })
         : calculateAngleDifference(heading, bearingToFeature) < laneThreshold;
 
     const isOnRoute = route ? isFeatureOnRoute(featurePoint, route, routeBufferTolerance) : false;

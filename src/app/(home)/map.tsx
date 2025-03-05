@@ -132,6 +132,12 @@ const Map = () => {
                                 dispatch(mapNavigationActions.setLocation(newLocation));
                                 dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
                                 dispatch(mapNavigationActions.setCategoryLocation(null));
+                                dispatch(mapNavigationActions.setDirectNavigation(true));
+                                dispatch(mapNavigationActions.setIsNavigationMode(true));
+                                dispatch(mapNavigationActions.setTracking(true));
+                                dispatch(mapNavigationActions.setIsNavigationSelecting(false));
+                                dispatch(mapNavigationActions.setRouteOptions(null));
+                                dispatch(mapNavigationActions.setSelectedRoute(0));
                                 closeSheet();
                             },
                         }}

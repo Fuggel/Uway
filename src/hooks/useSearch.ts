@@ -11,6 +11,7 @@ import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigat
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
+import { distanceToPointText } from "@/utils/map-utils";
 
 export const useSearchSuggestion = (params: { query: string }) => {
     const { userLocation } = useContext(UserLocationContext);
@@ -54,6 +55,10 @@ export const useSearchLocation = () => {
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const editingSearch = useSelector(mapSearchSelectors.startEditingSearch);
     const isPoiSearch = useSelector(mapSearchSelectors.isPoiSearch);
+    const { userLocation } = useContext(UserLocationContext);
+
+    const longitude = userLocation?.coords?.longitude;
+    const latitude = userLocation?.coords?.latitude;
 
     const {
         data: searchData,
@@ -77,7 +82,21 @@ export const useSearchLocation = () => {
                 default_id: generateRandomId(),
             } as unknown as SearchLocation;
 
-            const categoryFeatures = searchData.features.filter((feature) => feature.properties.feature_type === "poi");
+            const categoryFeatures = searchData.features
+                .filter((feature) => feature.properties.feature_type === "poi")
+                .map((feature) => ({
+                    ...feature,
+                    properties: {
+                        ...feature.properties,
+                        distance: distanceToPointText({
+                            pos1: longitude && latitude ? [longitude, latitude] : undefined,
+                            pos2: [
+                                feature.geometry.coordinates[0] as number,
+                                feature.geometry.coordinates[1] as number,
+                            ],
+                        }) as any,
+                    },
+                }));
 
             if (categoryFeatures.length > 0 && isPoiSearch) {
                 dispatch(

@@ -48,6 +48,7 @@ const PoiList = ({ data, onSelect }: PoiListProps) => {
                         <View style={{ width: "80%" }}>
                             <Text style={styles.textHeader}>{item.name}</Text>
                             <Text style={styles.textBody}>{item.full_address}</Text>
+                            <Text style={styles.textBody}>{item.distance}</Text>
                         </View>
 
                         <IconButton

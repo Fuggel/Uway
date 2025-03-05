@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapWaypointActions } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
@@ -85,6 +86,14 @@ const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));
+        dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
+        dispatch(mapNavigationActions.setCategoryLocation(null));
+        dispatch(mapNavigationActions.setDirectNavigation(true));
+        dispatch(mapNavigationActions.setIsNavigationMode(true));
+        dispatch(mapNavigationActions.setTracking(true));
+        dispatch(mapNavigationActions.setIsNavigationSelecting(false));
+        dispatch(mapNavigationActions.setRouteOptions(null));
+        dispatch(mapNavigationActions.setSelectedRoute(0));
         closeSheet();
     };
 

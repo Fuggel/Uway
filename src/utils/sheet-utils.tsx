@@ -124,6 +124,10 @@ function categoryData(suggestion: SearchSuggestionProperties) {
             label: "Adresse",
             value: suggestion.full_address,
         },
+        {
+            label: "Entfernung",
+            value: suggestion.distance,
+        },
     ];
 }
 
