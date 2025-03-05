@@ -15,8 +15,16 @@
                 "simulator": true
             }
         },
-        "production": {},
-        "test": {}
+        "production": {
+            "ios": {
+                "image": "latest"
+            }
+        },
+        "test": {
+            "ios": {
+                "image": "latest"
+            }
+        }
     },
     "submit": {
         "production": {}
