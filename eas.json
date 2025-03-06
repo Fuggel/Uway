@@ -15,16 +15,8 @@
                 "simulator": true
             }
         },
-        "production": {
-            "ios": {
-                "image": "latest"
-            }
-        },
-        "test": {
-            "ios": {
-                "image": "latest"
-            }
-        }
+        "production": {},
+        "test": {}
     },
     "submit": {
         "production": {}
