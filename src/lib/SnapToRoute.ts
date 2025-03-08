@@ -1,14 +1,15 @@
 import { Location } from "@rnmapbox/maps";
 import { Position, lineString, point } from "@turf/helpers";
+import { bearing, distance, nearestPointOnLine } from "@turf/turf";
 
 import { SnapToRouteConfig } from "@/types/INavigation";
 import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 import { KalmanFilterWrapper } from "./KalmanFilterWrapper";
-import { distance, nearestPointOnLine } from "@turf/turf";
 
 export class SnapToRoute {
     private lastValidLocation: Location | null = null;
+    private lastHeading: number | null = null;
     private config: SnapToRouteConfig;
     private kalmanFilter: KalmanFilterWrapper;
 
@@ -41,11 +42,16 @@ export class SnapToRoute {
             return this.lastValidLocation;
         }
 
+        const heading = this.getHeading(snappedPoint, route) ?? this.lastHeading ?? location.coords.course ?? 0;
+
+        this.lastHeading = heading;
+
         this.lastValidLocation = {
             coords: {
                 ...location.coords,
                 longitude: snappedPoint[0],
                 latitude: snappedPoint[1],
+                course: heading,
             },
             timestamp: location.timestamp,
         };
@@ -71,5 +77,26 @@ export class SnapToRoute {
         const snapped = nearestPointOnLine(routeLine, userPoint);
 
         return snapped.geometry.coordinates;
+    }
+
+    private getHeading(snappedPoint: Position, route: number[][]): number | null {
+        let closestIndex = -1;
+        let minDist = Infinity;
+
+        for (let i = 0; i < route.length; i++) {
+            const d = distance(snappedPoint, route[i], { units: "meters" });
+            if (d < minDist) {
+                minDist = d;
+                closestIndex = i;
+            }
+        }
+
+        if (closestIndex === -1 || closestIndex >= route.length - 1) {
+            return null;
+        }
+
+        const nextPoint = route[closestIndex + 1];
+
+        return bearing([snappedPoint[0], snappedPoint[1]], nextPoint);
     }
 }
