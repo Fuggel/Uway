@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
+import { bearing, distance, lineString, nearestPointOnLine, point } from "@turf/turf";
 
 import { THRESHOLD } from "@/constants/env-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
@@ -25,6 +25,7 @@ const useNavigation = () => {
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
+    const heading = userLocation?.coords?.course;
 
     const destinationLngLat = {
         lon: location?.coordinates.longitude,
@@ -87,7 +88,19 @@ const useNavigation = () => {
             const nearestPoint = point(nearestPointFeature.geometry.coordinates);
             const distanceToRoute = distance(userPoint, nearestPoint, { units: "meters" });
 
-            if (distanceToRoute > THRESHOLD.NAVIGATION.ROUTE_DEVIATION_METERS) {
+            const nearestIndex = nearestPointFeature.properties.index;
+            if (nearestIndex === undefined || nearestIndex >= routeCoordinates.length - 1) return;
+
+            const nextRoutePoint = routeCoordinates[nearestIndex + 1];
+            const routeHeading = bearing(nearestPoint.geometry.coordinates, nextRoutePoint);
+
+            const headingDifference = heading ? Math.abs(heading - routeHeading) : null;
+            const isUTurn =
+                headingDifference &&
+                headingDifference > THRESHOLD.NAVIGATION.UTURN_ANGLE_MIN &&
+                headingDifference < THRESHOLD.NAVIGATION.UTURN_ANGLE_MAX;
+
+            if (distanceToRoute > THRESHOLD.NAVIGATION.ROUTE_DEVIATION_METERS || isUTurn) {
                 recalculateRoute();
             }
         }

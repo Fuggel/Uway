@@ -196,4 +196,7 @@ export type ExcludeTypes = {
 export interface SnapToRouteConfig {
     snapRadius: number;
     minAccuracy: number;
+    maxSnapHeadingDifference: number;
+    isKalmanFilterEnabled: boolean;
+    isSnapToRouteEnabled: boolean;
 }

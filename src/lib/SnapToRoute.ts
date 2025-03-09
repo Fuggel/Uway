@@ -12,10 +12,14 @@ export class SnapToRoute {
     private lastHeading: number | null = null;
     private config: SnapToRouteConfig;
     private kalmanFilter: KalmanFilterWrapper;
+    private isKalmanFilterEnabled: boolean;
+    private isSnapToRouteEnabled: boolean;
 
     constructor(config: SnapToRouteConfig) {
         this.config = config;
         this.kalmanFilter = new KalmanFilterWrapper();
+        this.isKalmanFilterEnabled = config.isKalmanFilterEnabled;
+        this.isSnapToRouteEnabled = config.isSnapToRouteEnabled;
     }
 
     public processLocation(location: Location, route: number[][]): Location | null {
@@ -23,10 +27,12 @@ export class SnapToRoute {
             return this.lastValidLocation;
         }
 
-        const filtered = this.kalmanFilter.filterLocation({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-        });
+        const filtered = this.isKalmanFilterEnabled
+            ? this.kalmanFilter.filterLocation({
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+              })
+            : { lat: location.coords.latitude, lon: location.coords.longitude };
 
         const snappedPoint = this.snapToRoute(
             {
@@ -39,18 +45,29 @@ export class SnapToRoute {
         const distanceToRoad = distance([filtered.lon, filtered.lat], snappedPoint, { units: "meters" });
 
         if (distanceToRoad > this.config.snapRadius) {
-            return this.lastValidLocation;
+            return {
+                ...location,
+                coords: {
+                    ...location.coords,
+                    longitude: filtered.lon,
+                    latitude: filtered.lat,
+                },
+            };
         }
 
-        const heading = this.getHeading(snappedPoint, route) ?? this.lastHeading ?? location.coords.course ?? 0;
+        const heading =
+            this.getHeading(snappedPoint, route, location.coords.heading) ??
+            this.lastHeading ??
+            location.coords.course ??
+            0;
 
         this.lastHeading = heading;
 
         this.lastValidLocation = {
             coords: {
                 ...location.coords,
-                longitude: snappedPoint[0],
-                latitude: snappedPoint[1],
+                longitude: this.isSnapToRouteEnabled ? snappedPoint[0] : filtered.lon,
+                latitude: this.isSnapToRouteEnabled ? snappedPoint[1] : filtered.lat,
                 course: heading,
             },
             timestamp: location.timestamp,
@@ -79,7 +96,7 @@ export class SnapToRoute {
         return snapped.geometry.coordinates;
     }
 
-    private getHeading(snappedPoint: Position, route: number[][]): number | null {
+    private getHeading(snappedPoint: Position, route: number[][], userHeading: number | undefined): number | undefined {
         let closestIndex = -1;
         let minDist = Infinity;
 
@@ -92,11 +109,19 @@ export class SnapToRoute {
         }
 
         if (closestIndex === -1 || closestIndex >= route.length - 1) {
-            return null;
+            return userHeading;
         }
 
         const nextPoint = route[closestIndex + 1];
+        const calculatedHeading = bearing([snappedPoint[0], snappedPoint[1]], nextPoint);
 
-        return bearing([snappedPoint[0], snappedPoint[1]], nextPoint);
+        if (userHeading) {
+            const headingDifference = Math.abs(userHeading - calculatedHeading);
+            if (headingDifference > this.config.maxSnapHeadingDifference) {
+                return userHeading;
+            }
+        }
+
+        return calculatedHeading;
     }
 }
