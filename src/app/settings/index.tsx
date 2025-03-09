@@ -23,8 +23,6 @@ const Settings = () => {
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const showGasStations = useSelector(mapGasStationSelectors.showGasStation);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
-    const isKalmanFilterEnabled = useSelector(mapViewSelectors.isKalmanFilterEnabled);
-    const isSnapToRouteEnabled = useSelector(mapViewSelectors.isSnapToRouteEnabled);
 
     return (
         <>
@@ -88,20 +86,6 @@ const Settings = () => {
                 <SettingsSection icon="navigation" title="Navigation">
                     <SettingsItem title="Vermeiden">
                         <Link type="secondary" to={() => router.push("/settings/navigation")} />
-                    </SettingsItem>
-
-                    <SettingsItem title="Kalman Filter">
-                        <Switch
-                            checked={isKalmanFilterEnabled}
-                            onChange={() => dispatch(mapViewActions.setIsKalmanFilterEnabled(!isKalmanFilterEnabled))}
-                        />
-                    </SettingsItem>
-
-                    <SettingsItem title="Snap To Route">
-                        <Switch
-                            checked={isSnapToRouteEnabled}
-                            onChange={() => dispatch(mapViewActions.setIsSnapToRouteEnabled(!isSnapToRouteEnabled))}
-                        />
                     </SettingsItem>
                 </SettingsSection>
             </ScrollView>

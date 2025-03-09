@@ -5,21 +5,13 @@ import { bearing, distance, nearestPointOnLine } from "@turf/turf";
 import { SnapToRouteConfig } from "@/types/INavigation";
 import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
-import { KalmanFilterWrapper } from "./KalmanFilterWrapper";
-
 export class SnapToRoute {
     private lastValidLocation: Location | null = null;
     private lastHeading: number | null = null;
     private config: SnapToRouteConfig;
-    private kalmanFilter: KalmanFilterWrapper;
-    private isKalmanFilterEnabled: boolean;
-    private isSnapToRouteEnabled: boolean;
 
     constructor(config: SnapToRouteConfig) {
         this.config = config;
-        this.kalmanFilter = new KalmanFilterWrapper();
-        this.isKalmanFilterEnabled = config.isKalmanFilterEnabled;
-        this.isSnapToRouteEnabled = config.isSnapToRouteEnabled;
     }
 
     public processLocation(location: Location, route: number[][]): Location | null {
@@ -27,32 +19,14 @@ export class SnapToRoute {
             return this.lastValidLocation;
         }
 
-        const filtered = this.isKalmanFilterEnabled
-            ? this.kalmanFilter.filterLocation({
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-              })
-            : { lat: location.coords.latitude, lon: location.coords.longitude };
+        const snappedPoint = this.snapToRoute(location, route);
 
-        const snappedPoint = this.snapToRoute(
-            {
-                ...location,
-                coords: { ...location.coords, latitude: filtered.lat, longitude: filtered.lon },
-            },
-            route
-        );
-
-        const distanceToRoad = distance([filtered.lon, filtered.lat], snappedPoint, { units: "meters" });
+        const distanceToRoad = distance([location.coords.longitude, location.coords.latitude], snappedPoint, {
+            units: "meters",
+        });
 
         if (distanceToRoad > this.config.snapRadius) {
-            return {
-                ...location,
-                coords: {
-                    ...location.coords,
-                    longitude: filtered.lon,
-                    latitude: filtered.lat,
-                },
-            };
+            return location;
         }
 
         const heading =
@@ -66,8 +40,8 @@ export class SnapToRoute {
         this.lastValidLocation = {
             coords: {
                 ...location.coords,
-                longitude: this.isSnapToRouteEnabled ? snappedPoint[0] : filtered.lon,
-                latitude: this.isSnapToRouteEnabled ? snappedPoint[1] : filtered.lat,
+                longitude: snappedPoint[0],
+                latitude: snappedPoint[1],
                 course: heading,
             },
             timestamp: location.timestamp,

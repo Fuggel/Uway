@@ -28,8 +28,6 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const directions = useSelector(mapNavigationSelectors.directions);
     const [userLocation, setUserLocation] = useState<Location | null>(null);
-    const isKalmanFilterEnabled = useSelector(mapViewSelectors.isKalmanFilterEnabled);
-    const isSnapToRouteEnabled = useSelector(mapViewSelectors.isSnapToRouteEnabled);
 
     useEffect(() => {
         if (!isNavigationMode || !directions) return;
@@ -38,8 +36,6 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
             snapRadius: THRESHOLD.NAVIGATION.SNAP_RADIUS_IN_METERS,
             minAccuracy: THRESHOLD.NAVIGATION.MIN_ACCURACY,
             maxSnapHeadingDifference: THRESHOLD.NAVIGATION.MAX_SNAP_HEADING_DIFFERENCE,
-            isKalmanFilterEnabled,
-            isSnapToRouteEnabled,
         });
 
         return () => {
