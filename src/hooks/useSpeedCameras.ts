@@ -45,7 +45,6 @@ const useSpeedCameras = () => {
         queryFn: () =>
             fetchSpeedCameras({
                 userLonLat: { lon: longitude, lat: latitude },
-                distance: THRESHOLD.SPEED_CAMERA.SHOW_IN_METERS,
             }),
         enabled: showSpeedCameras && !!longitude && !!latitude,
         staleTime: Infinity,

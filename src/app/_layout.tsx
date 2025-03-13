@@ -10,7 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { API_KEY } from "@/constants/env-constants";
+import { API } from "@/constants/env-constants";
 import { BottomSheetContextProvider } from "@/contexts/BottomSheetContext";
 import { MapFeatureContextProvider } from "@/contexts/MapFeatureContext";
 import { MapInstructionContextProvider } from "@/contexts/MapInstructionContext";
@@ -47,9 +47,9 @@ export default function RootLayout() {
         const configurePurchases = async () => {
             try {
                 if (Platform.OS === "ios") {
-                    Purchases.configure({ apiKey: API_KEY.REVENUE_CAT_IOS });
+                    Purchases.configure({ apiKey: API.REVENUE_CAT_IOS });
                 } else if (Platform.OS === "android") {
-                    Purchases.configure({ apiKey: API_KEY.REVENUE_CAT_ANDROID });
+                    Purchases.configure({ apiKey: API.REVENUE_CAT_ANDROID });
                 }
             } catch (error) {
                 console.log(`Failed to configure Purchases: ${error}`);

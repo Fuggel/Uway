@@ -1,7 +1,6 @@
 import axios from "axios";
 
-import { API_URL } from "@/constants/api-constants";
-import { API_KEY } from "@/constants/env-constants";
+import { API } from "@/constants/env-constants";
 import { LonLat } from "@/types/IMap";
 import { SearchFeatureCollection, SearchSuggestion } from "@/types/ISearch";
 
@@ -11,19 +10,20 @@ export async function fetchSearchSuggestion(params: {
     lngLat: LonLat;
 }): Promise<SearchSuggestion> {
     try {
-        const queryParams = new URLSearchParams();
-        queryParams.append("q", params.query);
-        queryParams.append("session_token", params.sessionToken);
-        queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
-        queryParams.append("proximity", `${params.lngLat.lon},${params.lngLat.lat}`);
-        queryParams.append("types", "address,street,place,poi,locality,city,district,postcode,country,category");
-        queryParams.append("limit", "8");
-        queryParams.append("language", "de");
+        if (!params.lngLat.lon || !params.lngLat.lat) {
+            return { suggestions: [] };
+        }
 
-        const url = `${API_URL.MAPBOX_SEARCH_SUGGESTION}?${queryParams.toString()}`;
+        const queryParams = new URLSearchParams();
+        queryParams.append("query", params.query);
+        queryParams.append("sessionToken", params.sessionToken);
+        queryParams.append("lon", params.lngLat.lon.toString());
+        queryParams.append("lat", params.lngLat.lat.toString());
+
+        const url = `${API.UWAY_URL}/search-suggestions?${queryParams.toString()}`;
         const response = await axios.get(url);
 
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log(`Error fetching search suggestions: ${error}`);
         return { suggestions: [] };
@@ -36,14 +36,13 @@ export async function fetchSearchLocation(params: {
 }): Promise<SearchFeatureCollection> {
     try {
         const queryParams = new URLSearchParams();
-        queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
-        queryParams.append("session_token", params.sessionToken);
-        queryParams.append("language", "de");
+        queryParams.append("mapboxId", params.mapboxId);
+        queryParams.append("sessionToken", params.sessionToken);
 
-        const url = `${API_URL.MAPBOX_SEARCH_RETRIEVE}/${params.mapboxId}?${queryParams.toString()}`;
+        const url = `${API.UWAY_URL}/search-locations?${queryParams.toString()}`;
         const response = await axios.get(url);
 
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log(`Error fetching search results: ${error}`);
         return { type: "FeatureCollection", features: [] };

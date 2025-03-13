@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { FeatureCollection } from "@turf/helpers";
 
-import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
+import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchGasStations } from "@/services/gas-stations";
@@ -29,7 +29,6 @@ const useGasStations = () => {
         queryFn: () =>
             fetchGasStations({
                 userLonLat: { lon: longitude, lat: latitude },
-                radius: THRESHOLD.GAS_STATION.SHOW_IN_KILOMETERS,
             }),
         enabled: showGasStations && !!longitude && !!latitude,
         staleTime: Infinity,
@@ -40,7 +39,7 @@ const useGasStations = () => {
         if (data && showGasStations && longitude && latitude) {
             setGasStations({
                 ...data,
-                features: data.features.map((feature) => {
+                features: data?.features?.map((feature) => {
                     const properties = feature.properties;
                     const iconType = getStationIcon(
                         data.features.map((f) => f.properties as unknown as GasStation),

@@ -126,7 +126,7 @@ const Layers = () => {
                 </ShapeSource>
             )}
 
-            {incidents?.incidents?.data && (
+            {incidents?.incidents?.data?.features && (
                 <ShapeSource
                     id="incident-symbol-source"
                     shape={{

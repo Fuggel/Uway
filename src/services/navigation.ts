@@ -1,7 +1,7 @@
 import axios from "axios";
 
-import { API_URL } from "@/constants/api-constants";
-import { API_KEY } from "@/constants/env-constants";
+import { API } from "@/constants/env-constants";
+import { EXCLUDE_TYPES } from "@/constants/map-constants";
 import { LonLat } from "@/types/IMap";
 import { ExcludeTypes } from "@/types/INavigation";
 
@@ -20,39 +20,27 @@ export async function fetchDirections(params: {
             return [];
         }
 
-        const coordinates = params.waypoint
-            ? `${startLon},${startLat};${params.waypoint.lon},${params.waypoint.lat};${destLon},${destLat}`
-            : `${startLon},${startLat};${destLon},${destLat}`;
-
         const queryParams = new URLSearchParams();
-        queryParams.append("geometries", "geojson");
-        queryParams.append("steps", "true");
-        queryParams.append("language", "de");
-        queryParams.append("overview", "full");
-        queryParams.append("annotations", "maxspeed,distance,duration");
-        queryParams.append("banner_instructions", "true");
-        queryParams.append("voice_instructions", "true");
-        queryParams.append("voice_units", "metric");
-        queryParams.append("roundabout_exits", "true");
-        queryParams.append("alternatives", "true");
-        queryParams.append("access_token", API_KEY.MAPBOX_ACCESS_TOKEN);
+        queryParams.append("profile", params.profile);
+        queryParams.append("startCoordinates", `${startLon},${startLat}`);
+        queryParams.append("destinationCoordinates", `${destLon},${destLat}`);
 
         if (params.waypoint) {
-            queryParams.append("waypoints", "0;2");
+            queryParams.append("waypoint", `${params.waypoint.lon},${params.waypoint.lat}`);
         }
 
         if (params.excludeTypes && Object.keys(params.excludeTypes).length > 0) {
-            const excludeTypes = Object.keys(params.excludeTypes).filter(
-                (key) => params.excludeTypes[key as keyof ExcludeTypes]
-            );
+            const exclude = Object.keys(params.excludeTypes)
+                .filter((key) => params.excludeTypes[key as keyof ExcludeTypes])
+                .map((key) => EXCLUDE_TYPES[key as keyof ExcludeTypes]);
 
-            queryParams.append("exclude", excludeTypes.join(","));
+            queryParams.append("exclude", exclude.join(","));
         }
 
-        const url = `${API_URL.MAPBOX_DIRECTIONS}/${params.profile}/${coordinates}?${queryParams.toString()}`;
+        const url = `${API.UWAY_URL}/directions?${queryParams.toString()}`;
         const response = await axios.get(url);
 
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.log(`Error fetching directions: ${error}`);
         return [];

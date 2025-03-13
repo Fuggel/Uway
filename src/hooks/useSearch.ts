@@ -38,7 +38,7 @@ export const useSearchSuggestion = (params: { query: string }) => {
 
     useEffect(() => {
         if (suggestionData) {
-            setSuggestions(suggestionData.suggestions.sort((a, b) => a.distance - b.distance));
+            setSuggestions(suggestionData?.suggestions?.sort((a, b) => a.distance - b.distance));
         }
 
         if (params.query.length === 0) {

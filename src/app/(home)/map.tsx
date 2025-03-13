@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 
 import { COLORS } from "@/constants/colors-constants";
-import { API_KEY } from "@/constants/env-constants";
+import { API } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
@@ -40,7 +40,7 @@ import RouteOptions from "@/components/map/MapBottomSheet/RouteOptions";
 import MapButtons from "@/components/map/MapButtons";
 import MapNavigation from "@/components/map/MapNavigation";
 
-Mapbox.setAccessToken(API_KEY.MAPBOX_ACCESS_TOKEN);
+Mapbox.setAccessToken(API.MAPBOX_ACCESS_TOKEN);
 
 const Map = () => {
     const dispatch = useDispatch();

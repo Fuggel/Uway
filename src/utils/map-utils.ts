@@ -4,7 +4,7 @@ import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
 import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation } from "@/types/IGasStation";
-import { LonLat, MapboxStyle } from "@/types/IMap";
+import { MapboxStyle } from "@/types/IMap";
 import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
@@ -194,23 +194,6 @@ export function isValidLonLat(lon: number | undefined, lat: number | undefined) 
         return false;
     }
     return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
-}
-
-export function boundingBox(lonLat: LonLat, distance: number) {
-    if (!lonLat.lon || !lonLat.lat) {
-        return;
-    }
-
-    const metersPerDegree = 111111; // Roughly 111 km at the equator
-    const latDelta = distance / metersPerDegree;
-    const lonDelta = distance / (metersPerDegree * Math.cos(lonLat.lat * (Math.PI / 180)));
-
-    return {
-        minLat: lonLat.lat - latDelta,
-        minLon: lonLat.lon - lonDelta,
-        maxLat: lonLat.lat + latDelta,
-        maxLon: lonLat.lon + lonDelta,
-    };
 }
 
 export function determineSpeedLimitIcon(speedLimit: number) {

@@ -43,7 +43,6 @@ const useIncidents = () => {
         queryFn: () =>
             fetchIncidents({
                 userLonLat: { lon: longitude, lat: latitude },
-                distance: THRESHOLD.INCIDENT.SHOW_IN_METERS,
             }),
         enabled: showIncidents && !!longitude && !!latitude,
         staleTime: Infinity,
@@ -56,7 +55,7 @@ const useIncidents = () => {
             let closestIncident: IncidentAlert | null = null;
             let isWithinAnyWarningZone = false;
 
-            const filteredIncidents = data.features.filter(
+            const filteredIncidents = data.features?.filter(
                 (incident) =>
                     (incident.properties as unknown as IncidentProperties).probabilityOfOccurrence === "certain"
             );

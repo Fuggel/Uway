@@ -4,6 +4,7 @@ import Mapbox from "@rnmapbox/maps";
 import { FeatureCollection, Geometry, GeometryCollection, Position } from "@turf/helpers";
 
 import { MapConfig, MapboxStyle } from "@/types/IMap";
+import { ExcludeType, ExcludeTypes } from "@/types/INavigation";
 import { MapStyle } from "@/types/ISettings";
 import { SpeedCameraProfile, SpeedCameraType } from "@/types/ISpeed";
 
@@ -127,3 +128,11 @@ export const SPEED_CAMERA_TYPE: SpeedCameraProfile[] = [
         label: "Mobil",
     },
 ];
+
+export const EXCLUDE_TYPES: { [key in keyof ExcludeTypes]: ExcludeType } = {
+    [ExcludeType.TOLL]: ExcludeType.TOLL,
+    [ExcludeType.MOTORWAY]: ExcludeType.MOTORWAY,
+    [ExcludeType.FERRY]: ExcludeType.FERRY,
+    [ExcludeType.UNPAVED]: ExcludeType.UNPAVED,
+    [ExcludeType.CASH_ONLY_TOLLS]: ExcludeType.CASH_ONLY_TOLLS,
+};
