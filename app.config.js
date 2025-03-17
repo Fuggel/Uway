@@ -1,5 +1,4 @@
 export default ({ config }) => {
-    const MAPBOX_TOKEN = process.env.EXPO_SECRET_MAPBOX_ACCESS_TOKEN;
     return {
         ...config,
         owner: "fuggel",
@@ -64,7 +63,6 @@ export default ({ config }) => {
             [
                 "@rnmapbox/maps",
                 {
-                    RNMapboxMapsDownloadToken: MAPBOX_TOKEN,
                     RNMapboxMapsVersion: "10.16.0",
                 },
             ],
