@@ -8,6 +8,7 @@ import { LonLat } from "@/types/IMap";
 import { DEFAULT_FC } from "../constants/map-constants";
 
 export async function fetchSpeedCameras(params: {
+    authToken: string;
     userLonLat: LonLat;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
@@ -20,7 +21,11 @@ export async function fetchSpeedCameras(params: {
         queryParams.append("lat", params.userLonLat.lat.toString());
 
         const url = `${API.UWAY_URL}/speed-cameras?${queryParams.toString()}`;
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${params.authToken}`,
+            },
+        });
 
         return response.data.data;
     } catch (error) {

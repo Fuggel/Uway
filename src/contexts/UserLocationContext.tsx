@@ -8,7 +8,6 @@ import useLocationPermission from "@/hooks/useLocationPermissions";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { SnapToRoute } from "@/lib/SnapToRoute";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapViewSelectors } from "@/store/mapView";
 
 interface ContextProps {
     userLocation: Location | null;

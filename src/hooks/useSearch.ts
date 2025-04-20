@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
 
+import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSearchLocation, fetchSearchSuggestion } from "@/services/search";
 import { mapLayoutsActions } from "@/store/mapLayouts";
@@ -14,6 +15,7 @@ import { generateRandomId } from "@/utils/auth-utils";
 import { distanceToPointText } from "@/utils/map-utils";
 
 export const useSearchSuggestion = (params: { query: string }) => {
+    const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
     const [suggestions, setSuggestions] = useState<SearchSuggestionProperties[] | null>(null);
 
@@ -28,11 +30,12 @@ export const useSearchSuggestion = (params: { query: string }) => {
         queryKey: ["searchSuggestion", params.query],
         queryFn: () =>
             fetchSearchSuggestion({
+                authToken: String(authToken?.token),
                 query: params.query,
                 sessionToken: generateRandomId(),
                 lngLat: { lon: longitude, lat: latitude },
             }),
-        enabled: params.query.length > 0,
+        enabled: params.query.length > 0 && !!authToken?.token,
         staleTime: Infinity,
     });
 
@@ -55,6 +58,7 @@ export const useSearchLocation = () => {
     const locationId = useSelector(mapNavigationSelectors.locationId);
     const editingSearch = useSelector(mapSearchSelectors.startEditingSearch);
     const isPoiSearch = useSelector(mapSearchSelectors.isPoiSearch);
+    const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
 
     const longitude = userLocation?.coords?.longitude;
@@ -68,10 +72,11 @@ export const useSearchLocation = () => {
         queryKey: ["searchLocation", locationId],
         queryFn: () =>
             fetchSearchLocation({
+                authToken: String(authToken?.token),
                 mapboxId: locationId?.mapbox_id || "",
                 sessionToken: generateRandomId(),
             }),
-        enabled: locationId?.mapbox_id ? locationId?.mapbox_id.length > 0 : false,
+        enabled: locationId?.mapbox_id ? locationId?.mapbox_id.length > 0 : false && !!authToken?.token,
         staleTime: Infinity,
     });
 

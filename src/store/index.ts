@@ -13,11 +13,13 @@ import mapSpeedCameraReduce from "./mapSpeedCamera";
 import mapTextToSpeechReduce from "./mapTextToSpeech";
 import mapViewReduce from "./mapView";
 import mapWaypointReduce from "./mapWaypoint";
+import revenueCatReduce from "./revenueCat";
 
 const persistConfig = {
     key: "root",
     storage,
     whitelist: [
+        "revenueCat",
         "mapView",
         "mapSpeedCamera",
         "mapGasStation",
@@ -29,6 +31,7 @@ const persistConfig = {
 };
 
 const reducer = combineReducers({
+    revenueCat: revenueCatReduce,
     mapView: mapViewReduce,
     mapNavigation: mapNavigationReduce,
     mapSpeedCamera: mapSpeedCameraReduce,

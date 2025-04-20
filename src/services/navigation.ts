@@ -6,6 +6,7 @@ import { LonLat } from "@/types/IMap";
 import { ExcludeTypes } from "@/types/INavigation";
 
 export async function fetchDirections(params: {
+    authToken: string;
     profile: string;
     startLngLat: LonLat;
     destinationLngLat: LonLat;
@@ -38,7 +39,11 @@ export async function fetchDirections(params: {
         }
 
         const url = `${API.UWAY_URL}/directions?${queryParams.toString()}`;
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${params.authToken}`,
+            },
+        });
 
         return response.data.data;
     } catch (error) {

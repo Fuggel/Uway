@@ -1,16 +1,26 @@
+import { revenueCatActions } from "@/store/revenueCat";
 import { useEffect, useState } from "react";
 import Purchases from "react-native-purchases";
+import { useDispatch } from "react-redux";
 
 import Map from "./map";
 import Paywall from "./paywall";
 
 const Home = () => {
+    const dispatch = useDispatch();
     const [isSubscriptionActive, setSubscriptionActive] = useState(false);
 
     const checkSubscriptionStatus = async () => {
         try {
             const customerInfo = await Purchases.getCustomerInfo();
-            const hasActiveSubscription = Object.keys(customerInfo.entitlements.active).length > 0;
+            const hasActiveSubscription = customerInfo?.entitlements?.active?.pro?.isActive;
+
+            if (hasActiveSubscription) {
+                const rcUserId = customerInfo?.originalAppUserId;
+                dispatch(revenueCatActions.setRcUserId(rcUserId));
+            } else {
+                dispatch(revenueCatActions.setRcUserId(null));
+            }
 
             setSubscriptionActive(hasActiveSubscription);
         } catch (error) {
@@ -22,7 +32,7 @@ const Home = () => {
         checkSubscriptionStatus();
     }, []);
 
-    return <Map />;
+    return isSubscriptionActive ? <Map /> : <Paywall onSubscriptionChange={checkSubscriptionStatus} />;
 };
 
 export default Home;

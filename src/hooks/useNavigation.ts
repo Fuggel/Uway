@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { bearing, distance, lineString, nearestPointOnLine, point } from "@turf/turf";
 
 import { THRESHOLD } from "@/constants/env-constants";
+import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchDirections } from "@/services/navigation";
 import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
@@ -13,6 +14,7 @@ import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 const useNavigation = () => {
+    const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
     const dispatch = useDispatch();
     const location = useSelector(mapNavigationSelectors.location);
@@ -40,18 +42,23 @@ const useNavigation = () => {
         queryKey: ["directions", location, gasStationWaypoint, excludeTypes],
         queryFn: () =>
             fetchDirections({
+                authToken: String(authToken?.token),
                 profile: navigationProfile,
                 startLngLat: { lon: longitude, lat: latitude },
                 destinationLngLat,
                 excludeTypes,
                 waypoint: gasStationWaypoint ? { lon: gasStationWaypoint.lon, lat: gasStationWaypoint.lat } : undefined,
             }),
-        enabled: isValidLonLat(longitude, latitude) && isValidLonLat(destinationLngLat.lon, destinationLngLat.lat),
+        enabled:
+            isValidLonLat(longitude, latitude) &&
+            isValidLonLat(destinationLngLat.lon, destinationLngLat.lat) &&
+            !!authToken?.token,
     });
 
     const { mutate: recalculateRoute } = useMutation({
         mutationFn: () =>
             fetchDirections({
+                authToken: String(authToken?.token),
                 profile: navigationProfile,
                 startLngLat: { lon: longitude, lat: latitude },
                 destinationLngLat: destinationLngLat,

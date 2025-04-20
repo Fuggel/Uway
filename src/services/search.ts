@@ -5,6 +5,7 @@ import { LonLat } from "@/types/IMap";
 import { SearchFeatureCollection, SearchSuggestion } from "@/types/ISearch";
 
 export async function fetchSearchSuggestion(params: {
+    authToken: string;
     query: string;
     sessionToken: string;
     lngLat: LonLat;
@@ -21,7 +22,11 @@ export async function fetchSearchSuggestion(params: {
         queryParams.append("lat", params.lngLat.lat.toString());
 
         const url = `${API.UWAY_URL}/search-suggestions?${queryParams.toString()}`;
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${params.authToken}`,
+            },
+        });
 
         return response.data.data;
     } catch (error) {
@@ -31,6 +36,7 @@ export async function fetchSearchSuggestion(params: {
 }
 
 export async function fetchSearchLocation(params: {
+    authToken: string;
     mapboxId: string;
     sessionToken: string;
 }): Promise<SearchFeatureCollection> {
@@ -40,7 +46,11 @@ export async function fetchSearchLocation(params: {
         queryParams.append("sessionToken", params.sessionToken);
 
         const url = `${API.UWAY_URL}/search-locations?${queryParams.toString()}`;
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${params.authToken}`,
+            },
+        });
 
         return response.data.data;
     } catch (error) {

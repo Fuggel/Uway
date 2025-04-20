@@ -7,6 +7,7 @@ import { distance } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
+import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
@@ -18,6 +19,7 @@ import { incidentTitle } from "@/utils/sheet-utils";
 import useTextToSpeech from "./useTextToSpeech";
 
 const useIncidents = () => {
+    const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
@@ -42,9 +44,10 @@ const useIncidents = () => {
         queryKey: ["incidents", showIncidents],
         queryFn: () =>
             fetchIncidents({
+                authToken: String(authToken?.token),
                 userLonLat: { lon: longitude, lat: latitude },
             }),
-        enabled: showIncidents && !!longitude && !!latitude,
+        enabled: showIncidents && !!authToken?.token && !!longitude && !!latitude,
         staleTime: Infinity,
         refetchInterval: REFETCH_INTERVAL.INCIDENTS_IN_MINUTES,
     });

@@ -7,6 +7,7 @@ import { DEFAULT_FC } from "@/constants/map-constants";
 import { LonLat } from "@/types/IMap";
 
 export async function fetchGasStations(params: {
+    authToken: string;
     userLonLat: LonLat;
 }): Promise<FeatureCollection<Geometry, GeometryCollection>> {
     try {
@@ -19,7 +20,11 @@ export async function fetchGasStations(params: {
         queryParams.append("lon", params.userLonLat.lon.toString());
 
         const url = `${API.UWAY_URL}/gas-stations?${queryParams.toString()}`;
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${params.authToken}`,
+            },
+        });
 
         return response.data.data as FeatureCollection<Geometry, GeometryCollection>;
     } catch (error) {

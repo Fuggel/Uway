@@ -7,6 +7,7 @@ import { distance } from "@turf/turf";
 
 import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
+import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedCameras } from "@/services/speed-cameras";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
@@ -18,6 +19,7 @@ import { convertSpeedToKmh, isFeatureRelevant, warningThresholds } from "@/utils
 import useTextToSpeech from "./useTextToSpeech";
 
 const useSpeedCameras = () => {
+    const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
     const navigationDirections = useSelector(mapNavigationSelectors.directions);
     const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
@@ -44,9 +46,10 @@ const useSpeedCameras = () => {
         queryKey: ["speedCameras", showSpeedCameras],
         queryFn: () =>
             fetchSpeedCameras({
+                authToken: String(authToken?.token),
                 userLonLat: { lon: longitude, lat: latitude },
             }),
-        enabled: showSpeedCameras && !!longitude && !!latitude,
+        enabled: showSpeedCameras && !!authToken?.token && !!longitude && !!latitude,
         staleTime: Infinity,
         refetchInterval: REFETCH_INTERVAL.SPEED_CAMERAS_IN_MINUTES,
     });
