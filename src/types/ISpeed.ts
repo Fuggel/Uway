@@ -22,7 +22,7 @@ export interface SpeedCameraProfile {
     label: string;
 }
 
-export interface RelevantFeatureParams {
+export interface AheadFeatureParams {
     userPoint: [number, number];
     featurePoint: [number, number];
     heading: number;

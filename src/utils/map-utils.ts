@@ -6,7 +6,7 @@ import { LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation } from "@/types/IGasStation";
 import { MapboxStyle } from "@/types/IMap";
 import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
-import { RelevantFeatureParams } from "@/types/ISpeed";
+import { AheadFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
@@ -393,7 +393,7 @@ export function convertSpeedToKmh(speed: number) {
     return speed * 3.6;
 }
 
-export function isFeatureRelevant(params: RelevantFeatureParams) {
+export function isFeatureAhead(params: AheadFeatureParams) {
     const { tolerance, userPoint, featurePoint, heading } = params;
 
     const userPointGeo = point(userPoint);

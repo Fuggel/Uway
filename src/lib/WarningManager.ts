@@ -1,7 +1,7 @@
 import { bearing, point } from "@turf/turf";
 
 import { WarningThresholds } from "@/types/INavigation";
-import { RelevantFeatureParams } from "@/types/ISpeed";
+import { AheadFeatureParams } from "@/types/ISpeed";
 
 export class WarningManager {
     private warningThresholds: WarningThresholds;
@@ -15,11 +15,11 @@ export class WarningManager {
         distanceToFeature: number,
         playWarning: (message: string) => void,
         warningMessage: string,
-        relevanceParams: RelevantFeatureParams
+        aheadParams: AheadFeatureParams
     ) {
         const { early, late } = this.warningThresholds;
 
-        if (!this.isFeatureRelevant(relevanceParams).isAhead) {
+        if (!this.isFeatureRelevant(aheadParams).isAhead) {
             return;
         }
 
@@ -49,7 +49,7 @@ export class WarningManager {
         }
     }
 
-    private isFeatureRelevant(params: RelevantFeatureParams) {
+    private isFeatureRelevant(params: AheadFeatureParams) {
         const { tolerance, userPoint, featurePoint, heading } = params;
 
         const userPointGeo = point(userPoint);

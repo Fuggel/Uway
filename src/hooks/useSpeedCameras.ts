@@ -14,7 +14,7 @@ import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
 import { WarningAlert } from "@/types/IMap";
 import { SpeedCameraAlert } from "@/types/ISpeed";
-import { convertSpeedToKmh, isFeatureRelevant, warningThresholds } from "@/utils/map-utils";
+import { convertSpeedToKmh, isFeatureAhead, warningThresholds } from "@/utils/map-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
 
@@ -74,7 +74,7 @@ const useSpeedCameras = () => {
                     return;
                 }
 
-                const { isAhead } = isFeatureRelevant({
+                const { isAhead } = isFeatureAhead({
                     userPoint: userPoint,
                     featurePoint: cameraPoint,
                     heading,

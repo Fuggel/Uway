@@ -13,7 +13,7 @@ import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { IncidentAlert, IncidentProperties, WarningAlertIncident } from "@/types/ITraffic";
-import { convertSpeedToKmh, isFeatureRelevant, warningThresholds } from "@/utils/map-utils";
+import { convertSpeedToKmh, isFeatureAhead, warningThresholds } from "@/utils/map-utils";
 import { incidentTitle } from "@/utils/sheet-utils";
 
 import useTextToSpeech from "./useTextToSpeech";
@@ -74,7 +74,7 @@ const useIncidents = () => {
                     return;
                 }
 
-                const { isAhead } = isFeatureRelevant({
+                const { isAhead } = isFeatureAhead({
                     userPoint: [longitude, latitude],
                     featurePoint: incidentPoint,
                     heading,
