@@ -7,7 +7,6 @@ import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 export class SnapToRoute {
     private lastValidLocation: Location | null = null;
-    private lastHeading: number | null = null;
     private config: SnapToRouteConfig;
 
     constructor(config: SnapToRouteConfig) {
@@ -29,13 +28,7 @@ export class SnapToRoute {
             return location;
         }
 
-        const heading =
-            this.getHeading(snappedPoint, route, location.coords.heading) ??
-            this.lastHeading ??
-            location.coords.course ??
-            0;
-
-        this.lastHeading = heading;
+        const heading = this.getHeading(snappedPoint, route, location.coords.course) ?? location.coords.course ?? 0;
 
         this.lastValidLocation = {
             coords: {
