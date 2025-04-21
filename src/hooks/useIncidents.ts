@@ -24,7 +24,6 @@ const useIncidents = () => {
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const directions = useSelector(mapNavigationSelectors.directions);
     const { startSpeech } = useTextToSpeech();
     const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null }>();
     const [hasPlayedWarning, setHasPlayedWarning] = useState({ early: false, late: false });
@@ -75,14 +74,11 @@ const useIncidents = () => {
                     return;
                 }
 
-                const { isRelevant } = isFeatureRelevant({
+                const { isAhead } = isFeatureRelevant({
                     userPoint: [longitude, latitude],
                     featurePoint: incidentPoint,
                     heading,
                     tolerance: THRESHOLD.NAVIGATION.IS_AHEAD_IN_DEGREES,
-                    laneThreshold: THRESHOLD.NAVIGATION.IS_ON_SAME_LANE_IN_DEGREES,
-                    route: directions?.geometry?.coordinates,
-                    routeBufferTolerance: THRESHOLD.NAVIGATION.ROUTE_BUFFER_TOLERANCE,
                 });
 
                 const isWithinEarlyWarningDistance = distanceToFeature <= early;
@@ -91,7 +87,7 @@ const useIncidents = () => {
 
                 if (
                     isNavigationMode &&
-                    isRelevant &&
+                    isAhead &&
                     (isWithinEarlyWarningDistance || isWithinLateWarningDistance) &&
                     isCloserThanPrevious
                 ) {
@@ -107,7 +103,7 @@ const useIncidents = () => {
                     });
                 }
 
-                if (isNavigationMode && playAcousticWarning && isRelevant && incidentWarningText?.textToSpeech) {
+                if (isNavigationMode && playAcousticWarning && isAhead && incidentWarningText?.textToSpeech) {
                     if (!hasPlayedWarning.early && isWithinEarlyWarningDistance) {
                         startSpeech(incidentWarningText.textToSpeech);
                         setHasPlayedWarning((prev) => ({ ...prev, early: true }));

@@ -1,5 +1,5 @@
-import { Position, lineString, point } from "@turf/helpers";
-import { bearing, booleanPointInPolygon, buffer, distance } from "@turf/turf";
+import { Position, point } from "@turf/helpers";
+import { bearing, distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
@@ -394,8 +394,7 @@ export function convertSpeedToKmh(speed: number) {
 }
 
 export function isFeatureRelevant(params: RelevantFeatureParams) {
-    const { tolerance, laneThreshold, userPoint, featurePoint, heading, directions, route, routeBufferTolerance } =
-        params;
+    const { tolerance, userPoint, featurePoint, heading } = params;
 
     const userPointGeo = point(userPoint);
     const featurePointGeo = point(featurePoint);
@@ -405,35 +404,12 @@ export function isFeatureRelevant(params: RelevantFeatureParams) {
 
     const isAhead = angleDifference <= tolerance;
 
-    const isSameLane = directions
-        ? directions.some((dir) => {
-              const oppositeDir = (dir + 180) % 360;
-              return calculateAngleDifference(heading, oppositeDir) < laneThreshold;
-          })
-        : calculateAngleDifference(heading, bearingToFeature) < laneThreshold;
-
-    const isOnRoute = route ? isFeatureOnRoute(featurePoint, route, routeBufferTolerance) : false;
-
-    const isRelevant = isAhead && isSameLane && isOnRoute;
-
-    return { isRelevant };
+    return { isAhead };
 }
 
 function calculateAngleDifference(angle1: number, angle2: number) {
     const diff = Math.abs(angle1 - angle2);
     return diff > 180 ? 360 - diff : diff;
-}
-
-function isFeatureOnRoute(featurePoint: number[], route: number[][], routeBufferTolerance: number) {
-    const featurePointGeo = point(featurePoint);
-    const routeGeo = lineString(route);
-    const bufferedRoute = buffer(routeGeo, routeBufferTolerance, { units: "meters" });
-
-    if (!bufferedRoute) {
-        return false;
-    }
-
-    return booleanPointInPolygon(featurePointGeo, bufferedRoute);
 }
 
 export function warningThresholds(speed: number) {

@@ -26,9 +26,5 @@ export interface RelevantFeatureParams {
     userPoint: [number, number];
     featurePoint: [number, number];
     heading: number;
-    directions?: number[];
     tolerance: number;
-    laneThreshold: number;
-    route: number[][] | undefined;
-    routeBufferTolerance: number;
 }

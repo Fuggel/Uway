@@ -1,4 +1,4 @@
-import { bearing, booleanPointInPolygon, buffer, lineString, point } from "@turf/turf";
+import { bearing, point } from "@turf/turf";
 
 import { WarningThresholds } from "@/types/INavigation";
 import { RelevantFeatureParams } from "@/types/ISpeed";
@@ -19,7 +19,7 @@ export class WarningManager {
     ) {
         const { early, late } = this.warningThresholds;
 
-        if (!this.isFeatureRelevant(relevanceParams).isRelevant) {
+        if (!this.isFeatureRelevant(relevanceParams).isAhead) {
             return;
         }
 
@@ -49,9 +49,8 @@ export class WarningManager {
         }
     }
 
-    private isFeatureRelevant(params: RelevantFeatureParams): { isRelevant: boolean } {
-        const { tolerance, laneThreshold, userPoint, featurePoint, heading, directions, route, routeBufferTolerance } =
-            params;
+    private isFeatureRelevant(params: RelevantFeatureParams) {
+        const { tolerance, userPoint, featurePoint, heading } = params;
 
         const userPointGeo = point(userPoint);
         const featurePointGeo = point(featurePoint);
@@ -61,34 +60,11 @@ export class WarningManager {
 
         const isAhead = angleDifference <= tolerance;
 
-        const isSameLane = directions
-            ? directions.some((dir) => {
-                  const oppositeDir = (dir + 180) % 360;
-                  return this.calculateAngleDifference(heading, oppositeDir) < laneThreshold;
-              })
-            : this.calculateAngleDifference(heading, bearingToFeature) < laneThreshold;
-
-        const isOnRoute = route ? this.isFeatureOnRoute(featurePoint, route, routeBufferTolerance) : false;
-
-        const isRelevant = isAhead && isSameLane && isOnRoute;
-
-        return { isRelevant };
+        return { isAhead };
     }
 
     private calculateAngleDifference(angle1: number, angle2: number): number {
         const diff = Math.abs(angle1 - angle2);
         return diff > 180 ? 360 - diff : diff;
-    }
-
-    private isFeatureOnRoute(featurePoint: number[], route: number[][], routeBufferTolerance: number): boolean {
-        const featurePointGeo = point(featurePoint);
-        const routeGeo = lineString(route);
-        const bufferedRoute = buffer(routeGeo, routeBufferTolerance, { units: "meters" });
-
-        if (!bufferedRoute) {
-            return false;
-        }
-
-        return booleanPointInPolygon(featurePointGeo, bufferedRoute);
     }
 }
