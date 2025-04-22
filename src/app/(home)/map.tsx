@@ -12,7 +12,6 @@ import { API } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
-import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
@@ -20,12 +19,9 @@ import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
-import { mapWaypointActions } from "@/store/mapWaypoint";
-import { GasStation } from "@/types/IGasStation";
-import { LonLat } from "@/types/IMap";
 import { SearchLocation } from "@/types/ISearch";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
-import { determineMapStyle, getOrderedGasStations } from "@/utils/map-utils";
+import { determineMapStyle } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 import { determineTheme, invertTheme } from "@/utils/theme-utils";
 
@@ -47,7 +43,6 @@ const Map = () => {
     const { cameraRef } = useMapCamera();
     const { userLocation } = useContext(UserLocationContext);
     const { openSheet, sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
-    const { gasStations } = useContext(MapFeatureContext);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const showRouteOptions = useSelector(mapNavigationSelectors.showRouteOptions);
     const { loadingDirections } = useNavigation();
@@ -114,16 +109,6 @@ const Map = () => {
                             data: openSheetData(sheetData?.markerType, sheetData?.markerProperties),
                             gasStation: {
                                 show: sheetData?.markerType === MarkerSheet.GAS_STATION,
-                            },
-                        }}
-                        waypointProps={{
-                            data: getOrderedGasStations(
-                                gasStations.gasStations?.features.map((feature) => feature.properties as GasStation)
-                            ),
-                            onSelect: (coords: LonLat) => {
-                                dispatch(mapWaypointActions.setSelectGasStationWaypoint(false));
-                                dispatch(mapWaypointActions.setGasStationWaypoints(coords));
-                                closeSheet();
                             },
                         }}
                         poiProps={{

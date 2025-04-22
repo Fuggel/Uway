@@ -8,7 +8,6 @@ import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { LayerId } from "@/types/IMap";
 import { SearchSuggestionProperties } from "@/types/ISearch";
@@ -25,7 +24,6 @@ const Layers = () => {
     const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
     const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
     const directions = useSelector(mapNavigationSelectors.directions);
-    const isGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
     const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
     const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -89,7 +87,7 @@ const Layers = () => {
                         style={{
                             iconImage: ["get", "iconType"],
                             iconSize:
-                                isGasStationWaypoint || openGasStationsList
+                                openGasStationsList
                                     ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
                                     : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,

@@ -10,7 +10,6 @@ import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchDirections } from "@/services/navigation";
 import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { isValidLonLat, removeConsecutiveDuplicates } from "@/utils/map-utils";
 
 const useNavigation = () => {
@@ -22,7 +21,6 @@ const useNavigation = () => {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const directions = useSelector(mapNavigationSelectors.directions);
     const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
-    const gasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const directNavigation = useSelector(mapNavigationSelectors.directNavigation);
 
     const longitude = userLocation?.coords?.longitude;
@@ -39,7 +37,7 @@ const useNavigation = () => {
         isLoading: loadingDirections,
         error: errorDirections,
     } = useQuery({
-        queryKey: ["directions", location, gasStationWaypoint, excludeTypes],
+        queryKey: ["directions", location, excludeTypes],
         queryFn: () =>
             fetchDirections({
                 authToken: String(authToken?.token),
@@ -47,7 +45,6 @@ const useNavigation = () => {
                 startLngLat: { lon: longitude, lat: latitude },
                 destinationLngLat,
                 excludeTypes,
-                waypoint: gasStationWaypoint ? { lon: gasStationWaypoint.lon, lat: gasStationWaypoint.lat } : undefined,
             }),
         enabled:
             isValidLonLat(longitude, latitude) &&
@@ -76,6 +73,7 @@ const useNavigation = () => {
 
     useEffect(() => {
         if (data?.routes?.length > 0) {
+            console.log("Triggered...");
             directNavigation
                 ? dispatch(mapNavigationActions.setDirections(data.routes[0]))
                 : dispatch(mapNavigationActions.setRouteOptions(data.routes));

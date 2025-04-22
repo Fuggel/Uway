@@ -7,7 +7,6 @@ import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapWaypointActions } from "@/store/mapWaypoint";
 import { GasStation } from "@/types/IGasStation";
 import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
 import { MarkerSheet } from "@/types/ISheet";
@@ -18,7 +17,7 @@ import Text from "@/components/common/Text";
 
 interface MarkerInfoProps {
     title: string;
-    data: { label: string; value: string | number | React.ReactNode }[] | null;
+    data: { label: string; value: string | number | React.ReactNode; }[] | null;
     gasStation?: {
         show: boolean;
     };
@@ -26,7 +25,6 @@ interface MarkerInfoProps {
 
 const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
     const dispatch = useDispatch();
-    const directions = useSelector(mapNavigationSelectors.directions);
     const categoryLocation = useSelector(mapNavigationSelectors.categoryLocation);
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
 
@@ -97,16 +95,6 @@ const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
         closeSheet();
     };
 
-    const waypointGasStation = () => {
-        dispatch(
-            mapWaypointActions.setGasStationWaypoints({
-                lon: sheetData?.markerProperties.lng,
-                lat: sheetData?.markerProperties.lat,
-            })
-        );
-        closeSheet();
-    };
-
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -115,14 +103,6 @@ const MarkerInfo = ({ title, data, gasStation }: MarkerInfoProps) => {
                 </Text>
                 {(gasStation?.show || categoryLocation) && (
                     <View style={styles.iconButtonRight}>
-                        {directions && gasStation?.show && (
-                            <IconButton
-                                icon="map-marker-plus"
-                                size="md"
-                                type="secondary"
-                                onPress={waypointGasStation}
-                            />
-                        )}
                         {gasStation?.show && sheetData?.markerType === MarkerSheet.GAS_STATION && (
                             <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
                         )}

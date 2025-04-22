@@ -11,7 +11,6 @@ export async function fetchDirections(params: {
     startLngLat: LonLat;
     destinationLngLat: LonLat;
     excludeTypes: ExcludeTypes;
-    waypoint?: LonLat;
 }) {
     try {
         const { lon: startLon, lat: startLat } = params.startLngLat;
@@ -25,10 +24,6 @@ export async function fetchDirections(params: {
         queryParams.append("profile", params.profile);
         queryParams.append("startCoordinates", `${startLon},${startLat}`);
         queryParams.append("destinationCoordinates", `${destLon},${destLat}`);
-
-        if (params.waypoint) {
-            queryParams.append("waypoint", `${params.waypoint.lon},${params.waypoint.lat}`);
-        }
 
         if (params.excludeTypes && Object.keys(params.excludeTypes).length > 0) {
             const exclude = Object.keys(params.excludeTypes)

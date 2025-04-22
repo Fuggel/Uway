@@ -12,7 +12,6 @@ import mapSearchReduce from "./mapSearch";
 import mapSpeedCameraReduce from "./mapSpeedCamera";
 import mapTextToSpeechReduce from "./mapTextToSpeech";
 import mapViewReduce from "./mapView";
-import mapWaypointReduce from "./mapWaypoint";
 import revenueCatReduce from "./revenueCat";
 
 const persistConfig = {
@@ -40,7 +39,6 @@ const reducer = combineReducers({
     mapTextToSpeech: mapTextToSpeechReduce,
     mapSearch: mapSearchReduce,
     mapLayouts: mapLayoutsReduce,
-    mapWaypoint: mapWaypointReduce,
     mapExcludeNavigation: mapExcludeNavigationReduce,
 });
 

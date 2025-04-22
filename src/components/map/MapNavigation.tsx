@@ -10,8 +10,6 @@ import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
-import { mapWaypointActions, mapWaypointSelectors } from "@/store/mapWaypoint";
-import { SheetType } from "@/types/ISheet";
 import { toGermanDate } from "@/utils/date-utils";
 import {
     convertSpeedToKmh,
@@ -28,12 +26,11 @@ const deviceHeight = Dimensions.get("window").height;
 
 const MapNavigation = () => {
     const dispatch = useDispatch();
-    const { showSheet, openSheet } = useContext(BottomSheetContext);
+    const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const { currentAnnotation } = useContext(MapInstructionContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
-    const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const [arrivalTime, setArrivalTime] = useState<string | undefined>(undefined);
@@ -46,11 +43,6 @@ const MapNavigation = () => {
         const now = new Date();
         now.setSeconds(now.getSeconds() + remainingTime);
         setArrivalTime(toGermanDate({ isoDate: now.toISOString(), showTimeOnly: true }));
-    };
-
-    const selectWaypoint = () => {
-        dispatch(mapWaypointActions.setSelectGasStationWaypoint(true));
-        openSheet({ type: SheetType.WAYPOINT });
     };
 
     useEffect(() => {
@@ -111,17 +103,6 @@ const MapNavigation = () => {
                 </View>
 
                 <View style={styles.navigationActions}>
-                    {!!isGasStationWaypoint ? (
-                        <IconButton
-                            icon="gas-station-off"
-                            onPress={() => dispatch(mapWaypointActions.removeGasStationWaypoints())}
-                            type="white"
-                            size="lg"
-                        />
-                    ) : (
-                        <IconButton icon="gas-station" onPress={selectWaypoint} type="white" size="lg" />
-                    )}
-
                     {isNavigationMode && (
                         <IconButton
                             icon={allowTextToSpeech ? "volume-high" : "volume-off"}

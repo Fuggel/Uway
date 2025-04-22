@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 
 import { mapLayoutsActions } from "@/store/mapLayouts";
 import { mapNavigationActions } from "@/store/mapNavigation";
-import { mapWaypointActions } from "@/store/mapWaypoint";
 import { MarkerSheet, OpenSheet, SheetType } from "@/types/ISheet";
 
 interface SheetProperties {
@@ -26,8 +25,8 @@ interface ProviderProps {
 export const BottomSheetContext = createContext<ContextProps>({
     sheetData: null,
     showSheet: false,
-    openSheet: () => {},
-    closeSheet: () => {},
+    openSheet: () => { },
+    closeSheet: () => { },
 });
 
 export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }) => {
@@ -35,7 +34,7 @@ export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }
     const [showSheet, setShowSheet] = useState(false);
     const [sheetData, setSheetData] = useState<SheetProperties | null>(null);
 
-    const openSheet: OpenSheet = <T,>(params: { type: SheetType; markerProperties?: T; markerType?: MarkerSheet }) => {
+    const openSheet: OpenSheet = <T,>(params: { type: SheetType; markerProperties?: T; markerType?: MarkerSheet; }) => {
         setSheetData({ type: params.type, markerType: params.markerType, markerProperties: params.markerProperties });
         setShowSheet(true);
     };
@@ -44,7 +43,6 @@ export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }
         setShowSheet(false);
         setSheetData(null);
         dispatch(mapNavigationActions.setSearchQuery(""));
-        dispatch(mapWaypointActions.setSelectGasStationWaypoint(false));
         dispatch(mapLayoutsActions.setOpenCategoryLocationsList(false));
         dispatch(mapLayoutsActions.setOpenGasStationsList(false));
     };

@@ -10,7 +10,6 @@ import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
-import { mapWaypointSelectors } from "@/store/mapWaypoint";
 import { convertSpeedToKmh } from "@/utils/map-utils";
 
 const { width, height } = Dimensions.get("window");
@@ -28,8 +27,6 @@ const useMapCamera = () => {
     const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const navigationView = useSelector(mapNavigationSelectors.navigationView);
     const navigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const isGasStationWaypoint = useSelector(mapWaypointSelectors.gasStationWaypoints);
-    const selectingGasStationWaypoint = useSelector(mapWaypointSelectors.selectGasStationWaypoint);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const isOpenCategoryList = useSelector(mapLayoutsSelectors.openCategoryLocationsList);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
@@ -159,31 +156,16 @@ const useMapCamera = () => {
     };
 
     useEffect(() => {
-        if (
-            isNavigationSelecting &&
-            directions &&
-            tracking &&
-            !selectingGasStationWaypoint &&
-            !selectingCategoryLocation &&
-            !openGasStationsList
-        ) {
+        if (isNavigationSelecting && directions && tracking && !selectingCategoryLocation && !openGasStationsList) {
             fitBounds();
         }
-    }, [
-        isNavigationSelecting,
-        directions,
-        tracking,
-        isGasStationWaypoint,
-        selectingGasStationWaypoint,
-        selectingCategoryLocation,
-        openGasStationsList,
-    ]);
+    }, [isNavigationSelecting, directions, tracking, selectingCategoryLocation, openGasStationsList]);
 
     useEffect(() => {
-        if ((selectingGasStationWaypoint || openGasStationsList) && tracking) {
+        if (openGasStationsList && tracking) {
             fitBoundsToUserAndGasStations();
         }
-    }, [selectingGasStationWaypoint, openGasStationsList, tracking]);
+    }, [openGasStationsList, tracking]);
 
     useEffect(() => {
         if (selectingCategoryLocation && tracking) {
@@ -199,13 +181,7 @@ const useMapCamera = () => {
 
     useEffect(() => {
         const updateCamera = () => {
-            if (
-                !cameraRef.current ||
-                selectingGasStationWaypoint ||
-                selectingCategoryLocation ||
-                openGasStationsList ||
-                showRouteOptions
-            ) {
+            if (!cameraRef.current || selectingCategoryLocation || openGasStationsList || showRouteOptions) {
                 return;
             }
 
@@ -239,7 +215,6 @@ const useMapCamera = () => {
         navigationView,
         showRouteOptions,
         openGasStationsList,
-        selectingGasStationWaypoint,
     ]);
 
     useEffect(() => {
