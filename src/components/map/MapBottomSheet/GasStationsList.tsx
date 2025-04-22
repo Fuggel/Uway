@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
@@ -16,13 +16,14 @@ import Dropdown from "@/components/common/Dropdown";
 import IconButton from "@/components/common/IconButton";
 import Text from "@/components/common/Text";
 import PriceDisplay from "@/components/ui/PriceDisplay";
+import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
 
 const GasStationsList = () => {
     const dispatch = useDispatch();
     const { closeSheet } = useContext(BottomSheetContext);
     const { gasStations } = useContext(MapFeatureContext);
     const [selectedBrand, setSelectedBrand] = useState<string>(DefaultFilter.ALL);
-    const [selectedFuelType, setSelectedFuelType] = useState<string>(FuelType.DIESEL);
+    const selectedFuelType = useSelector(mapGasStationSelectors.selectedFuelType);
 
     const data = getOrderedGasStations(
         gasStations.gasStations?.features.map((feature) => feature.properties as GasStation)
@@ -86,7 +87,6 @@ const GasStationsList = () => {
 
     const filteredData = data.filter((item) => {
         const fuelTypeMatches =
-            selectedFuelType === DefaultFilter.ALL ||
             (selectedFuelType === FuelType.DIESEL && item.diesel > 0) ||
             (selectedFuelType === FuelType.E5 && item.e5 > 0) ||
             (selectedFuelType === FuelType.E10 && item.e10 > 0);
@@ -133,8 +133,8 @@ const GasStationsList = () => {
                         label: fuelType,
                         value: fuelType,
                     }))}
-                    value={selectedFuelType}
-                    onChange={(item: string) => setSelectedFuelType(item)}
+                    value={selectedFuelType ?? FuelType.DIESEL}
+                    onChange={(item) => dispatch(mapGasStationActions.setSelectedFuelType(item as FuelType))}
                 />
             </View>
 
