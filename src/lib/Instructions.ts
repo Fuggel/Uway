@@ -1,9 +1,8 @@
 import { Location } from "@rnmapbox/maps";
-import { lineString, LineString, point } from "@turf/helpers";
+import { LineString, lineString, point } from "@turf/helpers";
 import { distance, nearestPointOnLine } from "@turf/turf";
 
 import {
-    Annotation,
     BannerInstruction,
     CurrentAnnotation,
     CurrentInstruction,
@@ -22,22 +21,14 @@ class Instructions {
 
     private routeGeometry: number[][] = [];
     private instructions: Instruction[];
-    private annotation: Annotation;
     private currentStepIndex = 0;
-    private currentAnnotationIndex = 0;
     private lastDistanceToNextStep = 0;
     private roundedUpdates = 10;
     private distanceThreshold = 50;
 
-    constructor(
-        routeGeometry: number[][],
-        instructions: Instruction[],
-        annotation: Annotation,
-        userPosition: Location | null
-    ) {
+    constructor(routeGeometry: number[][], instructions: Instruction[], userPosition: Location | null) {
         this.routeGeometry = routeGeometry;
         this.instructions = instructions;
-        this.annotation = annotation;
         this.userPosition = userPosition;
     }
 
@@ -123,7 +114,6 @@ class Instructions {
             if (snappedPoint.properties.dist < minDistance) {
                 minDistance = snappedPoint.properties.dist;
                 closestLeg = line.coordinates;
-                this.currentAnnotationIndex = i;
             }
         }
 
@@ -163,24 +153,23 @@ class Instructions {
         let totalRemainingDistance = 0;
         let totalRemainingTime = 0;
 
-        for (let i = this.currentAnnotationIndex; i < this.routeGeometry.length; i++) {
-            totalRemainingDistance += this.annotation.distance[i] || 0;
-            totalRemainingTime += this.annotation.duration[i] || 0;
+        for (let i = this.currentStepIndex; i < this.instructions.length; i++) {
+            totalRemainingDistance += this.instructions[i].distance || 0;
+            totalRemainingTime += this.instructions[i].duration || 0;
         }
 
-        const distanceInMeters = totalRemainingDistance / 1000;
+        const distanceInKm = totalRemainingDistance / 1000;
         const timeInMinutes = totalRemainingTime / 60;
 
         return {
-            remainingDistance: distanceInMeters.toFixed(1),
+            remainingDistance: distanceInKm.toFixed(1),
             remainingDuration: timeInMinutes.toFixed(0),
             remainingTime: totalRemainingTime,
         };
     }
 
     private getCurrentSpeedLimit() {
-        const currentSpeedLimit = this.annotation.maxspeed[this.currentAnnotationIndex];
-        return currentSpeedLimit ? currentSpeedLimit.speed : 0;
+        return 50;
     }
 
     private getActiveInstruction(closestStep: Instruction, minDistance: number) {

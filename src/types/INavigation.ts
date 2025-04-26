@@ -155,13 +155,6 @@ export interface Direction {
     duration: number;
     legs: any;
     steps: Instruction[];
-    annotation: Annotation;
-}
-
-export interface Annotation {
-    distance: number[];
-    duration: number[];
-    maxspeed: { speed: number; unit: string }[];
 }
 
 export interface WarningThresholds {
