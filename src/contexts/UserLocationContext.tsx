@@ -67,10 +67,10 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         (location: Location) => {
             let updatedLocation = location;
 
-            // if (snapToRoute.current && directions) {
-            //     updatedLocation =
-            //         snapToRoute.current.processLocation(location, directions.geometry.coordinates) || location;
-            // }
+            if (snapToRoute.current && directions) {
+                updatedLocation =
+                    snapToRoute.current.processLocation(location, directions.geometry.coordinates) || location;
+            }
 
             handleGPSWarnings(updatedLocation.coords.accuracy);
             setUserLocation(updatedLocation);
