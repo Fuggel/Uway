@@ -73,7 +73,6 @@ const useNavigation = () => {
 
     useEffect(() => {
         if (data?.routes?.length > 0) {
-            console.log("Triggered...");
             directNavigation
                 ? dispatch(mapNavigationActions.setDirections(data.routes[0]))
                 : dispatch(mapNavigationActions.setRouteOptions(data.routes));

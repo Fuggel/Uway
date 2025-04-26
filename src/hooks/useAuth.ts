@@ -60,7 +60,7 @@ const useAuth = () => {
         } else {
             setAuthToken(null);
         }
-    }, [data]);
+    }, [data, rcUserId]);
 
     return { authToken, loadingToken, errorToken };
 };
