@@ -196,43 +196,6 @@ export function isValidLonLat(lon: number | undefined, lat: number | undefined) 
     return lon >= -180 && lon <= 180 && lat >= -90 && lat <= 90;
 }
 
-export function determineSpeedLimitIcon(speedLimit: number) {
-    const assetsUrl = "../assets/images/map-icons/speed-limits";
-
-    switch (speedLimit) {
-        case 5:
-            return require(`${assetsUrl}/speed-limit-5.png`);
-        case 10:
-            return require(`${assetsUrl}/speed-limit-10.png`);
-        case 15:
-            return require(`${assetsUrl}/speed-limit-15.png`);
-        case 20:
-            return require(`${assetsUrl}/speed-limit-20.png`);
-        case 25:
-            return require(`${assetsUrl}/speed-limit-25.png`);
-        case 30:
-            return require(`${assetsUrl}/speed-limit-30.png`);
-        case 40:
-            return require(`${assetsUrl}/speed-limit-40.png`);
-        case 45:
-            return require(`${assetsUrl}/speed-limit-45.png`);
-        case 50:
-            return require(`${assetsUrl}/speed-limit-50.png`);
-        case 60:
-            return require(`${assetsUrl}/speed-limit-60.png`);
-        case 70:
-            return require(`${assetsUrl}/speed-limit-70.png`);
-        case 80:
-            return require(`${assetsUrl}/speed-limit-80.png`);
-        case 100:
-            return require(`${assetsUrl}/speed-limit-100.png`);
-        case 120:
-            return require(`${assetsUrl}/speed-limit-120.png`);
-        default:
-            return require(`${assetsUrl}/speed-limit-unknown.png`);
-    }
-}
-
 export function determineIncidentIcon(iconCategory: IncidentType) {
     const assetsUrl = "../assets/images/map-icons/incidents";
 

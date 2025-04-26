@@ -11,4 +11,5 @@ export const COLORS: Color = {
     light_gray: "#B0B0B0",
     shadow_gray: "rgba(241, 241, 241, 0.8)",
     white: "#FFFFFF",
+    red: "#CC0000",
 };

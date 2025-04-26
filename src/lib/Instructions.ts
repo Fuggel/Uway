@@ -119,7 +119,6 @@ class Instructions {
 
         if (closestLeg) {
             return {
-                maxSpeed: this.getCurrentSpeedLimit(),
                 remainingDistance: this.getRemainingInfo().remainingDistance,
                 remainingDuration: this.getRemainingInfo().remainingDuration,
                 remainingTime: this.getRemainingInfo().remainingTime,
@@ -166,10 +165,6 @@ class Instructions {
             remainingDuration: timeInMinutes.toFixed(0),
             remainingTime: totalRemainingTime,
         };
-    }
-
-    private getCurrentSpeedLimit() {
-        return 50;
     }
 
     private getActiveInstruction(closestStep: Instruction, minDistance: number) {

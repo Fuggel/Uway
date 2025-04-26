@@ -1,3 +1,5 @@
+import { Feature, Geometry, GeometryCollection } from "@turf/helpers";
+
 export interface SpeedCameraAlert {
     distance: number;
 }
@@ -27,4 +29,15 @@ export interface AheadFeatureParams {
     featurePoint: [number, number];
     heading: number;
     tolerance: number;
+}
+
+export type SpeedLimitFeature = GeometryCollection & SpeedLimitProperties;
+
+export interface SpeedLimitProperties {
+    maxspeed: string;
+}
+
+export interface SpeedLimitAlert {
+    distance: number;
+    feature: Feature<Geometry, GeometryCollection>;
 }

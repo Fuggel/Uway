@@ -23,10 +23,9 @@ const useInstructions = () => {
     useEffect(() => {
         const routeGeometry = directions?.geometry?.coordinates || [];
         const steps = directions?.legs[0]?.steps || [];
-        const annotation = directions?.legs[0]?.annotation || {};
 
         if (directions) {
-            instructionsRef.current = new Instructions(routeGeometry, steps, annotation, userLocation);
+            instructionsRef.current = new Instructions(routeGeometry, steps, userLocation);
         }
 
         return () => {

@@ -22,7 +22,6 @@ export interface CurrentInstruction {
 }
 
 export interface CurrentAnnotation {
-    maxSpeed: number | string;
     remainingDistance: string;
     remainingDuration: string;
     remainingTime: number;

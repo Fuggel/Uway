@@ -1,26 +1,24 @@
 import { useContext, useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
 import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
+import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
-import {
-    convertSpeedToKmh,
-    determineSpeedLimitIcon,
-    readableStringDistance,
-    readableStringDuration,
-} from "@/utils/map-utils";
+import { convertSpeedToKmh, readableStringDistance, readableStringDuration } from "@/utils/map-utils";
 
 import Card from "../common/Card";
 import IconButton from "../common/IconButton";
 import Text from "../common/Text";
+import SpeedLimit from "../ui/SpeedLimit";
 
 const deviceHeight = Dimensions.get("window").height;
 
@@ -29,6 +27,7 @@ const MapNavigation = () => {
     const { showSheet } = useContext(BottomSheetContext);
     const { userLocation } = useContext(UserLocationContext);
     const { currentAnnotation } = useContext(MapInstructionContext);
+    const { speedLimits } = useContext(MapFeatureContext);
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
@@ -75,12 +74,9 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    {currentAnnotation?.maxSpeed && (
-                        <Image
-                            source={determineSpeedLimitIcon(Number(currentAnnotation.maxSpeed))}
-                            style={styles.speedLimitImage}
-                        />
-                    )}
+                    <SpeedLimit
+                        maxSpeed={(speedLimits.speedLimits?.alert?.feature?.properties as SpeedLimitFeature)?.maxspeed}
+                    />
                 </View>
             )}
 
@@ -160,10 +156,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         fontSize: SIZES.fontSize.lg,
-    },
-    speedLimitImage: {
-        width: SIZES.iconSize.xl,
-        height: SIZES.iconSize.xl,
     },
     navigationInfo: {
         flex: 1,
