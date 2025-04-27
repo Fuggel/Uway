@@ -239,9 +239,9 @@ export function getStationColor(stations: GasStation[], price: number, fuelType:
 
     const diffPercentage = ((price - avgPrice) / avgPrice) * 100;
 
-    if (diffPercentage >= 5) {
+    if (diffPercentage >= 3) {
         return COLORS.error;
-    } else if (diffPercentage <= -5) {
+    } else if (diffPercentage <= -3) {
         return COLORS.success;
     } else {
         return COLORS.secondary;

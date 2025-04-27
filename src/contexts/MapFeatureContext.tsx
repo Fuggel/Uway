@@ -7,7 +7,7 @@ import useIncidents from "@/hooks/useIncidents";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
 import { WarningAlert } from "@/types/IMap";
-import { SpeedCameraAlert, SpeedLimitAlert } from "@/types/ISpeed";
+import { SpeedCameraAlert } from "@/types/ISpeed";
 import { IncidentAlert, WarningAlertIncident } from "@/types/ITraffic";
 
 type SpeedCamera = {
@@ -31,7 +31,7 @@ type GasStation = {
 };
 
 type SpeedLimit = {
-    speedLimits: SpeedLimitAlert | null;
+    speedLimits: string | null;
     loadingSpeedLimits: boolean;
     errorSpeedLimits: Error | null;
 };

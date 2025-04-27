@@ -11,7 +11,6 @@ import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
-import { SpeedLimitFeature } from "@/types/ISpeed";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, readableStringDistance, readableStringDuration } from "@/utils/map-utils";
 
@@ -37,8 +36,6 @@ const MapNavigation = () => {
     const userSpeed = userLocation?.coords?.speed;
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
     const remainingTime = currentAnnotation?.remainingTime || 0;
-
-    const speedLimit = (speedLimits.speedLimits?.feature?.properties as SpeedLimitFeature)?.maxspeed;
 
     const determineArrivalTime = () => {
         const now = new Date();
@@ -76,7 +73,7 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    {!!speedLimit && <SpeedLimit maxSpeed={speedLimit} />}
+                    {!!speedLimits?.speedLimits && <SpeedLimit maxSpeed={speedLimits.speedLimits} />}
                 </View>
             )}
 
