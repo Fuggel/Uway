@@ -38,6 +38,8 @@ const MapNavigation = () => {
     const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed).toFixed(0) : "0";
     const remainingTime = currentAnnotation?.remainingTime || 0;
 
+    const speedLimit = (speedLimits.speedLimits?.feature?.properties as SpeedLimitFeature)?.maxspeed;
+
     const determineArrivalTime = () => {
         const now = new Date();
         now.setSeconds(now.getSeconds() + remainingTime);
@@ -74,9 +76,7 @@ const MapNavigation = () => {
                         </Text>
                     </View>
 
-                    <SpeedLimit
-                        maxSpeed={(speedLimits.speedLimits?.alert?.feature?.properties as SpeedLimitFeature)?.maxspeed}
-                    />
+                    {!!speedLimit && <SpeedLimit maxSpeed={speedLimit} />}
                 </View>
             )}
 

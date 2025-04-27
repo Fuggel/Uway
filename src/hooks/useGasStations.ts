@@ -60,7 +60,7 @@ const useGasStations = () => {
         } else {
             setGasStations(DEFAULT_FC);
         }
-    }, [data, longitude, latitude]);
+    }, [data]);
 
     return { gasStations, loadingGasStations, errorGasStations };
 };

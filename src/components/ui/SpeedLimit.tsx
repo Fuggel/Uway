@@ -1,6 +1,7 @@
+import Svg, { Circle, Text } from "react-native-svg";
+
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
-import Svg, { Circle, Text } from "react-native-svg";
 
 interface SpeedLimitProps {
     maxSpeed: string;
@@ -9,7 +10,7 @@ interface SpeedLimitProps {
 const SpeedLimit = ({ maxSpeed }: SpeedLimitProps) => {
     return (
         <Svg width="60" height="60" viewBox="0 0 40 40">
-            <Circle cx="20" cy="20" r="18" fill={COLORS.white} stroke={COLORS.red} strokeWidth="4" />
+            <Circle cx="20" cy="20" r="18" fill={COLORS.white} stroke={COLORS.red} strokeWidth="3" />
             <Text
                 x="50%"
                 y="54%"
@@ -23,7 +24,6 @@ const SpeedLimit = ({ maxSpeed }: SpeedLimitProps) => {
                 {maxSpeed}
             </Text>
         </Svg>
-
     );
 };
 

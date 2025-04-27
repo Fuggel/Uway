@@ -11,14 +11,14 @@ import { SpeedCameraAlert, SpeedLimitAlert } from "@/types/ISpeed";
 import { IncidentAlert, WarningAlertIncident } from "@/types/ITraffic";
 
 type SpeedCamera = {
-    speedCameras: { data: FeatureCollection; alert: SpeedCameraAlert | null; } | undefined;
+    speedCameras: { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined;
     speedCameraWarningText: WarningAlert | null;
     loadingSpeedCameras: boolean;
     errorSpeedCameras: Error | null;
 };
 
 type Incident = {
-    incidents: { data: FeatureCollection; alert: IncidentAlert | null; } | undefined;
+    incidents: { data: FeatureCollection; alert: IncidentAlert | null } | undefined;
     incidentWarningText: WarningAlertIncident | null;
     loadingIncidents: boolean;
     errorIncidents: Error | null;
@@ -31,7 +31,7 @@ type GasStation = {
 };
 
 type SpeedLimit = {
-    speedLimits: { data: FeatureCollection; alert: SpeedLimitAlert | null; } | undefined;
+    speedLimits: SpeedLimitAlert | null;
     loadingSpeedLimits: boolean;
     errorSpeedLimits: Error | null;
 };
@@ -66,7 +66,7 @@ export const MapFeatureContext = createContext<ContextProps>({
         errorGasStations: null,
     },
     speedLimits: {
-        speedLimits: undefined,
+        speedLimits: null,
         loadingSpeedLimits: false,
         errorSpeedLimits: null,
     },

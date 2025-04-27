@@ -1,20 +1,21 @@
 import { useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
-import { FeatureCollection } from "@turf/helpers";
 import { distance, lineString, nearestPointOnLine, point } from "@turf/turf";
 
 import { THRESHOLD } from "@/constants/env-constants";
-import { DEFAULT_FC } from "@/constants/map-constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedLimits } from "@/services/speed-limits";
+import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { SpeedLimitAlert } from "@/types/ISpeed";
 
 const useSpeedLimits = () => {
     const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
-    const [speedLimits, setSpeedLimits] = useState<{ data: FeatureCollection; alert: SpeedLimitAlert | null }>();
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
+    const [speedLimits, setSpeedLimits] = useState<SpeedLimitAlert | null>(null);
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
@@ -24,20 +25,20 @@ const useSpeedLimits = () => {
         isLoading: loadingSpeedLimits,
         error: errorSpeedLimits,
     } = useQuery({
-        queryKey: ["speedLimits"],
+        queryKey: ["speedLimits", isNavigationMode],
         queryFn: () =>
             fetchSpeedLimits({
                 authToken: String(authToken?.token),
                 userLonLat: { lon: longitude, lat: latitude },
                 distance: THRESHOLD.SPEED_LIMIT.SHOW_IN_METERS,
             }),
-        enabled: !!longitude && !!latitude,
+        enabled: !!longitude && !!latitude && isNavigationMode && !!authToken?.token,
         staleTime: Infinity,
         refetchInterval: THRESHOLD.SPEED_LIMIT.SHOW_IN_METERS,
     });
 
     useEffect(() => {
-        if (data && longitude && latitude) {
+        if (data && longitude && latitude && isNavigationMode) {
             let closestSpeedLimit: SpeedLimitAlert | null = null;
 
             data?.features?.forEach((feature) => {
@@ -61,11 +62,11 @@ const useSpeedLimits = () => {
                 }
             });
 
-            setSpeedLimits({ data, alert: closestSpeedLimit });
+            setSpeedLimits(closestSpeedLimit);
         } else {
-            setSpeedLimits({ data: DEFAULT_FC, alert: null });
+            setSpeedLimits(null);
         }
-    }, [data, longitude, latitude]);
+    }, [data, isNavigationMode]);
 
     return { speedLimits, loadingSpeedLimits, errorSpeedLimits };
 };
