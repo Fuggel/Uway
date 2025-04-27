@@ -118,10 +118,12 @@ class Instructions {
         }
 
         if (closestLeg) {
+            const remainingInfo = this.getRemainingInfo();
+
             return {
-                remainingDistance: this.getRemainingInfo().remainingDistance,
-                remainingDuration: this.getRemainingInfo().remainingDuration,
-                remainingTime: this.getRemainingInfo().remainingTime,
+                remainingDistance: remainingInfo.remainingDistance,
+                remainingDuration: remainingInfo.remainingDuration,
+                remainingTime: remainingInfo.remainingTime,
             };
         }
     }
