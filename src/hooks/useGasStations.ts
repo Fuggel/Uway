@@ -10,8 +10,6 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchGasStations } from "@/services/gas-stations";
 import { mapGasStationSelectors } from "@/store/mapGasStation";
-import { GasStation } from "@/types/IGasStation";
-import { getStationIcon } from "@/utils/map-utils";
 
 const useGasStations = () => {
     const { authToken } = useContext(AuthContext);
@@ -40,23 +38,7 @@ const useGasStations = () => {
 
     useEffect(() => {
         if (data && showGasStations && longitude && latitude) {
-            setGasStations({
-                ...data,
-                features: data?.features?.map((feature) => {
-                    const properties = feature.properties;
-                    const iconType = getStationIcon(
-                        data.features.map((f) => f.properties as unknown as GasStation),
-                        (properties as unknown as GasStation).diesel
-                    );
-                    return {
-                        ...feature,
-                        properties: {
-                            ...properties,
-                            iconType,
-                        },
-                    };
-                }),
-            });
+            setGasStations(data);
         } else {
             setGasStations(DEFAULT_FC);
         }
