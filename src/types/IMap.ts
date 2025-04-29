@@ -47,12 +47,6 @@ export interface Location {
     geometry: Geometry;
 }
 
-export interface WarningAlert {
-    textToSpeech?: string;
-    title?: string;
-    subTitle?: string;
-}
-
 export enum LayerId {
     USER_LOCATION = "user-location-layer",
     GPS_ACCURACY = "gps-accuracy-layer",

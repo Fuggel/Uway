@@ -1,12 +1,11 @@
 import { Position, point } from "@turf/helpers";
-import { bearing, distance } from "@turf/turf";
+import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation } from "@/types/IGasStation";
 import { MapboxStyle } from "@/types/IMap";
 import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
-import { AheadFeatureParams } from "@/types/ISpeed";
 import { IncidentType } from "@/types/ITraffic";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
@@ -338,38 +337,6 @@ export function readableStringDistance(distance: string | undefined) {
 
 export function convertSpeedToKmh(speed: number) {
     return speed * 3.6;
-}
-
-export function isFeatureAhead(params: AheadFeatureParams) {
-    const { tolerance, userPoint, featurePoint, heading } = params;
-
-    const userPointGeo = point(userPoint);
-    const featurePointGeo = point(featurePoint);
-
-    const bearingToFeature = bearing(userPointGeo, featurePointGeo);
-    const angleDifference = calculateAngleDifference(heading, bearingToFeature);
-
-    const isAhead = angleDifference <= tolerance;
-
-    return { isAhead };
-}
-
-function calculateAngleDifference(angle1: number, angle2: number) {
-    const diff = Math.abs(angle1 - angle2);
-    return diff > 180 ? 360 - diff : diff;
-}
-
-export function warningThresholds(speed: number) {
-    switch (true) {
-        case speed <= 30:
-            return { early: 300, late: 150 };
-        case speed <= 50:
-            return { early: 500, late: 250 };
-        case speed > 90:
-            return { early: 1500, late: 800 };
-        default:
-            return { early: 800, late: 400 };
-    }
 }
 
 export function removeConsecutiveDuplicates(lineString: number[][]): number[][] {

@@ -86,10 +86,9 @@ const Layers = () => {
                         id={LayerId.GAS_STATION}
                         style={{
                             iconImage: ["get", "iconType"],
-                            iconSize:
-                                openGasStationsList
-                                    ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
-                                    : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
+                            iconSize: openGasStationsList
+                                ? ["interpolate", ["linear"], ["zoom"], 10, 0.1, 15, 0.35, 20, 0.65]
+                                : ["interpolate", ["linear"], ["zoom"], 10, 0, 15, 0.25, 20, 0.5],
                             iconAllowOverlap: true,
                             iconRotate: 0,
                         }}
@@ -98,10 +97,10 @@ const Layers = () => {
                 </ShapeSource>
             )}
 
-            {speedCameras.speedCameras?.data && (
+            {speedCameras.speedCameras && (
                 <ShapeSource
                     id="speed-camera-source"
-                    shape={speedCameras.speedCameras.data as GeoJSON.FeatureCollection}
+                    shape={speedCameras.speedCameras as GeoJSON.FeatureCollection}
                     onPress={(e) => {
                         openSheet<SpeedCameraProperties>({
                             type: SheetType.MARKER,
@@ -124,12 +123,12 @@ const Layers = () => {
                 </ShapeSource>
             )}
 
-            {incidents?.incidents?.data?.features && (
+            {incidents?.incidents?.features && (
                 <ShapeSource
                     id="incident-symbol-source"
                     shape={{
                         type: "FeatureCollection",
-                        features: incidents.incidents.data.features.map((incident) => ({
+                        features: incidents.incidents.features.map((incident) => ({
                             type: "Feature",
                             geometry: {
                                 type: "Point",

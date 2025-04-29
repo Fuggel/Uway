@@ -7,6 +7,7 @@ import { SIZES } from "@/constants/size-constants";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
+import { IncidentType } from "@/types/ITraffic";
 import { determineIncidentIcon } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
 
@@ -83,20 +84,20 @@ const MapAlerts = () => {
                     </View>
                 )}
 
-                {speedCameras?.speedCameras?.alert && speedCameras?.speedCameraWarningText?.title && (
+                {speedCameras && speedCameras?.speedCameraWarning?.text && (
                     <Toast
-                        show={!!speedCameras.speedCameras.alert}
+                        show={!!speedCameras.speedCameraWarning.text}
                         type="error"
-                        title={speedCameras.speedCameraWarningText.title}
+                        title={speedCameras.speedCameraWarning.text}
                     />
                 )}
 
-                {incidents?.incidents?.alert && incidents?.incidentWarningText?.title && (
+                {incidents && incidents?.incidentWarning?.text && (
                     <Toast
-                        show={!!incidents.incidents.alert}
+                        show={!!incidents.incidentWarning.text}
                         type="error"
-                        image={determineIncidentIcon(incidents.incidents.alert.events[0]?.iconCategory)}
-                        title={incidents.incidentWarningText.title}
+                        image={determineIncidentIcon(incidents.incidentWarning.eventWarningType as IncidentType)}
+                        title={incidents.incidentWarning.text}
                     />
                 )}
             </View>

@@ -156,16 +156,6 @@ export interface Direction {
     steps: Instruction[];
 }
 
-export interface WarningThresholds {
-    [WarningThreshold.EARLY]: number;
-    [WarningThreshold.LATE]: number;
-}
-
-export enum WarningThreshold {
-    EARLY = "early",
-    LATE = "late",
-}
-
 export interface ManeuverImage {
     currentArrowDir: ImageSourcePropType;
     nextArrowDir: ImageSourcePropType | null;

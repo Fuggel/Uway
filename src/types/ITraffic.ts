@@ -1,5 +1,3 @@
-import { WarningAlert } from "./IMap";
-
 export interface IncidentFeature {
     type: string;
     geometry: {
@@ -7,11 +5,6 @@ export interface IncidentFeature {
         coordinates: number[][];
     };
     properties: IncidentProperties;
-}
-
-export interface IncidentAlert {
-    distance: number;
-    events: IncidentEvent[];
 }
 
 export enum IncidentType {
@@ -54,8 +47,4 @@ export interface IncidentProperties {
         type: string;
         coordinates: number[][];
     };
-}
-
-export interface WarningAlertIncident extends WarningAlert {
-    properties?: IncidentProperties;
 }

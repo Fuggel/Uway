@@ -15,6 +15,7 @@ import { AuthContextProvider } from "@/contexts/AuthContext";
 import { BottomSheetContextProvider } from "@/contexts/BottomSheetContext";
 import { MapFeatureContextProvider } from "@/contexts/MapFeatureContext";
 import { MapInstructionContextProvider } from "@/contexts/MapInstructionContext";
+import { SocketContextProvider } from "@/contexts/SocketContext";
 import { UserLocationContextProvider } from "@/contexts/UserLocationContext";
 import store, { persistor } from "@/store";
 
@@ -67,45 +68,56 @@ export default function RootLayout() {
                 <PaperProvider>
                     <QueryClientProvider client={queryClient}>
                         <AuthContextProvider>
-                            <UserLocationContextProvider>
-                                <MapInstructionContextProvider>
-                                    <BottomSheetContextProvider>
-                                        <MapFeatureContextProvider>
-                                            <GestureHandlerRootView>
-                                                <Stack>
-                                                    <Stack.Screen name="(home)/index" options={{ headerShown: false }} />
-                                                    <Stack.Screen name="(home)/map" options={{ headerShown: false }} />
-                                                    <Stack.Screen name="(home)/paywall" options={{ headerShown: false }} />
-                                                    <Stack.Screen
-                                                        name="(modal)/search"
-                                                        options={{ presentation: "modal", headerShown: false }}
-                                                    />
-                                                    <Stack.Screen
-                                                        name="(modal)/save-search"
-                                                        options={{ presentation: "modal", headerShown: false }}
-                                                    />
-                                                    <Stack.Screen
-                                                        name="settings/index"
-                                                        options={{ title: "Einstellungen", headerBackTitle: "Map" }}
-                                                    />
-                                                    <Stack.Screen
-                                                        name="settings/navigation/index"
-                                                        options={{ title: "Navigation" }}
-                                                    />
-                                                    <Stack.Screen
-                                                        name="settings/speed-camera/index"
-                                                        options={{ title: "Blitzer" }}
-                                                    />
-                                                    <Stack.Screen
-                                                        name="settings/incidents/index"
-                                                        options={{ title: "Verkehrsdaten" }}
-                                                    />
-                                                </Stack>
-                                            </GestureHandlerRootView>
-                                        </MapFeatureContextProvider>
-                                    </BottomSheetContextProvider>
-                                </MapInstructionContextProvider>
-                            </UserLocationContextProvider>
+                            <SocketContextProvider>
+                                <UserLocationContextProvider>
+                                    <MapInstructionContextProvider>
+                                        <BottomSheetContextProvider>
+                                            <MapFeatureContextProvider>
+                                                <GestureHandlerRootView>
+                                                    <Stack>
+                                                        <Stack.Screen
+                                                            name="(home)/index"
+                                                            options={{ headerShown: false }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="(home)/map"
+                                                            options={{ headerShown: false }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="(home)/paywall"
+                                                            options={{ headerShown: false }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="(modal)/search"
+                                                            options={{ presentation: "modal", headerShown: false }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="(modal)/save-search"
+                                                            options={{ presentation: "modal", headerShown: false }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="settings/index"
+                                                            options={{ title: "Einstellungen", headerBackTitle: "Map" }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="settings/navigation/index"
+                                                            options={{ title: "Navigation" }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="settings/speed-camera/index"
+                                                            options={{ title: "Blitzer" }}
+                                                        />
+                                                        <Stack.Screen
+                                                            name="settings/incidents/index"
+                                                            options={{ title: "Verkehrsdaten" }}
+                                                        />
+                                                    </Stack>
+                                                </GestureHandlerRootView>
+                                            </MapFeatureContextProvider>
+                                        </BottomSheetContextProvider>
+                                    </MapInstructionContextProvider>
+                                </UserLocationContextProvider>
+                            </SocketContextProvider>
                         </AuthContextProvider>
                     </QueryClientProvider>
                 </PaperProvider>

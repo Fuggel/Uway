@@ -2,38 +2,33 @@ import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
-import { FeatureCollection, point } from "@turf/helpers";
-import { distance } from "@turf/turf";
+import { FeatureCollection } from "@turf/helpers";
 
-import { REFETCH_INTERVAL, THRESHOLD } from "@/constants/env-constants";
+import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { DEFAULT_FC } from "@/constants/map-constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchIncidents } from "@/services/incidents";
 import { mapIncidentSelectors } from "@/store/mapIncident";
-import { mapNavigationSelectors } from "@/store/mapNavigation";
-import { IncidentAlert, IncidentProperties, WarningAlertIncident } from "@/types/ITraffic";
-import { convertSpeedToKmh, isFeatureAhead, warningThresholds } from "@/utils/map-utils";
-import { incidentTitle } from "@/utils/sheet-utils";
+import { WarningType } from "@/types/IWarning";
 
-import useTextToSpeech from "./useTextToSpeech";
+import useWarningListener from "./useWarningListener";
 
 const useIncidents = () => {
     const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
     const playAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
-    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const { startSpeech } = useTextToSpeech();
-    const [incidents, setIncidents] = useState<{ data: FeatureCollection; alert: IncidentAlert | null }>();
-    const [hasPlayedWarning, setHasPlayedWarning] = useState({ early: false, late: false });
-    const [incidentWarningText, setIncidentWarningText] = useState<WarningAlertIncident | null>(null);
+    const [incidents, setIncidents] = useState<FeatureCollection | undefined>(undefined);
+    const { warning: incidentWarning } = useWarningListener({
+        eventType: WarningType.INCIDENT,
+        playAcousticWarning,
+        userLocation,
+        checkForType: (warningState) => warningState === WarningType.INCIDENT,
+    });
 
     const longitude = userLocation?.coords?.longitude;
     const latitude = userLocation?.coords?.latitude;
-    const heading = userLocation?.coords?.course || 0;
-    const userSpeed = userLocation?.coords.speed || 0;
-    const currentSpeed = userSpeed && userSpeed > 0 ? convertSpeedToKmh(userSpeed) : 0;
 
     const {
         data,
@@ -52,94 +47,15 @@ const useIncidents = () => {
     });
 
     useEffect(() => {
-        if (data && showIncidents && longitude && latitude) {
-            const { early, late } = warningThresholds(currentSpeed);
-            let closestIncident: IncidentAlert | null = null;
-            let isWithinAnyWarningZone = false;
-
-            const filteredIncidents = data.features?.filter(
-                (incident) =>
-                    (incident.properties as unknown as IncidentProperties).probabilityOfOccurrence === "certain"
-            );
-
-            filteredIncidents?.forEach((incident) => {
-                const userPoint: [number, number] = [longitude, latitude];
-                const incidentPoint = incident.geometry.coordinates[0] as [number, number];
-
-                const distanceToFeature = distance(point(userPoint), point(incidentPoint), {
-                    units: "meters",
-                });
-
-                if (distanceToFeature > early) {
-                    return;
-                }
-
-                const { isAhead } = isFeatureAhead({
-                    userPoint: [longitude, latitude],
-                    featurePoint: incidentPoint,
-                    heading,
-                    tolerance: THRESHOLD.NAVIGATION.IS_AHEAD_IN_DEGREES,
-                });
-
-                const isWithinEarlyWarningDistance = distanceToFeature <= early;
-                const isWithinLateWarningDistance = distanceToFeature <= late;
-                const isCloserThanPrevious = !closestIncident || distanceToFeature < closestIncident.distance;
-
-                if (
-                    isNavigationMode &&
-                    isAhead &&
-                    (isWithinEarlyWarningDistance || isWithinLateWarningDistance) &&
-                    isCloserThanPrevious
-                ) {
-                    isWithinAnyWarningZone = true;
-                    closestIncident = {
-                        distance: distanceToFeature,
-                        events: (incident.properties as unknown as IncidentProperties).events,
-                    };
-
-                    setIncidentWarningText({
-                        ...incidentWarningText,
-                        properties: incident.properties as unknown as IncidentProperties,
-                    });
-                }
-
-                if (isNavigationMode && playAcousticWarning && isAhead && incidentWarningText?.textToSpeech) {
-                    if (!hasPlayedWarning.early && isWithinEarlyWarningDistance) {
-                        startSpeech(incidentWarningText.textToSpeech);
-                        setHasPlayedWarning((prev) => ({ ...prev, early: true }));
-                    } else if (!hasPlayedWarning.late && isWithinLateWarningDistance) {
-                        startSpeech(incidentWarningText.textToSpeech);
-                        setHasPlayedWarning((prev) => ({ ...prev, late: true }));
-                    }
-                }
-            });
-
-            if (!isWithinAnyWarningZone) {
-                setHasPlayedWarning({ early: false, late: false });
-            }
-
-            setIncidents({
-                data: { ...data, features: filteredIncidents },
-                alert: closestIncident,
-            });
-        } else {
-            setIncidents({ data: DEFAULT_FC, alert: null });
-            setHasPlayedWarning({ early: false, late: false });
+        if (!data || !showIncidents || !longitude || !latitude) {
+            setIncidents(DEFAULT_FC);
+            return;
         }
-    }, [data, longitude, latitude, isNavigationMode]);
 
-    useEffect(() => {
-        if (incidents?.alert) {
-            const distance = incidents.alert.distance.toFixed(0);
+        setIncidents(data);
+    }, [data, showIncidents, longitude, latitude]);
 
-            setIncidentWarningText({
-                textToSpeech: `${incidentTitle(incidentWarningText?.properties)} in ${distance} Metern.`,
-                title: `${incidentTitle(incidentWarningText?.properties)} in ${distance} m.`,
-            });
-        }
-    }, [incidents?.alert]);
-
-    return { incidents, incidentWarningText, loadingIncidents, errorIncidents };
+    return { incidents, incidentWarning, loadingIncidents, errorIncidents };
 };
 
 export default useIncidents;

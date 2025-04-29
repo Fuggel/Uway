@@ -1,7 +1,3 @@
-export interface SpeedCameraAlert {
-    distance: number;
-}
-
 export enum SpeedCameraType {
     STATIONARY = "stationary",
     MOBILE = "mobile",
@@ -20,11 +16,4 @@ export interface SpeedCameraProperties {
 export interface SpeedCameraProfile {
     value: SpeedCameraType;
     label: string;
-}
-
-export interface AheadFeatureParams {
-    userPoint: [number, number];
-    featurePoint: [number, number];
-    heading: number;
-    tolerance: number;
 }

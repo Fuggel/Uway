@@ -6,20 +6,18 @@ import useGasStations from "@/hooks/useGasStations";
 import useIncidents from "@/hooks/useIncidents";
 import useSpeedCameras from "@/hooks/useSpeedCameras";
 import useSpeedLimits from "@/hooks/useSpeedLimits";
-import { WarningAlert } from "@/types/IMap";
-import { SpeedCameraAlert } from "@/types/ISpeed";
-import { IncidentAlert, WarningAlertIncident } from "@/types/ITraffic";
+import { WarningAlert } from "@/types/IWarning";
 
 type SpeedCamera = {
-    speedCameras: { data: FeatureCollection; alert: SpeedCameraAlert | null } | undefined;
-    speedCameraWarningText: WarningAlert | null;
+    speedCameras: FeatureCollection | undefined;
+    speedCameraWarning: WarningAlert | null;
     loadingSpeedCameras: boolean;
     errorSpeedCameras: Error | null;
 };
 
 type Incident = {
-    incidents: { data: FeatureCollection; alert: IncidentAlert | null } | undefined;
-    incidentWarningText: WarningAlertIncident | null;
+    incidents: FeatureCollection | undefined;
+    incidentWarning: WarningAlert | null;
     loadingIncidents: boolean;
     errorIncidents: Error | null;
 };
@@ -50,13 +48,13 @@ interface ProviderProps {
 export const MapFeatureContext = createContext<ContextProps>({
     speedCameras: {
         speedCameras: undefined,
-        speedCameraWarningText: null,
+        speedCameraWarning: null,
         loadingSpeedCameras: false,
         errorSpeedCameras: null,
     },
     incidents: {
         incidents: undefined,
-        incidentWarningText: null,
+        incidentWarning: null,
         loadingIncidents: false,
         errorIncidents: null,
     },
