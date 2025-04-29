@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 import { Location } from "@rnmapbox/maps";
 
 import { useSocket } from "@/contexts/SocketContext";
-import { mapNavigationSelectors } from "@/store/mapNavigation";
 import { SocketEvent, Warning, WarningAlert, WarningState, WarningThresholdState, WarningType } from "@/types/IWarning";
 
 import useTextToSpeech from "./useTextToSpeech";
@@ -18,8 +16,6 @@ const useWarningListener = (params: {
     const socket = useSocket();
     const { startSpeech } = useTextToSpeech();
     const [hasPlayedWarning, setHasPlayedWarning] = useState<WarningThresholdState>({ early: false, late: false });
-    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-
     const [warning, setWarning] = useState<WarningAlert | null>(null);
 
     useEffect(() => {
@@ -37,7 +33,14 @@ const useWarningListener = (params: {
         const handleWarning = (data: Warning) => {
             const { text, textToSpeech, warningState, warningType, eventWarningType } = data;
 
-            if (!isNavigationMode || !params.playAcousticWarning || !params.checkForType(warningType)) return;
+            if (
+                !params.checkForType(warningType) ||
+                Object.keys(data).some((key) => data[key as keyof Warning] === null)
+            ) {
+                setWarning(null);
+                setHasPlayedWarning({ early: false, late: false });
+                return;
+            }
 
             setWarning({ text, textToSpeech, eventWarningType });
 
@@ -46,6 +49,8 @@ const useWarningListener = (params: {
                 setWarning(null);
                 return;
             }
+
+            if (!params.playAcousticWarning) return;
 
             if (warningState === WarningState.EARLY && !hasPlayedWarning.early) {
                 startSpeech(textToSpeech);
@@ -61,7 +66,7 @@ const useWarningListener = (params: {
         return () => {
             socket.off(SocketEvent.WARNING, handleWarning);
         };
-    }, [socket, isNavigationMode, params.playAcousticWarning, hasPlayedWarning, params.eventType, params.userLocation]);
+    }, [socket, params.playAcousticWarning, hasPlayedWarning, params.eventType, params.userLocation]);
 
     return { warning };
 };
