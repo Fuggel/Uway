@@ -24,7 +24,6 @@ const useIncidents = () => {
         eventType: WarningType.INCIDENT,
         playAcousticWarning,
         userLocation,
-        checkForType: (warningState) => warningState === WarningType.INCIDENT,
     });
 
     const longitude = userLocation?.coords?.longitude;

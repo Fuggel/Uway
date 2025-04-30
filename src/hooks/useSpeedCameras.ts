@@ -24,7 +24,6 @@ const useSpeedCameras = () => {
         eventType: WarningType.SPEED_CAMERA,
         playAcousticWarning,
         userLocation,
-        checkForType: (warningState) => warningState === WarningType.SPEED_CAMERA,
     });
 
     const longitude = userLocation?.coords?.longitude;

@@ -11,7 +11,6 @@ const useWarningListener = (params: {
     eventType: WarningType;
     playAcousticWarning: boolean;
     userLocation: Location | null;
-    checkForType: (warningState: WarningType) => boolean;
 }) => {
     const socket = useSocket();
     const { startSpeech } = useTextToSpeech();
@@ -34,7 +33,7 @@ const useWarningListener = (params: {
             const { text, textToSpeech, warningState, warningType, eventWarningType } = data;
 
             if (
-                !params.checkForType(warningType) ||
+                params.eventType !== warningType ||
                 Object.keys(data).some((key) => data[key as keyof Warning] === null)
             ) {
                 setWarning(null);
