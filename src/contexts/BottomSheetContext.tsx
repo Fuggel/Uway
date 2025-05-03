@@ -25,8 +25,8 @@ interface ProviderProps {
 export const BottomSheetContext = createContext<ContextProps>({
     sheetData: null,
     showSheet: false,
-    openSheet: () => { },
-    closeSheet: () => { },
+    openSheet: () => {},
+    closeSheet: () => {},
 });
 
 export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }) => {
@@ -34,7 +34,7 @@ export const BottomSheetContextProvider: React.FC<ProviderProps> = ({ children }
     const [showSheet, setShowSheet] = useState(false);
     const [sheetData, setSheetData] = useState<SheetProperties | null>(null);
 
-    const openSheet: OpenSheet = <T,>(params: { type: SheetType; markerProperties?: T; markerType?: MarkerSheet; }) => {
+    const openSheet: OpenSheet = <T,>(params: { type: SheetType; markerProperties?: T; markerType?: MarkerSheet }) => {
         setSheetData({ type: params.type, markerType: params.markerType, markerProperties: params.markerProperties });
         setShowSheet(true);
     };

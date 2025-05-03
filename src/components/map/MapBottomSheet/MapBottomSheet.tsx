@@ -2,18 +2,20 @@ import { useContext } from "react";
 
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { SearchLocation, SearchSuggestionProperties } from "@/types/ISearch";
-import { SheetType } from "@/types/ISheet";
+import { MarkerSheet, SheetType } from "@/types/ISheet";
 
 import BottomSheetComponent from "../../common/BottomSheet";
+import { default as GasStationInfoSheet } from "./GasStationInfoSheet";
 import GasStationsList from "./GasStationsList";
-import MarkerInfo from "./MarkerInfo";
+import IncidentInfoSheet from "./IncidentInfoSheet";
 import PoiList from "./PoiList";
+import SpeedCameraInfoSheet from "./SpeedCameraInfoSheet";
 
 interface MapBottomSheetProps {
     onClose: () => void;
     markerProps?: {
         title: string;
-        data: { label: string; value: string | number | React.ReactNode; }[] | null;
+        data: { label: string; value: string | number | React.ReactNode }[] | null;
         gasStation?: {
             show: boolean;
         };
@@ -33,14 +35,21 @@ const MapBottomSheet = ({ onClose, markerProps, poiProps }: MapBottomSheetProps)
         <BottomSheetComponent
             onClose={onClose}
             height={
-                sheetData.type === SheetType.POI ||
-                    sheetData.type === SheetType.GAS_STATION_LIST
-                    ? "50%"
-                    : undefined
+                sheetData.type === SheetType.POI || sheetData.type === SheetType.GAS_STATION_LIST ? "50%" : undefined
             }
         >
             {sheetData.type === SheetType.MARKER && markerProps && (
-                <MarkerInfo title={markerProps.title} data={markerProps.data} gasStation={markerProps.gasStation} />
+                <>
+                    {sheetData.markerType === MarkerSheet.GAS_STATION && (
+                        <GasStationInfoSheet data={markerProps.data!} title={markerProps.title} />
+                    )}
+                    {sheetData.markerType === MarkerSheet.SPEED_CAMERA && (
+                        <SpeedCameraInfoSheet data={markerProps.data!} title={markerProps.title} />
+                    )}
+                    {sheetData.markerType === MarkerSheet.INCIDENT && (
+                        <IncidentInfoSheet data={markerProps.data!} title={markerProps.title} />
+                    )}
+                </>
             )}
             {sheetData.type === SheetType.POI && poiProps && (
                 <PoiList data={poiProps.data} onSelect={poiProps.onSelect} />
