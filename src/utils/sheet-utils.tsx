@@ -165,11 +165,11 @@ export function gasStationTitle(gasStationProperties: GasStation | undefined) {
 export function speedCameraTitle(speedCameraProperties: SpeedCameraProperties | undefined) {
     switch (speedCameraProperties?.type) {
         case SpeedCameraType.STATIONARY:
-            return "Stationärer Blitzer";
+            return "Fester Blitzer";
         case SpeedCameraType.MOBILE:
             return "Mobiler Blitzer";
         default:
-            return "Blitzer";
+            return "Fester Blitzer";
     }
 }
 
