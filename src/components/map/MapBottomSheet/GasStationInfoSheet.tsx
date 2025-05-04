@@ -10,15 +10,17 @@ import { mapNavigationActions } from "@/store/mapNavigation";
 import { GasStation } from "@/types/IGasStation";
 import { SearchLocation } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
+import { getGasStationIcon } from "@/utils/map-utils";
 import { gasStationTitle } from "@/utils/sheet-utils";
 
 import InfoSheet from "@/components/common/InfoSheet";
 import Text from "@/components/common/Text";
+import PriceDisplay from "@/components/ui/PriceDisplay";
 
 const GasStationInfoSheet = () => {
     const dispatch = useDispatch();
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
-    const { street, houseNumber, postCode, place, brand, lng, lat, diesel, e5, e10 } =
+    const { street, houseNumber, postCode, place, brand, lng, lat, diesel, e5, e10, iconType } =
         (sheetData?.markerProperties as GasStation) ?? {};
 
     const navigateToGasStation = () => {
@@ -47,29 +49,23 @@ const GasStationInfoSheet = () => {
         <InfoSheet
             title={gasStationTitle(sheetData?.markerProperties)}
             subtitle={`${street} ${houseNumber}`}
-            img={require(`../../../assets/images/map-icons/gas-station/gas-station-average.png`)}
+            img={getGasStationIcon(iconType)}
         >
             <View style={styles.content}>
                 <View style={styles.pricesWrapper}>
                     <View style={styles.fuelPrice}>
                         <Text type="lightGray">Diesel</Text>
-                        <Text type="white" style={styles.fuelPriceText}>
-                            {diesel} €
-                        </Text>
+                        <PriceDisplay price={diesel} st={{ color: COLORS.white }} stSub={{ color: COLORS.white }} />
                     </View>
 
                     <View style={styles.fuelPrice}>
                         <Text type="lightGray">E5</Text>
-                        <Text type="white" style={styles.fuelPriceText}>
-                            {e5} €
-                        </Text>
+                        <PriceDisplay price={e5} st={{ color: COLORS.white }} stSub={{ color: COLORS.white }} />
                     </View>
 
                     <View style={styles.fuelPrice}>
                         <Text type="lightGray">E10</Text>
-                        <Text type="white" style={styles.fuelPriceText}>
-                            {e10} €
-                        </Text>
+                        <PriceDisplay price={e10} st={{ color: COLORS.white }} stSub={{ color: COLORS.white }} />
                     </View>
                 </View>
 
@@ -102,9 +98,6 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.dark_gray,
         borderRadius: SIZES.borderRadius.sm,
         padding: SIZES.spacing.md,
-    },
-    fuelPriceText: {
-        fontWeight: "bold",
     },
     button: {
         backgroundColor: COLORS.secondary,

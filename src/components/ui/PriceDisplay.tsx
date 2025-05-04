@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     superscript: {
         fontWeight: "bold",
         position: "absolute",
-        top: -5,
+        top: -3,
         right: 13,
     },
 });

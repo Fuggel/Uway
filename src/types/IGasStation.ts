@@ -13,6 +13,7 @@ export interface GasStation {
     isOpen: boolean;
     houseNumber: string;
     postCode: number;
+    iconType: IconType;
 }
 
 export enum DefaultFilter {
@@ -23,4 +24,10 @@ export enum FuelType {
     DIESEL = "Diesel",
     E5 = "E5",
     E10 = "E10",
+}
+
+export enum IconType {
+    GAS_STATION_CHEAP = "gas-station-cheap",
+    GAS_STATION_AVERAGE = "gas-station-average",
+    GAS_STATION_EXPENSIVE = "gas-station-expensive",
 }

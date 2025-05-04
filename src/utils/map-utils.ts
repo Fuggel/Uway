@@ -3,7 +3,7 @@ import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
 import { LANE_IMAGES } from "@/constants/map-constants";
-import { FuelType, GasStation } from "@/types/IGasStation";
+import { FuelType, GasStation, IconType } from "@/types/IGasStation";
 import { MapboxStyle } from "@/types/IMap";
 import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { IncidentType } from "@/types/ITraffic";
@@ -402,4 +402,19 @@ export function formatLastReportText(lastReportTime?: string): string | null {
     if (diffDays <= 3) return `Zuletzt vor ${diffDays} Tagen gemeldet`;
 
     return null;
+}
+
+export function getGasStationIcon(iconType: IconType) {
+    const assetsUrl = "../assets/images/map-icons/gas-station";
+
+    switch (iconType) {
+        case IconType.GAS_STATION_CHEAP:
+            return require(`${assetsUrl}/gas-station-cheap.png`);
+        case IconType.GAS_STATION_AVERAGE:
+            return require(`${assetsUrl}/gas-station-average.png`);
+        case IconType.GAS_STATION_EXPENSIVE:
+            return require(`${assetsUrl}/gas-station-expensive.png`);
+        default:
+            return require(`${assetsUrl}/gas-station-average.png`);
+    }
 }
