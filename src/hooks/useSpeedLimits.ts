@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { THRESHOLD } from "@/constants/env-constants";
+import { REFETCH_INTERVAL } from "@/constants/env-constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { fetchSpeedLimits } from "@/services/speed-limits";
@@ -31,7 +31,7 @@ const useSpeedLimits = () => {
             }),
         enabled: !!longitude && !!latitude && isNavigationMode && !!authToken?.token,
         staleTime: Infinity,
-        refetchInterval: THRESHOLD.SPEED_LIMIT.SHOW_IN_METERS,
+        refetchInterval: REFETCH_INTERVAL.SPEED_LIMITS_IN_SECONDS,
     });
 
     useEffect(() => {
