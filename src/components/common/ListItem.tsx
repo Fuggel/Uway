@@ -11,13 +11,15 @@ interface ListItemProps {
     onPress: () => void;
     icon: string;
     text: string;
+    color?: string;
+    type?: "primary" | "gray" | "white" | "secondary" | "lightGray" | "success" | "error" | "warning";
 }
 
-const ListItem = ({ onPress, icon, text }: ListItemProps) => {
+const ListItem = ({ onPress, icon, text, color, type }: ListItemProps) => {
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
-            <MaterialCommunityIcons name={icon as any} size={24} color={COLORS.primary} />
-            <Text>{text}</Text>
+            <MaterialCommunityIcons name={icon as any} size={24} color={color ?? COLORS.primary} />
+            <Text type={type ?? "primary"}>{text}</Text>
         </TouchableOpacity>
     );
 };

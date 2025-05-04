@@ -1,7 +1,6 @@
 import { Href, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Divider } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -11,6 +10,7 @@ import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { SavedSearchLocation, SearchLocation } from "@/types/ISearch";
 
 import BottomSheetComponent from "@/components/common/BottomSheet";
+import Divider from "@/components/common/Divider";
 import IconButton from "@/components/common/IconButton";
 import ListItem from "@/components/common/ListItem";
 import Text from "@/components/common/Text";
@@ -60,24 +60,28 @@ const SavedSearches = ({ handleLocationComplete }: SavedSearchesProps) => {
             {bottomSheet && bottomSheet.data && (
                 <BottomSheetComponent onClose={() => setBottomSheet(null)} snapPoints={["100%"]} height="33%">
                     <View style={styles.bottomSheetContainer}>
-                        <Text textStyle="header" style={{ marginBottom: SIZES.spacing.sm }}>
+                        <Text textStyle="header" type="white" style={{ marginBottom: SIZES.spacing.sm }}>
                             {bottomSheet.data.title}
                         </Text>
 
                         <ListItem
                             icon="pencil"
                             text="Ort bearbeiten"
+                            color={COLORS.white}
+                            type="white"
                             onPress={() => {
                                 router.push("/(modal)/save-search" as Href);
                                 dispatch(mapSearchActions.startEditingSearch(bottomSheet.data));
                             }}
                         />
 
-                        <Divider />
+                        <Divider st={{ marginVertical: SIZES.spacing.md }} />
 
                         <ListItem
                             icon="trash-can"
                             text="Ort löschen"
+                            type="error"
+                            color={COLORS.error}
                             onPress={() => {
                                 dispatch(mapSearchActions.deleteSavedSearch(bottomSheet.data!.title as string));
                                 setBottomSheet(null);
@@ -94,9 +98,9 @@ export default SavedSearches;
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: SIZES.spacing.md,
+        marginTop: SIZES.spacing.lg,
         marginBottom: SIZES.spacing.sm,
-        paddingHorizontal: SIZES.spacing.sm,
+        paddingHorizontal: SIZES.spacing.md,
     },
     flexRow: {
         flexDirection: "row",
@@ -106,7 +110,6 @@ const styles = StyleSheet.create({
     },
     bottomSheetContainer: {
         paddingHorizontal: SIZES.spacing.md,
-        backgroundColor: COLORS.white,
         gap: SIZES.spacing.sm,
         height: "100%",
     },

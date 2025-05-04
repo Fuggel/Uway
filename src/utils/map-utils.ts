@@ -265,7 +265,7 @@ export function getOrderedGasStations(gasStations: GasStation[] | undefined): Ga
         .sort((a, b) => b.score - a.score);
 }
 
-export function distanceToPointText(params: { pos1: Position | undefined; pos2: Position | undefined }) {
+export function distanceToPointText(params: { pos1: Position | undefined; pos2: Position | undefined; }) {
     if (!params.pos1 || !params.pos2) {
         return "Entfernung unbekannt";
     }
@@ -362,4 +362,44 @@ export function removeConsecutiveDuplicates(lineString: number[][]): number[][] 
     }
 
     return filtered;
+}
+
+export function getIncidentStatusText(
+    startTime?: string,
+    endTime?: string,
+    lastReportTime?: string
+): string | null {
+    const now = Date.now();
+
+    if (startTime && endTime) {
+        const end = new Date(endTime).getTime();
+        const remainingMinutes = Math.floor((end - now) / 60000);
+
+        if (remainingMinutes <= 0) return "Vorübergehend beendet";
+        return `Voraussichtlich noch ${remainingMinutes} min`;
+    }
+
+    return formatLastReportText(lastReportTime);
+}
+
+export function formatLastReportText(lastReportTime?: string): string | null {
+    if (!lastReportTime) return null;
+
+    const now = Date.now();
+    const last = new Date(lastReportTime).getTime();
+    const diffMs = now - last;
+
+    if (diffMs < 0) return null;
+
+    const diffMinutes = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMinutes < 3) return "Zuletzt vor wenigen Minuten gemeldet";
+    if (diffMinutes < 60) return `Zuletzt vor ${diffMinutes} min gemeldet`;
+    if (diffHours < 24) return `Zuletzt vor ${diffHours} Std. gemeldet`;
+    if (diffDays === 1) return "Zuletzt gestern gemeldet";
+    if (diffDays <= 3) return `Zuletzt vor ${diffDays} Tagen gemeldet`;
+
+    return null;
 }

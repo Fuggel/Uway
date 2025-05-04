@@ -46,7 +46,9 @@ const PoiList = ({ data, onSelect }: PoiListProps) => {
                 return (
                     <ScrollView key={i} style={styles.itemContainer} contentContainerStyle={styles.contentContainer}>
                         <View style={{ width: "80%" }}>
-                            <Text style={styles.textHeader}>{item.name}</Text>
+                            <Text type="white" style={styles.textHeader}>
+                                {item.name}
+                            </Text>
                             <Text style={styles.textBody}>{item.full_address}</Text>
                             <Text style={styles.textBody}>{item.distance}</Text>
                         </View>
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
         marginBottom: SIZES.spacing.xxs,
     },
     textBody: {
-        color: COLORS.gray,
+        color: COLORS.light_gray,
         fontSize: SIZES.fontSize.sm,
     },
 });

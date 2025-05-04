@@ -59,7 +59,7 @@ export default function Dropdown<T>({ data, value, icon, placeholder, clearable,
 const styles = StyleSheet.create({
     dropdown: {
         height: SIZES.spacing.xxl,
-        borderColor: COLORS.gray,
+        borderColor: COLORS.light_gray,
         borderRadius: SIZES.borderRadius.sm,
         paddingHorizontal: SIZES.spacing.sm,
         borderWidth: 1.5,
@@ -67,15 +67,17 @@ const styles = StyleSheet.create({
     },
     iconRight: {
         marginRight: SIZES.spacing.sm,
-        color: COLORS.primary,
+        color: COLORS.white,
     },
     iconLeft: {
-        color: COLORS.primary,
+        color: COLORS.white,
     },
     placeholderStyle: {
+        color: COLORS.white,
         fontSize: SIZES.fontSize.md,
     },
     selectedTextStyle: {
+        color: COLORS.white,
         fontSize: SIZES.fontSize.md,
     },
     iconStyle: {

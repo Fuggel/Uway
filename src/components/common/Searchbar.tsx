@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: SIZES.spacing.xs,
-        paddingHorizontal: SIZES.spacing.md,
+        gap: SIZES.spacing.sm,
+        paddingHorizontal: SIZES.spacing.xl,
     },
 });
 

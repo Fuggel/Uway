@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         borderRadius: SIZES.borderRadius.sm,
     },
     title: {
-        paddingHorizontal: SIZES.spacing.sm,
+        paddingHorizontal: SIZES.spacing.md,
         marginBottom: SIZES.spacing.sm,
     },
     locationItem: {

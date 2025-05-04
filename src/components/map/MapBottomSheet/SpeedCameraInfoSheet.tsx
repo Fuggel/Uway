@@ -1,52 +1,25 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useContext } from "react";
 
-import { COLORS } from "@/constants/colors-constants";
-import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { SpeedCameraProperties } from "@/types/ISpeed";
+import { speedCameraTitle } from "@/utils/sheet-utils";
 
-import InfoRow from "@/components/common/InfoRow";
+import InfoSheet from "@/components/common/InfoSheet";
 import Text from "@/components/common/Text";
 
-interface SpeedCameraInfoSheetProps {
-    data: { label: string; value: string | number | React.ReactNode }[];
-    title: string;
-}
+const SpeedCameraInfoSheet = () => {
+    const { sheetData } = useContext(BottomSheetContext);
+    const { address, maxspeed } = (sheetData?.markerProperties as SpeedCameraProperties) ?? {};
 
-const SpeedCameraInfoSheet = ({ data, title }: SpeedCameraInfoSheetProps) => {
     return (
-        <View style={styles.container}>
-            <Text textStyle="header" style={styles.title}>
-                {title}
-            </Text>
-
-            {data?.map((item, index) => <InfoRow key={index} label={item.label} value={item.value} />)}
-        </View>
+        <InfoSheet
+            title={speedCameraTitle(sheetData?.markerProperties)}
+            subtitle={address}
+            img={require(`../../../assets/images/map-icons/speed-camera/speed-camera.png`)}
+        >
+            {maxspeed && <Text type="white">Höchstgeschwindigkeit: {maxspeed} km/h</Text>}
+        </InfoSheet>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        paddingHorizontal: SIZES.spacing.md,
-        paddingBottom: SIZES.spacing.md,
-    },
-    title: {
-        marginVertical: SIZES.spacing.md,
-    },
-    itemContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        alignItems: "center",
-        marginBottom: SIZES.spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.light_gray,
-        paddingBottom: SIZES.spacing.xs,
-    },
-    value: {
-        fontWeight: "bold",
-        maxWidth: "75%",
-    },
-});
 
 export default SpeedCameraInfoSheet;

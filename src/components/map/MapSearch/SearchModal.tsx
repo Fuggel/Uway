@@ -32,9 +32,9 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     closeButton: {
-        marginTop: SIZES.spacing.xs,
+        marginTop: SIZES.spacing.xl,
         marginBottom: SIZES.spacing.md,
         alignSelf: "flex-end",
-        paddingHorizontal: SIZES.spacing.xs,
+        paddingHorizontal: SIZES.spacing.md,
     },
 });

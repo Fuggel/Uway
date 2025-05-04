@@ -38,14 +38,14 @@ const RouteOptions = () => {
                         onPress={() => dispatch(mapNavigationActions.setSelectedRoute(i))}
                     >
                         <View style={{ width: "80%", gap: SIZES.spacing.xs }}>
-                            <Text textStyle="header" type={selectedRoute === i ? "secondary" : "primary"}>
+                            <Text textStyle="header" type={selectedRoute === i ? "white" : "lightGray"}>
                                 {readableDuration(item.duration)}
                             </Text>
 
-                            <Text>Über {item.legs[0].summary}</Text>
+                            <Text type="lightGray">Über {item.legs[0].summary}</Text>
                         </View>
 
-                        <Text type="gray">{readableDistance(item.distance)}</Text>
+                        <Text type="lightGray">{readableDistance(item.distance)}</Text>
                     </Pressable>
                 </ScrollView>
             ))}
@@ -53,7 +53,7 @@ const RouteOptions = () => {
             <View style={styles.actions}>
                 <Button
                     mode="outlined"
-                    style={{ width: "48%", borderColor: COLORS.primary }}
+                    style={{ width: "48%", backgroundColor: COLORS.light_gray }}
                     textColor={COLORS.primary}
                     onPress={() => dispatch(mapNavigationActions.handleCancelNavigation())}
                 >
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     selectedRoute: {
-        backgroundColor: COLORS.shadow_gray,
+        backgroundColor: COLORS.dark_gray,
         borderLeftWidth: 5,
         borderLeftColor: COLORS.secondary,
     },

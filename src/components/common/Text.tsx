@@ -14,7 +14,7 @@ const Text = ({ children, type, textStyle, style }: TextProps) => {
     const getTextStyle = (): TextStyle => {
         switch (textStyle) {
             case "header":
-                return { fontWeight: "bold", fontSize: SIZES.fontSize.lg };
+                return { fontWeight: "bold", fontSize: SIZES.fontSize.xl };
             case "body":
                 return { fontSize: SIZES.fontSize.md };
             case "caption":

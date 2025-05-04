@@ -3,6 +3,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import BottomSheet, { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
 
+import { COLORS } from "@/constants/colors-constants";
+import { SIZES } from "@/constants/size-constants";
+
 interface BottomSheetComponentProps {
     onClose: () => void;
     children: React.ReactNode;
@@ -16,7 +19,14 @@ const BottomSheetComponent = ({ onClose, children, snapPoints, height, st }: Bot
 
     return (
         <GestureHandlerRootView style={{ ...styles.container, height: height ?? "30%" }}>
-            <BottomSheet snapPoints={snapPoints ?? ["100%"]} enablePanDownToClose onClose={onClose} enableDynamicSizing>
+            <BottomSheet
+                backgroundStyle={styles.bottomSheetBackground}
+                handleIndicatorStyle={styles.indicatorStyle}
+                snapPoints={snapPoints ?? ["100%"]}
+                enablePanDownToClose
+                onClose={onClose}
+                enableDynamicSizing
+            >
                 <ContentContainer style={{ ...styles.contentContainer, ...st }}>{children}</ContentContainer>
             </BottomSheet>
         </GestureHandlerRootView>
@@ -29,8 +39,16 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: "transparent",
         zIndex: 999999,
+    },
+    bottomSheetBackground: {
+        backgroundColor: COLORS.primary_light,
+        borderRadius: SIZES.borderRadius.lg,
+    },
+    indicatorStyle: {
+        backgroundColor: COLORS.gray,
+        width: SIZES.spacing.xxl,
+        marginTop: SIZES.spacing.xs,
     },
     contentContainer: {
         flex: 1,

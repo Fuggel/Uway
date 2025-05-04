@@ -16,7 +16,7 @@ export function sheetTitle<T>(marker: MarkerSheet | undefined, properties: T): s
         case MarkerSheet.GAS_STATION:
             return gasStationTitle(properties as GasStation);
         case MarkerSheet.SPEED_CAMERA:
-            return speedCameraTitle();
+            return speedCameraTitle(properties as SpeedCameraProperties);
         case MarkerSheet.CATEGORY_LOCATION:
             return categoryTitle(properties as SearchSuggestionProperties);
         default:
@@ -158,12 +158,19 @@ export function incidentTitle(incidentProperties: IncidentProperties | undefined
     }
 }
 
-function gasStationTitle(gasStationProperties: GasStation | undefined) {
+export function gasStationTitle(gasStationProperties: GasStation | undefined) {
     return gasStationProperties?.brand ?? "Unbekannt";
 }
 
-function speedCameraTitle() {
-    return "Blitzer";
+export function speedCameraTitle(speedCameraProperties: SpeedCameraProperties | undefined) {
+    switch (speedCameraProperties?.type) {
+        case SpeedCameraType.STATIONARY:
+            return "Stationärer Blitzer";
+        case SpeedCameraType.MOBILE:
+            return "Mobiler Blitzer";
+        default:
+            return "Blitzer";
+    }
 }
 
 function categoryTitle(suggestion: SearchSuggestionProperties) {

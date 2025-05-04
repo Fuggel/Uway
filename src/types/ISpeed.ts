@@ -7,6 +7,7 @@ export interface SpeedCameraProperties {
     type: SpeedCameraType;
     address: string;
     direction: string;
+    maxspeed: string;
     geometry: {
         type: string;
         coordinates: number[];

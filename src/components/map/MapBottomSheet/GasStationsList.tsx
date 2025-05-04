@@ -6,6 +6,7 @@ import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { MapFeatureContext } from "@/contexts/MapFeatureContext";
+import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
 import { mapNavigationActions } from "@/store/mapNavigation";
 import { DefaultFilter, FuelType, GasStation } from "@/types/IGasStation";
 import { SearchLocation } from "@/types/ISearch";
@@ -16,7 +17,6 @@ import Dropdown from "@/components/common/Dropdown";
 import IconButton from "@/components/common/IconButton";
 import Text from "@/components/common/Text";
 import PriceDisplay from "@/components/ui/PriceDisplay";
-import { mapGasStationActions, mapGasStationSelectors } from "@/store/mapGasStation";
 
 const GasStationsList = () => {
     const dispatch = useDispatch();
@@ -145,7 +145,9 @@ const GasStationsList = () => {
                 return (
                     <ScrollView key={i} style={styles.itemContainer} contentContainerStyle={styles.contentContainer}>
                         <View>
-                            <Text style={styles.textHeader}>{station.brand}</Text>
+                            <Text type="white" style={styles.textHeader}>
+                                {station.brand}
+                            </Text>
                             <Text style={styles.textBody}>{station.street}</Text>
                             <View style={{ flexDirection: "row" }}>
                                 <Text
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
         marginBottom: SIZES.spacing.xxs,
     },
     textBody: {
-        color: COLORS.gray,
+        color: COLORS.light_gray,
         fontSize: SIZES.fontSize.sm,
     },
 });

@@ -1,52 +1,35 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useContext } from "react";
 
-import { COLORS } from "@/constants/colors-constants";
-import { SIZES } from "@/constants/size-constants";
+import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { IncidentProperties } from "@/types/ITraffic";
+import { determineIncidentIcon, getIncidentStatusText } from "@/utils/map-utils";
+import { incidentTitle } from "@/utils/sheet-utils";
+import { formatLength } from "@/utils/unit-utils";
 
-import InfoRow from "@/components/common/InfoRow";
+import InfoSheet from "@/components/common/InfoSheet";
 import Text from "@/components/common/Text";
 
-interface IncidentInfoSheetProps {
-    data: { label: string; value: string | number | React.ReactNode }[];
-    title: string;
-}
+const IncidentInfoSheet = () => {
+    const { sheetData } = useContext(BottomSheetContext);
+    const { startTime, endTime, lastReportTime, length, from, iconCategory } =
+        (sheetData?.markerProperties as IncidentProperties) ?? {};
 
-const IncidentInfoSheet = ({ data, title }: IncidentInfoSheetProps) => {
+    const incidentStatus = getIncidentStatusText(startTime, endTime, lastReportTime);
+
     return (
-        <View style={styles.container}>
-            <Text textStyle="header" style={styles.title}>
-                {title}
-            </Text>
-
-            {data?.map((item, index) => <InfoRow key={index} label={item.label} value={item.value} />)}
-        </View>
+        <InfoSheet
+            title={incidentTitle(sheetData?.markerProperties)}
+            subtitle={incidentStatus}
+            img={determineIncidentIcon(iconCategory)}
+        >
+            {from && (
+                <Text type="white">
+                    {from}
+                    {length ? `, ${formatLength(length)}` : ""}
+                </Text>
+            )}
+        </InfoSheet>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        paddingHorizontal: SIZES.spacing.md,
-        paddingBottom: SIZES.spacing.md,
-    },
-    title: {
-        marginVertical: SIZES.spacing.md,
-    },
-    itemContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        alignItems: "center",
-        marginBottom: SIZES.spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.light_gray,
-        paddingBottom: SIZES.spacing.xs,
-    },
-    value: {
-        fontWeight: "bold",
-        maxWidth: "75%",
-    },
-});
 
 export default IncidentInfoSheet;

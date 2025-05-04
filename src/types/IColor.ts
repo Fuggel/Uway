@@ -1,5 +1,6 @@
 export interface Color {
     primary: string;
+    primary_light: string;
     secondary: string;
     secondary_light: string;
     success: string;
@@ -7,6 +8,7 @@ export interface Color {
     error: string;
     gray: string;
     light_gray: string;
+    dark_gray: string;
     shadow_gray: string;
     white: string;
     red: string;

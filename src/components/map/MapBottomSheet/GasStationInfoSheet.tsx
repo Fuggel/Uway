@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
+import { Button } from "react-native-paper";
 import { useDispatch } from "react-redux";
 
 import { COLORS } from "@/constants/colors-constants";
@@ -9,41 +10,27 @@ import { mapNavigationActions } from "@/store/mapNavigation";
 import { GasStation } from "@/types/IGasStation";
 import { SearchLocation } from "@/types/ISearch";
 import { generateRandomId } from "@/utils/auth-utils";
+import { gasStationTitle } from "@/utils/sheet-utils";
 
-import IconButton from "@/components/common/IconButton";
-import InfoRow from "@/components/common/InfoRow";
+import InfoSheet from "@/components/common/InfoSheet";
 import Text from "@/components/common/Text";
 
-interface GasStationInfoSheetProps {
-    data: { label: string; value: string | number | React.ReactNode }[];
-    title: string;
-}
-
-const GasStationInfoSheet = ({ data, title }: GasStationInfoSheetProps) => {
+const GasStationInfoSheet = () => {
     const dispatch = useDispatch();
     const { sheetData, closeSheet } = useContext(BottomSheetContext);
+    const { street, houseNumber, postCode, place, brand, lng, lat, diesel, e5, e10 } =
+        (sheetData?.markerProperties as GasStation) ?? {};
 
     const navigateToGasStation = () => {
-        const properties = sheetData?.markerProperties as GasStation;
-
-        const street = properties.street;
-        const houseNumber = properties.houseNumber || "";
-        const postcode = properties.postCode || "";
-        const city = properties.place || "";
-        const country = "Deutschland";
-
         const newLocation: SearchLocation = {
             default_id: generateRandomId(),
-            name: `${street} ${houseNumber}`,
+            name: `${street} ${houseNumber ?? ""}`,
             feature_type: "custom-waypoint",
             address: `${street} ${houseNumber}`,
-            full_address: `${postcode} ${city}`,
-            place_formatted: `${properties.brand}, ${postcode} ${city}, ${country}`,
+            full_address: `${postCode ?? ""} ${place ?? ""}`,
+            place_formatted: `${brand ?? ""}, ${postCode ?? ""} ${place ?? ""}, Deutschland`,
             maki: "fuel",
-            coordinates: {
-                longitude: properties.lng,
-                latitude: properties.lat,
-            },
+            coordinates: { longitude: lng, latitude: lat },
         };
 
         dispatch(mapNavigationActions.setLocation(newLocation));
@@ -57,49 +44,76 @@ const GasStationInfoSheet = ({ data, title }: GasStationInfoSheetProps) => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.titleContainer}>
-                <Text textStyle="header" style={styles.title}>
-                    {title || "Tankstelle"}
-                </Text>
-                <IconButton icon="directions" size="md" type="secondary" onPress={navigateToGasStation} />
-            </View>
+        <InfoSheet
+            title={gasStationTitle(sheetData?.markerProperties)}
+            subtitle={`${street} ${houseNumber}`}
+            img={require(`../../../assets/images/map-icons/gas-station/gas-station-average.png`)}
+        >
+            <View style={styles.content}>
+                <View style={styles.pricesWrapper}>
+                    <View style={styles.fuelPrice}>
+                        <Text type="lightGray">Diesel</Text>
+                        <Text type="white" style={styles.fuelPriceText}>
+                            {diesel} €
+                        </Text>
+                    </View>
 
-            {data?.map((item, index) => <InfoRow key={index} label={item.label} value={item.value} />)}
-        </View>
+                    <View style={styles.fuelPrice}>
+                        <Text type="lightGray">E5</Text>
+                        <Text type="white" style={styles.fuelPriceText}>
+                            {e5} €
+                        </Text>
+                    </View>
+
+                    <View style={styles.fuelPrice}>
+                        <Text type="lightGray">E10</Text>
+                        <Text type="white" style={styles.fuelPriceText}>
+                            {e10} €
+                        </Text>
+                    </View>
+                </View>
+
+                <Button
+                    mode="contained"
+                    onPress={navigateToGasStation}
+                    style={styles.button}
+                    labelStyle={styles.buttonText}
+                >
+                    Navigation starten
+                </Button>
+            </View>
+        </InfoSheet>
     );
 };
 
+export default GasStationInfoSheet;
+
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        paddingHorizontal: SIZES.spacing.md,
-        paddingBottom: SIZES.spacing.md,
+    content: {
+        gap: SIZES.spacing.md,
     },
-    titleContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-    },
-    title: {
-        flex: 1,
-        marginVertical: SIZES.spacing.md,
-    },
-    itemContainer: {
+    pricesWrapper: {
         flexDirection: "row",
         justifyContent: "space-between",
-        flexWrap: "wrap",
         alignItems: "center",
-        marginBottom: SIZES.spacing.sm,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.light_gray,
-        paddingBottom: SIZES.spacing.xs,
+        gap: SIZES.spacing.md,
     },
-    value: {
+    fuelPrice: {
+        backgroundColor: COLORS.dark_gray,
+        borderRadius: SIZES.borderRadius.sm,
+        padding: SIZES.spacing.md,
+    },
+    fuelPriceText: {
         fontWeight: "bold",
-        maxWidth: "75%",
+    },
+    button: {
+        backgroundColor: COLORS.secondary,
+        borderRadius: SIZES.borderRadius.sm,
+        height: 50,
+        justifyContent: "center",
+    },
+    buttonText: {
+        color: COLORS.white,
+        fontSize: SIZES.fontSize.md,
     },
 });
-
-export default GasStationInfoSheet;
