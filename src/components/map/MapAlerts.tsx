@@ -11,8 +11,8 @@ import { IncidentType } from "@/types/ITraffic";
 import { determineIncidentIcon } from "@/utils/map-utils";
 import { formatLength } from "@/utils/unit-utils";
 
+import Alert from "../common/Alert";
 import Text from "../common/Text";
-import Toast from "../common/Toast";
 import RoadShield from "../ui/RoadShield";
 
 const deviceHeight = Dimensions.get("window").height;
@@ -85,7 +85,7 @@ const MapAlerts = () => {
                 )}
 
                 {speedCameras && speedCameras?.speedCameraWarning?.text && (
-                    <Toast
+                    <Alert
                         show={!!speedCameras.speedCameraWarning.text}
                         type="error"
                         title={speedCameras.speedCameraWarning.text}
@@ -93,7 +93,7 @@ const MapAlerts = () => {
                 )}
 
                 {incidents && incidents?.incidentWarning?.text && (
-                    <Toast
+                    <Alert
                         show={!!incidents.incidentWarning.text}
                         type="error"
                         image={determineIncidentIcon(incidents.incidentWarning.eventWarningType as IncidentType)}

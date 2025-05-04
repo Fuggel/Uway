@@ -8,6 +8,7 @@ import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
+import { MapFeatureContext } from "@/contexts/MapFeatureContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
@@ -32,6 +33,9 @@ const MapButtons = () => {
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
     const openGasStationsList = useSelector(mapLayoutsSelectors.openGasStationsList);
     const { openSheet, closeSheet } = useContext(BottomSheetContext);
+    const { gasStations } = useContext(MapFeatureContext);
+    const direction = useSelector(mapNavigationSelectors.directions);
+    const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
 
     const excludeTypesLength = Object.keys(excludeTypes).filter(
         (key) => excludeTypes[key as keyof ExcludeTypes]
@@ -62,7 +66,7 @@ const MapButtons = () => {
                     </View>
                 )}
 
-                {isNavigationSelecting && (
+                {isNavigationSelecting && !!direction && !!routeOptions && (
                     <TouchableOpacity
                         style={styles.excludeButton}
                         activeOpacity={0.9}
@@ -93,7 +97,7 @@ const MapButtons = () => {
                     <IconButton type="white" icon="cog" onPress={() => router.push("/settings")} />
                 </View>
 
-                {!openGasStationsList && !isNavigationMode && (
+                {!openGasStationsList && !isNavigationMode && !!gasStations?.gasStations?.features?.length && (
                     <View style={styles.iconButton}>
                         <IconButton
                             type="white"

@@ -10,6 +10,7 @@ export interface Color {
     light_gray: string;
     dark_gray: string;
     shadow_gray: string;
+    shadow_error: string;
     white: string;
     red: string;
 }

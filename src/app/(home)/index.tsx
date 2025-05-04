@@ -1,10 +1,14 @@
-import { revenueCatActions } from "@/store/revenueCat";
 import { useEffect, useState } from "react";
+import { View } from "react-native";
 import Purchases from "react-native-purchases";
 import { useDispatch } from "react-redux";
 
+import { revenueCatActions } from "@/store/revenueCat";
+
 import Map from "./map";
 import Paywall from "./paywall";
+
+import ToastComponent from "@/components/common/Toast";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -32,7 +36,12 @@ const Home = () => {
         checkSubscriptionStatus();
     }, []);
 
-    return isSubscriptionActive ? <Map /> : <Paywall onSubscriptionChange={checkSubscriptionStatus} />;
+    return (
+        <>
+            <Map />
+            <ToastComponent />
+        </>
+    );
 };
 
 export default Home;

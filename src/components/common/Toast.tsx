@@ -1,114 +1,69 @@
-import { useEffect, useState } from "react";
-import { Image, ImageProps, StyleSheet, View, ViewStyle } from "react-native";
-import { Icon } from "react-native-paper";
+import React from "react";
+import { Dimensions, StyleSheet } from "react-native";
+import Toast, { BaseToast } from "react-native-toast-message";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { COLORS } from "@/constants/colors-constants";
 import { SIZES } from "@/constants/size-constants";
 
-import Text from "./Text";
+const deviceHeight = Dimensions.get("window").height;
 
-interface ToastProps {
-    show: boolean;
-    type: "success" | "error" | "warning" | "info";
-    title: string;
-    subTitle?: string;
-    image?: ImageProps;
-    autoHide?: boolean;
-    duration?: number;
-    st?: ViewStyle;
-}
-
-const Toast = ({ show, type, title, subTitle, image, autoHide, duration = 3000, st }: ToastProps) => {
-    const [isVisible, setIsVisible] = useState(show);
-
-    useEffect(() => {
-        if (show) {
-            setIsVisible(true);
-            if (autoHide) {
-                const timer = setTimeout(() => {
-                    setIsVisible(false);
-                }, duration);
-                return () => clearTimeout(timer);
-            }
-        } else {
-            setIsVisible(false);
-        }
-    }, [show, autoHide]);
-
-    const getIcon = () => {
-        switch (type) {
-            case "success":
-                return "check-circle";
-            case "error":
-                return "alert-circle";
-            case "warning":
-                return "alert";
-            case "info":
-                return "information";
-            default:
-                return "information";
-        }
-    };
-
-    const getIconColor = () => {
-        switch (type) {
-            case "success":
-                return COLORS.success;
-            case "error":
-                return COLORS.error;
-            case "warning":
-                return COLORS.warning;
-            case "info":
-                return COLORS.primary;
-            default:
-                return COLORS.primary;
-        }
-    };
-
-    if (!show || !isVisible) return null;
-
+const ToastComponent = () => {
     return (
-        <View style={{ ...styles.container, ...st }}>
-            <View style={styles.header}>
-                {!image ? (
-                    <Icon source={getIcon()} color={getIconColor()} size={SIZES.iconSize.lg} />
-                ) : (
-                    <Image resizeMode="contain" source={image} style={styles.image} />
-                )}
-
-                <View>
-                    <Text style={styles.title}>{title}</Text>
-                    {subTitle && <Text style={styles.subTitle}>{subTitle}</Text>}
-                </View>
-            </View>
-        </View>
+        <Toast
+            position="top"
+            visibilityTime={3000}
+            autoHide={true}
+            topOffset={deviceHeight > 1000 ? 50 : 60}
+            swipeable
+            config={{
+                error: (props) => (
+                    <BaseToast
+                        {...props}
+                        style={styles.error}
+                        renderLeadingIcon={() => (
+                            <MaterialCommunityIcons name="alert-circle-outline" style={styles.errorIcon} />
+                        )}
+                        text1Style={styles.text1}
+                        text2Style={styles.text2}
+                        text2Props={{
+                            numberOfLines: 3,
+                        }}
+                    />
+                ),
+            }}
+        />
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: COLORS.primary,
-        padding: 20,
-        borderRadius: SIZES.borderRadius.md,
-        alignSelf: "flex-start",
-    },
-    header: {
+    error: {
+        backgroundColor: COLORS.shadow_error,
+        borderLeftWidth: 3,
+        borderWidth: 3,
+        borderColor: COLORS.error,
+        maxWidth: "80%",
         alignItems: "center",
-        gap: SIZES.spacing.sm,
+        minHeight: 75,
+        height: "auto",
         flexDirection: "row",
-        width: "100%",
+        justifyContent: "flex-start",
     },
-    image: {
-        width: SIZES.iconSize.lg,
-        height: SIZES.iconSize.lg,
+    errorIcon: {
+        color: COLORS.white,
+        fontSize: SIZES.iconSize.lg,
+        marginLeft: SIZES.spacing.sm,
+        marginRight: -SIZES.spacing.sm,
     },
-    title: {
-        fontWeight: "bold",
+    text1: {
+        fontSize: SIZES.fontSize.lg,
         color: COLORS.white,
     },
-    subTitle: {
-        color: COLORS.light_gray,
+    text2: {
+        fontSize: SIZES.fontSize.md,
+        color: COLORS.white,
     },
 });
 
-export default Toast;
+export default ToastComponent;

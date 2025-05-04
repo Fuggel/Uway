@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
@@ -45,11 +46,13 @@ const Map = () => {
     const { openSheet, sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const showRouteOptions = useSelector(mapNavigationSelectors.showRouteOptions);
+    const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
     const { loadingDirections } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
 
     useKeepAwake();
@@ -72,6 +75,20 @@ const Map = () => {
             );
         }
     }, [location]);
+
+    useEffect(() => {
+        if (isNavigationSelecting && !routeOptions && !directions) {
+            dispatch(mapNavigationActions.setIsNavigationSelecting(false));
+            dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
+            dispatch(mapNavigationActions.setShowRouteOptions(false));
+
+            Toast.show({
+                type: "error",
+                text1: "Fehler",
+                text2: "Fehler beim Abrufen der Route.",
+            });
+        }
+    }, [isNavigationSelecting]);
 
     return (
         <>
@@ -146,7 +163,7 @@ const Map = () => {
                 )}
             </View>
 
-            {showRouteOptions && (
+            {showRouteOptions && routeOptions && (
                 <BottomSheetComponent onClose={() => dispatch(mapNavigationActions.handleCancelNavigation())}>
                     <RouteOptions />
                 </BottomSheetComponent>
