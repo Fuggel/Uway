@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Mapbox, { Location } from "@rnmapbox/maps";
 
 import { THRESHOLD } from "@/constants/env-constants";
-import useLocationPermission from "@/hooks/useLocationPermissions";
+import usePermissions from "@/hooks/usePermissions";
 import useTextToSpeech from "@/hooks/useTextToSpeech";
 import { SnapToRoute } from "@/lib/SnapToRoute";
 import { mapNavigationSelectors } from "@/store/mapNavigation";
@@ -20,7 +20,7 @@ interface ProviderProps {
 export const UserLocationContext = createContext<ContextProps>({ userLocation: null });
 
 export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children }) => {
-    const { hasLocationPermissions } = useLocationPermission();
+    const { hasLocationPermissions } = usePermissions();
     const { startSpeech } = useTextToSpeech();
     const snapToRoute = useRef<SnapToRoute | null>(null);
     const lastSpeechTime = useRef(0);
