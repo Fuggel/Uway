@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { View } from "react-native";
 import Purchases from "react-native-purchases";
 import { useDispatch } from "react-redux";
 
@@ -38,7 +37,7 @@ const Home = () => {
 
     return (
         <>
-            <Map />
+            {isSubscriptionActive ? <Map /> : <Paywall onSubscriptionChange={checkSubscriptionStatus} />}
             <ToastComponent />
         </>
     );

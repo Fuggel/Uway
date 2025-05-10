@@ -11,7 +11,7 @@ export interface Warning {
 
 export enum WarningType {
     INCIDENT = "incident",
-    SPEED_CAMERA = "speedCamera",
+    SPEED_CAMERA = "speed-camera",
 }
 
 export enum WarningState {
@@ -26,10 +26,8 @@ export interface WarningAlert {
 }
 
 export enum SocketEvent {
-    WARNING = "warning",
-    USER_LOCATION_UPDATE = "userLocationUpdate",
-    SPEED_CAMERA = "speedCamera",
-    INCIDENT = "incident",
+    WARNING_MANAGER = "warning-manager",
+    USER_LOCATION = "user-location",
 }
 
 export interface WarningThresholdState {

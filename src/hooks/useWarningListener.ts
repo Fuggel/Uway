@@ -20,7 +20,7 @@ const useWarningListener = (params: {
     useEffect(() => {
         if (!socket || !params.userLocation) return;
 
-        socket.emit(SocketEvent.USER_LOCATION_UPDATE, {
+        socket.emit(SocketEvent.USER_LOCATION, {
             eventType: params.eventType,
             lon: params.userLocation.coords.longitude,
             lat: params.userLocation.coords.latitude,
@@ -60,10 +60,10 @@ const useWarningListener = (params: {
             }
         };
 
-        socket.on(SocketEvent.WARNING, handleWarning);
+        socket.on(SocketEvent.WARNING_MANAGER, handleWarning);
 
         return () => {
-            socket.off(SocketEvent.WARNING, handleWarning);
+            socket.off(SocketEvent.WARNING_MANAGER, handleWarning);
         };
     }, [socket, params.playAcousticWarning, hasPlayedWarning, params.eventType, params.userLocation]);
 

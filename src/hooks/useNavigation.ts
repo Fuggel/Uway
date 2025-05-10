@@ -32,6 +32,11 @@ const useNavigation = () => {
         lat: location?.coordinates.latitude,
     };
 
+    const isQueryEnabled =
+        isValidLonLat(longitude, latitude) &&
+        isValidLonLat(destinationLngLat.lon, destinationLngLat.lat) &&
+        !!authToken?.token;
+
     const {
         data,
         isLoading: loadingDirections,
@@ -46,10 +51,7 @@ const useNavigation = () => {
                 destinationLngLat,
                 excludeTypes,
             }),
-        enabled:
-            isValidLonLat(longitude, latitude) &&
-            isValidLonLat(destinationLngLat.lon, destinationLngLat.lat) &&
-            !!authToken?.token,
+        enabled: isQueryEnabled,
     });
 
     const { mutate: recalculateRoute } = useMutation({
@@ -110,7 +112,7 @@ const useNavigation = () => {
         }
     }, [directions, longitude, latitude, isNavigationMode]);
 
-    return { loadingDirections, errorDirections };
+    return { loadingDirections, errorDirections, isQueryEnabled };
 };
 
 export default useNavigation;

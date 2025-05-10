@@ -51,20 +51,9 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
         return false;
     };
 
-    const handleGPSWarnings = (accuracy?: number) => {
-        if (!accuracy) {
-            if (shouldSpeakWarning()) {
-                startSpeech("Achtung: Kein GPS-Signal erkannt.");
-            }
-        } else if (accuracy > THRESHOLD.NAVIGATION.GPS_WARNING_THRESHOLD) {
-            if (shouldSpeakWarning()) {
-                startSpeech("Achtung: GPS-Signal ist schwach. Die Navigation könnte ungenau sein.");
-            }
-        }
-    };
-
     const updateUserLocation = useCallback(
         (location: Location) => {
+            const { accuracy } = location.coords;
             let updatedLocation = location;
 
             if (snapToRoute.current && directions) {
@@ -72,7 +61,10 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
                     snapToRoute.current.processLocation(location, directions.geometry.coordinates) || location;
             }
 
-            handleGPSWarnings(updatedLocation.coords.accuracy);
+            if (shouldSpeakWarning() && (!accuracy || accuracy > THRESHOLD.NAVIGATION.GPS_WARNING_THRESHOLD)) {
+                startSpeech("Achtung: GPS-Signal ist schwach. Die Navigation könnte ungenau sein.");
+            }
+
             setUserLocation(updatedLocation);
         },
         [directions]

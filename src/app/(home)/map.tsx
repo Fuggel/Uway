@@ -1,7 +1,7 @@
 import { useKeepAwake } from "expo-keep-awake";
 import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
-import { Keyboard, NativeModules, StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,6 @@ import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
-import usePermissions from "@/hooks/usePermissions";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
@@ -48,27 +47,15 @@ const Map = () => {
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const showRouteOptions = useSelector(mapNavigationSelectors.showRouteOptions);
     const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
-    const { loadingDirections } = useNavigation();
+    const { loadingDirections, errorDirections, isQueryEnabled } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
-    const { hasNotificationPermissions } = usePermissions();
 
     useKeepAwake();
-
-    useEffect(() => {
-        if (!hasNotificationPermissions) {
-            console.log("No notification permissions granted.");
-            return;
-        }
-
-        setInterval(() => {
-            NativeModules.ForegroundServiceModule.announce("Navigation", "In 300 Metern links abbiegen.");
-        }, 5000);
-    }, [hasNotificationPermissions]);
 
     useEffect(() => {
         if (location) {
@@ -90,7 +77,7 @@ const Map = () => {
     }, [location]);
 
     useEffect(() => {
-        if (isNavigationSelecting && !routeOptions && !directions) {
+        if (isNavigationSelecting && (errorDirections || !isQueryEnabled)) {
             dispatch(mapNavigationActions.setIsNavigationSelecting(false));
             dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
             dispatch(mapNavigationActions.setShowRouteOptions(false));
@@ -101,7 +88,7 @@ const Map = () => {
                 text2: "Fehler beim Abrufen der Route.",
             });
         }
-    }, [isNavigationSelecting]);
+    }, [isNavigationSelecting, errorDirections, isQueryEnabled]);
 
     return (
         <>
