@@ -2,8 +2,7 @@ package com.fuggel.Uway.services
 
 import android.app.*
 import android.content.*
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -14,6 +13,15 @@ class ForegroundService : Service() {
     private lateinit var tts: TextToSpeech
     private var ttsReady: Boolean = false
     private var pendingMessage: String? = null
+    private var latestMessage: String = "In 300 Metern links abbiegen."
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val repeatTask = object : Runnable {
+        override fun run() {
+            speak(latestMessage)
+            handler.postDelayed(this, 5000)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -30,18 +38,25 @@ class ForegroundService : Service() {
                 }
             } else {
                 Log.e("TEST12345", "TTS initialization failed")
-                println("TEST12345 FAILED")
             }
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val message = intent?.getStringExtra("message") ?: "Service gestartet"
+        val message = intent?.getStringExtra("message")
         val title = intent?.getStringExtra("title") ?: "Uway"
 
-        Log.d("TEST12345", "onStartCommand called with: $message")
-        showNotification(title, message)
-        speak(message)
+        message?.let {
+            Log.d("TEST12345", "onStartCommand: Neue Nachricht erhalten: $it")
+            latestMessage = it
+        }
+
+        showNotification(title, latestMessage)
+
+        if (!hasStartedSpeaking) {
+            handler.postDelayed(repeatTask, 5000)
+            hasStartedSpeaking = true
+        }
 
         return START_STICKY
     }
@@ -80,6 +95,7 @@ class ForegroundService : Service() {
     }
 
     override fun onDestroy() {
+        handler.removeCallbacks(repeatTask)
         if (::tts.isInitialized) {
             tts.stop()
             tts.shutdown()
@@ -91,5 +107,6 @@ class ForegroundService : Service() {
 
     companion object {
         const val CHANNEL_ID = "uway_tts_channel"
+        private var hasStartedSpeaking = false
     }
 }
