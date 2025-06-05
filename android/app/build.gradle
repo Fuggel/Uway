@@ -201,6 +201,14 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "com.google.android.gms:play-services-location:21.3.0"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+
+    implementation("io.socket:socket.io-client:2.0.1") {
+        exclude group: "org.json", module: "json"
+    }
 }
 
 if (rnVersion < versionToNumber(0, 75, 0)) {

@@ -14,6 +14,7 @@ import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
+import useBackgroundService from "@/hooks/useBackgroundService";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
@@ -52,10 +53,12 @@ const Map = () => {
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
+    const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
 
     useKeepAwake();
+    useBackgroundService(isNavigationMode);
 
     useEffect(() => {
         if (location) {

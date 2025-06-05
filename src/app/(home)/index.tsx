@@ -37,7 +37,7 @@ const Home = () => {
 
     return (
         <>
-            {isSubscriptionActive ? <Map /> : <Paywall onSubscriptionChange={checkSubscriptionStatus} />}
+            <Map />
             <ToastComponent />
         </>
     );

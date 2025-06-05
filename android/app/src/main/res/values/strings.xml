@@ -1,6 +1,11 @@
 <resources>
-  <string name="app_name">Uway</string>
-  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
-  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
-  <string name="expo_system_ui_user_interface_style" translatable="false">automatic</string>
+    <string name="app_name">Uway</string>
+    <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+    <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+    <string name="expo_system_ui_user_interface_style" translatable="false">automatic</string>
+    <string name="notification_channel_name">Uway Benachrichtigungen</string>
+    <string name="notification_channel_description">Benachrichtigungen von Uway</string>
+    <string name="notification_build_title">Navigation läuft</string>
+    <string name="notification_build_content">GPS-Tracking aktiv</string>
+    <string name="notification_warning_title">Warnung</string>
 </resources>
