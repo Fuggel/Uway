@@ -51,7 +51,7 @@ class Instructions {
             const to = point(targetCoordinates);
             const dist = distance(from, to, { units: "meters" });
 
-            if (dist <= 3) {
+            if (dist <= 5) {
                 this.isArrived = true;
                 onCancel();
             }

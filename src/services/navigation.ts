@@ -1,9 +1,9 @@
 import axios from "axios";
 
 import { API } from "@/constants/env-constants";
-import { EXCLUDE_TYPES } from "@/constants/map-constants";
 import { LonLat } from "@/types/IMap";
 import { ExcludeTypes } from "@/types/INavigation";
+import { prepareExludeTypes } from "@/utils/map-utils";
 
 export async function fetchDirections(params: {
     authToken: string;
@@ -26,11 +26,9 @@ export async function fetchDirections(params: {
         queryParams.append("destinationCoordinates", `${destLon},${destLat}`);
 
         if (params.excludeTypes && Object.keys(params.excludeTypes).length > 0) {
-            const exclude = Object.keys(params.excludeTypes)
-                .filter((key) => params.excludeTypes[key as keyof ExcludeTypes])
-                .map((key) => EXCLUDE_TYPES[key as keyof ExcludeTypes]);
+            const exludeTypes = prepareExludeTypes(params.excludeTypes);
 
-            queryParams.append("exclude", exclude.join(","));
+            queryParams.append("exclude", exludeTypes);
         }
 
         const url = `${API.UWAY_URL}/directions?${queryParams.toString()}`;

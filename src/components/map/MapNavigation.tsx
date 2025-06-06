@@ -11,7 +11,6 @@ import { MapInstructionContext } from "@/contexts/MapInstructionContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapTextToSpeechActions, mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
-import { Instruction } from "@/types/INavigation";
 import { toGermanDate } from "@/utils/date-utils";
 import { convertSpeedToKmh, readableStringDistance, readableStringDuration } from "@/utils/map-utils";
 
@@ -58,11 +57,6 @@ const MapNavigation = () => {
         if (directions && isNavigationMode && location) {
             dispatch(mapNavigationActions.setNavigationView(true));
             dispatch(mapNavigationActions.setSearchQuery(""));
-
-            const minimalSteps = directions.legs[0]?.steps?.map((step: Instruction) => ({
-                maneuverLocation: step.maneuver.location,
-                voiceInstructions: step.voiceInstructions,
-            }));
         }
     }, [isNavigationMode, directions]);
 

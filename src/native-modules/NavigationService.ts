@@ -1,7 +1,9 @@
 import { NativeModules } from "react-native";
 
+import { StartNavigation } from "@/types/INavigationService";
+
 interface NativeNavigationModule {
-    startNavigationService: () => void;
+    startNavigationService: (params: StartNavigation) => void;
     stopNavigationService: () => void;
 }
 

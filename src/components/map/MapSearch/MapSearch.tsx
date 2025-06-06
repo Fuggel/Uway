@@ -114,10 +114,6 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
         setSaveSearchError(SaveSearchError.NONE);
     };
 
-    const cancelNavigation = () => {
-        dispatch(mapNavigationActions.handleCancelNavigation());
-    };
-
     useEffect(() => {
         if (text) {
             dispatch(mapNavigationActions.setSearchQuery(text));
@@ -132,7 +128,9 @@ const MapSearch = ({ onClose }: MapSearchProps) => {
             value={selectedSuggestion ? selectedSuggestion.name : searchQuery}
             speechToText={{ isListening, startListening, stopListening }}
             onClear={() => {
-                location ? cancelNavigation() : dispatch(mapNavigationActions.setSearchQuery(""));
+                location
+                    ? dispatch(mapNavigationActions.handleCancelNavigation())
+                    : dispatch(mapNavigationActions.setSearchQuery(""));
             }}
         >
             {!isSaveSearchPath && <SavedSearches handleLocationComplete={handleLocationComplete} />}

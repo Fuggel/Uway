@@ -2,10 +2,10 @@ import { Position, point } from "@turf/helpers";
 import { distance } from "@turf/turf";
 
 import { COLORS } from "@/constants/colors-constants";
-import { LANE_IMAGES } from "@/constants/map-constants";
+import { EXCLUDE_TYPES, LANE_IMAGES } from "@/constants/map-constants";
 import { FuelType, GasStation, IconType } from "@/types/IGasStation";
 import { MapboxStyle } from "@/types/IMap";
-import { Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
+import { ExcludeTypes, Lane, LaneDirection, ManeuverType, ModifierType } from "@/types/INavigation";
 import { IncidentType } from "@/types/ITraffic";
 
 export function determineMapStyle(styleUrl: MapboxStyle): MapboxStyle {
@@ -265,7 +265,7 @@ export function getOrderedGasStations(gasStations: GasStation[] | undefined): Ga
         .sort((a, b) => b.score - a.score);
 }
 
-export function distanceToPointText(params: { pos1: Position | undefined; pos2: Position | undefined; }) {
+export function distanceToPointText(params: { pos1: Position | undefined; pos2: Position | undefined }) {
     if (!params.pos1 || !params.pos2) {
         return "Entfernung unbekannt";
     }
@@ -364,11 +364,7 @@ export function removeConsecutiveDuplicates(lineString: number[][]): number[][] 
     return filtered;
 }
 
-export function getIncidentStatusText(
-    startTime?: string,
-    endTime?: string,
-    lastReportTime?: string
-): string | null {
+export function getIncidentStatusText(startTime?: string, endTime?: string, lastReportTime?: string): string | null {
     const now = Date.now();
 
     if (startTime && endTime) {
@@ -417,4 +413,12 @@ export function getGasStationIcon(iconType: IconType) {
         default:
             return require(`${assetsUrl}/gas-station-average.png`);
     }
+}
+
+export function prepareExludeTypes(excludeTypes: ExcludeTypes) {
+    const exclude = Object.keys(excludeTypes)
+        .filter((key) => excludeTypes[key as keyof ExcludeTypes])
+        .map((key) => EXCLUDE_TYPES[key as keyof ExcludeTypes]);
+
+    return exclude.join(",");
 }

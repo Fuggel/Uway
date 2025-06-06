@@ -3,8 +3,9 @@ import { AppState } from "react-native";
 
 import NavigationService from "@/native-modules/NavigationService";
 import { AppStateType } from "@/types/IAppState";
+import { StartNavigation } from "@/types/INavigationService";
 
-const useBackgroundService = (navigationEnabled: boolean) => {
+const useBackgroundService = (params: StartNavigation) => {
     const appState = useRef(AppState.currentState);
     const [currentState, setCurrentState] = useState(AppState.currentState);
 
@@ -18,17 +19,17 @@ const useBackgroundService = (navigationEnabled: boolean) => {
     }, []);
 
     useEffect(() => {
-        if (!navigationEnabled) {
+        if (!params.isNavigationEnabled) {
             NavigationService.stopNavigationService();
             return;
         }
 
         if (currentState === AppStateType.BACKGROUND) {
-            NavigationService.startNavigationService();
+            NavigationService.startNavigationService(params);
         } else {
             NavigationService.stopNavigationService();
         }
-    }, [currentState, navigationEnabled]);
+    }, [currentState, params.isNavigationEnabled]);
 };
 
 export default useBackgroundService;

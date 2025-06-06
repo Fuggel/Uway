@@ -23,7 +23,6 @@ const RouteOptions = () => {
         dispatch(mapNavigationActions.setTracking(true));
         dispatch(mapNavigationActions.setIsNavigationSelecting(false));
         dispatch(mapNavigationActions.setRouteOptions(null));
-        dispatch(mapNavigationActions.setSelectedRoute(0));
         dispatch(mapNavigationActions.setShowRouteOptions(false));
     };
 

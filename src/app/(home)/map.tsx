@@ -12,18 +12,21 @@ import { COLORS } from "@/constants/colors-constants";
 import { API } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
+import { AuthContext } from "@/contexts/AuthContext";
 import { BottomSheetContext } from "@/contexts/BottomSheetContext";
 import { UserLocationContext } from "@/contexts/UserLocationContext";
 import useBackgroundService from "@/hooks/useBackgroundService";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
+import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
 import { mapViewSelectors } from "@/store/mapView";
+import { RouteProfileType } from "@/types/INavigation";
 import { SearchLocation } from "@/types/ISearch";
 import { MarkerSheet, SheetType } from "@/types/ISheet";
-import { determineMapStyle } from "@/utils/map-utils";
+import { determineMapStyle, prepareExludeTypes } from "@/utils/map-utils";
 import { sheetData as openSheetData, sheetTitle } from "@/utils/sheet-utils";
 import { determineTheme, invertTheme } from "@/utils/theme-utils";
 
@@ -43,11 +46,14 @@ Mapbox.setAccessToken(API.MAPBOX_ACCESS_TOKEN);
 const Map = () => {
     const dispatch = useDispatch();
     const { cameraRef } = useMapCamera();
+    const { authToken } = useContext(AuthContext);
     const { userLocation } = useContext(UserLocationContext);
     const { openSheet, sheetData, showSheet, closeSheet } = useContext(BottomSheetContext);
     const categoryLocations = useSelector(mapNavigationSelectors.categoryLocation);
     const showRouteOptions = useSelector(mapNavigationSelectors.showRouteOptions);
     const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
+    const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
+    const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
     const { loadingDirections, errorDirections, isQueryEnabled } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
@@ -58,7 +64,15 @@ const Map = () => {
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
 
     useKeepAwake();
-    useBackgroundService(isNavigationMode);
+
+    useBackgroundService({
+        isNavigationEnabled: isNavigationMode,
+        authToken: String(authToken?.token),
+        destinationCoordinates: `${location?.coordinates.longitude},${location?.coordinates.latitude}`,
+        exclude: prepareExludeTypes(excludeTypes),
+        profileType: RouteProfileType.DRIVING,
+        selectedRoute,
+    });
 
     useEffect(() => {
         if (location) {

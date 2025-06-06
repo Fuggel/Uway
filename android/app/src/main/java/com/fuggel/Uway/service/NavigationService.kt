@@ -6,30 +6,42 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.content.ContextCompat
+import com.fuggel.Uway.R
 import com.fuggel.Uway.constants.Constants
 import com.fuggel.Uway.model.Warning
 import com.fuggel.Uway.model.WarningLogic
+import com.fuggel.Uway.utils.InstructionHelper
+import com.fuggel.Uway.network.DirectionsClient
 import com.fuggel.Uway.socket.SocketIOClient
 import com.fuggel.Uway.utils.NotificationHelper
+import com.fuggel.Uway.utils.getIncidentIcon
 import com.google.android.gms.location.*
 import org.json.JSONObject
-import com.fuggel.Uway.R
-import com.fuggel.Uway.utils.getIncidentIcon
 
 class NavigationService : Service() {
 
-    private val hasPlayedWarning = mutableMapOf<Pair<String?, String?>, Boolean>()
+    private val hasPlayedWarning = mutableMapOf<Triple<String?, String?, String?>, Boolean>()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var socketIOClient: SocketIOClient
     private lateinit var ttsManager: TTSManager
 
+    private var selectedRoute = 0
+    private var destinationCoordinates: String = ""
+    private var excludeTypes: String = ""
+    private var profileType: String = ""
+    private var authToken: String = ""
+    private var didFetchDirections = false
+    private var lastInstruction: String? = null
+    private var instructionsManager: InstructionsManager? = null
+
     override fun onCreate() {
         super.onCreate()
         NotificationHelper.createNotificationChannel(this)
-        initTTS()
+        ttsManager = TTSManager(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -39,6 +51,12 @@ class NavigationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        selectedRoute = intent?.getIntExtra("selectedRoute", 0) ?: 0
+        destinationCoordinates = intent?.getStringExtra("destinationCoordinates") ?: ""
+        excludeTypes = intent?.getStringExtra("excludeTypes") ?: ""
+        profileType = intent?.getStringExtra("profileType") ?: ""
+        authToken = intent?.getStringExtra("authToken") ?: ""
+
         socketIOClient = SocketIOClient(Constants.SOCKET_URL) { message ->
             handleWarningMessage(message)
         }
@@ -51,7 +69,6 @@ class NavigationService : Service() {
             Constants.FOREGROUND_NOTIFICATION_ID,
             NotificationHelper.buildNotification(this)
         )
-        startLocationUpdates()
         return START_STICKY
     }
 
@@ -64,24 +81,20 @@ class NavigationService : Service() {
             tts = json.optString("textToSpeech").takeIf { it.isNotEmpty() }
         )
 
-        if (!WarningLogic.isValid(warning)) {
-            hasPlayedWarning.clear()
-            return
-        }
+        if (!WarningLogic.isValid(warning)) return
 
-        val key = Pair(warning.type!!, warning.state!!)
-
+        val key = Triple(warning.type, warning.state, warning.tts)
         if (hasPlayedWarning.getOrDefault(key, false)) return
-
         hasPlayedWarning[key] = true
 
-        NotificationHelper.showWarningNotification(
+        NotificationHelper.showNotification(
             this,
             getString(R.string.notification_warning_title),
-            warning.text!!,
-            getIncidentIcon(warning.type.toIntOrNull())
+            warning.text ?: "",
+            getIncidentIcon(warning.type?.toIntOrNull())
         )
-        ttsManager.speak(warning.tts!!)
+
+        ttsManager.speak(warning.tts ?: "")
     }
 
     private fun startLocationUpdates() {
@@ -115,11 +128,46 @@ class NavigationService : Service() {
                     location.speed.toDouble()
                 )
             }
-        }
-    }
 
-    private fun initTTS() {
-        ttsManager = TTSManager(this)
+            if (!didFetchDirections) {
+                didFetchDirections = true
+
+                DirectionsClient.fetchDirections(
+                    authToken = authToken,
+                    startLat = location.latitude,
+                    startLon = location.longitude,
+                    destinationCoordinates = destinationCoordinates,
+                    excludeTypes = excludeTypes,
+                    profileType = profileType,
+                    onSuccess = { response ->
+                        val json = JSONObject(response)
+                        val routes = json.getJSONObject("data").getJSONArray("routes")
+                        if (routes.length() > 0) {
+                            val route = routes.getJSONObject(selectedRoute)
+                            instructionsManager = InstructionsManager(
+                                InstructionHelper.parse(route),
+                                ttsManager,
+                                getLastInstruction = { lastInstruction },
+                                setLastInstruction = { lastInstruction = it },
+                                onArrived = {
+                                    stopForeground(STOP_FOREGROUND_REMOVE)
+                                    stopSelf()
+                                },
+                                onDeviated = {
+                                    didFetchDirections = false
+                                    selectedRoute = 0
+                                }
+                            )
+                        }
+                    },
+                    onError = { error ->
+                        Log.d("NavigationService", "Failed fetching directions: ${error.message}")
+                    }
+                )
+            }
+
+            instructionsManager?.updateLocation(location, this@NavigationService)
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -130,5 +178,11 @@ class NavigationService : Service() {
         socketIOClient.disconnect()
         ttsManager.shutdown()
         stopForeground(STOP_FOREGROUND_REMOVE)
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 }
