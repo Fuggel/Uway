@@ -29,11 +29,12 @@ class NavigationService : Service() {
     private lateinit var socketIOClient: SocketIOClient
     private lateinit var ttsManager: TTSManager
 
+    private var authToken: String = ""
+    private var isNavigationModeEnabled: Boolean = false
     private var selectedRoute = 0
     private var destinationCoordinates: String = ""
     private var excludeTypes: String = ""
     private var profileType: String = ""
-    private var authToken: String = ""
     private var didFetchDirections = false
     private var lastInstruction: String? = null
     private var instructionsManager: InstructionsManager? = null
@@ -51,11 +52,12 @@ class NavigationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        authToken = intent?.getStringExtra("authToken") ?: ""
+        isNavigationModeEnabled = intent?.getBooleanExtra("isNavigationEnabled", false) ?: false
         selectedRoute = intent?.getIntExtra("selectedRoute", 0) ?: 0
         destinationCoordinates = intent?.getStringExtra("destinationCoordinates") ?: ""
-        excludeTypes = intent?.getStringExtra("excludeTypes") ?: ""
+        excludeTypes = intent?.getStringExtra("exclude") ?: ""
         profileType = intent?.getStringExtra("profileType") ?: ""
-        authToken = intent?.getStringExtra("authToken") ?: ""
 
         socketIOClient = SocketIOClient(Constants.SOCKET_URL) { message ->
             handleWarningMessage(message)
@@ -129,7 +131,7 @@ class NavigationService : Service() {
                 )
             }
 
-            if (!didFetchDirections) {
+            if (isNavigationModeEnabled && !didFetchDirections) {
                 didFetchDirections = true
 
                 DirectionsClient.fetchDirections(
@@ -166,7 +168,9 @@ class NavigationService : Service() {
                 )
             }
 
-            instructionsManager?.updateLocation(location, this@NavigationService)
+            if (isNavigationModeEnabled) {
+                instructionsManager?.updateLocation(location, this@NavigationService)
+            }
         }
     }
 

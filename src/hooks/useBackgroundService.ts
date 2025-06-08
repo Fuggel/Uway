@@ -19,17 +19,12 @@ const useBackgroundService = (params: StartNavigation) => {
     }, []);
 
     useEffect(() => {
-        if (!params.isNavigationEnabled) {
-            NavigationService.stopNavigationService();
-            return;
-        }
-
         if (currentState === AppStateType.BACKGROUND) {
             NavigationService.startNavigationService(params);
         } else {
             NavigationService.stopNavigationService();
         }
-    }, [currentState, params.isNavigationEnabled]);
+    }, [currentState]);
 };
 
 export default useBackgroundService;

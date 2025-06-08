@@ -16,6 +16,7 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
     @ReactMethod
     fun startNavigationService(params: ReadableMap) {
         val authToken = params.getString("authToken") ?: ""
+        val isNavigationEnabled = params.getBoolean("isNavigationEnabled")
         val destinationCoordinates = params.getString("destinationCoordinates") ?: ""
         val excludeTypes = params.getString("exclude") ?: ""
         val profileType = params.getString("profileType") ?: ""
@@ -23,6 +24,7 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
 
         val intent = Intent(reactContext, NavigationService::class.java).apply {
             putExtra("authToken", authToken)
+            putExtra("isNavigationEnabled", isNavigationEnabled)
             putExtra("destinationCoordinates", destinationCoordinates)
             putExtra("exclude", excludeTypes)
             putExtra("profileType", profileType)

@@ -4,5 +4,5 @@ export interface StartNavigation {
     exclude: string;
     profileType: string;
     selectedRoute: number;
-    isNavigationEnabled?: boolean;
+    isNavigationEnabled: boolean;
 }
