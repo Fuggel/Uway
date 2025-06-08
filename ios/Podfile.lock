@@ -1,10 +1,14 @@
 PODS:
   - boost (1.83.0)
   - DoubleConversion (1.1.6)
+  - EXApplication (5.9.1):
+    - ExpoModulesCore
   - EXAV (14.0.7):
     - ExpoModulesCore
     - ReactCommon/turbomodule/core
   - EXLocation (17.0.1):
+    - ExpoModulesCore
+  - EXNotifications (0.28.19):
     - ExpoModulesCore
   - Expo (51.0.39):
     - ExpoModulesCore
@@ -84,11 +88,11 @@ PODS:
     - MapboxMobileEvents (= 1.0.10)
     - Turf (~> 2.0)
   - MapboxMobileEvents (1.0.10)
-  - PurchasesHybridCommon (13.21.0):
-    - RevenueCat (= 5.18.0)
-  - PurchasesHybridCommonUI (13.21.0):
-    - PurchasesHybridCommon (= 13.21.0)
-    - RevenueCatUI (= 5.18.0)
+  - PurchasesHybridCommon (13.31.0):
+    - RevenueCat (= 5.23.0)
+  - PurchasesHybridCommonUI (13.31.0):
+    - PurchasesHybridCommon (= 13.31.0)
+    - RevenueCatUI (= 5.23.0)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1250,12 +1254,12 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
-  - RevenueCat (5.18.0)
-  - RevenueCatUI (5.18.0):
-    - RevenueCat (= 5.18.0)
+  - RevenueCat (5.23.0)
+  - RevenueCatUI (5.23.0):
+    - RevenueCat (= 5.23.0)
   - RNCAsyncStorage (2.1.2):
     - React-Core
-  - RNGestureHandler (2.24.0):
+  - RNGestureHandler (2.25.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1287,11 +1291,11 @@ PODS:
     - React
     - React-Core
     - Turf
-  - RNPaywalls (8.7.0):
-    - PurchasesHybridCommonUI (= 13.21.0)
+  - RNPaywalls (8.9.7):
+    - PurchasesHybridCommonUI (= 13.31.0)
     - React-Core
-  - RNPurchases (8.7.0):
-    - PurchasesHybridCommon (= 13.21.0)
+  - RNPurchases (8.9.7):
+    - PurchasesHybridCommon (= 13.31.0)
     - React-Core
   - RNReanimated (3.10.1):
     - DoubleConversion
@@ -1366,8 +1370,10 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXApplication (from `../node_modules/expo-application/ios`)
   - EXAV (from `../node_modules/expo-av/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
+  - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
@@ -1463,10 +1469,14 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXApplication:
+    :path: "../node_modules/expo-application/ios"
   EXAV:
     :path: "../node_modules/expo-av/ios"
   EXLocation:
     :path: "../node_modules/expo-location/ios"
+  EXNotifications:
+    :path: "../node_modules/expo-notifications/ios"
   Expo:
     :path: "../node_modules/expo"
   ExpoAsset:
@@ -1620,8 +1630,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
+  EXApplication: c08200c34daca7af7fd76ac4b9d606077410e8ad
   EXAV: afa491e598334bbbb92a92a2f4dd33d7149ad37f
   EXLocation: 43e9b582ca63a23c6f0a18d8cbe2145b3a388b55
+  EXNotifications: 85496c9fab09d759d0e4ff594bca078ab817c40c
   Expo: 8c995afb875c15bf8439af0b20bcb9ed8f90d0bd
   ExpoAsset: 323700f291684f110fb55f0d4022a3362ea9f875
   ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
@@ -1641,8 +1653,8 @@ SPEC CHECKSUMS:
   MapboxCoreMaps: faa14a797417dc32088c98019a3ce72e46cda5cd
   MapboxMaps: f10aecadbfb7cf96368852ca313101eb4171da53
   MapboxMobileEvents: de50b3a4de180dd129c326e09cd12c8adaaa46d6
-  PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
-  PurchasesHybridCommonUI: 19a14aea9521c58814d2fba56f584ec58363c12c
+  PurchasesHybridCommon: f694edb3e77b863b6dd92b1097d2558182d11f77
+  PurchasesHybridCommonUI: bb30412198867b207ed50402f9d6d5af0e9d618a
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
   RCTDeprecation: 3afceddffa65aee666dafd6f0116f1d975db1584
   RCTRequired: ec1239bc9d8bf63e10fb92bd8b26171a9258e0c1
@@ -1692,13 +1704,13 @@ SPEC CHECKSUMS:
   React-runtimescheduler: cfbe85c3510c541ec6dc815c7729b41304b67961
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
-  RevenueCat: e825836f5d6baa870c53d7281be25a5fd91abd91
-  RevenueCatUI: f52648672be46e692955aab397a4a491f8aa196f
+  RevenueCat: a4db48f41c10fcdd6fd1ef455875e091b32bf70d
+  RevenueCatUI: 667b706e2138014a2d62572630cd9363dcf366a2
   RNCAsyncStorage: addfc2cb6511dbe199c56c6b26ede383b6c38919
-  RNGestureHandler: 4d82e79c24b18e83040ed9d6f1a178267c5c6aa8
+  RNGestureHandler: 29c5c18249e444b9300d66ad567202c2e278b4a6
   rnmapbox-maps: 10396fe37a1aff03c6f2097367ca9c31e06b156c
-  RNPaywalls: 9087b13ca20cc01337eaf1b43e9eedc5ac55bac4
-  RNPurchases: 3b35539c86769ad8a8f838060559cf13d0a8fcb1
+  RNPaywalls: 31cd247abfe717e235d274d261dd5c169cc29c8d
+  RNPurchases: bccd073fee75bd9f3f09c43787145ed24029e64e
   RNReanimated: 35f9ac9c3ac42d0497ebd1cce5c39d7687a8493e
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
   RNSVG: e451741721b9fd3db71b06aafe9335d09a189692
@@ -1707,6 +1719,6 @@ SPEC CHECKSUMS:
   Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
-PODFILE CHECKSUM: f4fdef0f07ce5897c939f27ad6b9002ba66cd8fd
+PODFILE CHECKSUM: ad9b238bb259a87acee9d36f9989bd4def15b8c7
 
 COCOAPODS: 1.16.2

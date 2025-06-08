@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 
 import NavigationService from "@/native-modules/NavigationService";
 import { AppStateType } from "@/types/IAppState";
@@ -20,9 +20,13 @@ const useBackgroundService = (params: StartNavigation) => {
 
     useEffect(() => {
         if (currentState === AppStateType.BACKGROUND) {
-            NavigationService.startNavigationService(params);
+            Platform.OS === "android"
+                ? NavigationService.startNavigationService(params)
+                : console.log("iOS is not implemented yet...");
         } else {
-            NavigationService.stopNavigationService();
+            Platform.OS === "android"
+                ? NavigationService.stopNavigationService()
+                : console.log("iOS is not implemented yet...");
         }
     }, [currentState]);
 };
