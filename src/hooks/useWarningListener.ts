@@ -26,7 +26,6 @@ const useWarningListener = (params: {
             lat: params.userLocation.coords.latitude,
             heading: params.userLocation.coords.course,
             speed: params.userLocation.coords.speed,
-            userId: socket.id,
         });
 
         const handleWarning = (data: Warning) => {

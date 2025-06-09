@@ -19,7 +19,7 @@ const useBackgroundService = (params: StartNavigation) => {
     }, []);
 
     useEffect(() => {
-        if (currentState === AppStateType.BACKGROUND) {
+        if (currentState === AppStateType.BACKGROUND && !!params.authToken) {
             Platform.OS === "android"
                 ? NavigationService.startNavigationService(params)
                 : console.log("iOS is not implemented yet...");
@@ -28,7 +28,7 @@ const useBackgroundService = (params: StartNavigation) => {
                 ? NavigationService.stopNavigationService()
                 : console.log("iOS is not implemented yet...");
         }
-    }, [currentState]);
+    }, [currentState, params.authToken]);
 };
 
 export default useBackgroundService;

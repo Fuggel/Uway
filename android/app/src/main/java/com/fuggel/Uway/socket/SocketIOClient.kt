@@ -9,6 +9,7 @@ import java.net.URISyntaxException
 
 class SocketIOClient(
     private val url: String = Constants.SOCKET_URL,
+    private val authToken: String,
     private val onMessageReceived: (String) -> Unit,
 ) {
     private val tag = "SocketIOClient"
@@ -16,7 +17,11 @@ class SocketIOClient(
 
     fun connect(onConnected: (() -> Unit)? = null) {
         try {
-            socket = IO.socket(url)
+            val opts = IO.Options().apply {
+                auth = mapOf("token" to authToken)
+            }
+
+            socket = IO.socket(url, opts)
         } catch (e: URISyntaxException) {
             Log.e(tag, "Invalid URL: $url", e)
             return
@@ -24,7 +29,6 @@ class SocketIOClient(
 
         socket?.apply {
             on(Socket.EVENT_CONNECT) {
-                Log.d(tag, "Connected with ID: ${getSocketId()}")
                 onConnected?.invoke()
             }
             on(Socket.EVENT_DISCONNECT) {
@@ -51,15 +55,12 @@ class SocketIOClient(
         heading: Double? = null,
         speed: Double? = null
     ) {
-        Log.d(tag, "Socket ID: ${getSocketId()}")
-
         val json = JSONObject().apply {
             put("eventType", eventType)
             put("lon", lon)
             put("lat", lat)
             put("heading", heading ?: JSONObject.NULL)
             put("speed", speed ?: JSONObject.NULL)
-            put("userId", getSocketId())
             put("eventWarningType", JSONObject.NULL)
         }
 
@@ -73,9 +74,5 @@ class SocketIOClient(
         socket?.off()
         socket = null
         Log.d(tag, "Socket disconnected and cleaned up")
-    }
-
-    private fun getSocketId(): String? {
-        return socket?.id()
     }
 }

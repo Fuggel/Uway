@@ -59,7 +59,7 @@ class NavigationService : Service() {
         excludeTypes = intent?.getStringExtra("exclude") ?: ""
         profileType = intent?.getStringExtra("profileType") ?: ""
 
-        socketIOClient = SocketIOClient(Constants.SOCKET_URL) { message ->
+        socketIOClient = SocketIOClient(Constants.SOCKET_URL, authToken) { message ->
             handleWarningMessage(message)
         }
 
@@ -71,6 +71,7 @@ class NavigationService : Service() {
             Constants.FOREGROUND_NOTIFICATION_ID,
             NotificationHelper.buildNotification(this)
         )
+
         return START_STICKY
     }
 
