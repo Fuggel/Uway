@@ -8,6 +8,7 @@ export interface StartNavigation {
     allowTextToSpeech: boolean;
     incidentOptions: IncidentOptions;
     speedCameraOptions: SpeedCameraOptions;
+    envConfig: EnvConfig;
 }
 
 export interface IncidentOptions {
@@ -18,4 +19,15 @@ export interface IncidentOptions {
 export interface SpeedCameraOptions {
     showSpeedCameras: boolean;
     playAcousticWarning: boolean;
+}
+
+export interface EnvConfig {
+    uwayApiUrl: string;
+    uwayWsUrl: string;
+    gpsWarningThreshold: number;
+    distanceThresholdInMeters: number;
+    speechCooldownInSeconds: number;
+    routeDeviationThresholdInMeters: number;
+    uTurnAngleMin: number;
+    uTurnAngleMax: number;
 }

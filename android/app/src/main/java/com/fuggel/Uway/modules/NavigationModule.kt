@@ -15,11 +15,11 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun startNavigationService(params: ReadableMap) {
-        val authToken = params.getString("authToken") ?: ""
+        val authToken = params.getString("authToken")
         val isNavigationEnabled = params.getBoolean("isNavigationEnabled")
         val destinationCoordinates = params.getString("destinationCoordinates") ?: ""
         val excludeTypes = params.getString("exclude") ?: ""
-        val profileType = params.getString("profileType") ?: ""
+        val profileType = params.getString("profileType")
         val selectedRoute = params.getInt("selectedRoute")
         val allowTextToSpeech = params.getBoolean("allowTextToSpeech")
 
@@ -34,6 +34,21 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
         val playSpeedCameraAcousticWarning =
             speedCameraOptions?.getBoolean("playAcousticWarning") ?: false
 
+        val config = params.getMap("envConfig")
+
+        val uwayApiUrl =
+            config?.getString("uwayApiUrl") ?: "https://uway-backend-3kp6.onrender.com/api"
+        val uwayWsUrl = config?.getString("uwayWsUrl") ?: "https://uway-backend-3kp6.onrender.com"
+        val gpsWarningThreshold = config?.getInt("gpsWarningThreshold") ?: 250
+        val distanceThresholdInMeters = config?.getInt("distanceThresholdInMeters") ?: 50
+        val speechCooldownInSeconds = config?.getInt("speechCooldownInSeconds") ?: 30
+        val routeDeviationThresholdInMeters =
+            config?.getInt("routeDeviationThresholdInMeters") ?: 30
+        val uTurnAngleMin = config?.getInt("uTurnAngleMin") ?: 150
+        val uTurnAngleMax = config?.getInt("uTurnAngleMax") ?: 210
+
+        val speechCooldownInMs = speechCooldownInSeconds * 1000L
+
         val intent = Intent(reactContext, NavigationService::class.java).apply {
             putExtra("authToken", authToken)
             putExtra("isNavigationEnabled", isNavigationEnabled)
@@ -46,6 +61,14 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
             putExtra("playIncidentAcousticWarning", playIncidentAcousticWarning)
             putExtra("showSpeedCameras", showSpeedCameras)
             putExtra("playSpeedCameraAcousticWarning", playSpeedCameraAcousticWarning)
+            putExtra("uwayApiUrl", uwayApiUrl)
+            putExtra("uwayWsUrl", uwayWsUrl)
+            putExtra("gpsWarningThreshold", gpsWarningThreshold)
+            putExtra("distanceThresholdInMeters", distanceThresholdInMeters)
+            putExtra("speechCooldownInMs", speechCooldownInMs)
+            putExtra("routeDeviationThresholdInMeters", routeDeviationThresholdInMeters)
+            putExtra("uTurnAngleMin", uTurnAngleMin)
+            putExtra("uTurnAngleMax", uTurnAngleMax)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

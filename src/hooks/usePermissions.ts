@@ -13,8 +13,15 @@ const usePermissions = () => {
     }, []);
 
     const checkAndRequestLocationPermission = async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        setHasLocationPermissions(status === Location.PermissionStatus.GRANTED);
+        const { status: fgStatus } = await Location.requestForegroundPermissionsAsync();
+        let backgroundGranted = false;
+
+        if (fgStatus === Location.PermissionStatus.GRANTED) {
+            const { status: bgStatus } = await Location.requestBackgroundPermissionsAsync();
+            backgroundGranted = bgStatus === Location.PermissionStatus.GRANTED;
+        }
+
+        setHasLocationPermissions(fgStatus === Location.PermissionStatus.GRANTED && backgroundGranted);
     };
 
     const checkAndRequestNotificationPermission = async () => {

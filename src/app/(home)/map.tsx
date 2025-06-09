@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
 
 import { COLORS } from "@/constants/colors-constants";
-import { API } from "@/constants/env-constants";
+import { API, THRESHOLD } from "@/constants/env-constants";
 import { DEFAULT_CAMERA_SETTINGS, MAP_ICONS } from "@/constants/map-constants";
 import { SIZES } from "@/constants/size-constants";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -88,6 +88,16 @@ const Map = () => {
         speedCameraOptions: {
             showSpeedCameras,
             playAcousticWarning: playSpeedCameraAcousticWarning,
+        },
+        envConfig: {
+            uwayApiUrl: API.UWAY_URL,
+            uwayWsUrl: API.UWAY_WS_URL,
+            gpsWarningThreshold: THRESHOLD.NAVIGATION.GPS_WARNING_THRESHOLD,
+            distanceThresholdInMeters: THRESHOLD.NAVIGATION.DISTANCE_IN_METERS,
+            speechCooldownInSeconds: THRESHOLD.NAVIGATION.SPEECH_COOLDOWN_IN_SECONDS,
+            routeDeviationThresholdInMeters: THRESHOLD.NAVIGATION.ROUTE_DEVIATION_METERS,
+            uTurnAngleMin: THRESHOLD.NAVIGATION.UTURN_ANGLE_MIN,
+            uTurnAngleMax: THRESHOLD.NAVIGATION.UTURN_ANGLE_MAX,
         },
     });
 

@@ -1,7 +1,9 @@
 package com.fuggel.Uway.network
 
+import com.fuggel.Uway.constants.AppConfig
 import com.fuggel.Uway.constants.Constants
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.IOException
 
 object DirectionsClient {
@@ -26,21 +28,24 @@ object DirectionsClient {
         val destLon = destinationParts[0]
         val destLat = destinationParts[1]
 
-        val urlBuilder = HttpUrl.Builder()
-            .scheme("http")
-            .host(Constants.UWAY_BACKEND_HOST)
-            .port(Constants.UWAY_BACKEND_PORT)
-            .addPathSegment("api")
+        val baseUrl = AppConfig.uwayApiUrl.toHttpUrlOrNull()
+        if (baseUrl == null) {
+            onError(IllegalArgumentException("Invalid base URL: ${AppConfig.uwayApiUrl}"))
+            return
+        }
+
+        val url = baseUrl.newBuilder()
             .addPathSegment("directions")
             .addQueryParameter("profile", profileType)
             .addQueryParameter("startCoordinates", "$startLon,$startLat")
             .addQueryParameter("destinationCoordinates", "$destLon,$destLat")
+            .apply {
+                if (excludeTypes.isNotEmpty()) {
+                    addQueryParameter("exclude", excludeTypes)
+                }
+            }
+            .build()
 
-        if (excludeTypes.isNotEmpty()) {
-            urlBuilder.addQueryParameter("exclude", excludeTypes)
-        }
-
-        val url = urlBuilder.build()
         val request = Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $authToken")

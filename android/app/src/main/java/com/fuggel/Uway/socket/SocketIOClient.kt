@@ -1,6 +1,7 @@
 package com.fuggel.Uway.socket
 
 import android.util.Log
+import com.fuggel.Uway.constants.AppConfig
 import com.fuggel.Uway.constants.Constants
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -8,7 +9,6 @@ import org.json.JSONObject
 import java.net.URISyntaxException
 
 class SocketIOClient(
-    private val url: String = Constants.SOCKET_URL,
     private val authToken: String,
     private val onMessageReceived: (String) -> Unit,
 ) {
@@ -21,9 +21,9 @@ class SocketIOClient(
                 auth = mapOf("token" to authToken)
             }
 
-            socket = IO.socket(url, opts)
+            socket = IO.socket(AppConfig.uwayWsUrl, opts)
         } catch (e: URISyntaxException) {
-            Log.e(tag, "Invalid URL: $url", e)
+            Log.e(tag, "Invalid URL: ${AppConfig.uwayWsUrl}", e)
             return
         }
 
@@ -44,7 +44,7 @@ class SocketIOClient(
             }
 
             connect()
-            Log.d(tag, "Socket connected to $url")
+            Log.d(tag, "Socket connected to ${AppConfig.uwayWsUrl}")
         }
     }
 

@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.fuggel.Uway.R
+import com.fuggel.Uway.constants.AppConfig
 import com.fuggel.Uway.constants.Constants
 import com.fuggel.Uway.model.Warning
 import com.fuggel.Uway.model.WarningLogic
@@ -44,10 +45,11 @@ class NavigationService : Service() {
     private var didFetchDirections = false
     private var lastInstruction: String? = null
     private var instructionsManager: InstructionsManager? = null
+    private var lastGpsWarningTime = 0L
 
     override fun onCreate() {
         super.onCreate()
-        
+
         NotificationHelper.createNotificationChannel(this)
         ttsManager = TTSManager(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -70,8 +72,28 @@ class NavigationService : Service() {
         showSpeedCameras = intent?.getBooleanExtra("showSpeedCameras", false) ?: false
         playSpeedCameraAcousticWarning =
             intent?.getBooleanExtra("playSpeedCameraAcousticWarning", false) ?: false
+        AppConfig.uwayApiUrl = intent?.getStringExtra("uwayApiUrl") ?: AppConfig.uwayApiUrl
+        AppConfig.uwayWsUrl = intent?.getStringExtra("uwayWsUrl") ?: AppConfig.uwayWsUrl
+        AppConfig.gpsWarningThreshold =
+            intent?.getIntExtra("gpsWarningThreshold", AppConfig.gpsWarningThreshold)
+                ?: AppConfig.gpsWarningThreshold
+        AppConfig.distanceThresholdInMeters =
+            intent?.getIntExtra("distanceThresholdInMeters", AppConfig.distanceThresholdInMeters)
+                ?: AppConfig.distanceThresholdInMeters
+        AppConfig.speechCooldownInMs =
+            intent?.getLongExtra("speechCooldownInMs", AppConfig.speechCooldownInMs)
+                ?: AppConfig.speechCooldownInMs
+        AppConfig.routeDeviationThresholdInMeters =
+            intent?.getIntExtra(
+                "routeDeviationThresholdInMeters",
+                AppConfig.routeDeviationThresholdInMeters
+            ) ?: AppConfig.routeDeviationThresholdInMeters
+        AppConfig.uTurnAngleMin =
+            intent?.getIntExtra("uTurnAngleMin", AppConfig.uTurnAngleMin) ?: AppConfig.uTurnAngleMin
+        AppConfig.uTurnAngleMax =
+            intent?.getIntExtra("uTurnAngleMax", AppConfig.uTurnAngleMax) ?: AppConfig.uTurnAngleMax
 
-        socketIOClient = SocketIOClient(Constants.SOCKET_URL, authToken) { message ->
+        socketIOClient = SocketIOClient(authToken) { message ->
             handleWarningMessage(message)
         }
 
@@ -152,6 +174,16 @@ class NavigationService : Service() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             val location = result.lastLocation ?: return
+
+            if (location.accuracy > AppConfig.gpsWarningThreshold) {
+                val now = System.currentTimeMillis()
+                if (now - lastGpsWarningTime > AppConfig.speechCooldownInMs) {
+                    lastGpsWarningTime = now
+                    if (allowTextToSpeech) {
+                        ttsManager.speak(getString(R.string.weak_gps_signal))
+                    }
+                }
+            }
 
             Constants.VALID_WARNING_TYPES.forEach { eventType ->
                 socketIOClient.sendLocation(

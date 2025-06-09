@@ -2,6 +2,7 @@ package com.fuggel.Uway.service
 
 import android.content.Context
 import android.location.Location
+import com.fuggel.Uway.constants.AppConfig
 import com.fuggel.Uway.model.Instruction
 import com.fuggel.Uway.model.ManeuverType
 import com.fuggel.Uway.model.VoiceInstruction
@@ -19,11 +20,6 @@ class InstructionsManager(
     private val onDeviated: () -> Unit,
 ) {
     private val routeCoordinates: List<List<Double>> = steps.map { it.maneuverLocation }
-    private val distanceThreshold = 50.0
-    private val deviationThresholdMeters = 30.0
-    private val uTurnAngleMin = 150.0
-    private val uTurnAngleMax = 210.0
-
     private var isArrived = false
 
     fun updateLocation(location: Location, context: Context) {
@@ -68,7 +64,7 @@ class InstructionsManager(
             userPoint
         )
 
-        if (distance > deviationThresholdMeters) return true
+        if (distance > AppConfig.routeDeviationThresholdInMeters) return true
 
         val nextIndex = (indexOnLine + 1).coerceAtMost(routeCoordinates.size - 1)
         val nextPoint = routeCoordinates[nextIndex]
@@ -78,7 +74,7 @@ class InstructionsManager(
         val userBearing = location.bearing.toDouble()
         val angleDiff = abs(routeBearing - userBearing)
 
-        return angleDiff in uTurnAngleMin..uTurnAngleMax
+        return angleDiff in AppConfig.uTurnAngleMin.toDouble()..AppConfig.uTurnAngleMax.toDouble()
     }
 
     private fun checkIfArrived(location: Location): Boolean {
@@ -112,7 +108,7 @@ class InstructionsManager(
             val diff = abs(distanceToManeuver - instruction.distanceAlongGeometry)
             val isAhead = instruction.distanceAlongGeometry >= distanceToManeuver
             val isFirst = instruction.announcement == firstInstruction.announcement
-            isFirst || (isAhead && diff <= distanceThreshold)
+            isFirst || (isAhead && diff <= AppConfig.distanceThresholdInMeters.toDouble())
         }
     }
 }

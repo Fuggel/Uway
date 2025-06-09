@@ -5,7 +5,10 @@
     <string name="expo_system_ui_user_interface_style" translatable="false">automatic</string>
     <string name="notification_channel_name">Uway Benachrichtigungen</string>
     <string name="notification_channel_description">Benachrichtigungen von Uway</string>
+    <string name="notification_alert_channel_name">Uway Warnungen</string>
+    <string name="notification_alert_channel_description">Benachrichtigungen für akustische Warnungen und wichtige Hinweise</string>
     <string name="notification_build_title">Navigation läuft</string>
     <string name="notification_build_content">GPS-Tracking aktiv</string>
     <string name="notification_warning_title">Warnung</string>
+    <string name="weak_gps_signal">Achtung: GPS-Signal ist schwach. Die Navigation könnte ungenau sein.</string>
 </resources>

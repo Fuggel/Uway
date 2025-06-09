@@ -2,6 +2,7 @@ import { Location } from "@rnmapbox/maps";
 import { LineString, lineString, point } from "@turf/helpers";
 import { distance, nearestPointOnLine } from "@turf/turf";
 
+import { THRESHOLD } from "@/constants/env-constants";
 import {
     BannerInstruction,
     CurrentAnnotation,
@@ -24,7 +25,6 @@ class Instructions {
     private currentStepIndex = 0;
     private lastDistanceToNextStep = 0;
     private roundedUpdates = 10;
-    private distanceThreshold = 50;
 
     constructor(routeGeometry: number[][], instructions: Instruction[], userPosition: Location | null) {
         this.routeGeometry = routeGeometry;
@@ -195,7 +195,8 @@ class Instructions {
 
             if (
                 isFirstInstruction ||
-                (instruction.distanceAlongGeometry >= currentDistance && distanceDifference <= this.distanceThreshold)
+                (instruction.distanceAlongGeometry >= currentDistance &&
+                    distanceDifference <= THRESHOLD.NAVIGATION.DISTANCE_IN_METERS)
             ) {
                 return instruction;
             }
