@@ -47,11 +47,10 @@ class NavigationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        
         NotificationHelper.createNotificationChannel(this)
         ttsManager = TTSManager(this)
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000L)
             .setMinUpdateIntervalMillis(1500L)
             .build()
@@ -212,6 +211,7 @@ class NavigationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         fusedLocationClient.removeLocationUpdates(locationCallback)
         socketIOClient.disconnect()
         ttsManager.shutdown()
@@ -220,6 +220,7 @@ class NavigationService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
+
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }

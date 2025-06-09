@@ -8,25 +8,28 @@ import { StartNavigation } from "@/types/INavigationService";
 const useBackgroundService = (params: StartNavigation) => {
     const appState = useRef(AppState.currentState);
     const [currentState, setCurrentState] = useState(AppState.currentState);
+    const hasBeenActiveOnce = useRef(false);
 
     useEffect(() => {
         const subscription = AppState.addEventListener("change", (nextAppState) => {
             appState.current = nextAppState;
             setCurrentState(nextAppState);
+
+            if (nextAppState === AppStateType.ACTIVE) {
+                hasBeenActiveOnce.current = true;
+            }
         });
 
         return () => subscription.remove();
     }, []);
 
     useEffect(() => {
-        if (currentState === AppStateType.BACKGROUND && !!params.authToken) {
-            Platform.OS === "android"
-                ? NavigationService.startNavigationService(params)
-                : console.log("iOS is not implemented yet...");
+        if (Platform.OS !== "android") return;
+
+        if (currentState === AppStateType.BACKGROUND && !!params.authToken && hasBeenActiveOnce.current) {
+            NavigationService.startNavigationService(params);
         } else {
-            Platform.OS === "android"
-                ? NavigationService.stopNavigationService()
-                : console.log("iOS is not implemented yet...");
+            NavigationService.stopNavigationService();
         }
     }, [currentState, params.authToken]);
 };
