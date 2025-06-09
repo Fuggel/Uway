@@ -23,6 +23,7 @@ const useSpeedCameras = () => {
     const { warning: speedCameraWarning } = useWarningListener({
         eventType: WarningType.SPEED_CAMERA,
         playAcousticWarning,
+        showWarning: showSpeedCameras,
         userLocation,
     });
 

@@ -6,7 +6,8 @@ data class Warning(
     val type: String?,
     val state: String?,
     val text: String?,
-    val tts: String?
+    val tts: String?,
+    val eventWarningType: String?,
 )
 
 object WarningLogic {

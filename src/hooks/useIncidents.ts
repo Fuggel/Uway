@@ -23,6 +23,7 @@ const useIncidents = () => {
     const { warning: incidentWarning } = useWarningListener({
         eventType: WarningType.INCIDENT,
         playAcousticWarning,
+        showWarning: showIncidents,
         userLocation,
     });
 

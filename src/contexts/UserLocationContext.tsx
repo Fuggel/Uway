@@ -62,7 +62,6 @@ export const UserLocationContextProvider: React.FC<ProviderProps> = ({ children 
             }
 
             if (shouldSpeakWarning() && (!accuracy || accuracy > THRESHOLD.NAVIGATION.GPS_WARNING_THRESHOLD)) {
-                // TODO: Trigger a similar warning when the app is in the background
                 startSpeech("Achtung: GPS-Signal ist schwach. Die Navigation könnte ungenau sein.");
             }
 

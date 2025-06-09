@@ -12,6 +12,7 @@ import kotlin.math.abs
 class InstructionsManager(
     private val steps: List<Instruction>,
     private val ttsManager: TTSManager,
+    private val allowTextToSpeech: Boolean,
     private val getLastInstruction: () -> String?,
     private val setLastInstruction: (String) -> Unit,
     private val onArrived: () -> Unit,
@@ -51,7 +52,10 @@ class InstructionsManager(
             NotificationHelper.showNotification(context, "Navigation", activeVoice.announcement)
 
             setLastInstruction(activeVoice.announcement)
-            ttsManager.speak(activeVoice.announcement)
+
+            if (allowTextToSpeech) {
+                ttsManager.speak(activeVoice.announcement)
+            }
         }
     }
 

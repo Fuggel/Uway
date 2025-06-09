@@ -19,9 +19,12 @@ import useBackgroundService from "@/hooks/useBackgroundService";
 import useMapCamera from "@/hooks/useMapCamera";
 import useNavigation from "@/hooks/useNavigation";
 import { mapExcludeNavigationSelectors } from "@/store/mapExcludeNavigation";
+import { mapIncidentSelectors } from "@/store/mapIncident";
 import { mapLayoutsActions, mapLayoutsSelectors } from "@/store/mapLayouts";
 import { mapNavigationActions, mapNavigationSelectors } from "@/store/mapNavigation";
 import { mapSearchActions, mapSearchSelectors } from "@/store/mapSearch";
+import { mapSpeedCameraSelectors } from "@/store/mapSpeedCamera";
+import { mapTextToSpeechSelectors } from "@/store/mapTextToSpeech";
 import { mapViewSelectors } from "@/store/mapView";
 import { RouteProfileType } from "@/types/INavigation";
 import { SearchLocation } from "@/types/ISearch";
@@ -62,10 +65,14 @@ const Map = () => {
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
     const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
+    const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
+    const showIncidents = useSelector(mapIncidentSelectors.showIncident);
+    const playIncidentAcousticWarning = useSelector(mapIncidentSelectors.playAcousticWarning);
+    const showSpeedCameras = useSelector(mapSpeedCameraSelectors.showSpeedCameras);
+    const playSpeedCameraAcousticWarning = useSelector(mapSpeedCameraSelectors.playAcousticWarning);
 
     useKeepAwake();
 
-    // TODO: Include playAcousticWarning for instructions, speed cameras and incidents as well
     useBackgroundService({
         isNavigationEnabled: isNavigationMode,
         authToken: String(authToken?.token),
@@ -73,6 +80,15 @@ const Map = () => {
         exclude: prepareExludeTypes(excludeTypes),
         profileType: RouteProfileType.DRIVING,
         selectedRoute,
+        allowTextToSpeech,
+        incidentOptions: {
+            showIncidents,
+            playAcousticWarning: playIncidentAcousticWarning,
+        },
+        speedCameraOptions: {
+            showSpeedCameras,
+            playAcousticWarning: playSpeedCameraAcousticWarning,
+        },
     });
 
     useEffect(() => {

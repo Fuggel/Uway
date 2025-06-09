@@ -29,12 +29,18 @@ class NavigationService : Service() {
     private lateinit var socketIOClient: SocketIOClient
     private lateinit var ttsManager: TTSManager
 
-    private var authToken: String = ""
-    private var isNavigationModeEnabled: Boolean = false
+    private var authToken = ""
+    private var isNavigationModeEnabled = false
     private var selectedRoute = 0
-    private var destinationCoordinates: String = ""
-    private var excludeTypes: String = ""
-    private var profileType: String = ""
+    private var destinationCoordinates = ""
+    private var excludeTypes = ""
+    private var profileType = ""
+    private var allowTextToSpeech = true
+    private var showIncidents = true
+    private var playIncidentAcousticWarning = false
+    private var showSpeedCameras = false
+    private var playSpeedCameraAcousticWarning = false
+
     private var didFetchDirections = false
     private var lastInstruction: String? = null
     private var instructionsManager: InstructionsManager? = null
@@ -58,6 +64,13 @@ class NavigationService : Service() {
         destinationCoordinates = intent?.getStringExtra("destinationCoordinates") ?: ""
         excludeTypes = intent?.getStringExtra("exclude") ?: ""
         profileType = intent?.getStringExtra("profileType") ?: ""
+        allowTextToSpeech = intent?.getBooleanExtra("allowTextToSpeech", true) ?: true
+        showIncidents = intent?.getBooleanExtra("showIncidents", true) ?: true
+        playIncidentAcousticWarning =
+            intent?.getBooleanExtra("playIncidentAcousticWarning", false) ?: false
+        showSpeedCameras = intent?.getBooleanExtra("showSpeedCameras", false) ?: false
+        playSpeedCameraAcousticWarning =
+            intent?.getBooleanExtra("playSpeedCameraAcousticWarning", false) ?: false
 
         socketIOClient = SocketIOClient(Constants.SOCKET_URL, authToken) { message ->
             handleWarningMessage(message)
@@ -81,7 +94,8 @@ class NavigationService : Service() {
             type = json.optString("warningType").takeIf { it.isNotEmpty() },
             state = json.optString("warningState").takeIf { it.isNotEmpty() },
             text = json.optString("text").takeIf { it.isNotEmpty() },
-            tts = json.optString("textToSpeech").takeIf { it.isNotEmpty() }
+            tts = json.optString("textToSpeech").takeIf { it.isNotEmpty() },
+            eventWarningType = json.optString("eventWarningType").takeIf { it.isNotEmpty() }
         )
 
         if (!WarningLogic.isValid(warning)) return
@@ -90,14 +104,32 @@ class NavigationService : Service() {
         if (hasPlayedWarning.getOrDefault(key, false)) return
         hasPlayedWarning[key] = true
 
-        NotificationHelper.showNotification(
-            this,
-            getString(R.string.notification_warning_title),
-            warning.text ?: "",
-            getIncidentIcon(warning.type?.toIntOrNull())
-        )
+        val shouldShowNotification = when (warning.type) {
+            Constants.WARNING_TYPE_INCIDENT -> showIncidents
+            Constants.WARNING_TYPE_SPEED_CAMERA -> showSpeedCameras
+            else -> false
+        }
 
-        ttsManager.speak(warning.tts ?: "")
+        if (shouldShowNotification) {
+            NotificationHelper.showNotification(
+                this,
+                getString(R.string.notification_warning_title),
+                warning.text ?: "",
+                getIncidentIcon(warning.eventWarningType?.toIntOrNull())
+            )
+        }
+
+        if (!allowTextToSpeech) return
+
+        val shouldPlayAcousticWarning = when (warning.type) {
+            Constants.WARNING_TYPE_INCIDENT -> playIncidentAcousticWarning
+            Constants.WARNING_TYPE_SPEED_CAMERA -> playSpeedCameraAcousticWarning
+            else -> false
+        }
+
+        if (shouldPlayAcousticWarning) {
+            ttsManager.speak(warning.tts ?: "")
+        }
     }
 
     private fun startLocationUpdates() {
@@ -150,6 +182,7 @@ class NavigationService : Service() {
                             instructionsManager = InstructionsManager(
                                 InstructionHelper.parse(route),
                                 ttsManager,
+                                allowTextToSpeech,
                                 getLastInstruction = { lastInstruction },
                                 setLastInstruction = { lastInstruction = it },
                                 onArrived = {

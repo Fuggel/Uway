@@ -9,6 +9,7 @@ import useTextToSpeech from "./useTextToSpeech";
 
 const useWarningListener = (params: {
     eventType: WarningType;
+    showWarning: boolean;
     playAcousticWarning: boolean;
     userLocation: Location | null;
 }) => {
@@ -40,7 +41,11 @@ const useWarningListener = (params: {
                 return;
             }
 
-            setWarning({ text, textToSpeech, eventWarningType });
+            if (params.showWarning) {
+                setWarning({ text, textToSpeech, eventWarningType });
+            } else {
+                setWarning(null);
+            }
 
             if (warningState !== WarningState.EARLY && warningState !== WarningState.LATE) {
                 setHasPlayedWarning({ early: false, late: false });
@@ -64,7 +69,14 @@ const useWarningListener = (params: {
         return () => {
             socket.off(SocketEvent.WARNING_MANAGER, handleWarning);
         };
-    }, [socket, params.playAcousticWarning, hasPlayedWarning, params.eventType, params.userLocation]);
+    }, [
+        socket,
+        params.playAcousticWarning,
+        params.showWarning,
+        hasPlayedWarning,
+        params.eventType,
+        params.userLocation,
+    ]);
 
     return { warning };
 };

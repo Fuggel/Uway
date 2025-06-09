@@ -5,4 +5,17 @@ export interface StartNavigation {
     profileType: string;
     selectedRoute: number;
     isNavigationEnabled: boolean;
+    allowTextToSpeech: boolean;
+    incidentOptions: IncidentOptions;
+    speedCameraOptions: SpeedCameraOptions;
+}
+
+export interface IncidentOptions {
+    showIncidents: boolean;
+    playAcousticWarning: boolean;
+}
+
+export interface SpeedCameraOptions {
+    showSpeedCameras: boolean;
+    playAcousticWarning: boolean;
 }

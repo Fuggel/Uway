@@ -21,6 +21,18 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
         val excludeTypes = params.getString("exclude") ?: ""
         val profileType = params.getString("profileType") ?: ""
         val selectedRoute = params.getInt("selectedRoute")
+        val allowTextToSpeech = params.getBoolean("allowTextToSpeech")
+
+        val incidentOptions = params.getMap("incidentOptions")
+        val speedCameraOptions = params.getMap("speedCameraOptions")
+
+        val showIncidents = incidentOptions?.getBoolean("showIncidents") ?: false
+        val playIncidentAcousticWarning =
+            incidentOptions?.getBoolean("playAcousticWarning") ?: false
+
+        val showSpeedCameras = speedCameraOptions?.getBoolean("showSpeedCameras") ?: false
+        val playSpeedCameraAcousticWarning =
+            speedCameraOptions?.getBoolean("playAcousticWarning") ?: false
 
         val intent = Intent(reactContext, NavigationService::class.java).apply {
             putExtra("authToken", authToken)
@@ -29,6 +41,11 @@ class NavigationModule(private val reactContext: ReactApplicationContext) :
             putExtra("exclude", excludeTypes)
             putExtra("profileType", profileType)
             putExtra("selectedRoute", selectedRoute)
+            putExtra("allowTextToSpeech", allowTextToSpeech)
+            putExtra("showIncidents", showIncidents)
+            putExtra("playIncidentAcousticWarning", playIncidentAcousticWarning)
+            putExtra("showSpeedCameras", showSpeedCameras)
+            putExtra("playSpeedCameraAcousticWarning", playSpeedCameraAcousticWarning)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

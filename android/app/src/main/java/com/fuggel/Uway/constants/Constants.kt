@@ -9,7 +9,9 @@ object Constants {
     const val SOCKET_URL = "http://192.168.178.33:8001"
     const val USER_LOCATION = "user-location"
     const val WARNING_MANAGER = "warning-manager"
+    const val WARNING_TYPE_INCIDENT = "incident"
+    const val WARNING_TYPE_SPEED_CAMERA = "speed-camera"
 
-    val VALID_WARNING_TYPES = setOf("incident", "speed-camera")
+    val VALID_WARNING_TYPES = setOf(WARNING_TYPE_INCIDENT, WARNING_TYPE_SPEED_CAMERA)
     val VALID_WARNING_STATES = setOf("early", "late")
 }
