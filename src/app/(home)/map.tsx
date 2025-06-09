@@ -65,6 +65,7 @@ const Map = () => {
 
     useKeepAwake();
 
+    // TODO: Include playAcousticWarning for instructions, speed cameras and incidents as well
     useBackgroundService({
         isNavigationEnabled: isNavigationMode,
         authToken: String(authToken?.token),
