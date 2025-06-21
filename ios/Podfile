@@ -34,13 +34,15 @@ install! 'cocoapods',
 
 prepare_react_native_project!
 
-# @generated begin @rnmapbox/maps-rnmapboxmapsimpl - expo prebuild (DO NOT MODIFY) sync-3d6926200b2cf308973503d5e38be3f1bc39c659
+# @generated begin @rnmapbox/maps-rnmapboxmapsimpl - expo prebuild (DO NOT MODIFY) sync-33ae0a13d6dd97aca89c53a680e92d7501368312
 $RNMapboxMapsDownloadToken = ENV['EXPO_SECRET_MAPBOX_ACCESS_TOKEN']
 $RNMapboxMapsVersion = '10.16.0'
 # @generated end @rnmapbox/maps-rnmapboxmapsimpl
 target 'Uway' do
   use_expo_modules!
   config = use_native_modules!
+
+  pod 'Socket.IO-Client-Swift', '15.2.0'
 
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState } from "react-native";
 
 import NavigationService from "@/native-modules/NavigationService";
 import { AppStateType } from "@/types/IAppState";
@@ -24,8 +24,6 @@ const useBackgroundService = (params: StartNavigation) => {
     }, []);
 
     useEffect(() => {
-        if (Platform.OS !== "android") return;
-
         if (currentState === AppStateType.BACKGROUND && !!params.authToken && hasBeenActiveOnce.current) {
             NavigationService.startNavigationService(params);
         } else {
