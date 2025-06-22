@@ -47,6 +47,8 @@
     <string>Erlaube Uway deinen Standort zu verwenden.</string>
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.</string>
+    <key>NSLocationUsageDescription</key>
+    <string>Uway benötigt deinen Standort für Navigation und Warnungen.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Uway benötigt Zugriff auf deinen Standort, um Navigation zu ermöglichen.</string>
     <key>NSMicrophoneUsageDescription</key>
@@ -66,7 +68,13 @@
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Uway möchte dir Benachrichtigungen senden.</string>
+    <key>Privacy - Location Usage Description</key>
+    <string>Uway benötigt deinen Standort für Navigation und Warnungen.</string>
     <key>UIBackgroundModes</key>
     <array>
       <string>location</string>

@@ -11,10 +11,14 @@ import Foundation
     @objc static let shared = NavigationBridge()
 
     @objc func startWithParams(_ params: NSDictionary) {
+        print("[backgroundtask] bridge startWithParams called with: \(params)")
+
         NavigationService.shared.start(params: params)
     }
 
     @objc func stop() {
+      print("[backgroundtask] bridge stop called")
+
         NavigationService.shared.stop()
     }
 }

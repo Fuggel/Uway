@@ -30,7 +30,8 @@ export default ({ config }) => {
                     "Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.",
                 NSLocationAlwaysAndWhenInUseUsageDescription:
                     "Uway benötigt Zugriff auf deinen Standort im Hintergrund für Navigation und Warnungen.",
-                NSPhotoLibraryUsageDescription: "Uway benötigt Zugriff auf deine Fotos, um Bilder zu speichern.",
+                NSUserNotificationUsageDescription:
+                    "Uway möchte dir Benachrichtigungen senden.",
                 UIBackgroundModes: ["location", "audio"],
             },
         },

@@ -8,13 +8,13 @@ RCT_EXPORT_MODULE(NavigationModule);
 
 RCT_EXPORT_METHOD(startNavigationService:(NSDictionary *)params)
 {
-  RCTLogInfo(@"[Bridge] startNavigationService called with params: %@", params);
+  RCTLogInfo(@"[backgroundtask] startNavigationService called with params: %@", params);
   [NavigationBridge.shared startWithParams:params];
 }
 
 RCT_EXPORT_METHOD(stopNavigationService)
 {
-  RCTLogInfo(@"[Bridge] stopNavigationService called");
+  RCTLogInfo(@"[backgroundtask] stopNavigationService called");
   [NavigationBridge.shared stop];
 }
 

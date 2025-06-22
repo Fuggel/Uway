@@ -56,7 +56,7 @@ const useInstructions = () => {
 
         if (announcement && spokenInstruction !== announcement) {
             dispatch(mapNavigationActions.setSpokenInstruction(announcement));
-            startSpeech(announcement);
+            // startSpeech(announcement);
         }
     }, [isNavigationMode, currentInstruction]);
 

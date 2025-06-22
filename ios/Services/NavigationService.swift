@@ -30,6 +30,9 @@ class NavigationService: NSObject, CLLocationManagerDelegate {
     private var instructionsManager: InstructionsManager? = nil
     
     func start(params: NSDictionary) {
+      print("backgroundtask navigation service called with params: \(params)")
+      locationManager.requestAlwaysAuthorization()
+
       destinationCoordinates = params["destinationCoordinates"] as? String ?? ""
          excludeTypes = params["exclude"] as? String ?? ""
          profileType = params["profileType"] as? String ?? ""
@@ -59,7 +62,6 @@ class NavigationService: NSObject, CLLocationManagerDelegate {
              AppConfig.uTurnAngleMax = config["uTurnAngleMax"] as? Int ?? 210
          }
 
-        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.allowsBackgroundLocationUpdates = true
@@ -68,7 +70,7 @@ class NavigationService: NSObject, CLLocationManagerDelegate {
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
         
-        socketClient = SocketClient(authToken: authToken)
+        socketClient = SocketClient(authToken: authToken, socketUrl: AppConfig.uwayWsUrl)
 
         socketClient?.onMessageReceived = { [weak self] message in
             self?.handleWarningMessage(jsonString: message)
@@ -77,6 +79,8 @@ class NavigationService: NSObject, CLLocationManagerDelegate {
     }
     
     func stop() {
+      print("backgroundtask navigation service stopped")
+
         locationManager.stopUpdatingLocation()
         socketClient?.disconnect()
         speechSynthesizer.stopSpeaking(at: .immediate)
@@ -102,7 +106,10 @@ class NavigationService: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
+        
+        print("backgroundtask locations: \(location.coordinate.latitude), \(location.coordinate.longitude)")
 
+      
         ["incident", "speed-camera"].forEach { eventType in
             socketClient?.sendLocation(
                 eventType: eventType,

@@ -51,9 +51,13 @@ class DirectionsClient {
             return
         }
 
+        print("backgroundtask directions request url: \(url)")
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+
+        print("backgroundtask directions request headers: \(request.allHTTPHeaderFields ?? [:])")
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -64,6 +68,10 @@ class DirectionsClient {
             guard let data = data else {
                 onError(NSError(domain: "no_data", code: 400))
                 return
+            }
+
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("backgroundtask directions response: \(responseString)")
             }
 
             do {

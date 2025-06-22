@@ -15,10 +15,10 @@ class SocketClient {
     
     var onMessageReceived: ((String) -> Void)?
     
-    init(authToken: String) {
+  init(authToken: String, socketUrl: String) {
         self.authToken = authToken
+        let url = URL(string: socketUrl)!
         
-        let url = URL(string: AppConfig.uwayWsUrl)!
         manager = SocketManager(
             socketURL: url,
             config: [
@@ -31,6 +31,8 @@ class SocketClient {
     }
     
     func connect() {
+      print("backgroundtask socket connect() called")
+
         socket.on(clientEvent: .connect) { _, _ in
             print("Socket connected")
         }
@@ -78,6 +80,8 @@ class SocketClient {
     }
     
     func disconnect() {
+      print("backgroundtask socket disconnect() called")
+
         socket.disconnect()
     }
 }
