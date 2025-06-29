@@ -65,8 +65,8 @@ class NavigationModule: NSObject, CLLocationManagerDelegate {
                showSpeedCameras: self.showSpeedCameras,
                playSpeedCameraWarning: self.playSpeedCameraWarning,
                speak: { self.speak($0) },
-               notify: { title, body in
-                   NotificationHelper.showNotification(title: title, body: body)
+               notify: { title, body, icon in
+                 NotificationHelper.showNotification(title: title, body: body, iconName: icon)
                }
          )
 

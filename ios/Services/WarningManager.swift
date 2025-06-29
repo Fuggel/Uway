@@ -18,7 +18,8 @@ class WarningManager {
     var playSpeedCameraWarning: Bool = true
 
     private let speak: (String) -> Void
-    private let notify: (String, String) -> Void
+    private let notify: (String, String, String?) -> Void
+
 
     init(
         allowTextToSpeech: Bool,
@@ -27,7 +28,7 @@ class WarningManager {
         showSpeedCameras: Bool,
         playSpeedCameraWarning: Bool,
         speak: @escaping (String) -> Void,
-        notify: @escaping (String, String) -> Void
+        notify: @escaping (String, String, String?) -> Void
     ) {
         self.allowTextToSpeech = allowTextToSpeech
         self.showIncidents = showIncidents
@@ -57,16 +58,21 @@ class WarningManager {
 
         switch type {
         case "incident":
+            let iconType = (warning["eventWarningType"] as? String).flatMap { Int($0) }
+            let iconName = getIncidentIconName(for: iconType)
+            
             if showIncidents {
-                notify("Warnung", text)
+                notify("Warnung", text, iconName)
             }
             if playIncidentWarning && allowTextToSpeech {
                 speak(tts)
             }
 
         case "speed-camera":
+            let iconName = "speed_camera"
+            
             if showSpeedCameras {
-                notify("Blitzer", text)
+                notify("Blitzer", text, iconName)
             }
             if playSpeedCameraWarning && allowTextToSpeech {
                 speak(tts)

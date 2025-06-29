@@ -21,6 +21,7 @@
 		CA2774F52E11772800AE18AC /* DirectionsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F42E11772800AE18AC /* DirectionsService.swift */; };
 		CA2774F72E11793F00AE18AC /* WarningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F62E11793F00AE18AC /* WarningManager.swift */; };
 		CA2774F92E117D3E00AE18AC /* UwaySocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F82E117D3E00AE18AC /* UwaySocketManager.swift */; };
+		CA2774FB2E11913C00AE18AC /* WarningsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774FA2E11913C00AE18AC /* WarningsHelper.swift */; };
 		CADCBBD22E071D4900664652 /* InstructionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD12E071D4900664652 /* InstructionsManager.swift */; };
 		CADCBBD82E071D8300664652 /* Warning.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD72E071D8300664652 /* Warning.swift */; };
 		CADCBBDA2E071D9200664652 /* Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD92E071D9200664652 /* Instruction.swift */; };
@@ -50,6 +51,7 @@
 		CA2774F42E11772800AE18AC /* DirectionsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionsService.swift; sourceTree = "<group>"; };
 		CA2774F62E11793F00AE18AC /* WarningManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningManager.swift; sourceTree = "<group>"; };
 		CA2774F82E117D3E00AE18AC /* UwaySocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UwaySocketManager.swift; sourceTree = "<group>"; };
+		CA2774FA2E11913C00AE18AC /* WarningsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningsHelper.swift; sourceTree = "<group>"; };
 		CADCBBD12E071D4900664652 /* InstructionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsManager.swift; sourceTree = "<group>"; };
 		CADCBBD72E071D8300664652 /* Warning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Warning.swift; sourceTree = "<group>"; };
 		CADCBBD92E071D9200664652 /* Instruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instruction.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 		13B07FAE1A68108700A75B9A /* Uway */ = {
 			isa = PBXGroup;
 			children = (
+				CA2774FC2E11929400AE18AC /* Assets */,
 				CADCBBE92E071E3C00664652 /* Modules */,
 				CADCBBE22E071DD700664652 /* Utils */,
 				CADCBBDF2E071DC300664652 /* Socket */,
@@ -153,6 +156,13 @@
 			path = Uway/Supporting;
 			sourceTree = "<group>";
 		};
+		CA2774FC2E11929400AE18AC /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
 		CADCBBCC2E071C1B00664652 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -201,6 +211,7 @@
 				CADCBBE32E071DDE00664652 /* GeoHelper.swift */,
 				CADCBBE52E071DED00664652 /* NotificationHelper.swift */,
 				CADCBBE72E071DFB00664652 /* InstructionsHelper.swift */,
+				CA2774FA2E11913C00AE18AC /* WarningsHelper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -473,6 +484,7 @@
 			files = (
 				CA2774F72E11793F00AE18AC /* WarningManager.swift in Sources */,
 				CA2774EF2E0F119D00AE18AC /* NavigationModuleBridge.m in Sources */,
+				CA2774FB2E11913C00AE18AC /* WarningsHelper.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				CADCBBD82E071D8300664652 /* Warning.swift in Sources */,
 				CADCBBE42E071DDE00664652 /* GeoHelper.swift in Sources */,
@@ -650,10 +662,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -711,10 +720,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
