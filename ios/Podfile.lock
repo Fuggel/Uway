@@ -1363,10 +1363,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - Socket.IO-Client-Swift (15.2.0):
-    - Starscream (~> 3.1)
+  - Socket.IO-Client-Swift (16.1.0):
+    - Starscream (~> 4.0.6)
   - SocketRocket (0.7.0)
-  - Starscream (3.1.1)
+  - Starscream (4.0.8)
   - Turf (2.8.0)
   - Yoga (0.0.0)
 
@@ -1452,7 +1452,7 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - Socket.IO-Client-Swift (= 15.2.0)
+  - Socket.IO-Client-Swift (= 16.1.0)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1721,12 +1721,12 @@ SPEC CHECKSUMS:
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
   RNSVG: e451741721b9fd3db71b06aafe9335d09a189692
   RNVectorIcons: 845eda5c7819bd29699cafd0fc98c9d4afe28c96
-  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
+  Socket.IO-Client-Swift: ee4b8f80a3db18dd7f32b266ddf273310609443c
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
   Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
-PODFILE CHECKSUM: 2d5e4445bad8d2cda6730152d421bfd5e09f958d
+PODFILE CHECKSUM: 6ed07d02be22ec5fe4725b1e7100562aee806c10
 
 COCOAPODS: 1.16.2

@@ -16,15 +16,15 @@
 		96905EF65AED1B983A6B3ABC /* libPods-Uway.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Uway.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		CADCBBCA2E071B1E00664652 /* RCTNavigationModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBC92E071B1D00664652 /* RCTNavigationModule.m */; };
-		CADCBBCE2E071C2B00664652 /* NavigationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBCD2E071C2B00664652 /* NavigationService.swift */; };
-		CADCBBD02E071CBA00664652 /* NavigationBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBCF2E071CBA00664652 /* NavigationBridge.swift */; };
+		CA2774EF2E0F119D00AE18AC /* NavigationModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = CA2774EE2E0F119D00AE18AC /* NavigationModuleBridge.m */; };
+		CA2774F12E0F11D100AE18AC /* NavigationModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F02E0F11D000AE18AC /* NavigationModule.swift */; };
+		CA2774F52E11772800AE18AC /* DirectionsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F42E11772800AE18AC /* DirectionsService.swift */; };
+		CA2774F72E11793F00AE18AC /* WarningManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F62E11793F00AE18AC /* WarningManager.swift */; };
+		CA2774F92E117D3E00AE18AC /* UwaySocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2774F82E117D3E00AE18AC /* UwaySocketManager.swift */; };
 		CADCBBD22E071D4900664652 /* InstructionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD12E071D4900664652 /* InstructionsManager.swift */; };
-		CADCBBD52E071D6400664652 /* DirectionsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD42E071D6400664652 /* DirectionsClient.swift */; };
 		CADCBBD82E071D8300664652 /* Warning.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD72E071D8300664652 /* Warning.swift */; };
 		CADCBBDA2E071D9200664652 /* Instruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBD92E071D9200664652 /* Instruction.swift */; };
 		CADCBBDD2E071DA900664652 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBDC2E071DA900664652 /* AppConfig.swift */; };
-		CADCBBE12E071DCE00664652 /* SocketIOClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBE02E071DCE00664652 /* SocketIOClient.swift */; };
 		CADCBBE42E071DDE00664652 /* GeoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBE32E071DDE00664652 /* GeoHelper.swift */; };
 		CADCBBE62E071DED00664652 /* NotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBE52E071DED00664652 /* NotificationHelper.swift */; };
 		CADCBBE82E071DFB00664652 /* InstructionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADCBBE72E071DFB00664652 /* InstructionsHelper.swift */; };
@@ -45,16 +45,15 @@
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Uway/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B4E465FF23D76FCBC7F04526 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Uway/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CADCBBC92E071B1D00664652 /* RCTNavigationModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTNavigationModule.m; sourceTree = "<group>"; };
-		CADCBBCB2E071B5600664652 /* RCTNavigationModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTNavigationModule.h; sourceTree = "<group>"; };
-		CADCBBCD2E071C2B00664652 /* NavigationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationService.swift; sourceTree = "<group>"; };
-		CADCBBCF2E071CBA00664652 /* NavigationBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBridge.swift; sourceTree = "<group>"; };
+		CA2774EE2E0F119D00AE18AC /* NavigationModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NavigationModuleBridge.m; sourceTree = "<group>"; };
+		CA2774F02E0F11D000AE18AC /* NavigationModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationModule.swift; sourceTree = "<group>"; };
+		CA2774F42E11772800AE18AC /* DirectionsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionsService.swift; sourceTree = "<group>"; };
+		CA2774F62E11793F00AE18AC /* WarningManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningManager.swift; sourceTree = "<group>"; };
+		CA2774F82E117D3E00AE18AC /* UwaySocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UwaySocketManager.swift; sourceTree = "<group>"; };
 		CADCBBD12E071D4900664652 /* InstructionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsManager.swift; sourceTree = "<group>"; };
-		CADCBBD42E071D6400664652 /* DirectionsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionsClient.swift; sourceTree = "<group>"; };
 		CADCBBD72E071D8300664652 /* Warning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Warning.swift; sourceTree = "<group>"; };
 		CADCBBD92E071D9200664652 /* Instruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instruction.swift; sourceTree = "<group>"; };
 		CADCBBDC2E071DA900664652 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
-		CADCBBE02E071DCE00664652 /* SocketIOClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketIOClient.swift; sourceTree = "<group>"; };
 		CADCBBE32E071DDE00664652 /* GeoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoHelper.swift; sourceTree = "<group>"; };
 		CADCBBE52E071DED00664652 /* NotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelper.swift; sourceTree = "<group>"; };
 		CADCBBE72E071DFB00664652 /* InstructionsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsHelper.swift; sourceTree = "<group>"; };
@@ -94,8 +93,6 @@
 				8EB976AD493041A791D0570E /* noop-file.swift */,
 				7113315EA6464CF59F8B5BFB /* Uway-Bridging-Header.h */,
 				B4E465FF23D76FCBC7F04526 /* PrivacyInfo.xcprivacy */,
-				CADCBBC92E071B1D00664652 /* RCTNavigationModule.m */,
-				CADCBBCB2E071B5600664652 /* RCTNavigationModule.h */,
 			);
 			name = Uway;
 			sourceTree = "<group>";
@@ -159,8 +156,8 @@
 		CADCBBCC2E071C1B00664652 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				CADCBBCD2E071C2B00664652 /* NavigationService.swift */,
 				CADCBBD12E071D4900664652 /* InstructionsManager.swift */,
+				CA2774F62E11793F00AE18AC /* WarningManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -168,7 +165,7 @@
 		CADCBBD32E071D5A00664652 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				CADCBBD42E071D6400664652 /* DirectionsClient.swift */,
+				CA2774F42E11772800AE18AC /* DirectionsService.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -193,7 +190,7 @@
 		CADCBBDF2E071DC300664652 /* Socket */ = {
 			isa = PBXGroup;
 			children = (
-				CADCBBE02E071DCE00664652 /* SocketIOClient.swift */,
+				CA2774F82E117D3E00AE18AC /* UwaySocketManager.swift */,
 			);
 			path = Socket;
 			sourceTree = "<group>";
@@ -211,7 +208,8 @@
 		CADCBBE92E071E3C00664652 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				CADCBBCF2E071CBA00664652 /* NavigationBridge.swift */,
+				CA2774EE2E0F119D00AE18AC /* NavigationModuleBridge.m */,
+				CA2774F02E0F11D000AE18AC /* NavigationModule.swift */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -379,6 +377,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RevenueCat/RevenueCat.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RevenueCatUI/RevenueCat_RevenueCatUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/Starscream/Starscream_Privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -411,6 +410,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCTI18nStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RevenueCat.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RevenueCat_RevenueCatUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Starscream_Privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -471,22 +471,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CADCBBD52E071D6400664652 /* DirectionsClient.swift in Sources */,
+				CA2774F72E11793F00AE18AC /* WarningManager.swift in Sources */,
+				CA2774EF2E0F119D00AE18AC /* NavigationModuleBridge.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				CADCBBD82E071D8300664652 /* Warning.swift in Sources */,
 				CADCBBE42E071DDE00664652 /* GeoHelper.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				CADCBBDA2E071D9200664652 /* Instruction.swift in Sources */,
 				CADCBBE62E071DED00664652 /* NotificationHelper.swift in Sources */,
-				CADCBBCA2E071B1E00664652 /* RCTNavigationModule.m in Sources */,
 				CADCBBE82E071DFB00664652 /* InstructionsHelper.swift in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
+				CA2774F52E11772800AE18AC /* DirectionsService.swift in Sources */,
 				CADCBBD22E071D4900664652 /* InstructionsManager.swift in Sources */,
 				364D30C1D80543B789E71B82 /* noop-file.swift in Sources */,
+				CA2774F92E117D3E00AE18AC /* UwaySocketManager.swift in Sources */,
+				CA2774F12E0F11D100AE18AC /* NavigationModule.swift in Sources */,
 				CADCBBDD2E071DA900664652 /* AppConfig.swift in Sources */,
-				CADCBBE12E071DCE00664652 /* SocketIOClient.swift in Sources */,
-				CADCBBD02E071CBA00664652 /* NavigationBridge.swift in Sources */,
-				CADCBBCE2E071C2B00664652 /* NavigationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,7 +536,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuggel.Uway;
-				PRODUCT_NAME = "Uway";
+				PRODUCT_NAME = Uway;
 				SWIFT_OBJC_BRIDGING_HEADER = "Uway/Uway-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -583,7 +583,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fuggel.Uway;
-				PRODUCT_NAME = "Uway";
+				PRODUCT_NAME = Uway;
 				SWIFT_OBJC_BRIDGING_HEADER = "Uway/Uway-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -650,7 +650,10 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -708,7 +711,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

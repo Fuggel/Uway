@@ -42,7 +42,7 @@ target 'Uway' do
   use_expo_modules!
   config = use_native_modules!
 
-  pod 'Socket.IO-Client-Swift', '15.2.0'
+  pod 'Socket.IO-Client-Swift', '16.1.0'
 
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']

@@ -56,10 +56,10 @@ const useWarningListener = (params: {
             if (!params.playAcousticWarning) return;
 
             if (warningState === WarningState.EARLY && !hasPlayedWarning.early) {
-                // startSpeech(textToSpeech);
+                startSpeech(textToSpeech);
                 setHasPlayedWarning((prev) => ({ ...prev, early: true }));
             } else if (warningState === WarningState.LATE && !hasPlayedWarning.late) {
-                // startSpeech(textToSpeech);
+                startSpeech(textToSpeech);
                 setHasPlayedWarning((prev) => ({ ...prev, late: true }));
             }
         };

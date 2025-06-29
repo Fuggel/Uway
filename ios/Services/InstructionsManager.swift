@@ -40,41 +40,48 @@ class InstructionsManager {
         guard !checkIfArrived(location: location) else {
             if !isArrived {
                 isArrived = true
+                print("navigation: destination reached")
                 onArrived()
             }
             return
         }
-        
+
         if checkDeviation(location: location) {
+            print("navigation: route deviation detected")
             onDeviated()
         }
-        
-        guard let currentStep = getClosestStep(to: location) else { return }
-        
+
+        guard let currentStep = getClosestStep(to: location) else {
+            print("navigation: no matching step found")
+            return
+        }
+
         let distanceToManeuver = GeoHelper.haversine(
             lat1: location.coordinate.latitude,
             lon1: location.coordinate.longitude,
             lat2: currentStep.maneuverLocation[1],
             lon2: currentStep.maneuverLocation[0]
         )
-        
+
         if let activeVoice = getActiveVoiceInstruction(
             voiceInstructions: currentStep.voiceInstructions,
             distanceToManeuver: distanceToManeuver
-        ), activeVoice.announcement != getLastInstruction() {
-            setLastInstruction(activeVoice.announcement)
-            speak(activeVoice.announcement)
-            NotificationHelper.showNotification(
-                title: "Navigation",
-                body: activeVoice.announcement
-            )
+        ) {
+            if activeVoice.announcement != getLastInstruction() {
+                setLastInstruction(activeVoice.announcement)
+                speak(activeVoice.announcement)
+                NotificationHelper.showNotification(
+                    title: "Navigation",
+                    body: activeVoice.announcement
+                )
+            }
         }
     }
-    
+
     private func checkIfArrived(location: CLLocation) -> Bool {
         guard let lastStep = steps.last,
               lastStep.maneuverType == .arrive else { return false }
-        
+
         let (lng, lat) = (lastStep.maneuverLocation[0], lastStep.maneuverLocation[1])
         let dist = GeoHelper.haversine(
             lat1: location.coordinate.latitude,
@@ -82,19 +89,24 @@ class InstructionsManager {
             lat2: lat,
             lon2: lng
         )
+      
         return dist <= 5.0
     }
-    
+
     private func checkDeviation(location: CLLocation) -> Bool {
         guard routeCoordinates.count >= 2 else { return false }
 
         let userPoint = [location.coordinate.longitude, location.coordinate.latitude]
         let result = GeoHelper.nearestPointOnLine(line: routeCoordinates, point: userPoint)
-        
-      if result.distanceMeters > Double(AppConfig.routeDeviationThresholdInMeters) {
+
+        if result.distanceMeters > Double(AppConfig.routeDeviationThresholdInMeters) {
             return true
         }
 
+        guard location.course >= 0 else {
+            return false
+        }
+      
         let nextIndex = min(result.indexOnLine + 1, routeCoordinates.count - 1)
         let nextPoint = routeCoordinates[nextIndex]
         let routeBearing = GeoHelper.bearing(
@@ -103,8 +115,8 @@ class InstructionsManager {
         )
         let userBearing = location.course
         let angleDiff = abs(routeBearing - userBearing)
-        
-      return angleDiff >= Double(AppConfig.uTurnAngleMin) && angleDiff <= Double(AppConfig.uTurnAngleMax)
+      
+        return angleDiff >= Double(AppConfig.uTurnAngleMin) && angleDiff <= Double(AppConfig.uTurnAngleMax)
     }
 
     private func getClosestStep(to location: CLLocation) -> Instruction? {
@@ -134,7 +146,10 @@ class InstructionsManager {
         return voiceInstructions.first(where: {
             let diff = abs($0.distanceAlongGeometry - distanceToManeuver)
             let isAhead = $0.distanceAlongGeometry >= distanceToManeuver
-          return $0.announcement == first.announcement || (isAhead && diff <= Double(AppConfig.distanceThresholdInMeters))
+            let result = $0.announcement == first.announcement || (isAhead && diff <= Double(AppConfig.distanceThresholdInMeters))
+          
+            return result
         })
     }
 }
+
