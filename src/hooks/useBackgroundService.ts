@@ -1,35 +1,49 @@
-import { useEffect, useRef, useState } from "react";
-import { AppState } from "react-native";
+import { useEffect, useRef } from "react";
+import { AppState, AppStateStatus } from "react-native";
 
+import { useSplash } from "@/contexts/SplashContext";
 import NavigationService from "@/native-modules/NavigationService";
 import { AppStateType } from "@/types/IAppState";
 import { StartNavigation } from "@/types/INavigationService";
 
 const useBackgroundService = (params: StartNavigation) => {
-    const appState = useRef(AppState.currentState);
-    const [currentState, setCurrentState] = useState(AppState.currentState);
-    const hasBeenActiveOnce = useRef(false);
+    const { splashReady } = useSplash();
+    const appState = useRef<AppStateStatus>(AppState.currentState);
 
     useEffect(() => {
-        const subscription = AppState.addEventListener("change", (nextAppState) => {
+        if (!splashReady) return;
+
+        const isAuthenticated = !!params.authToken;
+
+        const handleAppStateChange = (nextAppState: AppStateStatus) => {
+            if (appState.current === nextAppState) return;
             appState.current = nextAppState;
-            setCurrentState(nextAppState);
 
-            if (nextAppState === AppStateType.ACTIVE) {
-                hasBeenActiveOnce.current = true;
+            if (nextAppState === AppStateType.BACKGROUND && isAuthenticated) {
+                NavigationService.startNavigationService(params);
+            } else {
+                NavigationService.stopNavigationService();
             }
-        });
+        };
 
-        return () => subscription.remove();
-    }, []);
+        const current = AppState.currentState;
+        appState.current = current;
 
-    useEffect(() => {
-        if (currentState === AppStateType.BACKGROUND && !!params.authToken && hasBeenActiveOnce.current) {
+        if (current === AppStateType.BACKGROUND && isAuthenticated) {
             NavigationService.startNavigationService(params);
         } else {
-            NavigationService.stopNavigationService();
+            setTimeout(() => {
+                NavigationService.stopNavigationService();
+            }, 1000);
         }
-    }, [currentState, params.authToken]);
+
+        const subscription = AppState.addEventListener("change", handleAppStateChange);
+
+        return () => {
+            NavigationService.stopNavigationService();
+            subscription.remove();
+        };
+    }, [splashReady, params.authToken]);
 };
 
 export default useBackgroundService;

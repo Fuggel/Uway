@@ -3,7 +3,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useContext, useEffect } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 
 import Mapbox, { Camera, Images, MapView } from "@rnmapbox/maps";
@@ -57,13 +56,12 @@ const Map = () => {
     const routeOptions = useSelector(mapNavigationSelectors.routeOptions);
     const selectedRoute = useSelector(mapNavigationSelectors.selectedRoute);
     const excludeTypes = useSelector(mapExcludeNavigationSelectors.excludeTypes);
-    const { loadingDirections, errorDirections, isQueryEnabled } = useNavigation();
+    const { loadingDirections } = useNavigation();
     const directions = useSelector(mapNavigationSelectors.directions);
     const location = useSelector(mapNavigationSelectors.location);
     const recentSearches = useSelector(mapSearchSelectors.recentSearches);
     const mapStyle = useSelector(mapViewSelectors.mapboxTheme);
     const isNavigationMode = useSelector(mapNavigationSelectors.isNavigationMode);
-    const isNavigationSelecting = useSelector(mapNavigationSelectors.isNavigationSelecting);
     const selectingCategoryLocation = useSelector(mapLayoutsSelectors.selectingCategoryLocation);
     const allowTextToSpeech = useSelector(mapTextToSpeechSelectors.selectAllowTextToSpeech);
     const showIncidents = useSelector(mapIncidentSelectors.showIncident);
@@ -119,20 +117,6 @@ const Map = () => {
             );
         }
     }, [location]);
-
-    useEffect(() => {
-        if (isNavigationSelecting && (errorDirections || !isQueryEnabled)) {
-            dispatch(mapNavigationActions.setIsNavigationSelecting(false));
-            dispatch(mapLayoutsActions.setSelectingCategoryLocation(false));
-            dispatch(mapNavigationActions.setShowRouteOptions(false));
-
-            Toast.show({
-                type: "error",
-                text1: "Fehler",
-                text2: "Fehler beim Abrufen der Route.",
-            });
-        }
-    }, [isNavigationSelecting, errorDirections, isQueryEnabled]);
 
     return (
         <>
