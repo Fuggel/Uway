@@ -7,12 +7,12 @@ React Native navigation app providing speed camera warnings, real-time traffic d
 ## Screenshots
 
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 650px;">
-  <img src="docs/images/navigation.jpeg" alt="Navigation" style="border-radius: 8px; width: 100%;" />
-  <img src="docs/images/speed-camera.jpeg" alt="Speed Camera Warning" style="border-radius: 8px; width: 100%;" />
-  <img src="docs/images/incident.jpeg" alt="Traffic Incident" style="border-radius: 8px; width: 100%;" />
-  <img src="docs/images/gas-station.jpeg" alt="Gas Station Details" style="border-radius: 8px; width: 100%;" />
-  <img src="docs/images/gas-station-list.jpeg" alt="Gas Station List" style="border-radius: 8px; width: 100%;" />
-  <img src="docs/images/settings.jpeg" alt="Settings" style="border-radius: 8px; width: 100%;" />
+  <img src="docs/images/navigation.jpeg" alt="Navigation" style="border-radius: 8px; width: 250px;" />
+  <img src="docs/images/speed-camera.jpeg" alt="Speed Camera Warning" style="border-radius: 8px; width: 250px;" />
+  <img src="docs/images/incident.jpeg" alt="Traffic Incident" style="border-radius: 8px; width: 250px;" />
+  <img src="docs/images/gas-station.jpeg" alt="Gas Station Details" style="border-radius: 8px; width: 250px;" />
+  <img src="docs/images/gas-station-list.jpeg" alt="Gas Station List" style="border-radius: 8px; width: 250px;" />
+  <img src="docs/images/settings.jpeg" alt="Settings" style="border-radius: 8px; width: 250px;" />
 </div>
 
 ## Architecture
